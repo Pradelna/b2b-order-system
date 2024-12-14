@@ -4,6 +4,9 @@ from .import views
 from .views import *
 
 urlpatterns = [
-    path('', landing_page, name='landing_page'),
-    path('land/', LandingView.as_view(), name='menu_page'),
+    path('api/', landing_page, name='land_page'),
+    path('api/landing/', LandingPageView.as_view(), name='landing_page'),
+    path('api/languages/', LanguagesView.as_view(), name='languages'),
+    path('api/menu/', MenuView.as_view(), name='menu_page'),
+    path('api/banner/', BannerView.as_view(), name='banner_page'),
 ]

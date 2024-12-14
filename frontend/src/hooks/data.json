@@ -1,0 +1,164 @@
+[
+    {
+        "lang": "Čeština",
+        "prefix": "cz",
+        "menu": {
+            "about_us": "O nás",
+            "technology": "Technologie",
+            "prices": "Ceny",
+            "services": "Sluzby",
+            "linen_rent": "Zapůjčení prádla",
+            "vacancies": "Přijetí nových zaměstnanců",
+            "contacts": "Kontakty",
+            "button_request_call": "Zavolať"
+        },
+        "start_banner": {
+            "title": "Profesionální<br><span>prádelna</span> v Praze",
+            "description": "Vysoce kvalitní a profesionální služby pro hotely, hostely, minihotely, sauny a lázně, koleje a fitness centra, mateřské školky a restaurace.",
+            "button_request_call": "Zavolať",
+            "button_two": "Zahájit spolupráci"
+        },
+        "about_us": {
+            "title": "Svěřte svoje podnikání lepším z nejlepších",
+            "description": "Děláme Vaše podnikání příjemnějším, čistším a pohodlnějším. Praní pro firmy je náročným procesem, je",
+            "guarantee_quality": "Záruka<br>kvality",
+            "fast_service": "Rychlá<br>obsluha",
+            "round_clock_service": "Nepřetržitě<br>servis",
+            "super_quality": "Super<br>kvalitní"
+        },
+        "service": {
+            "title": "Prádelní služby",
+            "sub_title_1": "PRO HOTELY, REKREAČNÍ DOMY, KOLEJE, PENZIONY, SANATORIA",
+            "description_1": "<ul>\r\n                        <li>washing of terry products and bed linen;</li>\r\n<li>washing and cleaning of uniforms, overalls of any format;</li>\r\n<li>cleaning down and feather",
+            "sub_title_2": "PRO RESTAURACE, KAVÁRNY A SLAVNOSTNÍ SÁLY",
+            "description_2": "základní ošetření prádla za pomocí strojů na chemické čištění. Výsledkem jsou naprosto čisté (bez mastných skvrn) ubrusy, ubrousky a jiné textilní výrobky;",
+            "sub_title_3": "PRO LETECKÉ SPOLEČNOSTI, PODNIKY VODNÍ, ŽELEZNÍČNÍ A AUTOMOBILOVÉ DOPRAVY",
+            "description_3": "praní froté prádla a ložního prádla;",
+            "sub_title_4": "PRO VOJENSKÁ ZAŘÍZENÍ, POLICII, SPECIÁLNÍ PODODDĚLENÍ A BEZPEČNOSTNÍ SLUŽBU",
+            "description_4": "praní rovného, zimního a letního prádla;",
+            "sub_title_5": "PRO SPORTOVNÍ STŘEDISKA, FITNESS CENTRA, SPA SALONY, LÁZNĚ, SAUNY, SALONY KRÁSY A KADEŘNICTVÍ",
+            "description_5": "praní a žehlení rovného prádla;"
+        },
+        "technologies": {
+            "title": "Technologie šetřící Vaše peníze",
+            "description": "Lze snížit náklady související s provozováním hotelu na základě správně zvoleného obchodního partnera na praní prádla? Nad praním už si vůbec nemusíte lámat hlavu! Naším hlavním cílem je zajistit pro Vás trvalou zásobu čistého prádla. Připravujeme individuální harmonogramy vyzvednutí a doručení prádla s přihlédnutím k potřebám každého klienta.",
+            "sub_title_1": "Zajistíme plné spektrum služeb",
+            "description_1": "Vyřešíme veškeré otázky týkající se praní, žehlení a opravy prádla. Nebudete již muset hledat další zprostředkovatele služeb.",
+            "sub_title_2": "Množství vad snížíme na 98 %",
+            "description_2": "Moderní americké zařízení a přední prostředky značky „CHRISTEYNS“ nám umožňují zajistit mnohem lepší kvalitu praní než u konkurence",
+            "sub_title_3": "Individuální balení",
+            "description_3": "Prádlo naších klientů pereme zvlášť, takže můžeme zaručit, že se Vaše prádlo neztratí",
+            "sub_title_4": "Množstevní účetnictví přijal prádlo",
+            "description_4": "Zavedli jsme účetní systém, který zcela vylučuje ztrátu vašeho prádla během praní. Nezasahujeme do prádla. Každá objednávka u nás prochází všemi fázemi zpracování individuálně!",
+            "sub_title_5": "Poskytování naléhavosti",
+            "description_5": "V našem skladu vždy máme zásoby prádla, abychom našim zákazníkům pomohli v obtížných dobách. Pokud je prádla nedostatek, stačí nám zavolat a my vám poskytneme dostatek!",
+            "sub_title_6": "Vysoká kvalita chemie",
+            "description_6": "Při naší práci používáme pouze ekologicky nezávadné vysoce kvalitní chemikálie značky CHRISTEYNS. Po praní nenajdete podivný zápach, skvrny ani stopy chemikálií."
+        },
+        "price": {
+            "title": "Od 50 Kč/kg!",
+            "description": "Cena se může lišit v závislosti na množství a jiných faktorech. Doručení prádla ve stanovené lhůtě! Provádíme dodání po Praze a v Středočeském kraji!",
+            "button_text": "Zjistit více"
+        },
+        "contacts": {
+            "title": "Kontakty",
+            "company_address": "Vlastník:\r\nEuromed EU Trade, s.r.o.\r\nJindricha Jindricha 2725/14, Praha 5, Stodůlky 155 00 Česká republika\r\nIČO: 06602959",
+            "laundry_address": "Prádelna: Pražská 355, Slaný\r\nSídlo: Jindřicha Jindřicha 2725/14, 15500, Praha 5\r\n+420 608 260 868\r\npradelna1cz@gmail.com",
+            "form_name": "meno",
+            "form_email": "e-mail",
+            "form_phone": "Telefon",
+            "form_message": "zprava",
+            "button_text": "Položit otázku",
+            "agree": "Souhlasím se zpracováním osobních údajů v souladu s pravidly používání stránky.",
+            "agree_link": "link",
+            "map_link": "link"
+        },
+        "footer": {
+            "cookies": "Cookies:",
+            "cookies_link": "Cookies:",
+            "privacy_policy": "Privacy policy:",
+            "privacy_policy_link": "Privacy policy link:"
+        }
+    },
+    {
+        "lang": "english",
+        "prefix": "en",
+        "menu": {
+            "about_us": "about us",
+            "technology": "technology",
+            "prices": "rices",
+            "services": "services",
+            "linen_rent": "Zapůjčení prádla",
+            "vacancies": "Přijetí nových zaměstnanců",
+            "contacts": "contacts",
+            "button_request_call": "request call"
+        },
+        "start_banner": {
+            "title": "Profesionální<br><span>prádelna</span> v Praze",
+            "description": "Vysoce kvalitní a profesionální služby pro hotely, hostely, minihotely, sauny a lázně, koleje a fitness centra, mateřské školky a restaurace.",
+            "button_request_call": "Zavolať",
+            "button_two": "Zahájit spolupráci"
+        },
+        "about_us": {
+            "title": "Svěřte svoje podnikání lepším z nejlepších",
+            "description": "Děláme Vaše podnikání příjemnějším, čistším a pohodlnějším. Praní pro firmy je náročným procesem, je",
+            "guarantee_quality": "Záruka<br>kvality",
+            "fast_service": "Rychlá<br>obsluha",
+            "round_clock_service": "Nepřetržitě<br>servis",
+            "super_quality": "Super<br>kvalitní"
+        },
+        "service": {
+            "title": "Prádelní služby",
+            "sub_title_1": "PRO HOTELY, REKREAČNÍ DOMY, KOLEJE, PENZIONY, SANATORIA",
+            "description_1": "<ul>\r\n                        <li>washing of terry products and bed linen;</li>\r\n<li>washing and cleaning of uniforms, overalls of any format;</li>\r\n<li>cleaning down and feather",
+            "sub_title_2": "PRO RESTAURACE, KAVÁRNY A SLAVNOSTNÍ SÁLY",
+            "description_2": "základní ošetření prádla za pomocí strojů na chemické čištění. Výsledkem jsou naprosto čisté (bez mastných skvrn) ubrusy, ubrousky a jiné textilní výrobky;",
+            "sub_title_3": "PRO LETECKÉ SPOLEČNOSTI, PODNIKY VODNÍ, ŽELEZNÍČNÍ A AUTOMOBILOVÉ DOPRAVY",
+            "description_3": "praní froté prádla a ložního prádla;",
+            "sub_title_4": "PRO VOJENSKÁ ZAŘÍZENÍ, POLICII, SPECIÁLNÍ PODODDĚLENÍ A BEZPEČNOSTNÍ SLUŽBU",
+            "description_4": "praní rovného, zimního a letního prádla;",
+            "sub_title_5": "PRO SPORTOVNÍ STŘEDISKA, FITNESS CENTRA, SPA SALONY, LÁZNĚ, SAUNY, SALONY KRÁSY A KADEŘNICTVÍ",
+            "description_5": "praní a žehlení rovného prádla;"
+        },
+        "technologies": {
+            "title": "Technologie šetřící Vaše peníze",
+            "description": "Lze snížit náklady související s provozováním hotelu na základě správně zvoleného obchodního partnera na praní prádla? Nad praním už si vůbec nemusíte lámat hlavu! Naším hlavním cílem je zajistit pro Vás trvalou zásobu čistého prádla. Připravujeme individuální harmonogramy vyzvednutí a doručení prádla s přihlédnutím k potřebám každého klienta.",
+            "sub_title_1": "Zajistíme plné spektrum služeb",
+            "description_1": "Vyřešíme veškeré otázky týkající se praní, žehlení a opravy prádla. Nebudete již muset hledat další zprostředkovatele služeb.",
+            "sub_title_2": "Množství vad snížíme na 98 %",
+            "description_2": "Moderní americké zařízení a přední prostředky značky „CHRISTEYNS“ nám umožňují zajistit mnohem lepší kvalitu praní než u konkurence",
+            "sub_title_3": "Individuální balení",
+            "description_3": "Prádlo naších klientů pereme zvlášť, takže můžeme zaručit, že se Vaše prádlo neztratí",
+            "sub_title_4": "Množstevní účetnictví přijal prádlo",
+            "description_4": "Zavedli jsme účetní systém, který zcela vylučuje ztrátu vašeho prádla během praní. Nezasahujeme do prádla. Každá objednávka u nás prochází všemi fázemi zpracování individuálně!",
+            "sub_title_5": "Poskytování naléhavosti",
+            "description_5": "V našem skladu vždy máme zásoby prádla, abychom našim zákazníkům pomohli v obtížných dobách. Pokud je prádla nedostatek, stačí nám zavolat a my vám poskytneme dostatek!",
+            "sub_title_6": "Vysoká kvalita chemie",
+            "description_6": "Při naší práci používáme pouze ekologicky nezávadné vysoce kvalitní chemikálie značky CHRISTEYNS. Po praní nenajdete podivný zápach, skvrny ani stopy chemikálií."
+        },
+        "price": {
+            "title": "Od 50 Kč/kg!",
+            "description": "Cena se může lišit v závislosti na množství a jiných faktorech. Doručení prádla ve stanovené lhůtě! Provádíme dodání po Praze a v Středočeském kraji!",
+            "button_text": "Zjistit více"
+        },
+        "contacts": {
+            "title": "Kontakty",
+            "company_address": "Vlastník:\r\nEuromed EU Trade, s.r.o.\r\nJindricha Jindricha 2725/14, Praha 5, Stodůlky 155 00 Česká republika\r\nIČO: 06602959",
+            "laundry_address": "Prádelna: Pražská 355, Slaný\r\nSídlo: Jindřicha Jindřicha 2725/14, 15500, Praha 5\r\n+420 608 260 868\r\npradelna1cz@gmail.com",
+            "form_name": "meno",
+            "form_email": "e-mail",
+            "form_phone": "Telefon",
+            "form_message": "zprava",
+            "button_text": "Položit otázku",
+            "agree": "Souhlasím se zpracováním osobních údajů v souladu s pravidly používání stránky.",
+            "agree_link": "link",
+            "map_link": "link"
+        },
+        "footer": {
+            "cookies": "Cookies:",
+            "cookies_link": "Cookies:",
+            "privacy_policy": "Privacy policy:",
+            "privacy_policy_link": "Privacy policy link:"
+        }
+    }
+]
