@@ -1,0 +1,67 @@
+@import "bootstrap/dist/css/bootstrap.min.css";
+
+.margin-top-200 {
+    margin-top: 200px;
+}
+
+.dashboard {
+    border-radius: 24px;
+}
+
+.dashboard-button {
+    border-radius: 16px;
+}
+
+.card-body {
+    position: relative;
+}
+
+.dash-button {
+    position: absolute;
+    top: 28%;
+    right: 40px;
+    font-size: 14px;
+    font-weight: 600;
+    line-height: 36px;
+    color: #00aab7;
+    text-align: center;
+    width: 196px;
+    height: 55px;
+    border-radius: 27px;
+    border: solid 2px #00aab7;
+    cursor: pointer; /* Изменение курсора */
+    transition: all 0.3s ease; /* Плавный переход при наведении */
+}
+  
+  .dash-button:hover {
+    background-color: #0d6efd; /* Цвет фона при наведении */
+    color: #fff; /* Цвет текста при наведении */
+  }
+
+  .place {
+    padding-left: 110px;
+  }
+
+  .place-card {
+    margin-bottom: 20px;
+  }
+
+  .place img {
+    position: absolute;
+    top: 18px;
+    left: 18px;
+    width: 70px;
+    border-radius: 30px;
+  }
+
+  #company-top .card {
+    min-height: 200px;
+  }
+
+  #company-top .mini {
+    min-height: 90px;
+  }
+
+  .new-order {
+    margin-bottom: 20px;
+  }
