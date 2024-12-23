@@ -1,7 +1,28 @@
 @import "bootstrap/dist/css/bootstrap.min.css";
 
-.margin-top-200 {
-    margin-top: 200px;
+body {
+  font-family: 'Montserrat', sans-serif;
+}
+
+.wrapper {
+  display: flex;
+  flex-direction: column;
+  min-height: 100vh; /* Ensure wrapper takes up full height of the viewport */
+}
+
+a {
+  text-decoration: none;
+  outline: none;
+  color: inherit;
+}
+
+.contact svg {
+  margin-right: 10px;
+  color: #00aab7;
+}
+
+.margin-top-130 {
+    margin-top: 130px;
 }
 
 .dashboard {
@@ -14,12 +35,13 @@
 
 .card-body {
     position: relative;
+    padding: 22px;
 }
 
 .dash-button {
     position: absolute;
-    top: 28%;
-    right: 40px;
+    top: 20%;
+    right: 30px;
     font-size: 14px;
     font-weight: 600;
     line-height: 36px;
@@ -34,34 +56,170 @@
 }
   
   .dash-button:hover {
-    background-color: #0d6efd; /* Цвет фона при наведении */
+    background-color: #00aab7; /* Цвет фона при наведении */
     color: #fff; /* Цвет текста при наведении */
-  }
-
-  .place {
-    padding-left: 110px;
   }
 
   .place-card {
     margin-bottom: 20px;
+    /* border: solid 2px #00aab7; */
+    cursor: pointer;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+    font-family: "Roboto", sans-serif;
+  }
+
+  .place-card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 6px 12px rgba(0, 0, 0, 0.15);
   }
 
   .place img {
     position: absolute;
-    top: 18px;
-    left: 18px;
+    top: 11px;
+    left: 14px;
     width: 70px;
     border-radius: 30px;
   }
 
   #company-top .card {
-    min-height: 200px;
+    min-height: 260px;
+    border: solid 2px #00aab7;
+    cursor: pointer;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+    font-family: "Roboto", sans-serif;
+  }
+
+  #company-top .card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 6px 12px rgba(0, 0, 0, 0.15);
+  }
+
+  #company-top .company {
+    background-color: #e1f6f8;
   }
 
   #company-top .mini {
-    min-height: 90px;
+    min-height: 119px;
+  }
+
+  .mini .card-body p {
+    margin-bottom: 0;
   }
 
   .new-order {
     margin-bottom: 20px;
   }
+
+
+
+/* comoany card */
+  .company-card {
+    background-color: #e1f6f8;
+    border-radius: 16px;
+    padding: 20px;
+    font-family: "Roboto", sans-serif;
+  }
+  
+  .company-card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 6px 12px rgba(0, 0, 0, 0.15);
+  }
+  
+  .company-name {
+    font-size: 18px;
+    font-weight: bold;
+    color: #0a68c0;
+    margin-bottom: 10px;
+  }
+  
+  .company-info {
+    font-size: 14px;
+    color: #5a5a5a;
+    margin: 5px 0;
+  }
+  
+  .company-contact {
+    font-size: 16px;
+    color: #0a68c0;
+    margin-top: 15px;
+    font-weight: bold;
+  }
+
+#company-top .fa-clock-rotate-left,
+#company-top .fa-receipt {
+  height: 40px;
+  margin-right: 5px;
+}
+
+.button-history {
+  position: relative;
+}
+
+.text-history {
+  position: absolute;
+  bottom: 0px;
+  left: 20px;
+}
+
+.mini .icon {
+  height: 30px;
+}
+
+.place p {
+  margin-bottom: 0;
+  font-size: 16px;
+}
+
+.place h5,
+.card-history h5 {
+  font-size: 18px;
+}
+
+.card-history svg {
+  height: 30px;
+}
+
+.place-card .card-body {
+  padding: 16px 16px 16px 110px;
+  transition: transform 0.3s, box-shadow 0.3s, border 0.3s;
+}
+
+.place-card:hover {
+  transform: scale(1.05);
+}
+
+.col-history {
+  position: relative;
+}
+
+#card-history {
+  position: absolute;
+  left: 20px;
+  width: clamp(300px, 100%, 400px);
+  background: #f8fcff;
+  border: 2px solid #00aab7;
+  border-radius: 16px;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.3);
+  opacity: 0;
+  display: none;
+  transition: height 0.3s ease, top 0.3s ease, opacity 0.3s ease, box-shadow 0.3s;
+}
+
+#card-history.active {
+  display: block;
+  opacity: 1;
+}
+
+/* Активные состояния */
+.place-card.active {
+  border: 2px solid #00aab7;
+  box-shadow: 0 8px 16px rgba(0, 123, 255, 0.3);
+  transform: scale(1.05);
+}
+
+#card-history.active {
+  border: 2px solid #00aab7;
+  box-shadow: 0 8px 16px rgba(0, 123, 255, 0.3);
+}

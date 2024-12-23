@@ -4,6 +4,10 @@ import useLanguageData from "../hooks/useLanguageData";
 import MenuComponent from "./MenuComponent";
 import AccountMenuComponent from "./AccountMenuComponent";
 import LanguageSwitcher from "./LanguageSwitcher";
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import {
+  faHouse, faUser
+} from "@fortawesome/free-solid-svg-icons";
 
 function Header({ language, handleLanguageChange, languageData }) {
     const currentData = languageData.find(item => item.lang === language);
@@ -24,10 +28,7 @@ function Header({ language, handleLanguageChange, languageData }) {
             {/* Контактная информация */}
             <div className="contact">
             <a href="/" className="mail">
-                <img
-                  src="/wp-content/themes/praska/assets/img/mail.png"
-                  alt="Почта"
-                />
+                <FontAwesomeIcon icon={faHouse} className="icon" />
                 <span>Domov</span>
               </a>
               <a href="tel:+420734246834" className="tel">
@@ -45,10 +46,7 @@ function Header({ language, handleLanguageChange, languageData }) {
                 <span>pradelna1cz@gmail.com</span>
               </a>
               <a href="/account" className="mail">
-                <img
-                  src="/wp-content/themes/praska/assets/img/mail.png"
-                  alt="Почта"
-                />
+              <FontAwesomeIcon icon={faUser} className="icon" />
                 <span>account</span>
               </a>
             </div>

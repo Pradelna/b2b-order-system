@@ -66,8 +66,6 @@ function App() {
             path="/"
             element={
               <>
-               
-
                 
                 <StartBanner
                   language={language}
