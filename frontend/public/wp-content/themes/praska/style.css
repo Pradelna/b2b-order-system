@@ -329,7 +329,7 @@ button {
 
 .header .lang .sub__lang {
   position: absolute;
-  left: -10px;
+  left: 23px;
   top: 120%;
   background-color: #e1f6f8;
   list-style-type: none;

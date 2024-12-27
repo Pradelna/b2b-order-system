@@ -163,6 +163,10 @@ class LandingPageSerializer(serializers.ModelSerializer):
             'vacancies': obj.menu_vacancies,
             'contacts': obj.menu_contacts,
             'button_request_call': obj.menu_button_request_call,
+            'header_home': obj.header_home,
+            'header_login': obj.header_login,
+            'header_logout': obj.header_logout,
+            'header_account': obj.header_account,
         }
 
     def get_start_banner(self, obj):

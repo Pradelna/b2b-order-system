@@ -1,28 +1,23 @@
 import React from "react";
-import { useNavigate, useLocation } from "react-router-dom";
+import { BrowserRouter, Routes, Route, useLocation } from "react-router-dom";
+import useLanguageData from "../hooks/useLanguageData";
 import MenuComponent from "./MenuComponent";
 import AccountMenuComponent from "./AccountMenuComponent";
 import LanguageSwitcher from "./LanguageSwitcher";
-import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { faHouse, faUser } from "@fortawesome/free-solid-svg-icons";
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import {
+  faHouse, faUser
+} from "@fortawesome/free-solid-svg-icons";
 
-function Header({ language, handleLanguageChange, languageData }) {
-  const navigate = useNavigate();
-  const location = useLocation();
-
-  if (!languageData) {
-    return null; // Возвращаем пустой компонент, если данных нет
-  }
-
-  const currentData = languageData.find((item) => item.lang === language);
-  const menuData = currentData.menu;
-
-  // Обработчик переключения языка с удалением префикса
-  const handleLanguageChangeWithPrefixRemoval = (lang) => {
-    handleLanguageChange(lang); // Меняем язык
-    const newPath = location.pathname.replace(/^\/[a-z]{2}/, ""); // Убираем префикс языка из пути
-    navigate(newPath || "/"); // Перенаправляем на путь без префикса
-  };
+function HeaderAccount({ language, handleLanguageChange, languageData }) {
+    if (!languageData) {
+      return null; // Возвращаем пустой компонент, если данных нет
+    }
+    // console.log(language);
+    // console.log(handleLanguageChange);
+    // console.log(languageData);
+    const currentData = languageData.find(item => item.lang === language);
+    const menuData = currentData.menu;
 
   return (
     <header className="header">
@@ -33,15 +28,15 @@ function Header({ language, handleLanguageChange, languageData }) {
             {/* Компонент переключения языков */}
             <LanguageSwitcher
               currentLanguage={language}
-              onLanguageChange={handleLanguageChangeWithPrefixRemoval} // Используем обновлённый обработчик
+              onLanguageChange={handleLanguageChange}
               availableLanguages={languageData}
             />
 
             {/* Контактная информация */}
             <div className="contact">
-              <a href="/" className="mail">
+            <a href="/" className="mail">
                 <FontAwesomeIcon icon={faHouse} className="icon" />
-                <span>{menuData.header_home}</span>
+                <span>{ menuData.header_home }</span>
               </a>
               <a href="tel:+420734246834" className="tel">
                 <img
@@ -58,8 +53,8 @@ function Header({ language, handleLanguageChange, languageData }) {
                 <span>pradelna1cz@gmail.com</span>
               </a>
               <a href="/account" className="mail">
-                <FontAwesomeIcon icon={faUser} className="icon" />
-                <span>{menuData.header_account}</span>
+              <FontAwesomeIcon icon={faUser} className="icon" />
+                <span>{ menuData.header_account }</span>
               </a>
             </div>
 
@@ -85,30 +80,22 @@ function Header({ language, handleLanguageChange, languageData }) {
               <span>+420 734 246 834</span>
             </a>
             <a href="mailto:pradelna1cz@gmail.com" className="mail">
-              <img src="/assets/img/mail3.png" alt="Почта" />
+              <img
+                src="/assets/img/mail3.png"
+                alt="Почта"
+              />
               <span>pradelna1cz@gmail.com</span>
             </a>
           </div>
         </div>
       </div>
 
-      {/* Динамическое меню */}
-      <DynamicMenu menuData={menuData} />
-    </header>
+
+
+
+      </header>
+
   );
 }
 
-export default Header;
-
-// Динамическое управление Header
-const DynamicMenu = ({ menuData }) => {
-  const location = useLocation(); // Определяем текущий маршрут
-
-  // Используем разные компоненты для разных маршрутов
-  if (location.pathname === "/account") {
-    return <AccountMenuComponent menuData={menuData} />;
-  }
-
-  // По умолчанию используем основной Header
-  return <MenuComponent menuData={menuData} />;
-};
+export default HeaderAccount;

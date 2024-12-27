@@ -1,6 +1,9 @@
 import React from "react";
 
 function Footer({ language, footerData }) {
+    if (!footerData) {
+        return null; // Возвращаем пустой компонент, если данных нет
+      }
     const currentData = footerData.find(item => item.lang === language);
     if (!currentData || !currentData.footer) {
         return null; // Если данных нет, компонент ничего не отображает

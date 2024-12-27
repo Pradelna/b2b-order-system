@@ -161,6 +161,10 @@ class Footer(models.Model):
 class LandingPage(models.Model):
     lang = models.CharField("language prefix", max_length=100)
     prefix = models.CharField("language name", max_length=10)
+    header_home = models.CharField("about us", max_length=100)
+    header_login = models.CharField("login", max_length=100)
+    header_logout = models.CharField("logout", max_length=100)
+    header_account = models.CharField("account", max_length=100)
     menu_about_us = models.CharField("about us", max_length=100)
     menu_technology = models.CharField("technology", max_length=100)
     menu_prices = models.CharField("prices", max_length=100)
