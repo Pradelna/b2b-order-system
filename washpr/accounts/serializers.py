@@ -19,5 +19,6 @@ class RegisterSerializer(serializers.ModelSerializer):
     def create(self, validated_data):
         # Хешируем пароль (или используем user.set_password())
         validated_data['password'] = make_password(validated_data['password'])
-        user = super().create(validated_data)
+        # user = super().create(validated_data)
+        user = User.objects.create(is_active=False, **validated_data)
         return user

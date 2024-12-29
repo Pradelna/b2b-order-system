@@ -10,6 +10,7 @@ import Technology from "./components/landing/technologies";
 import Price from "./components/landing/price";
 import Contacts from "./components/landing/contacts";
 import RegistrationForm from "./components/auth/RegistrationForm";
+import ActivationPage from "./components/auth/ActivationPage"; 
 
 import "./App.css";
 import Account from "./components/account";
@@ -89,6 +90,8 @@ function App() {
             path="/account/auth"
             element={<RegistrationForm />}
           />
+          <Route path="/activate/:uid/:token" element={<ActivationPage />} />
+
           <Route path="*" element={<Navigate to="/" />} />
         </Routes>
       </div>
