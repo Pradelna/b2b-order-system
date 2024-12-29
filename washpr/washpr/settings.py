@@ -144,3 +144,5 @@ MEDIA_ROOT = os.path.join(BASE_DIR, 'static/media/')
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
 AUTH_USER_MODEL = 'accounts.CustomUser'
+
+RECAPTCHA_SECRET_KEY = "6LdWEqkqAAAAAGLHgv9xIAygZZovfqdmGR2wBxQ4"

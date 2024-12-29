@@ -9,6 +9,7 @@ import Services from "./components/landing/services";
 import Technology from "./components/landing/technologies";
 import Price from "./components/landing/price";
 import Contacts from "./components/landing/contacts";
+import RegistrationForm from "./components/auth/RegistrationForm";
 
 import "./App.css";
 import Account from "./components/account";
@@ -83,6 +84,10 @@ function App() {
                 handleLanguageChange={handleLanguageChange}
               />
             }
+          />
+          <Route
+            path="/account/auth"
+            element={<RegistrationForm />}
           />
           <Route path="*" element={<Navigate to="/" />} />
         </Routes>
