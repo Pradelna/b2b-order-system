@@ -13,7 +13,9 @@ function Header({ language, handleLanguageChange, languageData }) {
   if (!languageData) {
     return null; // Возвращаем пустой компонент, если данных нет
   }
-
+  // console.log(languageData);
+  // console.log(language);
+  // console.log(handleLanguageChange);
   const currentData = languageData.find((item) => item.lang === language);
   const menuData = currentData.menu;
 

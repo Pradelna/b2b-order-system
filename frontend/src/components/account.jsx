@@ -1,4 +1,5 @@
-import React,  { useState } from "react";
+import React, { useState } from "react";
+import CompanyInfo from "./account/customer/CompanyInfo";
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import {
   faClockRotateLeft, faLocationDot, faBuilding, faIdCard, faPhone, faEnvelope, faUserTie, faReceipt, faCartPlus
@@ -7,6 +8,7 @@ import {
 
 
 function Account({ language, languageData }) {
+    // console.log(language, languageData)
     const currentData = languageData.find(item => item.lang === language);
     const data = currentData['service'];
   if (!data) {
@@ -54,7 +56,9 @@ function Account({ language, languageData }) {
                 <div id="company-top" className="row">
                   
                   <div className="col-6">
-                      <div className="card company-card">
+                    
+                    <CompanyInfo language={language} languageData={languageData} />
+                      {/* <div className="card company-card">
                       <h5 className="company-name">
                         <FontAwesomeIcon icon={faBuilding} className="icon" /> <span className="ms-1">Company Name</span>
                       </h5>
@@ -73,7 +77,7 @@ function Account({ language, languageData }) {
                       <p className="company-info">
                         <FontAwesomeIcon icon={faUserTie} className="icon" /> <span className="ms-1">Petr Kucer</span>
                       </p>
-                      </div>
+                      </div> */}
                   </div>
                   
                   <div className="col-3">

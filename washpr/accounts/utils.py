@@ -5,6 +5,7 @@ from django.core.mail import send_mail
 from django.utils.encoding import force_bytes
 from django.utils.http import urlsafe_base64_encode
 from django.contrib.auth import get_user_model
+from rest_framework.views import exception_handler
 
 
 def verify_recaptcha(token: str) -> bool:
@@ -54,3 +55,13 @@ def send_activation_email(user):
         [user.email],
         fail_silently=False,
     )
+
+
+
+def custom_exception_handler(exc, context):
+    response = exception_handler(exc, context)
+
+    if response is not None:
+        response.data['status_code'] = response.status_code
+
+    return response

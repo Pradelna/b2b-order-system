@@ -85,6 +85,7 @@ export default function RegistrationForm() {
         />
 
         <button type="submit">Зарегистрироваться</button>
+        <a href="/account/login/">LOGIN</a>
       </form>
 
       {message && <p>{message}</p>}

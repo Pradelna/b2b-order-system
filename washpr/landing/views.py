@@ -1,7 +1,7 @@
 from django.shortcuts import render
 from rest_framework.views import APIView
 from rest_framework.response import Response
-from rest_framework import status
+from rest_framework import status, permissions
 
 from .utils import get_items_by_language
 from .models import *
@@ -115,6 +115,8 @@ class OtherView(APIView):
 
 
 class LandingPageView(APIView):
+    permission_classes = [permissions.AllowAny]
+
     def get(self, request):
         lang = request.GET.get('lang', None)  # Получаем язык из запроса
         queryset = LandingPage.objects.all()  # Базовый запрос

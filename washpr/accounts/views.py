@@ -1,8 +1,11 @@
+from rest_framework.permissions import IsAuthenticated
 from rest_framework.views import APIView
 from rest_framework.response import Response
-from rest_framework import status
+from rest_framework import status, permissions
 
 from django.conf import settings
+from rest_framework_simplejwt.authentication import JWTAuthentication
+
 from .serializers import RegisterSerializer
 from .utils import verify_recaptcha, send_activation_email
 from django.contrib.auth import get_user_model
@@ -15,10 +18,12 @@ from rest_framework.response import Response
 from rest_framework import status
 
 
-
 class RegisterView(APIView):
+    permission_classes = [permissions.AllowAny]  # Позволяет доступ всем
+    authentication_classes = []
     def post(self, request):
         # 1. Достаём токен из тела запроса
+        print("Incoming data:", request.data)
         captcha_token = request.data.get("captchaToken", None)
 
         # 2. Проверяем капчу
@@ -32,6 +37,7 @@ class RegisterView(APIView):
             user = serializer.save()
             # Отправляем активационное письмо
             send_activation_email(user)
+            print("User created:", user.username)
             return Response({"message": "User created. Check your email for activation link."},
                             status=status.HTTP_201_CREATED)
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
@@ -44,6 +50,7 @@ User = get_user_model()
 def api_activate_account(request):
     uidb64 = request.data.get('uidb64')
     token = request.data.get('token')
+    print('start activation')
 
     try:
         user_id = force_str(urlsafe_base64_decode(uidb64))
@@ -57,3 +64,38 @@ def api_activate_account(request):
         return Response({'message': 'Account activated successfully'}, status=status.HTTP_200_OK)
     else:
         return Response({'message': 'Invalid or expired link'}, status=status.HTTP_400_BAD_REQUEST)
+
+
+class ActivateAccountView(APIView):
+    permission_classes = [permissions.AllowAny]  # Разрешаем доступ всем
+    authentication_classes = []  # Отключаем проверку аутентификации
+
+    def post(self, request):
+        uidb64 = request.data.get("uidb64")
+        token = request.data.get("token")
+
+        try:
+            uid = force_str(urlsafe_base64_decode(uidb64))
+            user = User.objects.get(pk=uid)
+        except (TypeError, ValueError, OverflowError, User.DoesNotExist):
+            return Response({"message": "Invalid activation link"}, status=status.HTTP_400_BAD_REQUEST)
+
+        if default_token_generator.check_token(user, token):
+            user.is_active = True
+            user.save()
+            return Response({"message": "Account activated successfully"}, status=status.HTTP_200_OK)
+        else:
+            return Response({"message": "Invalid or expired token"}, status=status.HTTP_400_BAD_REQUEST)
+
+
+class AccountDataView(APIView):
+    permission_classes = [permissions.IsAuthenticated]  # Требуется аутентификация
+    authentication_classes = [JWTAuthentication]  # Используем JWT для аутентификации
+
+    def get(self, request):
+        # Доступно только авторизованным
+        data = {
+            "user_email": request.user.email,
+            "some_data": "secret info"
+        }
+        return Response(data, status=status.HTTP_200_OK)

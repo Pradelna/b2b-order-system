@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from "react";
 import { BrowserRouter, Routes, Route, useParams, Navigate, useNavigate } from "react-router-dom";
+import PrivateRoute from "./components/auth/PrivateRoute";
 import Header from "./components/Header";
 import HeaderAccount from "./components/HeaderAccount";
 import Footer from "./components/footer";
@@ -11,6 +12,8 @@ import Price from "./components/landing/price";
 import Contacts from "./components/landing/contacts";
 import RegistrationForm from "./components/auth/RegistrationForm";
 import ActivationPage from "./components/auth/ActivationPage"; 
+import LoginForm from "./components/auth/LoginForm";
+import Loader from "./components/Loader";
 
 import "./App.css";
 import Account from "./components/account";
@@ -19,12 +22,16 @@ function App() {
   const [language, setLanguage] = useState(localStorage.getItem("language") || "cz"); // Язык по умолчанию
   const [languageData, setLanguageData] = useState(null);
   const [error, setError] = useState(null);
+  const [loading, setLoading] = useState(true);
+  const [progress, setProgress] = useState(0);
 
+  // Загружаем данные языка
   useEffect(() => {
     fetch(`http://localhost:8000/api/landing/?lang=${language}`)
       .then((response) => response.json())
       .then((data) => {
         setLanguageData(data);
+        setLoading(false); // Завершаем загрузку
       })
       .catch((error) => {
         console.error("Fetch error:", error);
@@ -43,8 +50,9 @@ function App() {
     return <div>Error: {error}</div>;
   }
 
+  // Отображаем загрузчик, если данные ещё не загружены
   if (!languageData) {
-    return <div>Loading...</div>;
+    return <Loader progress={progress} />;
   }
 
   return (
@@ -58,7 +66,6 @@ function App() {
               <MainPage
                 language={language}
                 languageData={languageData}
-                setLanguage={setLanguage}
                 handleLanguageChange={handleLanguageChange}
               />
             }
@@ -70,28 +77,30 @@ function App() {
               <MainPageWithPrefix
                 language={language}
                 languageData={languageData}
-                setLanguage={setLanguage}
                 handleLanguageChange={handleLanguageChange}
               />
             }
           />
-          {/* Страница аккаунта */}
+          {/* Страница аккаунта с приватным доступом */}
           <Route
             path="/account/*"
             element={
-              <AccountPage
-                language={language}
-                languageData={languageData}
-                handleLanguageChange={handleLanguageChange}
-              />
+              <PrivateRoute>
+                <AccountPage
+                  language={language}
+                  languageData={languageData}
+                  handleLanguageChange={handleLanguageChange}
+                />
+              </PrivateRoute>
             }
           />
-          <Route
-            path="/account/auth"
-            element={<RegistrationForm />}
-          />
+          {/* Страница регистрации */}
+          <Route path="/account/auth" element={<RegistrationForm />} />
+          {/* Страница активации */}
           <Route path="/activate/:uid/:token" element={<ActivationPage />} />
-
+          {/* Страница входа */}
+          <Route path="/account/login" element={<LoginForm />} />
+          {/* Страница для неизвестных маршрутов */}
           <Route path="*" element={<Navigate to="/" />} />
         </Routes>
       </div>
@@ -99,12 +108,7 @@ function App() {
   );
 }
 
-function MainPage({ language, languageData, setLanguage, handleLanguageChange }) {
-  useEffect(() => {
-    const cachedLanguage = localStorage.getItem("language") || "cz"; // Берём язык из localStorage
-    setLanguage(cachedLanguage); // Устанавливаем язык из кэша
-  }, [setLanguage]);
-
+function MainPage({ language, languageData, handleLanguageChange }) {
   return (
     <>
       <Header
@@ -123,20 +127,17 @@ function MainPage({ language, languageData, setLanguage, handleLanguageChange })
   );
 }
 
-function MainPageWithPrefix({ language, languageData, setLanguage, handleLanguageChange }) {
+function MainPageWithPrefix({ language, languageData, handleLanguageChange }) {
   const { lang } = useParams();
   const navigate = useNavigate();
 
   useEffect(() => {
     if (lang === "cz") {
-      // Если префикс "cz", перенаправляем на путь без префикса
-      navigate("/");
-    } else if (lang && lang !== language) {
-      // Если язык отличается, устанавливаем его
-      setLanguage(lang);
-      localStorage.setItem("language", lang);
+      navigate("/"); // Перенаправляем на главную
+    } else if (lang !== language) {
+      handleLanguageChange(lang); // Меняем язык
     }
-  }, [lang, language, setLanguage, navigate]);
+  }, [lang, language, handleLanguageChange, navigate]);
 
   return (
     <>
@@ -157,13 +158,6 @@ function MainPageWithPrefix({ language, languageData, setLanguage, handleLanguag
 }
 
 function AccountPage({ language, languageData, handleLanguageChange }) {
-  useEffect(() => {
-    const cachedLanguage = localStorage.getItem("language"); // Берём язык из localStorage
-    if (cachedLanguage) {
-      handleLanguageChange(cachedLanguage); // Устанавливаем язык из кэша
-    }
-  }, [handleLanguageChange]);
-
   return (
     <>
       <HeaderAccount
