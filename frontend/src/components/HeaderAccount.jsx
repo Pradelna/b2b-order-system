@@ -6,16 +6,13 @@ import AccountMenuComponent from "./AccountMenuComponent";
 import LanguageSwitcher from "./LanguageSwitcher";
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import {
-  faHouse, faUser
+  faHouse, faUser, faMobileScreen, faEnvelope
 } from "@fortawesome/free-solid-svg-icons";
 
 function HeaderAccount({ language, handleLanguageChange, languageData }) {
     if (!languageData) {
       return null; // Возвращаем пустой компонент, если данных нет
     }
-    // console.log(language);
-    // console.log(handleLanguageChange);
-    // console.log(languageData);
     const currentData = languageData.find(item => item.lang === language);
     const menuData = currentData.menu;
 
@@ -39,17 +36,11 @@ function HeaderAccount({ language, handleLanguageChange, languageData }) {
                 <span>{ menuData.header_home }</span>
               </a>
               <a href="tel:+420734246834" className="tel">
-                <img
-                  src="/wp-content/themes/praska/assets/img/tel.png"
-                  alt="Телефон"
-                />
+                <FontAwesomeIcon icon={faMobileScreen} className="icon" />
                 <span>+420 734 246 834</span>
               </a>
               <a href="mailto:pradelna1cz@gmail.com" className="mail">
-                <img
-                  src="/wp-content/themes/praska/assets/img/mail.png"
-                  alt="Почта"
-                />
+                <FontAwesomeIcon icon={faEnvelope } className="icon" />
                 <span>pradelna1cz@gmail.com</span>
               </a>
               <a href="/account" className="mail">
@@ -73,17 +64,11 @@ function HeaderAccount({ language, handleLanguageChange, languageData }) {
         <div className="container">
           <div className="header__mobile__contacts__wrap">
             <a href="tel:+420734246834" className="tel">
-              <img
-                src="/wp-content/themes/praska/assets/img/tel2.png"
-                alt="Телефон"
-              />
+              <FontAwesomeIcon icon={faMobileScreen} className="icon" />
               <span>+420 734 246 834</span>
             </a>
             <a href="mailto:pradelna1cz@gmail.com" className="mail">
-              <img
-                src="/assets/img/mail3.png"
-                alt="Почта"
-              />
+              <FontAwesomeIcon icon={faEnvelope } className="icon" />
               <span>pradelna1cz@gmail.com</span>
             </a>
           </div>

@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import CompanyInfo from "./account/customer/CompanyInfo";
+import CompanyInfo from "./customer/CompanyInfo";
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import {
   faClockRotateLeft, faLocationDot, faBuilding, faIdCard, faPhone, faEnvelope, faUserTie, faReceipt, faCartPlus
@@ -58,26 +58,7 @@ function Account({ language, languageData }) {
                   <div className="col-6">
                     
                     <CompanyInfo language={language} languageData={languageData} />
-                      {/* <div className="card company-card">
-                      <h5 className="company-name">
-                        <FontAwesomeIcon icon={faBuilding} className="icon" /> <span className="ms-1">Company Name</span>
-                      </h5>
-                      <p className="company-info">
-                        <FontAwesomeIcon icon={faLocationDot} className="icon" /> <span className="ms-2">Prague, Ulica 6</span>
-                      </p>
-                      <p className="company-info">
-                        <FontAwesomeIcon icon={faIdCard} className="icon" /> <span className="ms-1">ICO 44502693</span>
-                      </p>
-                      <p className="company-info">
-                        <FontAwesomeIcon icon={faPhone} className="icon" /> <span className="ms-1">+420 944 764 873</span>
-                      </p>
-                      <p className="company-info">
-                        <FontAwesomeIcon icon={faEnvelope} className="icon" /> <span className="ms-1">hotel@gmail.com</span>
-                      </p>
-                      <p className="company-info">
-                        <FontAwesomeIcon icon={faUserTie} className="icon" /> <span className="ms-1">Petr Kucer</span>
-                      </p>
-                      </div> */}
+
                   </div>
                   
                   <div className="col-3">

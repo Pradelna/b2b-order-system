@@ -50,7 +50,6 @@ User = get_user_model()
 def api_activate_account(request):
     uidb64 = request.data.get('uidb64')
     token = request.data.get('token')
-    print('start activation')
 
     try:
         user_id = force_str(urlsafe_base64_decode(uidb64))

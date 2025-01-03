@@ -1,21 +1,25 @@
-import React from "react";
+import React, { useState, useEffect } from "react";
 import { useNavigate, useLocation } from "react-router-dom";
 import MenuComponent from "./MenuComponent";
 import AccountMenuComponent from "./AccountMenuComponent";
 import LanguageSwitcher from "./LanguageSwitcher";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { faHouse, faUser } from "@fortawesome/free-solid-svg-icons";
+import { faHouse, faUser, faMobileScreen, faEnvelope } from "@fortawesome/free-solid-svg-icons";
 
 function Header({ language, handleLanguageChange, languageData }) {
   const navigate = useNavigate();
   const location = useLocation();
+  const [isAuthenticated, setIsAuthenticated] = useState(false);
+
+  useEffect(() => {
+    // Проверяем, есть ли токен в localStorage
+    const token = localStorage.getItem("accessToken");
+    setIsAuthenticated(!!token); // Если токен есть, пользователь аутентифицирован
+  }, []);
 
   if (!languageData) {
     return null; // Возвращаем пустой компонент, если данных нет
   }
-  // console.log(languageData);
-  // console.log(language);
-  // console.log(handleLanguageChange);
   const currentData = languageData.find((item) => item.lang === language);
   const menuData = currentData.menu;
 
@@ -24,6 +28,14 @@ function Header({ language, handleLanguageChange, languageData }) {
     handleLanguageChange(lang); // Меняем язык
     const newPath = location.pathname.replace(/^\/[a-z]{2}/, ""); // Убираем префикс языка из пути
     navigate(newPath || "/"); // Перенаправляем на путь без префикса
+  };
+
+  const handleAuthClick = () => {
+    if (isAuthenticated) {
+      navigate("/account"); // Если пользователь залогинен, переходим в аккаунт
+    } else {
+      navigate("/account/login"); // Если пользователь не залогинен, переходим на логин
+    }
   };
 
   return (
@@ -46,23 +58,17 @@ function Header({ language, handleLanguageChange, languageData }) {
                 <span>{menuData.header_home}</span>
               </a>
               <a href="tel:+420734246834" className="tel">
-                <img
-                  src="/wp-content/themes/praska/assets/img/tel.png"
-                  alt="Телефон"
-                />
+              <FontAwesomeIcon icon={faMobileScreen} className="icon" />
                 <span>+420 734 246 834</span>
               </a>
               <a href="mailto:pradelna1cz@gmail.com" className="mail">
-                <img
-                  src="/wp-content/themes/praska/assets/img/mail.png"
-                  alt="Почта"
-                />
+              <FontAwesomeIcon icon={faEnvelope } className="icon" />
                 <span>pradelna1cz@gmail.com</span>
               </a>
-              <a href="/account" className="mail">
+              <button onClick={handleAuthClick} className="header-menu">
                 <FontAwesomeIcon icon={faUser} className="icon" />
-                <span>{menuData.header_account}</span>
-              </a>
+                <span>{isAuthenticated ? menuData.header_account : "Log in"}</span>
+              </button>
             </div>
 
             {/* Бургер-меню */}
@@ -80,14 +86,11 @@ function Header({ language, handleLanguageChange, languageData }) {
         <div className="container">
           <div className="header__mobile__contacts__wrap">
             <a href="tel:+420734246834" className="tel">
-              <img
-                src="/wp-content/themes/praska/assets/img/tel2.png"
-                alt="Телефон"
-              />
+            <FontAwesomeIcon icon={faMobileScreen} className="icon" />
               <span>+420 734 246 834</span>
             </a>
             <a href="mailto:pradelna1cz@gmail.com" className="mail">
-              <img src="/assets/img/mail3.png" alt="Почта" />
+            <FontAwesomeIcon icon={faEnvelope } className="icon" />
               <span>pradelna1cz@gmail.com</span>
             </a>
           </div>
@@ -106,8 +109,8 @@ export default Header;
 const DynamicMenu = ({ menuData }) => {
   const location = useLocation(); // Определяем текущий маршрут
 
-  // Используем разные компоненты для разных маршрутов
-  if (location.pathname === "/account") {
+  // Проверяем, начинается ли путь с "/account"
+  if (location.pathname.startsWith("/account")) {
     return <AccountMenuComponent menuData={menuData} />;
   }
 
