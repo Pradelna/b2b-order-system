@@ -10,7 +10,16 @@ class CustomerSerializer(serializers.ModelSerializer):
 
 
 class CustomerGetSerializer(serializers.ModelSerializer):
+    user_id = serializers.IntegerField(source='user.id', read_only=True)
     class Meta:
         model = Customer
-        fields = ['company_name', 'company_address', 'company_ico', 'company_phone', 'company_email',  'company_person']
+        fields = [
+            'user_id',
+            'company_name',
+            'company_address',
+            'company_ico',
+            'company_phone',
+            'company_email',
+            'company_person'
+        ]
         read_only_fields = ['user']  # Поле user заполняется автоматически

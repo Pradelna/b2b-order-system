@@ -85,14 +85,38 @@ a {
   #company-top .card {
     min-height: 260px;
     border: solid 2px #00aab7;
-    cursor: pointer;
-    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    /* cursor: pointer; */
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
     transition: transform 0.3s ease, box-shadow 0.3s ease;
     font-family: "Roboto", sans-serif;
+    position: relative;
   }
+
+  h1.detail-page  {
+    font-size: 24px;
+  }
+
+  .detail-page .card {
+    min-height: 260px;
+    border: solid 2px #00aab7;
+    /* cursor: pointer; */
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+    font-family: "Roboto", sans-serif;
+    position: relative;
+  }  
 
   #company-top .card:hover {
     transform: translateY(-5px);
+    box-shadow: 0 6px 12px rgba(0, 0, 0, 0.35);
+  }
+
+  #company-top .card-form {
+    cursor: none;
+  }
+
+  #company-top .card-form:hover {
+    transform: none;
     box-shadow: 0 6px 12px rgba(0, 0, 0, 0.15);
   }
 
@@ -112,7 +136,23 @@ a {
     margin-bottom: 20px;
   }
 
+.settings {
+  position: absolute;
+  top: 20px;
+  right: 20px;
+  width: 24px;
+  height: auto;
+}
 
+.custom-tooltip {
+  background-color: #333 !important;
+  color: white !important;
+  padding: 10px !important;
+  border-radius: 8px !important;
+  font-size: 14px !important;
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.3) !important;
+  border: 1px solid white !important;
+}
 
 /* comoany card */
   .company-card {
@@ -122,6 +162,10 @@ a {
     font-family: "Roboto", sans-serif;
   }
   
+  .detail-page .company-card:hover {
+    transform: none;
+  }
+
   .company-card:hover {
     transform: translateY(-5px);
     box-shadow: 0 6px 12px rgba(0, 0, 0, 0.15);
@@ -265,15 +309,15 @@ a {
   font-family: "Roboto", sans-serif;
 }
 
-.btn-submit {
 
+.btn-submit {
     font-size: 14px;
     font-weight: 600;
     line-height: 36px;
     color: white;
     background-color: #00aab7;
     text-align: center;
-    width: 100%;
+    width: 200px;
     height: 55px;
     border-radius: 27px;
     border: solid 2px #00aab7;
@@ -309,7 +353,7 @@ a {
   line-height: 36px;
   color: #00aab7;
   text-align: center;
-  width: 100%;
+  width: 200px;
   height: 55px;
   border-radius: 27px;
   border: solid 2px #00aab7;
@@ -335,4 +379,63 @@ a {
 .btn-link:hover {
   background-color: #00aab7;
   color: white;
+}
+
+.btn-red {
+  background-color: #d90505;
+  text-transform: uppercase;
+  font-size: 14px;
+  font-weight: 600;
+  line-height: 36px;
+  color: white;
+  text-align: center;
+  width: 200px;
+  height: 55px;
+  border-radius: 27px;
+  display: -webkit-box;
+  display: -ms-flexbox;
+  display: flex;
+  -webkit-box-orient: horizontal;
+  -webkit-box-direction: normal;
+  -ms-flex-direction: row;
+  flex-direction: row;
+  -webkit-box-align: center;
+  -ms-flex-align: center;
+  align-items: center;
+  -webkit-box-pack: center;
+  -ms-flex-pack: center;
+  justify-content: center;
+  -ms-flex-wrap: nowrap;
+  flex-wrap: nowrap;
+  margin: 0 auto;
+
+}
+
+.btn-red:hover {
+  background-color: #fff;
+  color: #d90505;
+  font-weight: 800;
+  border: solid 2px #d90505;
+
+}
+
+.text-color {
+  color: #28aab7;
+}
+
+.label-form {
+  padding: 10px;
+}
+
+.form-control {
+  border-radius: 20px;
+  box-shadow: 2.5px 3.2px 12px 1px #8d8d8d47;
+}
+
+.card-form .row {
+  margin-bottom: 5px;
+}
+
+.alert {
+  border-radius: 16px;
 }

@@ -9,6 +9,16 @@ const LoginForm = ({ language, languageData, handleLanguageChange }) => {
   const [password, setPassword] = useState("");
   const [errorMessage, setErrorMessage] = useState("");
 
+  if (!languageData) {
+    console.log("no data")
+    return null;
+  }
+  if (!language) {
+    language = "cz"
+  }
+  const wholeData = languageData.find(item => item.lang === language);
+  const messageData = wholeData.auth;
+
   const navigate = useNavigate();
 
   const handleLogin = async (e) => {
@@ -27,7 +37,7 @@ const LoginForm = ({ language, languageData, handleLanguageChange }) => {
 
       if (!response.ok) {
         const errorData = await response.json();
-        setErrorMessage(`Ошибка авторизации: ${errorData.detail || "Неизвестная ошибка"}`);
+        setErrorMessage(`${messageData.author_error} ${errorData.detail || messageData.unknown_error}`);
         return;
       }
 
@@ -42,7 +52,7 @@ const LoginForm = ({ language, languageData, handleLanguageChange }) => {
       // Перенаправляем на /account/
       navigate("/account");
     } catch (error) {
-      setErrorMessage(`Ошибка сети: ${error.message}`);
+      setErrorMessage(`${messageData.network_error} ${error.message}`);
     }
   };
 
@@ -52,20 +62,24 @@ const LoginForm = ({ language, languageData, handleLanguageChange }) => {
           
     <div className="container margin-top-130 wrapper">
         
-      <div style={{ maxWidth: "800px", minWidth: "300px", margin: "5rem auto" }}>
+      <div style={{ width: "400px", margin: "5rem auto" }}>
+        
+      {errorMessage && (
+          <p className="alert alert-danger">{errorMessage}</p>
+        )}
         
         <div className="card card-login">
             <div className="card-body ">
                 <div className="text-center">
                     <img src="/wp-content/themes/praska/assets/img/logo.png"
-                        alt="Логотип"
+                        alt="logo"
                     />
                 </div>
             
                 <form onSubmit={handleLogin}>
 
                 <div className="form-group" style={{ marginBottom: "1rem" }}>
-                    <label>your email:</label>
+                    <label>{messageData.email}:</label>
                     <br />
                     <input
                     type="email"
@@ -77,7 +91,7 @@ const LoginForm = ({ language, languageData, handleLanguageChange }) => {
                     />
                 </div>
                 <div className="form-group" style={{ marginBottom: "1rem" }}>
-                    <label>password:</label>
+                    <label>{messageData.password}:</label>
                     <br />
                     <input
                     type="password"
@@ -89,20 +103,18 @@ const LoginForm = ({ language, languageData, handleLanguageChange }) => {
                     />
                 </div>
                 <div className="">
-                    <button className="btn-submit" type="submit">log in</button>
+                  <button className="btn-submit" type="submit">{messageData.login}</button>
                 </div>
                 <div className="mt-3 mb-3">
-                    <a className="btn-link">fogot password?</a>
+                  <a className="btn-link">{ messageData.forgot_password }</a>
                 </div>
                 <div className="text-center">
-                        Don't have an account yet?<br />
-                        <a href="/account/auth/">create one now</a>
+                        {messageData.no_account}?<br />
+                        <a href="/account/auth/"><span className="text-color">{messageData.create_one}</span></a>
                 </div>
                 </form>
 
-        {errorMessage && (
-          <p style={{ color: "red", marginTop: "1rem" }}>{errorMessage}</p>
-        )}
+
                           
             </div>
         </div>

@@ -6,7 +6,6 @@ const CustomerForm = ({ onSubmit }) => {
     company_address: "",
     company_ico: "",
     company_phone: "",
-    // company_email: "",
     company_person: "",
   });
 
@@ -20,69 +19,92 @@ const CustomerForm = ({ onSubmit }) => {
     onSubmit(formData);
   };
 
-  return (
+    return (
+    <div className="card company-card card-form">
     <form onSubmit={handleSubmit}>
-      <div>
-        <label>Company Name</label>
-        <input
-          type="text"
-          name="company_name"
-          value={formData.company_name}
-          onChange={handleChange}
-          required
-        />
+      <div className="row mb-1">
+        <div className="col-3 label-form">
+            <label>Company Name*</label>
+        </div>
+        <div className="col-9">
+            <input
+            className="form-control"
+            type="text"
+            name="company_name"
+            value={formData.company_name}
+            onChange={handleChange}
+            required
+            />  
+        </div>
       </div>
-      <div>
-        <label>Company Address</label>
-        <input
-          type="text"
-          name="company_address"
-          value={formData.company_address}
-          onChange={handleChange}
-          required
-        />
+      
+      <div className="row">
+        <div className="col-3 label-form">
+            <label>Company Address*</label>
+        </div>
+        <div className="col-9">
+            <input
+            className="form-control"
+            type="text"
+            name="company_address"
+            value={formData.company_address}
+            onChange={handleChange}
+            required
+            />
+        </div>
       </div>
-      <div>
-        <label>Company ICO</label>
-        <input
-          type="text"
-          name="company_ico"
-          value={formData.company_ico}
-          onChange={handleChange}
-          required
-        />
+      
+      <div className="row">
+        <div className="col-3 label-form">
+            <label>Company ICO*</label>
+        </div>
+        <div className="col-9">
+            <input
+            className="form-control"
+            type="text"
+            name="company_ico"
+            value={formData.company_ico}
+            onChange={handleChange}
+            required
+            />
+        </div>
       </div>
-      <div>
-        <label>Company Phone</label>
-        <input
-          type="text"
-          name="company_phone"
-          value={formData.company_phone}
-          onChange={handleChange}
-        />
+      
+      <div className="row">
+        <div className="col-3 label-form">
+            <label>Company Phone*</label>
+        </div>
+        <div className="col-9">
+            <input
+            className="form-control"
+            type="text"
+            name="company_phone"
+            value={formData.company_phone}
+            onChange={handleChange}
+            required
+            />
+        </div>
       </div>
-      {/* <div>
-        <label>Company Email</label>
-        <input
-          type="email"
-          name="company_email"
-          value={formData.company_email}
-          onChange={handleChange}
-          required
-        />
-      </div> */}
-      <div>
-        <label>Company Person</label>
-        <input
-          type="text"
-          name="company_person"
-          value={formData.company_person}
-          onChange={handleChange}
-          required
-        />
+      
+      <div className="row">
+        <div className="col-3 label-form">
+            <label>Company Person*</label>
+        </div>
+        <div className="col-9">
+            <input
+            className="form-control"
+            type="text"
+            name="company_person"
+            value={formData.company_person}
+            onChange={handleChange}
+            required
+            />
+        </div>
       </div>
-      <button type="submit">Submit</button>
+
+      <button style={{width: "200px"}} className="btn-submit mt-3" type="submit">Submit</button>
     </form>
+    </div>
   );
 };
 

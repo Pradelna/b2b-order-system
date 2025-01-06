@@ -1,5 +1,5 @@
 from rest_framework import serializers
-from .models import *
+from .models import LandingPage
 
 
 class LandingPageSerializer(serializers.ModelSerializer):
@@ -12,12 +12,13 @@ class LandingPageSerializer(serializers.ModelSerializer):
     price = serializers.SerializerMethodField()
     contacts = serializers.SerializerMethodField()
     footer = serializers.SerializerMethodField()
+    auth = serializers.SerializerMethodField()
 
     class Meta:
         model = LandingPage
         fields = [
             'lang', 'prefix', 'menu', 'start_banner', 'about_us',
-            'service', 'technologies', 'price', 'contacts', 'footer',
+            'service', 'technologies', 'price', 'contacts', 'footer', 'auth',
         ]
 
     def get_menu(self, obj):
@@ -115,4 +116,25 @@ class LandingPageSerializer(serializers.ModelSerializer):
             'cookies_link': obj.footer_cookies_link,
             'privacy_policy': obj.footer_privacy_policy,
             'privacy_policy_link': obj.footer_privacy_policy_link,
+        }
+
+    def get_auth(self, obj):
+        return {
+            'login': obj.auth_login,
+            'email': obj.auth_email,
+            'password': obj.auth_pass,
+            'no_account': obj.auth_no_account,
+            'create_one': obj.auth_create_one,
+            'forgot_password': obj.auth_forgot,
+            'register': obj.auth_reg,
+            'check_email': obj.auth_check_email,
+            'account_activated': obj.auth_activate,
+            'activation_error': obj.auth_activate_error,
+            'server_error': obj.auth_failed_server,
+            'invalid_token': obj.auth_invalid_link,
+            'button_ok': obj.auth_button_ok,
+            'button_error': obj.auth_button_error,
+            'author_error': obj.auth_author_error,
+            'unknown_error': obj.auth_unknown_error,
+            'network_error': obj.auth_network_error,
         }

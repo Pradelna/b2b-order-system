@@ -17,6 +17,7 @@ import Loader from "./components/Loader";
 import MainPage from "./components/MainPage";
 import MainPageWithPrefix from "./components/MainPageWithPrefix";
 import AccountPage from "./components/account/AccountPage";
+import CustomerDetailPage from "./components/account/customer/CustomerDetailPage";
 
 import "./App.css";
 
@@ -103,7 +104,8 @@ function App() {
           }
           />
           {/* Страница активации */}
-          <Route path="/activate/:uid/:token" element={<ActivationPage languageData={languageData} />} />
+          <Route path="/activate/:uid/:token" element={
+            <ActivationPage languageData={languageData} handleLanguageChange={handleLanguageChange} />} />
           {/* Страница входа */}
           <Route path="/account/login" element={
               <LoginForm
@@ -111,6 +113,17 @@ function App() {
                 languageData={languageData}
                 handleLanguageChange={handleLanguageChange}
               />
+            }
+          />
+          <Route 
+            path="/customer/:customerId" 
+            element={
+              <PrivateRoute>
+                <CustomerDetailPage
+                  language={language}
+                  languageData={languageData}
+                />
+              </PrivateRoute>
             }
           />
           {/* Страница для неизвестных маршрутов */}
@@ -121,67 +134,5 @@ function App() {
   );
 }
 
-// function MainPage({ language, languageData, handleLanguageChange }) {
-//   return (
-//     <>
-//       <Header
-//         language={language}
-//         languageData={languageData}
-//         handleLanguageChange={handleLanguageChange}
-//       />
-//       <StartBanner language={language} bannerData={languageData} />
-//       <About language={language} bannerData={languageData} />
-//       <Services language={language} servicesData={languageData} />
-//       <Technology language={language} techData={languageData} />
-//       <Price language={language} priceData={languageData} />
-//       <Contacts language={language} langData={languageData} />
-//       <Footer language={language} footerData={languageData} />
-//     </>
-//   );
-// }
-
-// function MainPageWithPrefix({ language, languageData, handleLanguageChange }) {
-//   const { lang } = useParams();
-//   const navigate = useNavigate();
-
-//   useEffect(() => {
-//     if (lang === "cz") {
-//       navigate("/"); // Перенаправляем на главную
-//     } else if (lang !== language) {
-//       handleLanguageChange(lang); // Меняем язык
-//     }
-//   }, [lang, language, handleLanguageChange, navigate]);
-
-//   return (
-//     <>
-//       <Header
-//         language={language}
-//         languageData={languageData}
-//         handleLanguageChange={handleLanguageChange}
-//       />
-//       <StartBanner language={language} bannerData={languageData} />
-//       <About language={language} bannerData={languageData} />
-//       <Services language={language} servicesData={languageData} />
-//       <Technology language={language} techData={languageData} />
-//       <Price language={language} priceData={languageData} />
-//       <Contacts language={language} langData={languageData} />
-//       <Footer language={language} footerData={languageData} />
-//     </>
-//   );
-// }
-
-// function AccountPage({ language, languageData, handleLanguageChange }) {
-//   return (
-//     <>
-//       <HeaderAccount
-//         language={language}
-//         languageData={languageData}
-//         handleLanguageChange={handleLanguageChange}
-//       />
-//       <Account language={language} languageData={languageData} />
-//       <Footer language={language} footerData={languageData} />
-//     </>
-//   );
-// }
 
 export default App;

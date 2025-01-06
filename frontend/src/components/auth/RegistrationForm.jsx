@@ -9,6 +9,16 @@ export default function RegistrationForm({ language, languageData, handleLanguag
   const [password, setPassword] = useState("");
   const [message, setMessage] = useState("");
 
+  if (!languageData) {
+    console.log("no data")
+    return null;
+  }
+  if (!language) {
+    language = "cz"
+  }
+  const wholeData = languageData.find(item => item.lang === language);
+  const messageData = wholeData.auth;
+
   // Сюда вставляем ваш публичный сайт-ключ
   const RECAPTCHA_SITE_KEY = "6LdWEqkqAAAAAF0sgXktyNzI4PphPZByrrMpzBm_";
 
@@ -41,13 +51,21 @@ export default function RegistrationForm({ language, languageData, handleLanguag
 
         const data = await response.json();
         if (response.ok) {
-          setMessage("User created. Check your email for activation link.");
+          setMessage(messageData.check_email);
         } else {
-          setMessage(`Ошибка при регистрации: ${JSON.stringify(data)}`);
+          // const errorReg = JSON.stringify(data);
+          const errorMessage = Object.entries(data)
+          .map(([field, messages]) => {
+              // Проверяем, массив ли messages и форматируем соответствующе
+              const messageText = Array.isArray(messages) ? messages.join(", ") : messages;
+              return `${field}: ${messageText}`;
+          })
+          .join("</br></br>");
+          setMessage(<span dangerouslySetInnerHTML={{ __html: `${errorMessage}` }} />);
         }
       }
     } catch (error) {
-      setMessage(`Ошибка запроса: ${error.message || error}`);
+      setMessage(`Error request: ${error.message || error}`);
     }
   };
 
@@ -60,7 +78,12 @@ export default function RegistrationForm({ language, languageData, handleLanguag
       />
 
       <div className="container margin-top-130 wrapper">
-        <div style={{ maxWidth: "800px", minWidth: "300px", margin: "5rem auto" }}>
+
+        
+        <div style={{ width: "400px", margin: "5rem auto" }}>
+
+        {message && <p className={`mt-3 alert ${message === messageData.check_email ? "alert-success" : "alert-danger" }`}>{message}</p>}
+
           <div className="card card-login">
             <div className="card-body">
               <div className="text-center">
@@ -73,7 +96,7 @@ export default function RegistrationForm({ language, languageData, handleLanguag
               </div>
               <form onSubmit={handleSubmit}>
                 <div className="form-group">
-                  <label htmlFor="email">Email:</label>
+                  <label htmlFor="email">{ messageData.email}:</label>
                   <input
                     id="email"
                     type="email"
@@ -86,7 +109,7 @@ export default function RegistrationForm({ language, languageData, handleLanguag
                 <br />
 
                 <div className="form-group">
-                  <label htmlFor="password">Пароль:</label>
+                  <label htmlFor="password">{messageData.password}:</label>
                   <input
                     id="password"
                     type="password"
@@ -107,11 +130,10 @@ export default function RegistrationForm({ language, languageData, handleLanguag
                   size="invisible"
                 />
 
-                <button type="submit" className="btn-submit mb-3">Зарегистрироваться</button>
-                <a href="/account/login/" className="btn-link">Войти</a>
+                <button type="submit" className="btn-submit mb-3">{messageData.register}</button>
+                <a href="/account/login/" className="btn-link">{messageData.login}</a>
               </form>
 
-              {message && <p className="mt-3">{message}</p>}
             </div>
           </div>
         </div>

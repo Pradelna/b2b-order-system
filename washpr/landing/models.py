@@ -77,6 +77,24 @@ class LandingPage(models.Model):
     footer_privacy_policy = models.CharField("privacy policy", max_length=100)
     footer_privacy_policy_link = models.CharField("privacy policy link", max_length=100)
 
+    auth_login = models.CharField("log in", max_length=100, blank=True, null=True)
+    auth_email = models.CharField("your email", max_length=100, blank=True, null=True)
+    auth_pass = models.CharField("password", max_length=100, blank=True, null=True)
+    auth_no_account = models.CharField("Don't have an account yet", max_length=150, blank=True, null=True)
+    auth_create_one = models.CharField("Create one", max_length=150, blank=True, null=True)
+    auth_forgot = models.CharField("Forgot pass", max_length=150, blank=True, null=True)
+    auth_reg = models.CharField("Create account", max_length=150, blank=True, null=True)
+    auth_check_email = models.CharField("User created. Check your email", max_length=150, blank=True, null=True)
+    auth_activate = models.CharField("Account activated successfully", max_length=150, blank=True, null=True)
+    auth_activate_error = models.CharField("Activation error", max_length=150, blank=True, null=True)
+    auth_failed_server = models.CharField("Failed to contact the server", max_length=150, blank=True, null=True)
+    auth_invalid_link = models.CharField("Invalid or expired token", max_length=150, blank=True, null=True)
+    auth_button_ok = models.CharField("Log in", max_length=100, blank=True, null=True)
+    auth_button_error = models.CharField("Back to web site if error", max_length=100, blank=True, null=True)
+    auth_author_error = models.CharField("Authorization error", max_length=100, blank=True, null=True)
+    auth_unknown_error = models.CharField("unknown error", max_length=50, blank=True, null=True)
+    auth_network_error = models.CharField("network error", max_length=50, blank=True, null=True)
+
     def __str__(self):
         return self.lang
 

@@ -2,13 +2,21 @@ import React, { useEffect, useState } from "react";
 import { useParams, Link } from "react-router-dom";
 import axios from "axios";
 
-const ActivationPage = ({ languageData }) => {
+const ActivationPage = ({ language, languageData }) => {
+  if (!languageData) {
+    console.log("no data")
+    return null;
+  }
+  if (!language) {
+    language = "cz"
+  }
+  const wholeData = languageData.find(item => item.lang === language);
+
   const { uid, token } = useParams();
-  const [message, setMessage] = useState("Проверка ссылки...");
+  const [message, setMessage] = useState("link checking...");
   const [loading, setLoading] = useState(true);
 
-  const currentData = languageData[0];
-  const messageData = currentData["contacts"];
+  const messageData = wholeData.auth;
 
   useEffect(() => {
     if (uid && token) {
@@ -18,23 +26,25 @@ const ActivationPage = ({ languageData }) => {
           token: token,
         })
         .then((response) => {
-          setMessage(response.data.message || messageData.title || "Аккаунт активирован!");
+          setMessage( messageData.account_activated || response.data.message || "Účet aktivován úspěšně");
         })
         .catch((error) => {
           if (error.response) {
-            setMessage(error.response.data.message || "Ошибка активации.");
+            setMessage(messageData.activation_error || error.response.data.message || "сhyba aktivace");
           } else {
-            setMessage("Не удалось связаться с сервером.");
+            setMessage(messageData.server_error || "nepodařilo se spojit se serverem");
           }
         })
         .finally(() => {
           setLoading(false);
         });
     } else {
-      setMessage("Некорректная ссылка активации (не хватает параметров).");
+      setMessage(messageData.invalid_token || "neplatný nebo vypršený odkaz");
       setLoading(false);
     }
-  }, [uid, token, messageData.title]);
+  }, [uid, token, messageData.account_activated]);
+
+  console.log(message);
 
   return (
     <div className="container mt-5">
@@ -44,15 +54,15 @@ const ActivationPage = ({ languageData }) => {
             <div className="card-body text-center">
               {loading ? (
                 <div className="spinner-border text-primary" role="status">
-                  <span className="visually-hidden">Загрузка...</span>
+                  <span className="visually-hidden">loading...</span>
                 </div>
               ) : (
                 <>
-                  <h3 className={`mb-4 ${message === messageData.title ? "text-success" : "text-danger"}`}>
+                  <h3 className={`mb-4 ${message === messageData.account_activated ? "text-success" : "text-danger" }`}>
                     {message}
                   </h3>
-                  <Link to="/" className="btn-link">
-                    Вернуться на главную
+                  <Link to={`${message === messageData.account_activated ? "/account/" : "/" }`} className="btn-link">
+                      {messageData.button_ok}
                   </Link>
                 </>
               )}

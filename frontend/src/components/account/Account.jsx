@@ -2,157 +2,128 @@ import React, { useState } from "react";
 import CompanyInfo from "./customer/CompanyInfo";
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import {
-  faClockRotateLeft, faLocationDot, faBuilding, faIdCard, faPhone, faEnvelope, faUserTie, faReceipt, faCartPlus
+  faClockRotateLeft
 } from "@fortawesome/free-solid-svg-icons";
+import ButtonAllHistory from "../history/ButtonAllHistory";
+import ButtonsOrder from "./customer/ButtonsOrder";
 
-
-
-function Account({ language, languageData }) {
-    // console.log(language, languageData)
+function Account({ language, languageData, customerData, setCustomerData }) {
     const currentData = languageData.find(item => item.lang === language);
     const data = currentData['service'];
-  if (!data) {
-    return null; // Если данных нет, компонент ничего не отображает
-  }
-
-  const [cardStyle, setCardStyle] = useState({ display: "none" });
-  const [cardContent, setCardContent] = useState("");
-  const [activeButton, setActiveButton] = useState(null); // Состояние для активной кнопки
-
-  const handleCardClick = (event, content, index) => {
-    if (activeButton === index) {
-      // Если та же кнопка нажата повторно, скрываем карточку и сбрасываем активное состояние
-      setCardStyle({ display: "none" });
-      setActiveButton(null);
-      return;
+    if (!data) {
+        return null;
     }
 
-    // Получаем размеры кнопки и контейнера
-    const buttonRect = event.target.closest(".place-card").getBoundingClientRect();
-    const containerRect = document.querySelector(".col-history").getBoundingClientRect();
+    const [cardStyle, setCardStyle] = useState({ display: "none" });
+    const [cardContent, setCardContent] = useState("");
+    const [activeButton, setActiveButton] = useState(null); 
+    const [successMessage, setSuccessMessage] = useState(""); // Новый state для сообщения
 
-    const cardHeight = buttonRect.bottom - containerRect.top;
+    const handleCardClick = (event, content, index) => {
+        if (activeButton === index) {
+            setCardStyle({ display: "none" });
+            setActiveButton(null);
+            return;
+        }
+        const buttonRect = event.target.closest(".place-card").getBoundingClientRect();
+        const containerRect = document.querySelector(".col-history").getBoundingClientRect();
+        const cardHeight = buttonRect.bottom - containerRect.top;
 
-    setCardStyle({
-      top: `0px`,
-      height: `${cardHeight}px`,
-      display: "block",
-    });
+        setCardStyle({
+            top: `0px`,
+            height: `${cardHeight}px`,
+            display: "block",
+        });
 
-    setCardContent(content);
-    setActiveButton(index); // Устанавливаем текущую активную кнопку
-  };
+        setCardContent(content);
+        setActiveButton(index);
+    };
 
-  const places = [
-    { name: "Hotel Palace", address: "Sokolovska 15, 831 43" },
-    { name: "Hotel Zamok", address: "Ulica 54, 831 43" },
-    { name: "Hotel Spa Royal", address: "Prospekt 21, 831 43" },
-  ];
+  // console.log("account");
+  // console.log(customerData);
+  
+    const places = [
+        { name: "Hotel Palace", address: "Sokolovska 15, 831 43" },
+        { name: "Hotel Zamok", address: "Ulica 54, 831 43" },
+        { name: "Hotel Spa Royal", address: "Prospekt 21, 831 43" },
+    ];
 
-  return (
+    return (
         <div className="container margin-top-130 wrapper">
             <div className="row">
-              <div className="col-8">
-                <div id="company-top" className="row">
-                  
-                  <div className="col-6">
-                    
-                    <CompanyInfo language={language} languageData={languageData} />
+                <div className="col-lg-12 col-8">
+                    <div id="company-top" className="row">
+                        <div className="col-12">
+                            {successMessage && <p className="alert alert-success">{successMessage}</p>} 
+                        </div>
+                        
+                        <div className={`${customerData && !customerData.error ? "col-6" : "col-12"}`}>
+                            {/* Передача setSuccessMessage в дочерний компонент */}
+                            <CompanyInfo 
+                                language={language} 
+                                languageData={languageData} 
+                                customerData={customerData} 
+                                setCustomerData={setCustomerData} 
+                                setSuccessMessage={setSuccessMessage} 
+                            />
+                        </div>
 
-                  </div>
-                  
-                  <div className="col-3">
-                    <div className="card dashboard-button">
-                      <div className="card-body button-history">
-                      <FontAwesomeIcon icon={faClockRotateLeft} className="icon" />
-                        <p className="text-history">All<br />history of<br />your orders</p>
-                      </div>
-                    </div>
-                  </div>
+                        {customerData && !customerData.error && (
+                            <ButtonAllHistory language={language} languageData={languageData} />
+                        )}
 
-                  <div className="col-3">
-                    
-                    <div className="card dashboard-button mini new-order">
-                      <div className="card-body text-center">
-                        <p className="card-title"><FontAwesomeIcon icon={faCartPlus} className="icon" /></p>
-                        <p className="card-title">new order</p>
-                      </div>
+                        {customerData && !customerData.error && (
+                            <ButtonsOrder language={language} languageData={languageData} />
+                        )}
                     </div>
-                    
-                    <div className="card dashboard-button mini">
-                      <div className="card-body text-center">
-                      <p className="card-title"><FontAwesomeIcon icon={faBuilding} className="icon" /></p>
-                      <p className="card-title">new place</p>
-                      </div>
-                    </div>
-                    
-                  </div>
 
+                    <div className="row mt-5">
+                        <div className="col-12">
+                            <h4>Your places</h4>
+                        </div>
+                        
+                        {places.map((place, index) => (
+                            <div className="col-12" key={index}>
+                                <div
+                                    className={`card dashboard place-card ${activeButton === index ? "active" : ""}`}
+                                    onClick={(e) => handleCardClick(e, place.name, index)}
+                                >
+                                    <div className="card-body place">
+                                        <img src="src/assets/dom.webp" alt="" />
+                                        <h5>{place.name}</h5>
+                                        <p className="card-text">{place.address}</p>
+                                        <button className="call dash-button">new order</button>
+                                    </div>
+                                </div>
+                            </div>
+                        ))}
+                    </div>
                 </div>
-                
-          
-                <div className="row mt-5">
 
-                  <div className="col-12">
-                    <h4>Your places</h4>
-                  </div>
-                  
-                  {places.map((place, index) => (
-                  <div className="col-12" key={index}>
-                    
+                <div className="col-4 col-history">
                     <div
-                      className={`card dashboard place-card ${
-                        activeButton === index ? "active" : ""
-                      }`}
-                      onClick={(e) => handleCardClick(e, place.name, index)}
-                     >
-                      <div className="card-body place">
-                        <img src="src/assets/dom.webp" alt="" />
-                        <h5>{place.name}</h5>
-                        <p className="card-text">{place.address}</p>
-                        <button className="call dash-button">new order</button>
-                      </div>
-                    </div>
-                    
-                  </div>
-                  ))}
-                  
-
-                </div>
-                
-
-              </div>
-              
-              {/* history */}
-              <div className="col-4 col-history">
-                
-                    <div
-                      id="card-history"
-                      className={`card ${activeButton !== null ? "active" : ""}`}
-                      style={cardStyle}
+                        id="card-history"
+                        className={`card ${activeButton !== null ? "active" : ""}`}
+                        style={cardStyle}
                     >
-                      <div className="card-body card-history">
-                      <FontAwesomeIcon icon={faClockRotateLeft} className="icon" />
-                        <h5>Orders history for {cardContent}</h5>
-                        <div className="history-list mt-4">
-                          <p>16.12.2024 delivering</p>
-                          <hr />
-                          <p>10.12.2024 pick up</p>
-                          <hr />
-                          <p>04.12.2024 delivering</p>
-                          <hr />
-                          <p>26.11.2024 pick up</p>
-                          </div>
-                      </div>
+                        <div className="card-body card-history">
+                            <FontAwesomeIcon icon={faClockRotateLeft} className="icon" />
+                            <h5>Orders history for {cardContent}</h5>
+                            <div className="history-list mt-4">
+                                <p>16.12.2024 delivering</p>
+                                <hr />
+                                <p>10.12.2024 pick up</p>
+                                <hr />
+                                <p>04.12.2024 delivering</p>
+                                <hr />
+                                <p>26.11.2024 pick up</p>
+                            </div>
+                        </div>
                     </div>
-                
-              </div>
-              {/* history end */}
-
+                </div>
             </div>
-
         </div>
-  );
+    );
 }
 
 export default Account;

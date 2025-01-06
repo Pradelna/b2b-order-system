@@ -5,13 +5,13 @@ from .models import Customer
 from .serializers import CustomerSerializer, CustomerGetSerializer
 
 
-@api_view(['GET', 'POST'])
+@api_view(['GET', 'POST', 'PUT'])
 @permission_classes([IsAuthenticated])
 def customer_view(request):
     if request.method == 'GET':
         try:
             # Получаем клиента, связанного с текущим пользователем
-            print(request.user.id)
+            print(request.user.email)
             print("request.user.id")
             customer = Customer.objects.get(user=request.user)
             serializer = CustomerGetSerializer(customer)
@@ -20,11 +20,31 @@ def customer_view(request):
             print('error - no customer')
             return Response({"error": "Customer not found"}, status=404)
 
-    if request.method == 'POST':
-        print("Received data:", request.data)
+    elif request.method == 'POST':
         serializer = CustomerSerializer(data=request.data)
         if serializer.is_valid():
             serializer.save(user=request.user, company_email=request.user.email)  # Связываем клиента с пользователем
             return Response(serializer.data)
-        print("Validation errors:", serializer.errors)
         return Response(serializer.errors, status=400)
+
+    elif request.method == 'PUT':  # ✅ Добавлено обновление данных
+        try:
+            customer = Customer.objects.get(user=request.user)
+            serializer = CustomerSerializer(customer, data=request.data)
+            if serializer.is_valid():
+                serializer.save()
+                return Response(serializer.data)
+            return Response(serializer.errors, status=400)
+        except Customer.DoesNotExist:
+            return Response({"error": "Customer not found"}, status=404)
+
+
+@api_view(['GET'])
+@permission_classes([IsAuthenticated])
+def customer_detail_view(request, customer_id):
+    try:
+        customer = Customer.objects.get(user__id=customer_id)
+        serializer = CustomerGetSerializer(customer)
+        return Response(serializer.data)
+    except Customer.DoesNotExist:
+        return Response({"error": "Customer not found"}, status=404)
