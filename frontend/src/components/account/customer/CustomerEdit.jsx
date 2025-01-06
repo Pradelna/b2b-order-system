@@ -8,12 +8,12 @@ import { Tooltip as ReactTooltip } from 'react-tooltip';
 
 function CustomerEdit({ customerData, setCustomerData, setSuccessMessage, onLogout, setIsEditing }) {
     const [formData, setFormData] = useState({
-        company_name: customerData?.company_name || "",
-        company_address: customerData?.company_address || "",
-        company_ico: customerData?.company_ico || "",
-        company_phone: customerData?.company_phone || "",
+        Company_name: customerData?.company_name || "",
+        Company_address: customerData?.company_address || "",
+        Company_ico: customerData?.company_ico || "",
+        Company_phone: customerData?.company_phone || "",
         // company_email: customerData?.company_email || "",
-        company_person: customerData?.company_person || "",
+        Contact_person: customerData?.company_person || "",
     });
 
     const handleChange = (e) => {
@@ -73,16 +73,20 @@ function CustomerEdit({ customerData, setCustomerData, setSuccessMessage, onLogo
             <form onSubmit={handleSubmit}>
                 <div className="row">
                 {Object.keys(formData).map((key) => (
-                    <div key={key} className="form-group mb-3">
-                        <label className="form-label">{key.replace('_', ' ')}</label>
-                        <input
-                            type="text"
-                            name={key}
-                            value={formData[key]}
-                            onChange={handleChange}
-                            className="form-control"
-                            required
-                        />
+                    <div key={key} className="row form-group mb-3">
+                        <div className="col-3 label-form">
+                            <label className="form-label">{key.replace('_', ' ')}</label>
+                        </div>
+                        <div className="col-9">
+                            <input
+                                type="text"
+                                name={key}
+                                value={formData[key]}
+                                onChange={handleChange}
+                                className="form-control"
+                                required
+                            />
+                        </div>
                     </div>
                 ))}
                 </div>

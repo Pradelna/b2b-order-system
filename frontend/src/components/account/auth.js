@@ -30,34 +30,81 @@ export const refreshToken = async () => {
   };
   
   // Обёртка для запросов с автоматическим обновлением токена
-  export const fetchWithAuth = async (url, options = {}) => {
-    const accessToken = localStorage.getItem("accessToken");
+  // export const fetchWithAuth = async (url, options = {}) => {
+  //   const accessToken = localStorage.getItem("accessToken");
   
-    const response = await fetch(url, {
+  //   const response = await fetch(url, {
+  //     ...options,
+  //     headers: {
+  //       ...options.headers,
+  //       Authorization: `Bearer ${accessToken}`,
+  //       "Content-Type": "application/json",
+  //     },
+  //   });
+  
+  //   if (response.status === 401) {
+  //     // Пытаемся обновить токен
+  //     const newToken = await refreshToken();
+  //     if (newToken) {
+  //       // Повторяем запрос с новым токеном
+  //       const retryResponse = await fetch(url, {
+  //         ...options,
+  //         headers: {
+  //           ...options.headers,
+  //           Authorization: `Bearer ${newToken}`,
+  //           "Content-Type": "application/json",
+  //         },
+  //       });
+  //       return retryResponse;
+  //     }
+  //   }
+  
+  //   return response;
+  // };
+
+
+// Исправленная версия fetchWithAuth
+export const fetchWithAuth = async (url, options = {}) => {
+  let accessToken = localStorage.getItem("accessToken");
+  
+  // Проверка, является ли тело FormData
+  const isFormData = options.body instanceof FormData;
+
+  // Добавление заголовков
+  const headers = {
+      ...options.headers,
+      Authorization: `Bearer ${accessToken}`,
+  };
+
+  // Если это не FormData, добавляем application/json
+  if (!isFormData) {
+      headers["Content-Type"] = "application/json";
+  }
+
+  // Основной запрос
+  const response = await fetch(url, {
       ...options,
-      headers: {
-        ...options.headers,
-        Authorization: `Bearer ${accessToken}`,
-        "Content-Type": "application/json",
-      },
-    });
-  
-    if (response.status === 401) {
-      // Пытаемся обновить токен
+      headers: headers,
+  });
+
+  // Если токен истек
+  if (response.status === 401) {
       const newToken = await refreshToken();
       if (newToken) {
-        // Повторяем запрос с новым токеном
-        const retryResponse = await fetch(url, {
-          ...options,
-          headers: {
-            ...options.headers,
-            Authorization: `Bearer ${newToken}`,
-            "Content-Type": "application/json",
-          },
-        });
-        return retryResponse;
+          accessToken = newToken;
+          const retryHeaders = {
+              ...options.headers,
+              Authorization: `Bearer ${newToken}`,
+          };
+          if (!isFormData) {
+              retryHeaders["Content-Type"] = "application/json";
+          }
+          return fetch(url, {
+              ...options,
+              headers: retryHeaders,
+          });
       }
-    }
-  
-    return response;
-  };
+  }
+
+  return response;
+};

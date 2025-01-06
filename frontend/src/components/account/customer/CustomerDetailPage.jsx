@@ -5,12 +5,14 @@ import CompanyInfo from "./CompanyInfo";
 import HeaderAccount from "../../HeaderAccount";
 import Footer from "../../Footer";
 import { fetchWithAuth } from "../auth.js";
+import UploadFile from "./UploadFile.jsx";
 
 function CustomerDetailPage({ language, languageData }) {
     const { customerId } = useParams();  // Это на самом деле user_id
     const [customerData, setCustomerData] = useState(null);
     const [isEditing, setIsEditing] = useState(false);
     const [successMessage, setSuccessMessage] = useState("");
+    const [message, setMessage] = useState(''); 
     const [loading, setLoading] = useState(true);
 
     const fetchCustomerData = () => {
@@ -97,6 +99,8 @@ function CustomerDetailPage({ language, languageData }) {
                                             
                             )}
                         </div>
+
+                        <UploadFile />
 
                         <div className="row">
                             {/* Кнопка выхода из аккаунта */}

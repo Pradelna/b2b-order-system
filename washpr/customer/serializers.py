@@ -1,5 +1,5 @@
 from rest_framework import serializers
-from .models import Customer
+from .models import Customer, CustomerDocuments
 
 
 class CustomerSerializer(serializers.ModelSerializer):
@@ -23,3 +23,12 @@ class CustomerGetSerializer(serializers.ModelSerializer):
             'company_person'
         ]
         read_only_fields = ['user']  # Поле user заполняется автоматически
+
+
+class CustomerDocumentSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = CustomerDocuments
+        fields = ['customer', 'file', 'uploaded_at']
+        extra_kwargs = {
+            'uploaded_at': {'read_only': True}
+        }
