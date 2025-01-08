@@ -12,6 +12,7 @@ function CompanyInfo({ language, languageData, customerData, setCustomerData, se
     const currentData = languageData.find(item => item.lang === language);
     const data = currentData ? currentData['service'] : null;
     const [loading, setLoading] = useState(true);
+    const [userId, setUserId] = useState(null);
     const location = useLocation();
     const isDetailPage = location.pathname.includes("/customer/");
 
@@ -23,6 +24,7 @@ function CompanyInfo({ language, languageData, customerData, setCustomerData, se
                 .then((data) => {
                     setCustomerData({ ...data });
                     setLoading(false);
+                    setUserId(data.user_id);
                 })
                 .catch((error) => {
                     console.error("Error fetching customer data:", error);
@@ -33,9 +35,6 @@ function CompanyInfo({ language, languageData, customerData, setCustomerData, se
         }
     }, [setCustomerData]);
     
-  
-  
-
     const handleFormSubmit = (formData) => {
         fetchWithAuth("http://localhost:8000/api/customer/data/", {
             method: "POST",
@@ -49,15 +48,17 @@ function CompanyInfo({ language, languageData, customerData, setCustomerData, se
         .then((data) => {
             setCustomerData({ ...data });
             setSuccessMessage("Customer data successfully added!");
-            setTimeout(() => { window.location.reload(); setSuccessMessage(""); }, 5000);
-            // setTimeout(() => setSuccessMessage(""), 5000);
+            setTimeout(() => setSuccessMessage(""), 5000);
+            // console.log(data);
         })
         .catch((error) => {
             console.error("Error submitting customer data:", error);
         });
     };
 
-    const customerId = customerData?.user_id;
+    const customerId = !customerData?.user_id ? userId : customerData?.user_id;
+    // console.log(customerId);
+    // console.log(data);
 
     if (loading) {
         return <div>Loading...</div>;
@@ -67,7 +68,7 @@ function CompanyInfo({ language, languageData, customerData, setCustomerData, se
         return (
             <div>
                 <p className="alert alert-danger">Add Customer Information</p>
-                <CustomerForm onSubmit={handleFormSubmit} languageData={languageData} />
+                <CustomerForm onSubmit={handleFormSubmit} currentData={currentData} />
             </div>
         );
     }

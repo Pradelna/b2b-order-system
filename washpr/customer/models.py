@@ -17,7 +17,8 @@ class Customer(models.Model):
     user = models.OneToOneField(User, on_delete=models.CASCADE, related_name="customer")
     company_name = models.CharField("Company name", max_length=200, null=True, blank=True)
     company_address = models.CharField("Company address", max_length=200, null=True, blank=True)
-    company_ico = models.CharField("Company ico", max_length=20, null=True, blank=True)
+    company_ico = models.CharField("Company ICO", max_length=20, null=True, blank=True)
+    company_dic = models.CharField("Company DIC", max_length=20, null=True, blank=True)
     phone_regex = RegexValidator(
         regex=r'^\+?(\d){6,18}$',
         message="Phone number must be entered in the format: '+431234567890' or 01234567890"
@@ -28,6 +29,7 @@ class Customer(models.Model):
     vop = models.BooleanField("Všeobecné obchodní podmínk", default=False)
     terms_of_use = models.BooleanField("Pravidla", default=False)
     gdpr = models.BooleanField("GDPR", default=False)
+    active = models.BooleanField("Active", default=False)
 
     def __str__(self):
         return self.company_name

@@ -13,12 +13,14 @@ class LandingPageSerializer(serializers.ModelSerializer):
     contacts = serializers.SerializerMethodField()
     footer = serializers.SerializerMethodField()
     auth = serializers.SerializerMethodField()
+    customer = serializers.SerializerMethodField()
+    buttons = serializers.SerializerMethodField()
 
     class Meta:
         model = LandingPage
         fields = [
-            'lang', 'prefix', 'menu', 'start_banner', 'about_us',
-            'service', 'technologies', 'price', 'contacts', 'footer', 'auth',
+            'lang', 'prefix', 'menu', 'start_banner', 'about_us', 'service',
+            'technologies', 'price', 'contacts', 'footer', 'auth', 'customer', 'buttons',
         ]
 
     def get_menu(self, obj):
@@ -137,4 +139,25 @@ class LandingPageSerializer(serializers.ModelSerializer):
             'author_error': obj.auth_author_error,
             'unknown_error': obj.auth_unknown_error,
             'network_error': obj.auth_network_error,
+        }
+
+    def get_customer(self, obj):
+        return {
+            'full_name': obj.customer_full_name,
+            'company_name': obj.customer_company_name,
+            'company_number': obj.customer_company_number,
+            'vat_number': obj.customer_vat_number,
+            'phone': obj.customer_phone,
+            'company_address': obj.customer_company_address,
+            'vop': obj.customer_vop,
+            'terms_use': obj.customer_terms_use,
+            'gdpr': obj.customer_gdpr,
+            'vop_check': obj.customer_vop_check,
+            'terms_use_check': obj.customer_terms_use_check,
+            'gdpr_check': obj.customer_gdpr_check,
+        }
+
+    def get_buttons(self, obj):
+        return {
+            'submit': obj.button_submit,
         }

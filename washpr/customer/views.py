@@ -19,7 +19,7 @@ def customer_view(request):
             serializer = CustomerGetSerializer(customer)
             return Response(serializer.data)
         except Customer.DoesNotExist:
-            return Response({"error": "Customer not found"}, status=404)
+            return Response({"error": "Customer not found", "user_id": request.user.id}, status=404)
 
     elif request.method == 'POST':
         serializer = CustomerSerializer(data=request.data)
@@ -31,7 +31,7 @@ def customer_view(request):
     elif request.method == 'PUT':  # ✅ Добавлено обновление данных
         try:
             customer = Customer.objects.get(user=request.user)
-            serializer = CustomerSerializer(customer, data=request.data)
+            serializer = CustomerSerializer(customer, data=request.data, partial=True)
             if serializer.is_valid():
                 serializer.save()
                 return Response(serializer.data)

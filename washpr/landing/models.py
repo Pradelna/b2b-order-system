@@ -108,6 +108,8 @@ class LandingPage(models.Model):
     customer_terms_use_check = models.CharField("Terms of use read", max_length=200, blank=True, null=True)
     customer_gdpr_check = models.CharField("GDPR read", max_length=200, blank=True, null=True)
 
+    button_submit = models.CharField("Button submit", max_length=50, blank=True, null=True)
+
     def __str__(self):
         return self.lang
 
