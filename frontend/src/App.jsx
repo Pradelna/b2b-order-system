@@ -17,7 +17,7 @@ import Loader from "./components/Loader";
 import MainPage from "./components/MainPage";
 import MainPageWithPrefix from "./components/MainPageWithPrefix";
 import AccountPage from "./components/account/AccountPage";
-import CustomerDetailPage from "./components/account/customer/CustomerDetailPage";
+import CustomerDetailPage from "./components/customer/CustomerDetailPage";
 
 import "./App.css";
 

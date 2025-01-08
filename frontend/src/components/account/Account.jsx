@@ -1,11 +1,11 @@
 import React, { useState } from "react";
-import CompanyInfo from "./customer/CompanyInfo";
+import CompanyInfo from "../customer/CompanyInfo";
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import {
   faClockRotateLeft
 } from "@fortawesome/free-solid-svg-icons";
 import ButtonAllHistory from "../history/ButtonAllHistory";
-import ButtonsOrder from "./customer/ButtonsOrder";
+import ButtonsOrder from "../customer/ButtonsOrder";
 
 function Account({ language, languageData, customerData, setCustomerData }) {
     const currentData = languageData.find(item => item.lang === language);
