@@ -2,8 +2,9 @@ from rest_framework import status
 from rest_framework.decorators import api_view, permission_classes
 from rest_framework.permissions import IsAuthenticated, AllowAny
 from rest_framework.response import Response
-from .models import Customer, CustomerDocuments
-from .serializers import CustomerSerializer, CustomerGetSerializer, CustomerDocumentSerializer
+from .models import Customer, CustomerDocuments, DocumentsForCustomer
+from .serializers import CustomerSerializer, CustomerGetSerializer, CustomerDocumentSerializer, \
+    DocumentForCustomerSerializer
 
 
 @api_view(['GET', 'POST', 'PUT'])
@@ -16,7 +17,7 @@ def customer_view(request):
             # Получаем клиента, связанного с текущим пользователем
             customer = Customer.objects.get(user=request.user)
             # customer = Customer.objects.get(pk=2)
-            serializer = CustomerGetSerializer(customer)
+            serializer = CustomerSerializer(customer)
             return Response(serializer.data)
         except Customer.DoesNotExist:
             return Response({"error": "Customer not found", "user_id": request.user.id}, status=404)
@@ -108,3 +109,16 @@ def delete_document(request, file_id):
         return Response({"message": "File deleted successfully!"}, status=status.HTTP_204_NO_CONTENT)
     except CustomerDocuments.DoesNotExist:
         return Response({"error": "File not found"}, status=status.HTTP_404_NOT_FOUND)
+
+
+@api_view(['GET'])
+@permission_classes([IsAuthenticated])
+def list_documents_for_customer(request):
+    try:
+        customer = Customer.objects.get(user=request.user)
+    except Customer.DoesNotExist:
+        return Response({"error": "Customer not found"}, status=404)
+
+    documents = DocumentsForCustomer.objects.filter(customer=customer)
+    serializer = DocumentForCustomerSerializer(documents, many=True)
+    return Response(serializer.data)

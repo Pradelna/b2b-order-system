@@ -6,8 +6,10 @@ import HeaderAccount from "../HeaderAccount";
 import Footer from "../Footer";
 import { fetchWithAuth } from "../account/auth.js";
 import UploadFile from "./UploadFile.jsx";
+import DocumentsBlock from "./DocumentsBlock.jsx";
 
 function CustomerDetailPage({ language, languageData }) {
+    const langData = languageData.find(item => item.lang === language);
     const { customerId } = useParams();  // Это на самом деле user_id
     const [customerData, setCustomerData] = useState(null);
     const [isEditing, setIsEditing] = useState(false);
@@ -23,8 +25,6 @@ function CustomerDetailPage({ language, languageData }) {
             return;
         }
 
-        // Используем user_id вместо customer_id
-        // fetchWithAuth(`http://127.0.0.1:8000/api/customer/${customerId}/`, {
         fetchWithAuth(`http://127.0.0.1:8000/api/customer/data/`, {
             method: "GET",
             headers: {
@@ -68,16 +68,11 @@ function CustomerDetailPage({ language, languageData }) {
             <div className="container margin-top-130 wrapper">
                 <div className="row">
                     <div className="col-lg-8 col-12">
-                        <h1 className="detail-page">Customer Details</h1>
+                        {/* <h1 className="detail-page">Customer Details</h1> */}
                         <div className="row detail-page">
                             
                             {successMessage && <p className="alert alert-success">{successMessage}</p>}
                             
-                            {/* <div className="text-end mb-4">
-                                <button className="btn btn-secondary" onClick={() => setIsEditing(!isEditing)}>
-                                    {isEditing ? "View Info" : "Edit Info "}
-                                </button>
-                            </div> */}
 
                             {isEditing ? (
                                 <CustomerEdit 
@@ -85,7 +80,8 @@ function CustomerDetailPage({ language, languageData }) {
                                     setCustomerData={setCustomerData} 
                                     setSuccessMessage={setSuccessMessage}
                                     onLogout={handleLogout} 
-                                    setIsEditing={setIsEditing} 
+                                    setIsEditing={setIsEditing}
+                                    langData={langData}
                                 />
                             ) : (
 
@@ -101,7 +97,9 @@ function CustomerDetailPage({ language, languageData }) {
                             )}
                         </div>
 
-                        <UploadFile />
+                        <UploadFile langData={langData} />
+
+                        <DocumentsBlock langData={langData} />
 
                         <div className="row">
                             {/* Кнопка выхода из аккаунта */}

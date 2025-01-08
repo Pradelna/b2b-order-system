@@ -4,7 +4,7 @@ import { fetchWithAuth } from "../account/auth";
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import {faSpinner, faFilePdf} from "@fortawesome/free-solid-svg-icons";
 
-const UploadFile = ({ onUploadSuccess }) => {
+const UploadFile = ({ onUploadSuccess, langData }) => {
     const [file, setFile] = useState(null);
     const fileInputRef = useRef(null);
     const [files, setFiles] = useState([]); // Список загруженных файлов
@@ -34,14 +34,14 @@ const UploadFile = ({ onUploadSuccess }) => {
     const handleButtonClick = () => {
         fileInputRef.current.click();
     };
-
+    // console.log(langData.messages);
     // Обработчик выбора файла и автоматической загрузки
     const handleFileChange = async (event) => {
         const file = event.target.files[0];
         if (!file) return;
     
         if (file.size > 2 * 1024 * 1024) {  // 2MB ограничение
-            setError('The selected file exceeds the maximum size of 2MB.');
+            setError(langData.messages.file_size);
             setSuccess('');
             return;
         }
@@ -61,7 +61,7 @@ const UploadFile = ({ onUploadSuccess }) => {
             console.log('Server Response:', responseData); // Для диагностики
     
             if (response.status === 201) {
-                setSuccess('File uploaded successfully!');
+                setSuccess(langData.messages.file_ok);
                 setTimeout(() => setSuccess(''), 3000);
                 setError('');
                 if (onUploadSuccess) {
@@ -69,12 +69,12 @@ const UploadFile = ({ onUploadSuccess }) => {
                 }
                 fetchUploadedFiles();
             } else {
-                const errorMessage = responseData.details?.file?.[0] || responseData.error || 'Failed to upload file.';
+                const errorMessage = responseData.details?.file?.[0] || responseData.error || langData.messages.file_failed;
                 setError(errorMessage);
                 setSuccess('');
             }
         } catch (error) {
-            setError('An error occurred while uploading the file. Please try again.');
+            setError(langData.messages.file_try_again);
             setSuccess('');
             console.error('Upload error:', error);
         } finally {
@@ -90,7 +90,7 @@ const UploadFile = ({ onUploadSuccess }) => {
                 return;
             }
     
-            if (!window.confirm('Are you sure you want to delete this file?')) {
+            if (!window.confirm(langData.messages.file_del_quest)) {
                 return;
             }
     
@@ -99,14 +99,14 @@ const UploadFile = ({ onUploadSuccess }) => {
                     method: 'DELETE',
                 });
                 if (response.ok) {
-                    setSuccess('File deleted successfully!');
+                    setSuccess(langData.messages.file_deleted);
                     setTimeout(() => setSuccess(''), 3000);
                     fetchUploadedFiles();
                 } else {
-                    setError('Failed to delete the file.');
+                    setError(langData.messages.file_failed_delete);
                 }
             } catch (error) {
-                setError('An error occurred while deleting the file.');
+                setError(langData.messages.file_failed_while_deleting);
             }
         };
 
@@ -126,17 +126,17 @@ const UploadFile = ({ onUploadSuccess }) => {
                         onChange={handleFileChange}
                     />
                     <button className='btn-upload' onClick={handleButtonClick} disabled={isUploading}>
-                        {isUploading ? 'Uploading...' : 'Upload File'}
+                        {isUploading ? langData.buttons.uploading : langData.buttons.upload }
                     </button>
                 </div>
                     <div className="col-4">
                         {/* Анимация загрузки */}
                         {isUploading && (
                             <div className="spinner" style={{ margin: '10px auto' }}>
-                                <FontAwesomeIcon
+                                {/* <FontAwesomeIcon
                                     icon={faSpinner}
                                     className="spinner-icon"
-                                /> {/*Uploading...*/}
+                                /> Uploading... */}
                             </div>
                         )}
                     </div>
@@ -153,7 +153,7 @@ const UploadFile = ({ onUploadSuccess }) => {
                             <FontAwesomeIcon
                                     icon={faFilePdf}
                                     className="file-uploaded"
-                                /> {file.file.split('/').pop()}
+                                /> <span style={{marginLeft:"5px"}}>{file.file.split('/').pop()}</span>
                             </a>
                             <button
                                 onClick={() => handleDeleteFile(file.id)}

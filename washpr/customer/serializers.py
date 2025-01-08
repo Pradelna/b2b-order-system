@@ -40,10 +40,8 @@ class CustomerDocumentSerializer(serializers.ModelSerializer):
         }
 
 
-User = get_user_model()
-
-
-# class CustomerGetSerializer(serializers.ModelSerializer):
-#     class Meta:
-#         model = User
-#         fields = ['email']
+class DocumentForCustomerSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = CustomerDocuments
+        fields = ['id', 'customer', 'file', 'uploaded_at']
+        read_only_fields = ['uploaded_at', 'site_file']

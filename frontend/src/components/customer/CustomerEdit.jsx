@@ -6,15 +6,28 @@ import {
 } from "@fortawesome/free-solid-svg-icons";
 import { Tooltip as ReactTooltip } from 'react-tooltip';
 
-function CustomerEdit({ customerData, setCustomerData, setSuccessMessage, onLogout, setIsEditing }) {
+function CustomerEdit({ customerData, setCustomerData, setSuccessMessage, setIsEditing, langData }) {
     const [formData, setFormData] = useState({
         company_name: customerData?.company_name || "",
         company_address: customerData?.company_address || "",
         company_ico: customerData?.company_ico || "",
+        company_dic: customerData?.company_dic || "",
         company_phone: customerData?.company_phone || "",
         // company_email: customerData?.company_email || "",
         company_person: customerData?.company_person || "",
     });
+    console.log(langData);
+    const labels = {
+        company_name: langData.customer.company_name,
+        company_address: langData.customer.company_address,
+        company_ico: langData.customer.company_number,
+        company_dic: langData.customer.vat_number,
+        company_phone: langData.customer.phone,
+        company_person: langData.customer.full_name,
+        vop: langData.customer.vop,
+        terms_of_use: langData.customer.terms_use,
+        gdpr: langData.customer.gdpr,
+      };
 
     const handleChange = (e) => {
         const { name, value } = e.target;
@@ -69,15 +82,15 @@ function CustomerEdit({ customerData, setCustomerData, setSuccessMessage, onLogo
                 content="Close editing"
                 className="custom-tooltip"
             />
-            <h2>Edit Customer Information</h2>
+            <h1 className="detail-page mb-3">Edit Customer Information</h1>
             <form onSubmit={handleSubmit}>
                 <div className="row">
                 {Object.keys(formData).map((key) => (
-                    <div key={key} className="row form-group mb-3">
-                        <div className="col-3 label-form">
-                            <label className="form-label">{key.replace('_', ' ')}</label>
+                    <div key={key} className="row form-group">
+                        <div className="col-12 col-md-4 label-form">
+                            <label className="form-label">{labels[key] || key.replace('_', ' ')}</label>
                         </div>
-                        <div className="col-9">
+                        <div className="col-12 col-md-8">
                             <input
                                 type="text"
                                 name={key}

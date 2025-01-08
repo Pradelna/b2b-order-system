@@ -18,6 +18,7 @@ import MainPage from "./components/MainPage";
 import MainPageWithPrefix from "./components/MainPageWithPrefix";
 import AccountPage from "./components/account/AccountPage";
 import CustomerDetailPage from "./components/customer/CustomerDetailPage";
+import LoaderTestPage from "./components/LoaderTestPage";
 
 import "./App.css";
 
@@ -56,7 +57,7 @@ function App() {
 
   // Отображаем загрузчик, если данные ещё не загружены
   if (!languageData) {
-    return <Loader progress={progress} />;
+    return <Loader />;
   }
 
   return (
@@ -115,6 +116,7 @@ function App() {
               />
             }
           />
+          <Route path="/loader-test" element={<LoaderTestPage />} />
           <Route 
             path="/customer/:customerId" 
             element={

@@ -10,9 +10,9 @@ const CustomerForm = ({ onSubmit, currentData }) => {
     company_dic: "",
     company_phone: "",
     company_person: "",
-    vop: false,             // Изменено на boolean
-    terms_of_use: false,    // Изменено на boolean
-    gdpr: false,            // Изменено на boolean
+    vop: false,
+    terms_of_use: false,
+    gdpr: false,
   });
 
   const handleChange = (e) => {

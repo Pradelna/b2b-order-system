@@ -83,7 +83,7 @@ a {
   }
 
   #company-top .card {
-    min-height: 240px;
+    min-height: 262px;
     border: solid 2px #00aab7;
     /* cursor: pointer; */
     box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
@@ -97,7 +97,7 @@ a {
   }
 
   .detail-page .card {
-    min-height: 240px;
+    min-height: 262px;
     border: solid 2px #00aab7;
     /* cursor: pointer; */
     box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
@@ -125,7 +125,7 @@ a {
   }
 
   #company-top .mini {
-    min-height: 110px;
+    min-height: 120px;
   }
 
   .mini .card-body p {
@@ -530,4 +530,24 @@ a {
   right: 10px;
   font-size: 24px;
   cursor: pointer;
+}
+
+svg.loader{
+  width: 100px;
+  height: 100px;
+  margin: 20px;
+  display:inline-block;
+}
+
+.loader-container {
+  position: fixed; /* Фиксированное положение */
+  top: 0; /* Растягиваем контейнер на всю страницу */
+  left: 0;
+  width: 100%;
+  height: 100%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  background-color: rgba(128, 128, 128, 0.5); /* Серый полупрозрачный фон */
+  z-index: 9999; /* Поверх всех элементов */
 }

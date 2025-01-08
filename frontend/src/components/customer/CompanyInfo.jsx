@@ -7,6 +7,7 @@ import {
 } from "@fortawesome/free-solid-svg-icons";
 import { fetchWithAuth } from "../account/auth.js";
 import { Tooltip as ReactTooltip } from 'react-tooltip';
+import Loader from "../Loader.jsx";
 
 function CompanyInfo({ language, languageData, customerData, setCustomerData, setSuccessMessage, setIsEditing }) {
     const currentData = languageData.find(item => item.lang === language);
@@ -57,11 +58,10 @@ function CompanyInfo({ language, languageData, customerData, setCustomerData, se
     };
 
     const customerId = !customerData?.user_id ? userId : customerData?.user_id;
-    // console.log(customerId);
-    // console.log(data);
+    // console.log(customerData);
 
     if (loading) {
-        return <div>Loading...</div>;
+        return <div><Loader /></div>;
     }
 
     if (!customerData || customerData.error === "Customer not found") {
@@ -123,7 +123,10 @@ function CompanyInfo({ language, languageData, customerData, setCustomerData, se
                 <FontAwesomeIcon icon={faLocationDot} className="icon" /> <span className="ms-2">{customerData.company_address}</span>
             </p>
             <p className="company-info">
-                <FontAwesomeIcon icon={faIdCard} className="icon" /> <span className="ms-1">ICO {customerData.company_ico}</span>
+                <FontAwesomeIcon icon={faIdCard} className="icon" /> <span className="ms-1">IČO {customerData.company_ico}</span>
+            </p>
+            <p className="company-info">
+                <FontAwesomeIcon icon={faIdCard} className="icon" /> <span className="ms-1">DIČ {customerData.company_dic}</span>
             </p>
             <p className="company-info">
                 <FontAwesomeIcon icon={faPhone} className="icon" /> <span className="ms-1">{customerData.company_phone}</span>

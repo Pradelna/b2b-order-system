@@ -59,11 +59,29 @@ def customer_document_upload_path(instance, filename):
     return f'customers/{instance.customer.user.id}/{filename}'
 
 
+def document_for_customer_upload_path(instance, filename):
+    """ Генерация пути для сохранения файла: media/customer.<user_id>/ """
+    return f'customers/{instance.customer.user.id}/for_customer/{filename}'
+
+
 class CustomerDocuments(models.Model):
     """ Модель документов клиента. """
     customer = models.ForeignKey(Customer, on_delete=models.CASCADE, related_name='documents')
     file = models.FileField(
         upload_to=customer_document_upload_path,
+        validators=[validate_file_size, validate_file_extension]
+    )
+    uploaded_at = models.DateTimeField(auto_now_add=True)
+
+    def __str__(self):
+        return f"Document for {self.customer.user.username} - {self.file.name}"
+
+
+class DocumentsForCustomer(models.Model):
+    """ Модель документов для клиента. """
+    customer = models.ForeignKey(Customer, on_delete=models.CASCADE, related_name='documents_for_customer')
+    file = models.FileField(
+        upload_to=document_for_customer_upload_path,
         validators=[validate_file_size, validate_file_extension]
     )
     uploaded_at = models.DateTimeField(auto_now_add=True)

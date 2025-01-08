@@ -15,11 +15,12 @@ class LandingPageSerializer(serializers.ModelSerializer):
     auth = serializers.SerializerMethodField()
     customer = serializers.SerializerMethodField()
     buttons = serializers.SerializerMethodField()
+    messages = serializers.SerializerMethodField()
 
     class Meta:
         model = LandingPage
         fields = [
-            'lang', 'prefix', 'menu', 'start_banner', 'about_us', 'service',
+            'lang', 'prefix', 'menu', 'start_banner', 'about_us', 'service', 'messages',
             'technologies', 'price', 'contacts', 'footer', 'auth', 'customer', 'buttons',
         ]
 
@@ -160,4 +161,18 @@ class LandingPageSerializer(serializers.ModelSerializer):
     def get_buttons(self, obj):
         return {
             'submit': obj.button_submit,
+            'upload': obj.button_upload,
+            'uploading': obj.button_uploading,
+        }
+
+    def get_messages(self, obj):
+        return {
+            'file_ok': obj.message_file_ok,
+            'file_del_quest': obj.message_file_del_quest,
+            'file_failed': obj.message_file_failed,
+            'file_try_again': obj.message_file_try_again,
+            'file_deleted': obj.message_file_deleted,
+            'file_failed_delete': obj.message_file_failed_delete,
+            'file_failed_while_deleting': obj.message_file_failed_while_deleting,
+            'file_size': obj.message_file_size,
         }

@@ -109,6 +109,21 @@ class LandingPage(models.Model):
     customer_gdpr_check = models.CharField("GDPR read", max_length=200, blank=True, null=True)
 
     button_submit = models.CharField("Button submit", max_length=50, blank=True, null=True)
+    button_upload = models.CharField("Button upload file", max_length=50, blank=True, null=True)
+    button_uploading = models.CharField("Button uploading", max_length=50, blank=True, null=True)
+
+    message_file_ok = models.CharField("File uploaded successfully!", max_length=100, blank=True, null=True)
+    message_file_size = models.CharField("The selected file exceeds the maximum size of 2MB", max_length=100,
+                                         blank=True, null=True)
+    message_file_del_quest = models.CharField("Are you sure you want to delete this file?", max_length=100, blank=True,
+                                              null=True)
+    message_file_failed = models.CharField("Failed to upload file", max_length=100, blank=True, null=True)
+    message_file_try_again = models.CharField("An error occurred while uploading the file. Please try again",
+                                           max_length=200, blank=True, null=True)
+    message_file_deleted = models.CharField("File deleted successfully!", max_length=100, blank=True, null=True)
+    message_file_failed_delete = models.CharField("Failed to delete the file", max_length=100, blank=True, null=True)
+    message_file_failed_while_deleting = models.CharField("An error occurred while deleting the file", max_length=100,
+                                                          blank=True, null=True)
 
     def __str__(self):
         return self.lang
