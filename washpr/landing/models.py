@@ -95,6 +95,19 @@ class LandingPage(models.Model):
     auth_unknown_error = models.CharField("unknown error", max_length=50, blank=True, null=True)
     auth_network_error = models.CharField("network error", max_length=50, blank=True, null=True)
 
+    customer_full_name = models.CharField("Name and surname", max_length=200, blank=True, null=True)
+    customer_company_name = models.CharField("Company name", max_length=200, blank=True, null=True)
+    customer_company_number = models.CharField("Company number", max_length=200, blank=True, null=True)
+    customer_vat_number = models.CharField("VAT EU number", max_length=200, blank=True, null=True)
+    customer_phone = models.CharField("Phone number", max_length=200, blank=True, null=True)
+    customer_company_address = models.CharField("Company address", max_length=200, blank=True, null=True)
+    customer_vop = models.CharField("VOP", max_length=200, blank=True, null=True)
+    customer_terms_use = models.CharField("Terms of use", max_length=200, blank=True, null=True)
+    customer_gdpr = models.CharField("GDPR", max_length=200, blank=True, null=True)
+    customer_vop_check = models.CharField("VOP read", max_length=200, blank=True, null=True)
+    customer_terms_use_check = models.CharField("Terms of use read", max_length=200, blank=True, null=True)
+    customer_gdpr_check = models.CharField("GDPR read", max_length=200, blank=True, null=True)
+
     def __str__(self):
         return self.lang
 

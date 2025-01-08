@@ -39,8 +39,8 @@ function Account({ language, languageData, customerData, setCustomerData }) {
         setActiveButton(index);
     };
 
-  // console.log("account");
-  // console.log(customerData);
+  console.log("account");
+  console.log(customerData);
   
     const places = [
         { name: "Hotel Palace", address: "Sokolovska 15, 831 43" },
@@ -51,7 +51,7 @@ function Account({ language, languageData, customerData, setCustomerData }) {
     return (
         <div className="container margin-top-130 wrapper">
             <div className="row">
-                <div className="col-lg-12 col-8">
+                <div className="col-lg-8 col-12">
                     <div id="company-top" className="row">
                         <div className="col-12">
                             {successMessage && <p className="alert alert-success">{successMessage}</p>} 

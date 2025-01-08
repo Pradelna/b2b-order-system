@@ -8,12 +8,12 @@ import { Tooltip as ReactTooltip } from 'react-tooltip';
 
 function CustomerEdit({ customerData, setCustomerData, setSuccessMessage, onLogout, setIsEditing }) {
     const [formData, setFormData] = useState({
-        Company_name: customerData?.company_name || "",
-        Company_address: customerData?.company_address || "",
-        Company_ico: customerData?.company_ico || "",
-        Company_phone: customerData?.company_phone || "",
+        company_name: customerData?.company_name || "",
+        company_address: customerData?.company_address || "",
+        company_ico: customerData?.company_ico || "",
+        company_phone: customerData?.company_phone || "",
         // company_email: customerData?.company_email || "",
-        Contact_person: customerData?.company_person || "",
+        company_person: customerData?.company_person || "",
     });
 
     const handleChange = (e) => {

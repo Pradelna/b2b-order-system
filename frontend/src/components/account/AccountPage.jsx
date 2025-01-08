@@ -24,7 +24,7 @@ function AccountPage({ language, languageData, handleLanguageChange }) {
         return response.json();
       })
       .then((data) => {
-        // console.log("AccountPage. Received customer data:", data);
+        console.log("AccountPage. Received customer data:", data);
         if (!data.company_email) {
           console.warn("No email found in customer data");
         }

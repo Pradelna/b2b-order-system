@@ -1,4 +1,6 @@
 import React, { useState } from "react";
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import {faFilePdf} from "@fortawesome/free-solid-svg-icons";
 
 const CustomerForm = ({ onSubmit }) => {
   const [formData, setFormData] = useState({
@@ -56,7 +58,7 @@ const CustomerForm = ({ onSubmit }) => {
       
       <div className="row">
         <div className="col-3 label-form">
-            <label>Company ICO*</label>
+            <label>Company IČ*</label>
         </div>
         <div className="col-9">
             <input
@@ -66,6 +68,22 @@ const CustomerForm = ({ onSubmit }) => {
             value={formData.company_ico}
             onChange={handleChange}
             required
+            />
+        </div>
+      </div>
+      
+      <div className="row">
+        <div className="col-3 label-form">
+            <label>Company DIČ*</label>
+        </div>
+        <div className="col-9">
+            <input
+            className="form-control"
+            type="text"
+            // name="company_ico"
+            // value={formData.company_ico}
+            // onChange={handleChange}
+            // required
             />
         </div>
       </div>
@@ -99,6 +117,69 @@ const CustomerForm = ({ onSubmit }) => {
             onChange={handleChange}
             required
             />
+        </div>
+      </div>
+      
+      <div className="row">
+        <div className="col-3 label-form">
+            <div class="form-check">
+            <input class="form-check-input" type="checkbox" value="" id="flexCheckDefault" required />
+            <label class="form-check-label" for="flexCheckDefault">
+                Precital som VOP*
+            </label>
+            </div>
+        </div>
+        <div className='col-9'>
+            <div className="form-control">
+            <a href="#" target="_blank" rel="noopener noreferrer">
+                <FontAwesomeIcon
+                        icon={faFilePdf}
+                        className="file-uploaded"
+                    /> Všeobecné obchodní podmínk
+                </a>
+            </div> 
+        </div>
+      </div>
+      
+      <div className="row">
+        <div className="col-3 label-form">
+            <div class="form-check">
+            <input class="form-check-input" type="checkbox" value="" id="flexCheckDefault" required />
+            <label class="form-check-label" for="flexCheckDefault">
+                Precital som Terms of use*
+            </label>
+            </div>
+        </div>
+        <div className='col-9'>
+            <div className="form-control">
+            <a href="#" target="_blank" rel="noopener noreferrer">
+                <FontAwesomeIcon
+                        icon={faFilePdf}
+                        className="file-uploaded"
+                    /> Terms of use
+                </a>
+            </div> 
+        </div>
+      </div>
+      
+      <div className="row">
+        <div className="col-3 label-form">
+            <div class="form-check">
+            <input class="form-check-input" type="checkbox" value="" id="flexCheckDefault" required />
+            <label class="form-check-label" for="flexCheckDefault">
+            Precital som GDPR*
+            </label>
+            </div>
+        </div>
+        <div className='col-9'>
+            <div className="form-control">
+            <a href="#" target="_blank" rel="noopener noreferrer">
+                <FontAwesomeIcon
+                        icon={faFilePdf}
+                        className="file-uploaded"
+                    /> GDPR
+                </a>
+            </div> 
         </div>
       </div>
 

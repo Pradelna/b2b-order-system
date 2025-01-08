@@ -494,3 +494,40 @@ a {
   height: auto;
   margin-right: 10px;
 }
+
+.spinner {
+  font-size: 20px;
+  animation: spin 1s linear infinite;
+}
+
+@keyframes spin {
+  from { transform: rotate(0deg); }
+  to { transform: rotate(360deg); }
+}
+
+.banner {
+  position: fixed;
+  top: 0;
+  right: -100%; /* Изначально скрыт за пределами экрана */
+  width: 300px;
+  padding: 20px;
+  background-color: #28a745;
+  color: white;
+  font-size: 16px;
+  box-shadow: -2px 0 5px rgba(0,0,0,0.5);
+  border-radius: 5px;
+  transition: right 0.5s ease-in-out;
+  z-index: 1000;
+}
+
+.banner.show {
+  right: 0; /* Показывается */
+}
+
+.close-btn {
+  position: absolute;
+  top: 5px;
+  right: 10px;
+  font-size: 24px;
+  cursor: pointer;
+}

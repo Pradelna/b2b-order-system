@@ -67,7 +67,7 @@ function CompanyInfo({ language, languageData, customerData, setCustomerData, se
         return (
             <div>
                 <p className="alert alert-danger">Add Customer Information</p>
-                <CustomerForm onSubmit={handleFormSubmit} />
+                <CustomerForm onSubmit={handleFormSubmit} languageData={languageData} />
             </div>
         );
     }

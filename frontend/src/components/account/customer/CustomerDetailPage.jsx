@@ -24,7 +24,8 @@ function CustomerDetailPage({ language, languageData }) {
         }
 
         // Используем user_id вместо customer_id
-        fetchWithAuth(`http://127.0.0.1:8000/api/customer/${customerId}/`, {
+        // fetchWithAuth(`http://127.0.0.1:8000/api/customer/${customerId}/`, {
+        fetchWithAuth(`http://127.0.0.1:8000/api/customer/data/`, {
             method: "GET",
             headers: {
                 Authorization: `Bearer ${token}`,
