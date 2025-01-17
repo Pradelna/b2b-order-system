@@ -104,7 +104,7 @@ function CustomerEdit({ customerData, setCustomerData, setSuccessMessage, setIsE
                 ))}
                 </div>
                 <div className="row">
-                    <button type="submit" className="btn-submit me-2">
+                    <button type="submit" className="btn-submit">
                         Save Changes
                     </button>
                 </div>

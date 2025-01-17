@@ -14,6 +14,8 @@ urlpatterns = [
     path('api/token/refresh/', TokenRefreshView.as_view(), name='token_refresh'),  # Обновление токена
     path('api/accounts/', include('accounts.urls')),
     path('api/customer/', include('customer.urls')),
+    path('api/order/', include('order.urls')),
+    path('api/place/', include('place.urls')),
     path('', include('landing.urls')),
 ]
 

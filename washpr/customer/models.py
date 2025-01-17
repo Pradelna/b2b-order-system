@@ -30,6 +30,8 @@ class Customer(models.Model):
     terms_of_use = models.BooleanField("Pravidla", default=False)
     gdpr = models.BooleanField("GDPR", default=False)
     active = models.BooleanField("Active", default=False)
+    rp_client_id = models.IntegerField("ItineraryClient id", null=True, blank=True)
+    rp_client_external_id = models.CharField("ItineraryClient external id", max_length=250, null=True, blank=True)
 
     def __str__(self):
         return self.company_name

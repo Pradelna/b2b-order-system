@@ -38,27 +38,49 @@ a {
     padding: 22px;
 }
 
-.dash-button {
-    position: absolute;
-    top: 20%;
-    right: 30px;
-    font-size: 14px;
-    font-weight: 600;
-    line-height: 36px;
-    color: #00aab7;
-    text-align: center;
-    width: 196px;
-    height: 55px;
-    border-radius: 27px;
-    border: solid 2px #00aab7;
-    cursor: pointer; /* Изменение курсора */
-    transition: all 0.3s ease; /* Плавный переход при наведении */
+.new-order-button {
+  position: absolute;
+  top: 20%;
+  right: 30px;
+  font-size: 14px;
+  font-weight: 600;
+  line-height: 36px;
+  color: #00aab7;
+  text-align: center;
+  width: 140px;
+  height: 55px;
+  border-radius: 27px;
+  border: solid 2px #00aab7;
+  cursor: pointer; /* Изменение курсора */
+  transition: all 0.3s ease; /* Плавный переход при наведении */
 }
   
-  .dash-button:hover {
-    background-color: #00aab7; /* Цвет фона при наведении */
-    color: #fff; /* Цвет текста при наведении */
-  }
+.new-order-button:hover {
+  background-color: #00aab7; /* Цвет фона при наведении */
+  color: #fff; /* Цвет текста при наведении */
+}
+
+.details-place-button {
+  position: absolute;
+  top: 20%;
+  right: 186px;
+  font-size: 14px;
+  font-weight: 600;
+  line-height: 36px;
+  color: #00aab7;
+  text-align: center;
+  width: 140px;
+  height: 55px;
+  border-radius: 27px;
+  border: solid 2px #00aab7;
+  cursor: pointer; /* Изменение курсора */
+  transition: all 0.3s ease; /* Плавный переход при наведении */
+}
+  
+.details-place-button:hover {
+  background-color: #00aab7; /* Цвет фона при наведении */
+  color: #fff; /* Цвет текста при наведении */
+}
 
   .place-card {
     margin-bottom: 20px;
@@ -126,6 +148,7 @@ a {
 
   #company-top .mini {
     min-height: 120px;
+    cursor: pointer;
   }
 
   .mini .card-body p {
@@ -199,6 +222,7 @@ a {
 
 .button-history {
   position: relative;
+  cursor: pointer;
 }
 
 .text-history {
@@ -373,7 +397,6 @@ a {
   -ms-flex-wrap: nowrap;
   flex-wrap: nowrap;
   margin: 0 auto;
-
 }
 
 .btn-link:hover {
@@ -550,4 +573,38 @@ svg.loader{
   align-items: center;
   background-color: rgba(128, 128, 128, 0.5); /* Серый полупрозрачный фон */
   z-index: 9999; /* Поверх всех элементов */
+}
+
+/* модальное окно для place */
+
+.modal-backdrop {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100vw;
+  height: 100vh;
+  background: rgba(0, 0, 0, 0.5);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 1050;
+}
+
+.modal-content {
+  background: white;
+  padding: 20px;
+  border-radius: 10px;
+  box-shadow: 0 0 15px rgba(0, 0, 0, 0.2);
+  width: 500px;
+  max-width: 90%;
+  z-index: 1051;
+}
+
+.btn-cancel {
+  background-color: #dc3545;
+  color: white;
+  border: none;
+  padding: 10px 20px;
+  cursor: pointer;
+  border-radius: 5px;
 }

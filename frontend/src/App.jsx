@@ -1,15 +1,6 @@
 import React, { useState, useEffect } from "react";
 import { BrowserRouter, Routes, Route, useParams, Navigate, useNavigate } from "react-router-dom";
 import PrivateRoute from "./components/auth/PrivateRoute";
-import Header from "./components/Header";
-import HeaderAccount from "./components/HeaderAccount";
-import Footer from "./components/Footer";
-import StartBanner from "./components/landing/StartBanner";
-import About from "./components/landing/About";
-import Services from "./components/landing/Services";
-import Technology from "./components/landing/Technologies";
-import Price from "./components/landing/Price";
-import Contacts from "./components/landing/Contacts";
 import RegistrationForm from "./components/auth/RegistrationForm";
 import ActivationPage from "./components/auth/ActivationPage"; 
 import LoginForm from "./components/auth/LoginForm";
@@ -19,6 +10,7 @@ import MainPageWithPrefix from "./components/MainPageWithPrefix";
 import AccountPage from "./components/account/AccountPage";
 import CustomerDetailPage from "./components/customer/CustomerDetailPage";
 import LoaderTestPage from "./components/LoaderTestPage";
+import PlaceDetails from "./components/place/PlaceDetails";
 
 import "./App.css";
 
@@ -126,6 +118,18 @@ function App() {
                   languageData={languageData}
                 />
               </PrivateRoute>
+            }
+          />
+          <Route
+            path="/place/:id"
+            element={
+              <PrivateRoute>
+                <PlaceDetails
+                  language={language}
+                  languageData={languageData}
+                  handleLanguageChange={handleLanguageChange}
+                />
+                </PrivateRoute>
             }
           />
           {/* Страница для неизвестных маршрутов */}

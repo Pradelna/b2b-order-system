@@ -101,9 +101,9 @@ function CustomerDetailPage({ language, languageData }) {
 
                         <DocumentsBlock langData={langData} />
 
-                        <div className="row">
+                        <div className="row mt-3 mb-5">
                             {/* Кнопка выхода из аккаунта */}
-                            <button className="btn-red mt-3" onClick={handleLogout}>
+                            <button className="btn-red" onClick={handleLogout}>
                                 Log Out
                             </button>
                         </div>
