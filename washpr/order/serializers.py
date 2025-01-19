@@ -1,36 +1,43 @@
 from rest_framework import serializers
-from .models import Place
+from .models import Order
 
 
-class PlaceSerializer(serializers.ModelSerializer):
+class OrderSerializer(serializers.ModelSerializer):
     class Meta:
-        model = Place
+        model = Order
         fields = [
-            'customer', 'place_name', 'active', 'rp_client_external_id',
-            'rp_client_name', 'rp_client_id', 'rp_id', 'rp_external_id',
-            'rp_title', 'rp_city', 'rp_street', 'rp_number', 'rp_zip',
-            'rp_person', 'rp_phone', 'rp_email'
+            'place', 'type_ship', 'system', 'monday', 'tuesday', 'wednesday',
+            'thursday', 'friday', 'date_pickup', 'date_delivery', 'every_week', 'terms'
         ]
         extra_kwargs = {
-            'customer': {'read_only': True},
+            'terms': {'required': True},
+            'place': {'required': True},
+            'date_pickup': {'required': True},
+            'date_delivery': {'required': True},
         }
 
+    def validate(self, data):
+        # Дополнительная валидация
+        if data.get('system') is None and not any([data.get(day) for day in [
+            'monday', 'tuesday', 'wednesday', 'thursday', 'friday'
+        ]]):
+            raise serializers.ValidationError("Either 'system' or at least one day of the week must be selected.")
+        if not data.get('every_week'):
+            if data.get('date_delivery') < data.get('date_pickup'):
+                raise serializers.ValidationError("Delivery date cannot be earlier than pick-up date.")
+        return data
 
-from rest_framework import serializers
-from .models import Place
+    def create(self, validated_data):
+        # Создаем новый заказ
+        return Order.objects.create(**validated_data)
 
 
-class GetPlaceSerializer(serializers.ModelSerializer):
+class GetOrderSerializer(serializers.ModelSerializer):
     class Meta:
-        model = Place
+        model = Order
         fields = [
-            'id', 'customer', 'place_name', 'active', 'rp_client_external_id',
-            'rp_client_name', 'rp_client_id', 'rp_id', 'rp_external_id',
-            'rp_title', 'rp_city', 'rp_street', 'rp_number', 'rp_zip',
-            'rp_person', 'rp_phone', 'rp_email'
+            'id', 'place', 'type_ship', 'system', 'monday', 'tuesday',
+            'wednesday', 'thursday', 'friday', 'date_pickup', 'date_delivery',
+            'every_week', 'terms', 'end_order', 'rp_problem_description'
         ]
-        extra_kwargs = {
-            'customer': {'read_only': True},
-            'id': {'read_only': True},
-        }
-
+        read_only_fields = ['id', 'place']

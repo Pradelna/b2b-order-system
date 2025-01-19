@@ -2,6 +2,7 @@ import React, { useState, useEffect } from "react";
 import { useNavigate, useLocation } from "react-router-dom";
 import CompanyInfo from "../customer/CompanyInfo";
 import PlaceForm from "../place/PlaceForm";
+import OrderForm from "../order/OrderForm.jsx";
 import { fetchWithAuth } from "../account/auth.js";
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faClockRotateLeft } from "@fortawesome/free-solid-svg-icons";
@@ -23,6 +24,8 @@ const Account = ({ language, languageData, customerData, setCustomerData }) => {
     const [showPlaceForm, setShowPlaceForm] = useState(false);
     const [places, setPlaces] = useState([]);
     const navigate = useNavigate();
+    const [showOrderForm, setShowOrderForm] = useState(false);
+    const [currentPlaceId, setCurrentPlaceId] = useState(null);
 
     const handleCardClick = (event, content, index) => {
         if (activeButton === index) {
@@ -70,6 +73,12 @@ const Account = ({ language, languageData, customerData, setCustomerData }) => {
         fetchPlaces();
     }, []);
 
+    const handleOrderSuccess = (data) => {
+        alert(`Order created successfully!`);
+        setShowOrderForm(false); // Закрываем форму
+      };
+      
+
     return (
         <div className="container margin-top-130 wrapper">
             <div className="row">
@@ -94,19 +103,23 @@ const Account = ({ language, languageData, customerData, setCustomerData }) => {
                         )}
 
                         {customerData && !customerData.error && (
-                            <ButtonsOrder 
+                                <ButtonsOrder 
                                 language={language} 
-                                languageData={languageData} 
+                                languageData={languageData}
                                 onCreatePlace={() => setShowPlaceForm(true)} 
+                                onCreateOrder={() => setShowOrderForm(true)}
                             />
                         )}
                     </div>
 
                     {showPlaceForm && (
                         <PlaceForm 
-                            onClose={() => setShowPlaceForm(false)} 
-                            onSuccess={handleSuccess} 
-                        />
+                        onClose={() => setShowPlaceForm(false)} 
+                        onSuccess={(newPlace) => {
+                            setPlaces((prevPlaces) => [...prevPlaces, newPlace]);
+                            setShowPlaceForm(false);
+                        }}
+                    />
                     )}
 
                     <div className="row mt-5">
@@ -125,7 +138,13 @@ const Account = ({ language, languageData, customerData, setCustomerData }) => {
                                         <p className="card-text">
                                             {place.rp_street}, {place.rp_city}, {place.rp_zip}
                                         </p>
-                                        <button className="call new-order-button">new order</button>
+                                        <button
+                                            className="call new-order-button"
+                                            onClick={() => {
+                                                setCurrentPlaceId(place.id);
+                                                setShowOrderForm(true);
+                                              }}
+                                        >new order</button>
                                         <button
                                             onClick={() => place.id && navigate(`/place/${place.id}`)}
                                             disabled={!place.id} // Отключаем кнопку, если нет ID
@@ -152,6 +171,18 @@ const Account = ({ language, languageData, customerData, setCustomerData }) => {
                 </div>
                 
             </div>
+            {showOrderForm && (
+                <OrderForm
+                    placeId={currentPlaceId}
+                    onClose={() => setShowOrderForm(false)}
+                    onSuccess={(newOrder) => {
+                        console.log("Order created successfully:", newOrder);
+                        setSuccessMessage(`Order created successfully`);
+                        setTimeout(() => setSuccessMessage(""), 5000); // Очистить сообщение через 5 секунд
+                        setShowOrderForm(false); // Закрыть форму
+                    }}
+                />
+            )}
         </div>
     );
 };

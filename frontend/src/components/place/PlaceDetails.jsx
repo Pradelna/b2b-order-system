@@ -11,7 +11,13 @@ function DetailPlace ({ language, languageData, handleLanguageChange }) {
   const navigate = useNavigate();
   const [place, setPlace] = useState(null);
   const [loading, setLoading] = useState(true);
-  const [showEditForm, setShowEditForm] = useState(false);
+  const [showEditForm, setShowEditForm] = useState(false); // for customer detail
+  const [showOrderForm, setShowOrderForm] = useState(false); // for order
+  const [successMessage, setSuccessMessage] = useState(""); 
+
+  const { placeId } = useParams();
+  const [currentOrder, setCurrentOrder] = useState(null);
+  const [orderHistory, setOrderHistory] = useState([]);
 
   useEffect(() => {
     // Получение данных о месте по ID
@@ -36,6 +42,32 @@ function DetailPlace ({ language, languageData, handleLanguageChange }) {
     fetchPlace();
   }, [id]);
 
+  useEffect(() => {
+    const fetchOrders = async () => {
+        try {
+            const response = await fetchWithAuth(`http://127.0.0.1:8000/api/order/${id}/orders/`);
+            if (response.ok) {
+                const orders = await response.json();
+
+                // Разделяем заказы на текущий и остальные
+                const current = orders.find(order => order.every_week && !order.end_order);
+                const history = orders.filter(order => !(order.every_week && !order.end_order));
+
+                setCurrentOrder(current);
+                setOrderHistory(history);
+            } else {
+                console.error("Failed to fetch orders");
+            }
+        } catch (error) {
+            console.error("Error fetching orders:", error);
+        } finally {
+            setLoading(false);
+        }
+    };
+
+    fetchOrders();
+}, [placeId]);
+
   const handleDelete = async () => {
     if (window.confirm("Are you sure you want to delete this place?")) {
       try {
@@ -57,6 +89,11 @@ function DetailPlace ({ language, languageData, handleLanguageChange }) {
     }
   };
 
+  const handleOrderSuccess = (data) => {
+    alert(`Order created successfully for ${place.place_name}`);
+    setShowOrderForm(false); // Закрываем форму после успешного создания
+  };
+
   if (loading) return <p>Loading...</p>;
   if (!place) return <p>Place not found.</p>;
 
@@ -69,7 +106,13 @@ function DetailPlace ({ language, languageData, handleLanguageChange }) {
         />
 
         <div className="container margin-top-130 wrapper">
+          
             <div className="row other-card">
+              
+                <div className="col-12">
+                    {successMessage && <p className="alert alert-success">{successMessage}</p>} 
+                </div>
+
                 <div className="card">
                     <h1>Place Details</h1>
                     {!showEditForm ? (
@@ -141,8 +184,69 @@ function DetailPlace ({ language, languageData, handleLanguageChange }) {
                 
             </div>
             
-      <h2>Create Order</h2>
-      <OrderForm placeId={id} />
+                 {/* Текущий заказ */}
+                 {currentOrder ? (
+                <div className="current-order">
+                    <h3>Current Order</h3>
+                    <div className="order-details">
+                        <p><strong>Type of Shipping:</strong> {currentOrder.type_ship}</p>
+                        <p><strong>System:</strong> {currentOrder.system || "Custom Days"}</p>
+                        {currentOrder.system === null && (
+                            <div>
+                                <p><strong>Days:</strong></p>
+                                <ul>
+                                    {currentOrder.monday && <li>Monday</li>}
+                                    {currentOrder.tuesday && <li>Tuesday</li>}
+                                    {currentOrder.wednesday && <li>Wednesday</li>}
+                                    {currentOrder.thursday && <li>Thursday</li>}
+                                    {currentOrder.friday && <li>Friday</li>}
+                                </ul>
+                            </div>
+                        )}
+                        <p><strong>Pickup Date:</strong> {currentOrder.date_pickup}</p>
+                        <p><strong>Delivery Date:</strong> {currentOrder.date_delivery}</p>
+                        <p><strong>Problem Description:</strong> {currentOrder.rp_problem_description || "None"}</p>
+                    </div>
+                </div>
+            ) : (
+                <p>No active weekly orders.</p>
+            )}
+            
+            {/* Button to open OrderForm */}
+            <button onClick={() => setShowOrderForm(true)}>Create Order</button>
+            
+        
+        {/* История заказов */}
+        <div className="order-history">
+                <h3>Order History</h3>
+                {orderHistory.length > 0 ? (
+                    <ul>
+                        {orderHistory.map(order => (
+                            <li key={order.id}>
+                                <p><strong>Type of Shipping:</strong> {order.type_ship}</p>
+                                <p><strong>Pickup Date:</strong> {order.date_pickup}</p>
+                                <p><strong>Delivery Date:</strong> {order.date_delivery}</p>
+                                <p><strong>Status:</strong> {order.end_order ? "Completed" : "In Progress"}</p>
+                            </li>
+                        ))}
+                    </ul>
+                ) : (
+                    <p>No order history available.</p>
+                )}
+            </div>
+
+
+            {showOrderForm && (
+              <OrderForm
+              placeId={place.id}
+              onClose={() => setShowOrderForm(false)}
+              onSuccess={(newOrder) => {
+                setSuccessMessage(`Order created successfully for place: ${newOrder.place}`);
+                setTimeout(() => setSuccessMessage(""), 5000); // Очистить сообщение через 5 секунд
+                setShowOrderForm(false); // Закрыть форму
+            }}
+            />
+            )}
     
         </div>
     <Footer language={language} languageData={languageData} />
