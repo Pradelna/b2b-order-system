@@ -1,8 +1,28 @@
 import React, { useState } from "react";
 import { fetchWithAuth } from "../account/auth";
 
-const PlaceEdit = ({ place, onClose, onPlaceUpdated }) => {
-  const [formData, setFormData] = useState({ ...place });
+const PlaceEdit = ({ place, onClose, onPlaceUpdated, onDelete }) => {
+  const [formData, setFormData] = useState({
+    place_name: place?.place_name || "",
+    rp_city: place?.rp_city || "",
+    rp_street: place?.rp_street || "",
+    rp_number: place?.rp_number || "",
+    rp_zip: place?.rp_zip || "",
+    rp_person: place?.rp_person || "",
+    rp_phone: place?.rp_phone || "",
+    rp_email: place?.rp_email || ""
+  });
+
+  const fieldLabels = {
+    place_name: "Place Name",
+    rp_city: "City",
+    rp_street: "Street",
+    rp_number: "Number",
+    rp_zip: "ZIP Code",
+    rp_person: "Contact Person",
+    rp_phone: "Phone",
+    rp_email: "Email",
+  };
 
   const handleChange = (e) => {
     const { name, value } = e.target;
@@ -37,9 +57,10 @@ const PlaceEdit = ({ place, onClose, onPlaceUpdated }) => {
 
   return (
     <form onSubmit={handleSubmit}>
+      
       {Object.entries(formData).map(([key, value]) => (
         <div className="mb-3" key={key}>
-          <label className="form-label">{key.replace("rp_", "").toUpperCase()}</label>
+          <label className="form-label">{fieldLabels[key] || key.replace("rp_", "").toUpperCase()}</label>
           <input
             className="form-control"
             type="text"
@@ -50,17 +71,24 @@ const PlaceEdit = ({ place, onClose, onPlaceUpdated }) => {
           />
         </div>
       ))}
-      <button type="submit" className="btn btn-success">
-        Save Changes
-      </button>
-      <button
-        type="button"
-        className="btn btn-secondary ms-2"
-        onClick={onClose}
-      >
-        Cancel
-      </button>
-    </form>
+      <div className="row">
+        <div className="col-6">
+            <button type="submit" className="btn btn-submit">
+              Save Changes
+            </button>
+        </div>
+        <div className="col-6">
+            <button
+              type="button"
+              className="btn btn-link"
+              onClick={onDelete}
+              >
+              Delete Place
+          </button>
+        </div>
+      </div>
+      
+  </form>
   );
 };
 

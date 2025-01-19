@@ -15,6 +15,7 @@ const OrderForm = ({ placeId, onClose, onSuccess }) => {
         date_pickup: "",
         date_delivery: "",
         every_week: false,
+        rp_customer_note: "",
         terms: false,
     });
   
@@ -233,6 +234,22 @@ const OrderForm = ({ placeId, onClose, onSuccess }) => {
                                 type="checkbox"
                                 name="every_week"
                                 checked={formData.every_week}
+                                onChange={handleChange}
+                            />
+                        </div>
+                    </div>
+                    
+                    {/* Note */}
+                    <div className="row mb-3">
+                        <div className="col-3 label-form">
+                            <label>Note</label>
+                        </div>
+                        <div className="col-9">
+                            <input
+                                className="form-control"
+                                type="text"
+                                name="rp_customer_note"
+                                checked={formData.rp_customer_note}
                                 onChange={handleChange}
                             />
                         </div>

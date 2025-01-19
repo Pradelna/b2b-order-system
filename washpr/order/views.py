@@ -5,6 +5,15 @@ from rest_framework import status
 from place.models import Place
 from .models import Order
 from .serializers import OrderSerializer, GetOrderSerializer
+from datetime import datetime
+
+
+def convert_date_to_unix(date_str):
+    try:
+        date = datetime.strptime(date_str, "%Y-%m-%d")  # Преобразуем строку в объект datetime
+        return int(date.timestamp())  # Преобразуем в Unix Timestamp
+    except ValueError:
+        return None
 
 
 @api_view(['POST'])
@@ -17,11 +26,15 @@ def create_order(request):
         place = Place.objects.get(id=data.get('place'), customer__user=request.user)
         # Добавляем валидацию для других полей через сериализатор
         serializer = OrderSerializer(data=data)
+        print(data)
         if serializer.is_valid():
             order = serializer.save(
                 rp_place_street=place.rp_street,
                 rp_place_number=place.rp_number,
-                rp_place_zip=place.rp_zip
+                rp_place_zip=place.rp_zip,
+                rp_time_from=convert_date_to_unix(data['date_pickup']),
+                rp_time_to=convert_date_to_unix(data['date_delivery']),
+                # rp_contract_external_id=
             )
             return Response(
                 {"message": "Order created successfully!", "order_id": order.id},

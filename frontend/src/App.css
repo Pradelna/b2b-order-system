@@ -157,6 +157,7 @@ a {
 
   .new-order {
     margin-bottom: 20px;
+    cursor: pointer;
   }
 
 .settings {
@@ -607,4 +608,16 @@ svg.loader{
   padding: 10px 20px;
   cursor: pointer;
   border-radius: 5px;
+}
+
+.place-details {
+  min-height: 330px !important;
+}
+
+.card-icon-button {
+  margin: 84px 0;
+}
+
+.current-order {
+  min-height: 410px !important;
 }

@@ -1,5 +1,7 @@
 import React, { useState, useEffect } from "react";
 import { useParams, useNavigate } from "react-router-dom";
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import { faPenToSquare, faSquareXmark, faCartPlus, faPowerOff } from "@fortawesome/free-solid-svg-icons";
 import HeaderAccount from "../HeaderAccount";
 import Footer from "../Footer";
 import PlaceEdit from "./PlaceEdit";
@@ -90,8 +92,8 @@ function DetailPlace ({ language, languageData, handleLanguageChange }) {
   };
 
   const handleOrderSuccess = (data) => {
-    alert(`Order created successfully for ${place.place_name}`);
-    setShowOrderForm(false); // Закрываем форму после успешного создания
+    // alert(`Order created successfully for ${place.place_name}`);
+    setShowOrderForm(false);
   };
 
   if (loading) return <p>Loading...</p>;
@@ -109,111 +111,186 @@ function DetailPlace ({ language, languageData, handleLanguageChange }) {
           
             <div className="row other-card">
               
-                <div className="col-12">
+                <div className="col-lg-8">
                     {successMessage && <p className="alert alert-success">{successMessage}</p>} 
                 </div>
 
-                <div className="card">
-                    <h1>Place Details</h1>
-                    {!showEditForm ? (
-                        
-                        
-                        <div>
-                            
-                        <div className="row mb-2">
-                            <div className="col-12">
-                                <div className="form-control">
-                                    <strong>Name:</strong> {place.place_name}
-                                </div>
-                            </div>
-                        </div>
-                        
-                        <div className="row mb-2">
-                            <div className="col-12">
-                                <div className="form-control">
-                                    <strong>Address:</strong> {place.rp_street}, {place.rp_city},{" "}
-                                    {place.rp_zip}
-                                </div>
-                            </div>
-                        </div>
-                        
-                        <div className="row mb-2">
-                            <div className="col-12">
-                                <div className="form-control">
-                                    <strong>Contact Person:</strong> {place.rp_person}
-                                </div>
-                            </div>
-                        </div>
-                        
-                        <div className="row mb-2">
-                            <div className="col-12">
-                                <div className="form-control">
-                                    <strong>Phone:</strong> {place.rp_phone}
-                                </div>
-                            </div>
-                        </div>
-                        
-                        <div className="row mb-2">
-                            <div className="col-12">
-                                <div className="form-control">
-                                <strong>Email:</strong> {place.rp_email}
-                                </div>
-                            </div>
-                        </div>
-                        
+                <div className="col-lg-6">
+                  
+                    <div className="card place-details">
+                      
 
-                        <button
-                            className="btn-submit mt-3"
+                        {!showEditForm ? (
+                        <FontAwesomeIcon
+                            icon={faPenToSquare}
+                            className="settings"
+                            style={{ cursor: "pointer" }}
                             onClick={() => setShowEditForm(true)}
-                        >
-                            Edit Place
-                        </button>
-                        <button className="btn-link mt-3" onClick={handleDelete}>
-                            Delete Place
-                        </button>
-                        </div>
-                    ) : (
-                        <PlaceEdit
-                        place={place}
-                        onClose={() => setShowEditForm(false)}
-                        onPlaceUpdated={setPlace}
+                            data-tooltip-id="edit-tooltip"
+                        />
+                      ) : (
+                        <FontAwesomeIcon
+                            icon={faSquareXmark}
+                            className="settings"
+                            style={{ cursor: "pointer" }}
+                            onClick={() => setShowEditForm(false)}
+                            data-tooltip-id="cross-tooltip"
                         />
                     )}
-                        
+              
+                        <h1>Place Details</h1>
+                        {!showEditForm ? (
+                            
+                            
+                            <div>
+                                
+                                <div className="row mb-2">
+                                    <div className="col-12">
+                                        <div className="form-control">
+                                            <strong>Name:</strong> {place.place_name}
+                                        </div>
+                                    </div>
+                                </div>
+                                
+                                <div className="row mb-2">
+                                    <div className="col-12">
+                                        <div className="form-control">
+                                            <strong>Address:</strong> {place.rp_street}, {place.rp_city},{" "}
+                                            {place.rp_zip}
+                                        </div>
+                                    </div>
+                                </div>
+                                
+                                <div className="row mb-2">
+                                    <div className="col-12">
+                                        <div className="form-control">
+                                            <strong>Contact Person:</strong> {place.rp_person}
+                                        </div>
+                                    </div>
+                                </div>
+                                
+                                <div className="row mb-2">
+                                    <div className="col-12">
+                                        <div className="form-control">
+                                            <strong>Phone:</strong> {place.rp_phone}
+                                        </div>
+                                    </div>
+                                </div>
+                                
+                                <div className="row mb-2">
+                                    <div className="col-12">
+                                        <div className="form-control">
+                                        <strong>Email:</strong> {place.rp_email}
+                                        </div>
+                                    </div>
+                                </div>
+                            
+                            </div>
+                        ) : (
+                            <PlaceEdit
+                            place={place}
+                            onClose={() => setShowEditForm(false)}
+                            onPlaceUpdated={setPlace}
+                            onDelete={handleDelete}
+                            />
+                        )}
+                            
+                    </div>
+            
                 </div>
+                
+                  <div className="col-2">
+                      {/* Button to open OrderForm */}
+                      <div 
+                          className="card dashboard-button mini new-order place-details"
+                          onClick={() => setShowOrderForm(true)}
+                      >
+                          <div className="card-body text-center">
+                              <p className="card-icon-button">
+                                  <FontAwesomeIcon icon={faCartPlus} className="icon" />
+                              </p>
+                              <p className="card-title">new order</p>
+                          </div>
+                      </div>
+          
+                  </div>
+                
+
                 
             </div>
             
                  {/* Текущий заказ */}
                  {currentOrder ? (
-                <div className="current-order">
-                    <h3>Current Order</h3>
-                    <div className="order-details">
-                        <p><strong>Type of Shipping:</strong> {currentOrder.type_ship}</p>
-                        <p><strong>System:</strong> {currentOrder.system || "Custom Days"}</p>
-                        {currentOrder.system === null && (
-                            <div>
-                                <p><strong>Days:</strong></p>
-                                <ul>
-                                    {currentOrder.monday && <li>Monday</li>}
-                                    {currentOrder.tuesday && <li>Tuesday</li>}
-                                    {currentOrder.wednesday && <li>Wednesday</li>}
-                                    {currentOrder.thursday && <li>Thursday</li>}
-                                    {currentOrder.friday && <li>Friday</li>}
-                                </ul>
-                            </div>
-                        )}
-                        <p><strong>Pickup Date:</strong> {currentOrder.date_pickup}</p>
-                        <p><strong>Delivery Date:</strong> {currentOrder.date_delivery}</p>
-                        <p><strong>Problem Description:</strong> {currentOrder.rp_problem_description || "None"}</p>
+                <div className="row current-order other-card">
+                  
+                    <div className="col-lg-6">
+                      
+                        <div className="card current-order">
+                          
+                            <h3>Current Order</h3>
+                            <div className="order-details">
+                              
+                                <div className="form-control mb-2">
+                                    <strong>Status:</strong> {currentOrder.rp_status}
+                                </div>
+                                <div className="form-control mb-2">
+                                    <strong>Type of Shipping:</strong> {currentOrder.type_ship}
+                                </div>
+                                <div className="form-control mb-2">
+                                    <strong>System:</strong> {currentOrder.system || "Custom Days"}
+                                </div>
+                                
+                                {currentOrder.system === "Own" && (
+                                    <div className="form-control mb-2">
+                                        <strong>Days: </strong>
+                                        
+                                            {currentOrder.monday && <span>Monday </span>}
+                                            {currentOrder.tuesday && <span>Tuesday </span>}
+                                            {currentOrder.wednesday && <span>Wednesday </span>}
+                                            {currentOrder.thursday && <span>Thursday </span>}
+                                            {currentOrder.friday && <span>Friday </span>}
+                                       
+                                    </div>
+                                )}
+                                
+                                <div className="form-control mb-2">
+                                    <strong>Pickup Date:</strong> {currentOrder.date_pickup}
+                                </div>
+                                <div className="form-control mb-2">
+                                    <strong>Delivery Date:</strong> {currentOrder.date_delivery}
+                                </div>
+                                <div className="form-control mb-2">
+                                    <strong>Note:</strong> {currentOrder.rp_problem_description || "None"}
+                                </div>
+
+                            </div>            
+                
+                        </div>        
+              
                     </div>
+                    
+                    <div className="col-2">
+                      {/* Button to cancel */}
+                      <div 
+                          className="card dashboard-button mini new-order  current-order"
+                          onClick={() => setShowOrderForm(true)}
+                      >
+                          <div className="card-body text-center">
+                              <p className="card-icon-button">
+                                  <FontAwesomeIcon icon={faPowerOff} className="icon" />
+                              </p>
+                              <p className="card-title">stop order</p>
+                          </div>
+                      </div>
+          
+                  </div>
+
                 </div>
             ) : (
                 <p>No active weekly orders.</p>
             )}
             
-            {/* Button to open OrderForm */}
-            <button onClick={() => setShowOrderForm(true)}>Create Order</button>
+            
             
         
         {/* История заказов */}
