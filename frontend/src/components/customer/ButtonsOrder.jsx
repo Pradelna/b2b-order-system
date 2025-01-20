@@ -10,7 +10,7 @@ function ButtonsOrder({ language, languageData, onCreatePlace, onCreateOrder }) 
         <div className="col-3">
             {/* Кнопка New Order */}
             <div 
-                className="card dashboard-button mini new-order"
+                className="card mini new-order"
                 onClick={onCreateOrder} 
             >
                 <div className="card-body text-center">
@@ -23,7 +23,7 @@ function ButtonsOrder({ language, languageData, onCreatePlace, onCreateOrder }) 
 
             {/* Кнопка New Place */}
             <div 
-                className="card dashboard-button mini" 
+                className="card mini" 
                 onClick={onCreatePlace} 
             >
                 <div className="card-body text-center">

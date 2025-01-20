@@ -3,11 +3,13 @@ import { useNavigate, useLocation } from "react-router-dom";
 import CompanyInfo from "../customer/CompanyInfo";
 import PlaceForm from "../place/PlaceForm";
 import OrderForm from "../order/OrderForm.jsx";
+import OrderHistory from "../order/OrderHistory";
+import ButtonAllHistory from "../history/ButtonAllHistory";
+import ButtonsOrder from "../customer/ButtonsOrder";
 import { fetchWithAuth } from "../account/auth.js";
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faClockRotateLeft } from "@fortawesome/free-solid-svg-icons";
-import ButtonAllHistory from "../history/ButtonAllHistory";
-import ButtonsOrder from "../customer/ButtonsOrder";
+
 
 const Account = ({ language, languageData, customerData, setCustomerData }) => {
     const currentData = languageData.find(item => item.lang === language);
@@ -23,14 +25,18 @@ const Account = ({ language, languageData, customerData, setCustomerData }) => {
     const [successMessage, setSuccessMessage] = useState(location.state?.successMessage || ""); 
     const [showPlaceForm, setShowPlaceForm] = useState(false);
     const [places, setPlaces] = useState([]);
+    const [orders, setOrders] = useState([]); // Список заказов
+    const [visibleOrders, setVisibleOrders] = useState(5); // Количество отображаемых заказов
     const navigate = useNavigate();
     const [showOrderForm, setShowOrderForm] = useState(false);
     const [currentPlaceId, setCurrentPlaceId] = useState(null);
+    const [selectedPlaceId, setSelectedPlaceId] = useState(null);
 
-    const handleCardClick = (event, content, index) => {
+    const handleCardClick = (event, content, index, placeId) => {
         if (activeButton === index) {
             setCardStyle({ display: "none" });
             setActiveButton(null);
+            setSelectedPlaceId(null); // Сбрасываем выбранное место
             return;
         }
         const buttonRect = event.target.closest(".place-card").getBoundingClientRect();
@@ -39,12 +45,13 @@ const Account = ({ language, languageData, customerData, setCustomerData }) => {
     
         setCardStyle({
             top: `0px`,
-            height: `${cardHeight}px`,
+            minHeight: `${cardHeight}px`,
             display: "block",
         });
     
         setCardContent(content);
         setActiveButton(index);
+        setSelectedPlaceId(placeId); // Устанавливаем ID выбранного места
     };
 
     const handleSuccess = (newPlace) => {
@@ -76,11 +83,33 @@ const Account = ({ language, languageData, customerData, setCustomerData }) => {
     const handleOrderSuccess = (data) => {
         alert(`Order created successfully!`);
         setShowOrderForm(false); // Закрываем форму
-      };
+    };
+    
+    useEffect(() => {
+        // Fetch orders
+        const fetchOrders = async () => {
+            try {
+                const response = await fetchWithAuth("http://127.0.0.1:8000/api/order/list/");
+                if (response.ok) {
+                    const data = await response.json();
+                    setOrders(data);
+                } else {
+                    console.error("Failed to fetch orders");
+                }
+            } catch (error) {
+                console.error("Error fetching orders:", error);
+            }
+        };
+
+        fetchOrders();
+    }, []);
       
+    //   const loadMoreOrders = () => {
+    //     setVisibleOrders((prevVisibleOrders) => prevVisibleOrders + 10);
+    // };
 
     return (
-        <div className="container margin-top-130 wrapper">
+        <div className="container margin-top-130 wrapper account-page">
             <div className="row">
                 <div className="col-xl-8 col-12">
                     <div id="company-top" className="row">
@@ -127,12 +156,12 @@ const Account = ({ language, languageData, customerData, setCustomerData }) => {
                             <h4>Your places</h4>
                         </div>
                         {places.map((place, index) => (
-                            <div className="col-12" key={index}>
+                            <div className="col-12 dashboard" key={index}>
                                 <div 
-                                    className={`card dashboard place-card ${activeButton === index ? "active" : ""}`}
-                                    onClick={(e) => handleCardClick(e, place.name, index)}
+                                    className={`card place-card ${activeButton === index ? "active" : ""}`}
+                                    onClick={(e) => handleCardClick(e, place.name, index, place.id)}
                                 >
-                                    <div className="card-body place">
+                                    <div className="place">
                                         <img src="src/assets/dom.webp" alt="" />
                                         <h5>{place.place_name}</h5>
                                         <p className="card-text">
@@ -165,7 +194,14 @@ const Account = ({ language, languageData, customerData, setCustomerData }) => {
                     >
                         <div className="card-body card-history">
                             <FontAwesomeIcon icon={faClockRotateLeft} className="icon" />
-                            <h5>Orders history for {cardContent}</h5>
+                            <h5>Orders history for</h5>
+                            <div className="mt-1">
+                                <OrderHistory 
+                                    placeId={selectedPlaceId} 
+                                    // loadMoreOrders={loadMoreOrders} 
+                                    hasMoreOrders={visibleOrders < orders.length} 
+                                />
+                            </div>
                         </div>
                     </div>
                 </div>

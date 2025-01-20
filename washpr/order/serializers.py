@@ -33,10 +33,11 @@ class OrderSerializer(serializers.ModelSerializer):
 
 
 class GetOrderSerializer(serializers.ModelSerializer):
+    place_name = serializers.CharField(source='place.place_name', read_only=True)
     class Meta:
         model = Order
         fields = [
-            'id', 'place', 'type_ship', 'system', 'monday', 'tuesday',
+            'id', 'place', 'place_name', 'type_ship', 'system', 'monday', 'tuesday',
             'wednesday', 'thursday', 'friday', 'date_pickup', 'date_delivery',
             'every_week', 'terms', 'end_order', 'rp_problem_description'
         ]

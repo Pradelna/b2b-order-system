@@ -80,6 +80,7 @@ function CustomerEdit({ customerData, setCustomerData, setSuccessMessage, setIsE
                 id="cross-tooltip" 
                 place="top" 
                 content="Close editing"
+                effect="solid"  
                 className="custom-tooltip"
             />
             <h1 className="detail-page mb-3">Edit Customer Information</h1>

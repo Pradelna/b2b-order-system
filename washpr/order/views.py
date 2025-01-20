@@ -28,6 +28,22 @@ def create_order(request):
         serializer = OrderSerializer(data=data)
         print(data)
         if serializer.is_valid():
+            # n = 0
+            # limit = 20
+            # while n <= limit:
+            #     n += 1
+            #     order_n = Order(
+            #         place=place,
+            #         type_ship='pickup_ship_one',
+            #         system='every_day',
+            #         active=True,
+            #         rp_time_from=1737936000,
+            #         rp_time_to=1738108800,
+            #         rp_place_street=place.rp_street,
+            #         rp_place_number=place.rp_number,
+            #         rp_place_zip=place.rp_zip,
+            #     )
+            #     order_n.save()
             order = serializer.save(
                 rp_place_street=place.rp_street,
                 rp_place_number=place.rp_number,
@@ -66,3 +82,15 @@ def get_place_orders(request, place_id):
         return Response(serializer.data)
     except Order.DoesNotExist:
         return Response({"error": "No orders found for this place"}, status=status.HTTP_404_NOT_FOUND)
+
+
+@api_view(['GET'])
+@permission_classes([IsAuthenticated])
+def get_orders(request):
+    try:
+        user = request.user
+        orders = Order.objects.filter(place__customer__user=user)
+        serializer = GetOrderSerializer(orders, many=True)
+        return Response(serializer.data, status=status.HTTP_200_OK)
+    except Exception as e:
+        return Response({"error": str(e)}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)

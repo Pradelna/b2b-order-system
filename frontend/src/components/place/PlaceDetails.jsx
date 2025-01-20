@@ -7,6 +7,7 @@ import Footer from "../Footer";
 import PlaceEdit from "./PlaceEdit";
 import OrderForm from "../order/OrderForm";
 import { fetchWithAuth } from "../account/auth";
+import OrderHistory from "../order/OrderHistory";
 
 function DetailPlace ({ language, languageData, handleLanguageChange }) {
   const { id } = useParams(); // Получаем ID места из URL
@@ -20,6 +21,8 @@ function DetailPlace ({ language, languageData, handleLanguageChange }) {
   const { placeId } = useParams();
   const [currentOrder, setCurrentOrder] = useState(null);
   const [orderHistory, setOrderHistory] = useState([]);
+  const [visibleOrders, setVisibleOrders] = useState(10); // Показываем первые 10 заказов
+  const [hasMoreOrders, setHasMoreOrders] = useState(false); // Индикатор наличия ещё заказов
 
   useEffect(() => {
     // Получение данных о месте по ID
@@ -57,6 +60,7 @@ function DetailPlace ({ language, languageData, handleLanguageChange }) {
 
                 setCurrentOrder(current);
                 setOrderHistory(history);
+                setHasMoreOrders(history.length > 10); // Устанавливаем флаг, если заказов больше 10
             } else {
                 console.error("Failed to fetch orders");
             }
@@ -96,6 +100,15 @@ function DetailPlace ({ language, languageData, handleLanguageChange }) {
     setShowOrderForm(false);
   };
 
+  const loadMoreOrders = () => {
+    // Увеличиваем количество отображаемых заказов
+    setVisibleOrders((prevVisibleOrders) => {
+        const newVisibleCount = prevVisibleOrders + 10;
+        setHasMoreOrders(newVisibleCount < orderHistory.length); // Проверяем, есть ли ещё заказы
+        return newVisibleCount;
+    });
+};
+
   if (loading) return <p>Loading...</p>;
   if (!place) return <p>Place not found.</p>;
 
@@ -107,15 +120,15 @@ function DetailPlace ({ language, languageData, handleLanguageChange }) {
           handleLanguageChange={handleLanguageChange}
         />
 
-        <div className="container margin-top-130 wrapper">
+        <div className="container margin-top-130 wrapper place-detail-page">
           
             <div className="row other-card">
               
-                <div className="col-lg-8">
+                <div className="col-lg-8 col-md-10 col-12">
                     {successMessage && <p className="alert alert-success">{successMessage}</p>} 
                 </div>
 
-                <div className="col-lg-6">
+                <div className="col-lg-8 col-md-10 col-12">
                   
                     <div className="card place-details">
                       
@@ -184,7 +197,14 @@ function DetailPlace ({ language, languageData, handleLanguageChange }) {
                                         </div>
                                     </div>
                                 </div>
-                            
+                        
+                                <button className="btn-submit mt-3" onClick={() => setShowOrderForm(true)}>
+                              
+                                    <FontAwesomeIcon icon={faCartPlus} className="icon" />
+                          
+                                  <span className="ms-3">new order</span>
+                              </button>
+
                             </div>
                         ) : (
                             <PlaceEdit
@@ -195,27 +215,10 @@ function DetailPlace ({ language, languageData, handleLanguageChange }) {
                             />
                         )}
                             
+
                     </div>
             
                 </div>
-                
-                  <div className="col-2">
-                      {/* Button to open OrderForm */}
-                      <div 
-                          className="card dashboard-button mini new-order place-details"
-                          onClick={() => setShowOrderForm(true)}
-                      >
-                          <div className="card-body text-center">
-                              <p className="card-icon-button">
-                                  <FontAwesomeIcon icon={faCartPlus} className="icon" />
-                              </p>
-                              <p className="card-title">new order</p>
-                          </div>
-                      </div>
-          
-                  </div>
-                
-
                 
             </div>
             
@@ -223,7 +226,7 @@ function DetailPlace ({ language, languageData, handleLanguageChange }) {
                  {currentOrder ? (
                 <div className="row current-order other-card">
                   
-                    <div className="col-lg-6">
+                    <div className="col-lg-8 col-md-10 col-12">
                       
                         <div className="card current-order">
                           
@@ -265,54 +268,29 @@ function DetailPlace ({ language, languageData, handleLanguageChange }) {
 
                             </div>            
                 
+                            <button className="btn-link mt-2">
+                            <FontAwesomeIcon icon={faPowerOff} className="icon" />
+                              <span className="ms-2">stop order</span>
+                              </button>
+
                         </div>        
               
                     </div>
-                    
-                    <div className="col-2">
-                      {/* Button to cancel */}
-                      <div 
-                          className="card dashboard-button mini new-order  current-order"
-                          onClick={() => setShowOrderForm(true)}
-                      >
-                          <div className="card-body text-center">
-                              <p className="card-icon-button">
-                                  <FontAwesomeIcon icon={faPowerOff} className="icon" />
-                              </p>
-                              <p className="card-title">stop order</p>
-                          </div>
-                      </div>
-          
-                  </div>
 
                 </div>
             ) : (
                 <p>No active weekly orders.</p>
             )}
             
-            
-            
         
         {/* История заказов */}
-        <div className="order-history">
-                <h3>Order History</h3>
-                {orderHistory.length > 0 ? (
-                    <ul>
-                        {orderHistory.map(order => (
-                            <li key={order.id}>
-                                <p><strong>Type of Shipping:</strong> {order.type_ship}</p>
-                                <p><strong>Pickup Date:</strong> {order.date_pickup}</p>
-                                <p><strong>Delivery Date:</strong> {order.date_delivery}</p>
-                                <p><strong>Status:</strong> {order.end_order ? "Completed" : "In Progress"}</p>
-                            </li>
-                        ))}
-                    </ul>
-                ) : (
-                    <p>No order history available.</p>
-                )}
+        <div className="row mt-4">
+            <div className="col-lg-8 col-md-10 col-12">
+                <OrderHistory placeId={place.id} />
             </div>
-
-
+        </div>
+        
+      
             {showOrderForm && (
               <OrderForm
               placeId={place.id}
