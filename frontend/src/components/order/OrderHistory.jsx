@@ -7,7 +7,7 @@ import { Tooltip as ReactTooltip } from 'react-tooltip';
 
 const OrderHistory = ({ placeId }) => {
     const [orders, setOrders] = useState([]);
-    const [visibleOrders, setVisibleOrders] = useState(10);
+    const [visibleOrders, setVisibleOrders] = useState(20);
     const [hasMoreOrders, setHasMoreOrders] = useState(false);
     const [loading, setLoading] = useState(true);
 

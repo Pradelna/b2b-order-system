@@ -116,6 +116,7 @@ function App() {
                 <CustomerDetailPage
                   language={language}
                   languageData={languageData}
+                  handleLanguageChange={handleLanguageChange}
                 />
               </PrivateRoute>
             }

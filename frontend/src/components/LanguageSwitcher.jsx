@@ -1,7 +1,9 @@
-import React, { useState } from "react";
+import React, { useState, useContext } from "react";
+import { LanguageContext } from "../context/LanguageContext.jsx";
 
 const LanguageSwitcher = ({ currentLanguage, onLanguageChange, availableLanguages }) => {
   const [isDropdownOpen, setIsDropdownOpen] = useState(false); // Управление состоянием выпадающего списка
+  // const { currentLanguage, onLanguageChange } = useContext(LanguageContext);
 
   const toggleDropdown = () => {
     setIsDropdownOpen(!isDropdownOpen); // Переключаем состояние выпадающего меню

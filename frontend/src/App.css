@@ -256,11 +256,11 @@ p.text-history {
 .dashboard .card {
   border-radius: 24px;
   padding: 0;
-  height: 94px;
+  height: 90px;
 }
 
 .place-card .place {
-  padding: 16px 16px 16px 110px;
+  padding: 16px 16px 16px 90px;
   transition: transform 0.3s, box-shadow 0.3s, border 0.3s;
   cursor: pointer;
 }
@@ -295,7 +295,7 @@ p.text-history {
 .place-card.active {
   border: 2px solid #00aab7;
   box-shadow: 0 8px 16px rgba(0, 123, 255, 0.3);
-  transform: scale(1.05);
+  transform: scale(1.08);
 }
 
 #card-history.active {
@@ -640,9 +640,21 @@ svg.loader{
   height: 18px;
 }
 
+.place-icon svg,
 .invoice-icon svg,
 .receipt-icon svg {
   height: 20px;
+}
+
+.place-icon {
+  height: 50px;
+  width: 50px;
+  background: #e1f6f8;
+  border-radius: 10px;
+  padding: 15px 14px;
+  position: absolute;
+  top: 20px;
+  left: 20px;
 }
 
 .history-icon {
@@ -710,4 +722,22 @@ svg.loader{
   max-height: calc(100vh - 50px); /* Ограничивает высоту окна до видимой области */
   overflow-y: auto; /* Добавляет прокрутку, если контент превышает высоту */
   position: relative;
+}
+
+
+.details-place-button-in-history {
+  position: absolute;
+  top: 55px;
+  right: 20px;
+  font-size: 14px;
+  font-weight: 600;
+  line-height: 36px;
+  color: #00aab7;
+  text-align: center;
+  width: 140px;
+  height: 50px;
+  border-radius: 27px;
+  border: solid 2px #00aab7;
+  cursor: pointer; /* Изменение курсора */
+  transition: all 0.3s ease; /* Плавный переход при наведении */
 }

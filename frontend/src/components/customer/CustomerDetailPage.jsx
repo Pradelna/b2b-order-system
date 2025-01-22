@@ -1,4 +1,5 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useContext } from "react";
+import { LanguageContext } from "../../context/LanguageContext.jsx";
 import { useParams } from "react-router-dom";
 import CustomerEdit from "./CustomerEdit";
 import CompanyInfo from "./CompanyInfo";
@@ -8,8 +9,9 @@ import { fetchWithAuth } from "../account/auth.js";
 import UploadFile from "./UploadFile.jsx";
 import DocumentsBlock from "./DocumentsBlock.jsx";
 
-function CustomerDetailPage({ language, languageData }) {
+function CustomerDetailPage({ language, languageData, handleLanguageChange }) {
     const langData = languageData.find(item => item.lang === language);
+    // const { currentLanguage } = useContext(LanguageContext);
     const { customerId } = useParams();  // Это на самом деле user_id
     const [customerData, setCustomerData] = useState(null);
     const [isEditing, setIsEditing] = useState(false);

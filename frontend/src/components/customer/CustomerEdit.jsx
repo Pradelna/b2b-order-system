@@ -1,9 +1,7 @@
 import React, { useState } from "react";
 import { fetchWithAuth } from "../account/auth.js";
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import {
-  faSquareXmark
-} from "@fortawesome/free-solid-svg-icons";
+import { faSquareXmark } from "@fortawesome/free-solid-svg-icons";
 import { Tooltip as ReactTooltip } from 'react-tooltip';
 
 function CustomerEdit({ customerData, setCustomerData, setSuccessMessage, setIsEditing, langData }) {

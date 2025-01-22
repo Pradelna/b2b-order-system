@@ -8,7 +8,7 @@ import ButtonAllHistory from "../history/ButtonAllHistory";
 import ButtonsOrder from "../customer/ButtonsOrder";
 import { fetchWithAuth } from "../account/auth.js";
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faClockRotateLeft } from "@fortawesome/free-solid-svg-icons";
+import { faClockRotateLeft, faHouse } from "@fortawesome/free-solid-svg-icons";
 
 
 const Account = ({ language, languageData, customerData, setCustomerData }) => {
@@ -162,7 +162,14 @@ const Account = ({ language, languageData, customerData, setCustomerData }) => {
                                     onClick={(e) => handleCardClick(e, place.name, index, place.id)}
                                 >
                                     <div className="place">
-                                        <img src="src/assets/dom.webp" alt="" />
+                                        {/* <img src="src/assets/dom.webp" alt="" /> */}
+                                        <div className="place-icon">
+                                            <FontAwesomeIcon
+                                                icon={faHouse}
+                                                className="s"
+                                            />
+                                        </div>
+                                        
                                         <h5>{place.place_name}</h5>
                                         <p className="card-text">
                                             {place.rp_street}, {place.rp_city}, {place.rp_zip}
@@ -194,6 +201,13 @@ const Account = ({ language, languageData, customerData, setCustomerData }) => {
                     >
                         <div className="card-body card-history">
                             <FontAwesomeIcon icon={faClockRotateLeft} className="icon" />
+                            <button
+                                onClick={() => selectedPlaceId && navigate(`/place/${selectedPlaceId}`)}
+                                disabled={!selectedPlaceId} // Отключаем кнопку, если место не выбрано
+                                className="details-place-button-in-history"
+                            >
+                                Whole history
+                            </button>
                             <h5>Orders history for</h5>
                             <div className="mt-1">
                                 <OrderHistory 
