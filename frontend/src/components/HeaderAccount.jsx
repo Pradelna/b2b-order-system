@@ -1,4 +1,5 @@
-import React from "react";
+import { useContext } from "react";
+import { LanguageContext } from "../context/LanguageContext.jsx";
 import { BrowserRouter, Routes, Route, useLocation } from "react-router-dom";
 import useLanguageData from "../hooks/useLanguageData";
 import MenuComponent from "./MenuComponent";
@@ -9,12 +10,9 @@ import {
   faHouse, faUser, faMobileScreen, faEnvelope
 } from "@fortawesome/free-solid-svg-icons";
 
-function HeaderAccount({ language, handleLanguageChange, languageData }) {
-    if (!languageData) {
-      return null; // Возвращаем пустой компонент, если данных нет
-    }
-    const currentData = languageData.find(item => item.lang === language);
-    const menuData = currentData.menu;
+function HeaderAccount() {
+    const { currentData } = useContext(LanguageContext);
+    const menuData = currentData ? currentData.menu : null;
 
   return (
     <header className="header">
@@ -23,12 +21,7 @@ function HeaderAccount({ language, handleLanguageChange, languageData }) {
         <div className="container">
           <div className="header__top__wrap">
             {/* Компонент переключения языков */}
-            <LanguageSwitcher
-              currentLanguage={language}
-              onLanguageChange={handleLanguageChange}
-              availableLanguages={languageData}
-            />
-
+            <LanguageSwitcher />
             {/* Контактная информация */}
             <div className="contact">
             <a href="/" className="mail">

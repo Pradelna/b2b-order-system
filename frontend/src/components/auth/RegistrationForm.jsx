@@ -1,23 +1,20 @@
-import { useState, useRef } from "react";
+import { useState, useRef, useContext } from "react";
+import { LanguageContext } from "../../context/LanguageContext.jsx";
 import ReCAPTCHA from "react-google-recaptcha";
 import { fetchWithAuth } from "../account/auth";
 import Header from "../Header";
 import Footer from "../Footer";
 
-export default function RegistrationForm({ language, languageData, handleLanguageChange }) {
+export default function RegistrationForm() {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [message, setMessage] = useState("");
 
-  if (!languageData) {
-    console.log("no data")
-    return null;
+  const { currentData } = useContext(LanguageContext);
+  if (!currentData) {
+    return null; // Если данных нет, компонент ничего не отображает
   }
-  if (!language) {
-    language = "cz"
-  }
-  const wholeData = languageData.find(item => item.lang === language);
-  const messageData = wholeData.auth;
+  const messageData = currentData.auth;
 
   // Сюда вставляем ваш публичный сайт-ключ
   const RECAPTCHA_SITE_KEY = "6LdWEqkqAAAAAF0sgXktyNzI4PphPZByrrMpzBm_";
@@ -71,11 +68,7 @@ export default function RegistrationForm({ language, languageData, handleLanguag
 
   return (
     <>
-      <Header 
-        language={language} 
-        languageData={languageData} 
-        handleLanguageChange={handleLanguageChange} 
-      />
+      <Header />
 
       <div className="container margin-top-130 wrapper">
 
@@ -139,10 +132,7 @@ export default function RegistrationForm({ language, languageData, handleLanguag
         </div>
       </div>
 
-      <Footer 
-        language={language} 
-        languageData={languageData} 
-      />
+      <Footer />
     </>
   );
 }

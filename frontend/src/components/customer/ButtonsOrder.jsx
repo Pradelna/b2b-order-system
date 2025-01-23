@@ -1,8 +1,10 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useContext } from "react";
+import { LanguageContext } from "../../context/LanguageContext.jsx";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faBuilding, faCartPlus } from "@fortawesome/free-solid-svg-icons";
 
-function ButtonsOrder({ language, languageData, onCreatePlace, onCreateOrder }) {
+function ButtonsOrder({ onCreatePlace, onCreateOrder }) {
+    const { currentData } = useContext(LanguageContext);
     const [currentPlaceId, setCurrentPlaceId] = useState(null); // Исправлено имя useState
     const [showOrderForm, setShowOrderForm] = useState(false); // Добавлено для управления формой
 

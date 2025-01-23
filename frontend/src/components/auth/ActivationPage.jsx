@@ -1,22 +1,18 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState, useContext } from "react";
+import { LanguageContext } from "../../context/LanguageContext.jsx";
 import { useParams, Link } from "react-router-dom";
 import axios from "axios";
 
-const ActivationPage = ({ language, languageData }) => {
-  if (!languageData) {
-    console.log("no data")
-    return null;
+const ActivationPage = () => {
+  const { currentData } = useContext(LanguageContext);
+  if (!currentData || !currentData.service) {
+    return null; // Если данных нет, компонент ничего не отображает
   }
-  if (!language) {
-    language = "cz"
-  }
-  const wholeData = languageData.find(item => item.lang === language);
+  const messageData = currentData.auth;
 
   const { uid, token } = useParams();
   const [message, setMessage] = useState("link checking...");
   const [loading, setLoading] = useState(true);
-
-  const messageData = wholeData.auth;
 
   useEffect(() => {
     if (uid && token) {

@@ -1,7 +1,10 @@
+import { useContext } from "react";
+import { LanguageContext } from "../../context/LanguageContext.jsx";
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faClockRotateLeft } from "@fortawesome/free-solid-svg-icons";
 
-function ButtonAllHistory({ language, languageData }) {
+function ButtonAllHistory() {
+    const { currentData } = useContext(LanguageContext);
 
     
 

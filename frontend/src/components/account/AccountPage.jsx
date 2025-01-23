@@ -4,7 +4,7 @@ import HeaderAccount from "../HeaderAccount";
 import Account from "./Account";
 import Footer from "../Footer";
 
-function AccountPage({ language, languageData, handleLanguageChange }) {
+function AccountPage() {
   const [customerData, setCustomerData] = useState(null);
   const [loading, setLoading] = useState(true);
 
@@ -44,18 +44,12 @@ function AccountPage({ language, languageData, handleLanguageChange }) {
 
   return (
       <>
-        <HeaderAccount
-          language={language}
-          languageData={languageData}
-          handleLanguageChange={handleLanguageChange}
-        />
+        <HeaderAccount />
         <Account 
-            language={language} 
-            languageData={languageData} 
             customerData={customerData} 
             setCustomerData={setCustomerData} 
         />
-        <Footer language={language} languageData={languageData} />
+        <Footer />
       </>
   );
 }

@@ -1,4 +1,5 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useContext } from "react";
+import { LanguageContext } from "../../context/LanguageContext.jsx";
 import { useNavigate, useLocation } from "react-router-dom";
 import CompanyInfo from "../customer/CompanyInfo";
 import PlaceForm from "../place/PlaceForm";
@@ -11,12 +12,12 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faClockRotateLeft, faHouse } from "@fortawesome/free-solid-svg-icons";
 
 
-const Account = ({ language, languageData, customerData, setCustomerData }) => {
-    const currentData = languageData.find(item => item.lang === language);
-    const data = currentData['service'];
-    if (!data) {
-        return null;
-    }
+const Account = ({ customerData, setCustomerData }) => {
+  const { currentData, language, languageData } = useContext(LanguageContext);
+  if (!currentData || !currentData.service) {
+    return null; // Если данных нет, компонент ничего не отображает
+  }
+  const messageData = currentData.auth;
 
     const [cardStyle, setCardStyle] = useState({ display: "none" });
     const [cardContent, setCardContent] = useState("");
@@ -119,8 +120,6 @@ const Account = ({ language, languageData, customerData, setCustomerData }) => {
                         
                         <div className={`${customerData && !customerData.error ? "col-6" : "col-12"}`}>
                             <CompanyInfo 
-                                language={language} 
-                                languageData={languageData} 
                                 customerData={customerData} 
                                 setCustomerData={setCustomerData} 
                                 setSuccessMessage={setSuccessMessage} 
@@ -128,13 +127,11 @@ const Account = ({ language, languageData, customerData, setCustomerData }) => {
                         </div>
 
                         {customerData && !customerData.error && (
-                            <ButtonAllHistory language={language} languageData={languageData} />
+                            <ButtonAllHistory />
                         )}
 
                         {customerData && !customerData.error && (
                                 <ButtonsOrder 
-                                language={language} 
-                                languageData={languageData}
                                 onCreatePlace={() => setShowPlaceForm(true)} 
                                 onCreateOrder={() => setShowOrderForm(true)}
                             />

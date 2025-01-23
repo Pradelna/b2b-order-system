@@ -1,23 +1,20 @@
-import React, { useState } from "react";
+import React, { useState, useContext } from "react";
+import { LanguageContext } from "../../context/LanguageContext.jsx";
 import { useNavigate } from "react-router-dom";
 import Header from "../Header";
 import Footer from "../Footer";
 import { fetchWithAuth } from "../account/auth";
 
-const LoginForm = ({ language, languageData, handleLanguageChange }) => {
+const LoginForm = () => {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [errorMessage, setErrorMessage] = useState("");
 
-  if (!languageData) {
-    console.log("no data")
-    return null;
+  const { currentData } = useContext(LanguageContext);
+  if (!currentData || !currentData.service) {
+    return null; // Если данных нет, компонент ничего не отображает
   }
-  if (!language) {
-    language = "cz"
-  }
-  const wholeData = languageData.find(item => item.lang === language);
-  const messageData = wholeData.auth;
+  const messageData = currentData.auth;
 
   const navigate = useNavigate();
 
@@ -58,7 +55,7 @@ const LoginForm = ({ language, languageData, handleLanguageChange }) => {
 
   return (
     <>
-    <Header language={language} languageData={languageData} handleLanguageChange={handleLanguageChange} />
+    <Header />
           
     <div className="container margin-top-130 wrapper">
         
@@ -123,7 +120,7 @@ const LoginForm = ({ language, languageData, handleLanguageChange }) => {
         </div>
     </div>
           
-      <Footer language={language} languageData={languageData} />
+      <Footer />
     </>
   );
 };

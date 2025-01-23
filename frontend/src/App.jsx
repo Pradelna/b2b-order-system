@@ -1,4 +1,5 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useContext } from "react";
+import { LanguageContext } from "./context/LanguageContext";
 import { BrowserRouter, Routes, Route, useParams, Navigate, useNavigate } from "react-router-dom";
 import PrivateRoute from "./components/auth/PrivateRoute";
 import RegistrationForm from "./components/auth/RegistrationForm";
@@ -60,22 +61,14 @@ function App() {
           <Route
             path="/"
             element={
-              <MainPage
-                language={language}
-                languageData={languageData}
-                handleLanguageChange={handleLanguageChange}
-              />
+              <MainPage />
             }
           />
           {/* Главная страница с префиксом */}
           <Route
             path="/:lang"
             element={
-              <MainPageWithPrefix
-                language={language}
-                languageData={languageData}
-                handleLanguageChange={handleLanguageChange}
-              />
+              <MainPageWithPrefix />
             }
           />
           {/* Страница аккаунта с приватным доступом */}
@@ -93,19 +86,15 @@ function App() {
           />
           {/* Страница регистрации */}
           <Route path="/account/auth" element={
-            <RegistrationForm language={language} languageData={languageData} handleLanguageChange={handleLanguageChange} />
+            <RegistrationForm />
           }
           />
           {/* Страница активации */}
           <Route path="/activate/:uid/:token" element={
-            <ActivationPage languageData={languageData} handleLanguageChange={handleLanguageChange} />} />
+            <ActivationPage />} />
           {/* Страница входа */}
           <Route path="/account/login" element={
-              <LoginForm
-                language={language}
-                languageData={languageData}
-                handleLanguageChange={handleLanguageChange}
-              />
+              <LoginForm />
             }
           />
           <Route path="/loader-test" element={<LoaderTestPage />} />

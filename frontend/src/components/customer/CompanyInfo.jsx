@@ -1,4 +1,5 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useContext } from "react";
+import { LanguageContext } from "../../context/LanguageContext.jsx";
 import CustomerForm from "./CustomerForm";
 import { Link, useLocation } from "react-router-dom"; 
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
@@ -9,9 +10,9 @@ import { fetchWithAuth } from "../account/auth.js";
 import { Tooltip as ReactTooltip } from 'react-tooltip';
 import Loader from "../Loader.jsx";
 
-function CompanyInfo({ language, languageData, customerData, setCustomerData, setSuccessMessage, setIsEditing }) {
-    const currentData = languageData.find(item => item.lang === language);
-    const data = currentData ? currentData['service'] : null;
+function CompanyInfo({ customerData, setCustomerData, setSuccessMessage, setIsEditing }) {
+    const { currentData } = useContext(LanguageContext);
+    const data = currentData ? currentData.service : null;
     const [loading, setLoading] = useState(true);
     const [userId, setUserId] = useState(null);
     const location = useLocation();

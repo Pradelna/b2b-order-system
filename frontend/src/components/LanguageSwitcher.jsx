@@ -1,12 +1,31 @@
 import React, { useState, useContext } from "react";
 import { LanguageContext } from "../context/LanguageContext.jsx";
 
-const LanguageSwitcher = ({ currentLanguage, onLanguageChange, availableLanguages }) => {
+const LanguageSwitcher = () => {
   const [isDropdownOpen, setIsDropdownOpen] = useState(false); // Управление состоянием выпадающего списка
-  // const { currentLanguage, onLanguageChange } = useContext(LanguageContext);
+  const { language, handleLanguageChange, languageData } = useContext(LanguageContext);
+  // console.log("LanguageSwitcher avaibleLanguage", languageData);
 
   const toggleDropdown = () => {
     setIsDropdownOpen(!isDropdownOpen); // Переключаем состояние выпадающего меню
+  };
+
+  const updateURLWithoutPrefix = (newLang) => {
+    const currentURL = window.location.pathname;
+
+    // Регулярное выражение для поиска языкового префикса в начале URL
+    const languagePrefixRegex = /^\/[a-z]{2}(\/|$)/;
+
+    // Проверяем, есть ли языковой префикс и удаляем его
+    const baseURL = currentURL.match(languagePrefixRegex)
+      ? currentURL.replace(languagePrefixRegex, "/")
+      : currentURL;
+
+    // Если выбранный язык `cz`, оставляем URL без префикса
+    const updatedURL = newLang === "cz" ? baseURL : `/${newLang}${baseURL}`;
+
+    // Обновляем URL без перезагрузки страницы
+    window.history.pushState(null, "", updatedURL);
   };
 
   return (
@@ -15,14 +34,14 @@ const LanguageSwitcher = ({ currentLanguage, onLanguageChange, availableLanguage
         {/* Текущий язык */}
         <li className="lang__button" onClick={toggleDropdown}>
           <img
-            src={`/images/lang-flags/${currentLanguage}-flag.png`}
-            alt={currentLanguage}
+            src={`/images/lang-flags/${language}-flag.png`}
+            alt={language}
             width="16"
             height="11"
           />
           <span>
             {
-              availableLanguages.find((lang) => lang.lang === currentLanguage)?.prefix || "Language"
+              languageData.find((lang) => lang.lang === language)?.prefix || "Language"
             }
           </span>
           <img
@@ -35,14 +54,15 @@ const LanguageSwitcher = ({ currentLanguage, onLanguageChange, availableLanguage
         {/* Выпадающее меню */}
         {isDropdownOpen && (
           <ul id="menu-yazyki" className="sub__lang">
-            {availableLanguages
-              .filter((lang) => lang.lang !== currentLanguage) // Исключаем текущий язык из списка
+            {languageData
+              .filter((lang) => lang.lang !== language) // Исключаем текущий язык из списка
               .map((lang) => (
                 <li
                   className="lang-item"
                   key={lang.lang}
                   onClick={() => {
-                    onLanguageChange(lang.lang);
+                    handleLanguageChange(lang.lang);
+                    updateURLWithoutPrefix(lang.lang); // Обновляем URL
                     setIsDropdownOpen(false); // Закрываем меню после выбора
                   }}
                 >

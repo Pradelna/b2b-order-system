@@ -1,11 +1,13 @@
-import React from "react";
+import React, { useContext } from "react";
+import { LanguageContext } from "../../context/LanguageContext.jsx";
 
-function StartBanner({ language, bannerData }) {
-    const currentData = bannerData.find(item => item.lang === language);
-    const data = currentData.start_banner;
-  if (!data) {
+function StartBanner() {
+  const { currentData } = useContext(LanguageContext);
+
+  if (!currentData || !currentData.start_banner) {
     return null; // Если данных нет, компонент ничего не отображает
   }
+  const data = currentData.start_banner;
 
   return (
     <section className="first__screen">

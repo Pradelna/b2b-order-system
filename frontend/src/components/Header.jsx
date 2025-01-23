@@ -1,4 +1,5 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useContext } from "react";
+import { LanguageContext } from "../context/LanguageContext.jsx";
 import { useNavigate, useLocation } from "react-router-dom";
 import MenuComponent from "./MenuComponent";
 import AccountMenuComponent from "./AccountMenuComponent";
@@ -6,7 +7,8 @@ import LanguageSwitcher from "./LanguageSwitcher";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faHouse, faUser, faMobileScreen, faEnvelope } from "@fortawesome/free-solid-svg-icons";
 
-function Header({ language, handleLanguageChange, languageData }) {
+function Header() {
+  const { language, handleLanguageChange, languageData } = useContext(LanguageContext);
   const navigate = useNavigate();
   const location = useLocation();
   const [isAuthenticated, setIsAuthenticated] = useState(false);

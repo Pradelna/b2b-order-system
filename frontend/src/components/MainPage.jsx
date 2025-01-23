@@ -7,21 +7,17 @@ import Price from "./landing/Price";
 import Contacts from "./landing/Contacts";
 import Footer from "./Footer";
 
-function MainPage({ language, languageData, handleLanguageChange }) {
+function MainPage() {
     return (
       <>
-        <Header
-          language={language}
-          languageData={languageData}
-          handleLanguageChange={handleLanguageChange}
-        />
-        <StartBanner language={language} bannerData={languageData} />
-        <About language={language} bannerData={languageData} />
-        <Services language={language} servicesData={languageData} />
-        <Technology language={language} techData={languageData} />
-        <Price language={language} priceData={languageData} />
-        <Contacts language={language} langData={languageData} />
-        <Footer language={language} languageData={languageData} />
+        <Header />
+        <StartBanner />
+        <About />
+        <Services />
+        <Technology />
+        <Price  />
+        <Contacts />
+        <Footer />
       </>
     );
 }

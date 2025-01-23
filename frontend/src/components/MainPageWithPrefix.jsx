@@ -1,4 +1,5 @@
-import { useEffect } from "react";
+import { useEffect, useContext } from "react";
+import { LanguageContext } from "../context/LanguageContext.jsx";
 import { BrowserRouter, Routes, Route, useParams, Navigate, useNavigate } from "react-router-dom";
 import Header from "./Header";
 import StartBanner from "./landing/StartBanner";
@@ -9,7 +10,8 @@ import Price from "./landing/Price";
 import Contacts from "./landing/Contacts";
 import Footer from "./Footer";
 
-function MainPageWithPrefix({ language, languageData, handleLanguageChange }) {
+function MainPageWithPrefix() {
+  const { language, handleLanguageChange } = useContext(LanguageContext);
   const { lang } = useParams();
   const navigate = useNavigate();
 
@@ -23,18 +25,14 @@ function MainPageWithPrefix({ language, languageData, handleLanguageChange }) {
 
   return (
     <>
-      <Header
-        language={language}
-        languageData={languageData}
-        handleLanguageChange={handleLanguageChange}
-      />
-      <StartBanner language={language} bannerData={languageData} />
-      <About language={language} bannerData={languageData} />
-      <Services language={language} servicesData={languageData} />
-      <Technology language={language} techData={languageData} />
-      <Price language={language} priceData={languageData} />
-      <Contacts language={language} langData={languageData} />
-      <Footer language={language} footerData={languageData} />
+      <Header />
+      <StartBanner />
+      <About />
+      <Services />
+      <Technology />
+      <Price />
+      <Contacts />
+      <Footer />
     </>
   );
 }
