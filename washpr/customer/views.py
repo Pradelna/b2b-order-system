@@ -41,15 +41,15 @@ def customer_view(request):
             return Response({"error": "Customer not found"}, status=404)
 
 
-@api_view(['GET'])
-@permission_classes([IsAuthenticated])
-def customer_detail_view(request, customer_id):
-    try:
-        customer = Customer.objects.get(user__id=customer_id)
-        serializer = CustomerGetSerializer(customer)
-        return Response(serializer.data)
-    except Customer.DoesNotExist:
-        return Response({"error": "Customer not found"}, status=404)
+# @api_view(['GET'])
+# @permission_classes([IsAuthenticated])
+# def customer_detail_view(request, customer_id):
+#     try:
+#         customer = Customer.objects.get(user__id=customer_id)
+#         serializer = CustomerGetSerializer(customer)
+#         return Response(serializer.data)
+#     except Customer.DoesNotExist:
+#         return Response({"error": "Customer not found"}, status=404)
 
 
 @api_view(['GET'])

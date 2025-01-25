@@ -1,10 +1,12 @@
-import React, { useState } from "react";
+import { useState, useContext } from "react";
+import { LanguageContext } from "../../context/LanguageContext.jsx";
 import { fetchWithAuth } from "../account/auth.js";
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faSquareXmark } from "@fortawesome/free-solid-svg-icons";
 import { Tooltip as ReactTooltip } from 'react-tooltip';
 
-function CustomerEdit({ customerData, setCustomerData, setSuccessMessage, setIsEditing, langData }) {
+function CustomerEdit({ customerData, setCustomerData, setSuccessMessage, setIsEditing }) {
+    const { currentData } = useContext(LanguageContext);
     const [formData, setFormData] = useState({
         company_name: customerData?.company_name || "",
         company_address: customerData?.company_address || "",
@@ -14,17 +16,17 @@ function CustomerEdit({ customerData, setCustomerData, setSuccessMessage, setIsE
         // company_email: customerData?.company_email || "",
         company_person: customerData?.company_person || "",
     });
-    console.log(langData);
+    console.log(currentData);
     const labels = {
-        company_name: langData.customer.company_name,
-        company_address: langData.customer.company_address,
-        company_ico: langData.customer.company_number,
-        company_dic: langData.customer.vat_number,
-        company_phone: langData.customer.phone,
-        company_person: langData.customer.full_name,
-        vop: langData.customer.vop,
-        terms_of_use: langData.customer.terms_use,
-        gdpr: langData.customer.gdpr,
+        company_name: currentData.customer.company_name,
+        company_address: currentData.customer.company_address,
+        company_ico: currentData.customer.company_number,
+        company_dic: currentData.customer.vat_number,
+        company_phone: currentData.customer.phone,
+        company_person: currentData.customer.full_name,
+        vop: currentData.customer.vop,
+        terms_of_use: currentData.customer.terms_use,
+        gdpr: currentData.customer.gdpr,
       };
 
     const handleChange = (e) => {
@@ -104,7 +106,7 @@ function CustomerEdit({ customerData, setCustomerData, setSuccessMessage, setIsE
                 </div>
                 <div className="row">
                     <button type="submit" className="btn-submit">
-                        Save Changes
+                        { currentData.buttons.submit }
                     </button>
                 </div>
 

@@ -1,10 +1,13 @@
 // src/components/UploadFile.jsx
-import React, { useRef, useState, useEffect } from 'react';
+import { useRef, useState, useEffect, useContext } from 'react';
+import { LanguageContext } from "../../context/LanguageContext.jsx";
 import { fetchWithAuth } from "../account/auth";
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import {faSpinner, faFilePdf} from "@fortawesome/free-solid-svg-icons";
 
-const UploadFile = ({ onUploadSuccess, langData }) => {
+const UploadFile = ({ onUploadSuccess }) => {
+    const { currentData } = useContext(LanguageContext);
+    console.log(currentData);
     const [file, setFile] = useState(null);
     const fileInputRef = useRef(null);
     const [files, setFiles] = useState([]); // Список загруженных файлов
@@ -34,14 +37,14 @@ const UploadFile = ({ onUploadSuccess, langData }) => {
     const handleButtonClick = () => {
         fileInputRef.current.click();
     };
-    // console.log(langData.messages);
+    // console.log(currentData.messages);
     // Обработчик выбора файла и автоматической загрузки
     const handleFileChange = async (event) => {
         const file = event.target.files[0];
         if (!file) return;
     
         if (file.size > 2 * 1024 * 1024) {  // 2MB ограничение
-            setError(langData.messages.file_size);
+            setError(currentData.messages.file_size);
             setSuccess('');
             return;
         }
@@ -61,7 +64,7 @@ const UploadFile = ({ onUploadSuccess, langData }) => {
             console.log('Server Response:', responseData); // Для диагностики
     
             if (response.status === 201) {
-                setSuccess(langData.messages.file_ok);
+                setSuccess(currentData.messages.file_ok);
                 setTimeout(() => setSuccess(''), 3000);
                 setError('');
                 if (onUploadSuccess) {
@@ -69,12 +72,12 @@ const UploadFile = ({ onUploadSuccess, langData }) => {
                 }
                 fetchUploadedFiles();
             } else {
-                const errorMessage = responseData.details?.file?.[0] || responseData.error || langData.messages.file_failed;
+                const errorMessage = responseData.details?.file?.[0] || responseData.error || currentData.messages.file_failed;
                 setError(errorMessage);
                 setSuccess('');
             }
         } catch (error) {
-            setError(langData.messages.file_try_again);
+            setError(currentData.messages.file_try_again);
             setSuccess('');
             console.error('Upload error:', error);
         } finally {
@@ -90,7 +93,7 @@ const UploadFile = ({ onUploadSuccess, langData }) => {
                 return;
             }
     
-            if (!window.confirm(langData.messages.file_del_quest)) {
+            if (!window.confirm(currentData.messages.file_del_quest)) {
                 return;
             }
     
@@ -99,14 +102,14 @@ const UploadFile = ({ onUploadSuccess, langData }) => {
                     method: 'DELETE',
                 });
                 if (response.ok) {
-                    setSuccess(langData.messages.file_deleted);
+                    setSuccess(currentData.messages.file_deleted);
                     setTimeout(() => setSuccess(''), 3000);
                     fetchUploadedFiles();
                 } else {
-                    setError(langData.messages.file_failed_delete);
+                    setError(currentData.messages.file_failed_delete);
                 }
             } catch (error) {
-                setError(langData.messages.file_failed_while_deleting);
+                setError(currentData.messages.file_failed_while_deleting);
             }
         };
 
@@ -126,7 +129,7 @@ const UploadFile = ({ onUploadSuccess, langData }) => {
                         onChange={handleFileChange}
                     />
                     <button className='btn-upload' onClick={handleButtonClick} disabled={isUploading}>
-                        {isUploading ? langData.buttons.uploading : langData.buttons.upload }
+                        {isUploading ? currentData.buttons.uploading : currentData.buttons.upload }
                     </button>
                 </div>
                     <div className="col-4">
@@ -145,7 +148,7 @@ const UploadFile = ({ onUploadSuccess, langData }) => {
                 
 
                 {/* Список загруженных файлов */}
-                <h3 style={{fontSize:"20px"}} className='mt-3'>Uploaded Files</h3>
+                <h3 style={{fontSize:"20px"}} className='mt-3'>{currentData.customer.uploaded_files}</h3>
                 <div style={{margin:"0 1px"}} className='row'>
                     {files.map((file, index) => (
                         <div className='col-12 form-control mb-2' style={{display:'flex'}} key={index}>

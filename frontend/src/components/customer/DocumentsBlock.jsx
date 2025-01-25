@@ -1,10 +1,12 @@
 // src/components/UploadFile.jsx
-import React, { useRef, useState, useEffect } from 'react';
+import { useRef, useState, useEffect, useContext } from 'react';
+import { LanguageContext } from "../../context/LanguageContext.jsx";
 import { fetchWithAuth } from "../account/auth";
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import {faFilePdf} from "@fortawesome/free-solid-svg-icons";
 
-const DocumentsBlock = ({ langData }) => {
+const DocumentsBlock = () => {
+    const { currentData } = useContext(LanguageContext);
     const fileInputRef = useRef(null);
     const [files, setFiles] = useState([]); // Список загруженных файлов
 
@@ -50,7 +52,7 @@ const DocumentsBlock = ({ langData }) => {
                         <div className="form-control">
                             <a href="#" target="_blank" rel="noopener noreferrer">
                             <FontAwesomeIcon icon={faFilePdf} className="file-uploaded" />
-                            <span style={{marginLeft:"5px"}}>{ langData.customer.vop }</span>
+                            <span style={{marginLeft:"5px"}}>{ currentData.customer.vop }</span>
                             </a>
                         </div>
                     </div>
@@ -60,7 +62,7 @@ const DocumentsBlock = ({ langData }) => {
                         <div className="form-control">
                             <a href="#" target="_blank" rel="noopener noreferrer">
                             <FontAwesomeIcon icon={faFilePdf} className="file-uploaded" />
-                            <span style={{marginLeft:"5px"}}>{ langData.customer.terms_use }</span>
+                            <span style={{marginLeft:"5px"}}>{ currentData.customer.terms_use }</span>
                             </a>
                         </div>
                     </div>
@@ -70,7 +72,7 @@ const DocumentsBlock = ({ langData }) => {
                         <div className="form-control">
                             <a href="#" target="_blank" rel="noopener noreferrer">
                             <FontAwesomeIcon icon={faFilePdf} className="file-uploaded mr-3" />
-                            <span style={{marginLeft:"5px"}}>{ langData.customer.gdpr }</span>
+                            <span style={{marginLeft:"5px"}}>{ currentData.customer.gdpr }</span>
                             </a>
                         </div>
                     </div>

@@ -328,14 +328,17 @@ button {
 }
 
 .header .lang .sub__lang {
-  position: absolute;
-  left: 23px;
-  top: 120%;
-  background-color: #e1f6f8;
-  list-style-type: none;
-  padding: 10px;
-  white-space: nowrap;
-  width: 136px;
+    position: absolute;
+    left: 24px;
+    top: 36px;
+    background-color: #e1f6f8;
+    list-style-type: none;
+    padding: 10px;
+    white-space: nowrap;
+    width: 136px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+    z-index: 9999;
+    border-radius: 10px;
 }
 
 .header .lang .sub__lang li {

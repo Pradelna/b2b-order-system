@@ -1,8 +1,10 @@
-import React, { useState } from "react";
+import { useState, useContext } from "react";
+import { LanguageContext } from "../../context/LanguageContext.jsx";
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faFilePdf } from "@fortawesome/free-solid-svg-icons";
 
-const CustomerForm = ({ onSubmit, currentData }) => {
+const CustomerForm = ({ onSubmit }) => {
+  const { currentData } = useContext(LanguageContext);
   const [formData, setFormData] = useState({
     company_name: "",
     company_address: "",

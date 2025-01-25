@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useContext } from "react";
+import { useState, useEffect, useContext } from "react";
 import { LanguageContext } from "../../context/LanguageContext.jsx";
 import { useParams } from "react-router-dom";
 import CustomerEdit from "./CustomerEdit";
@@ -9,9 +9,8 @@ import { fetchWithAuth } from "../account/auth.js";
 import UploadFile from "./UploadFile.jsx";
 import DocumentsBlock from "./DocumentsBlock.jsx";
 
-function CustomerDetailPage({ language, languageData, handleLanguageChange }) {
-    const langData = languageData.find(item => item.lang === language);
-    // const { currentLanguage } = useContext(LanguageContext);
+function CustomerDetailPage() {
+    const { currentData, language, languageData } = useContext(LanguageContext);
     const { customerId } = useParams();  // Это на самом деле user_id
     const [customerData, setCustomerData] = useState(null);
     const [isEditing, setIsEditing] = useState(false);
@@ -66,7 +65,7 @@ function CustomerDetailPage({ language, languageData, handleLanguageChange }) {
 
     return (
         <>
-            <HeaderAccount language={language} languageData={languageData} />
+            <HeaderAccount />
             <div className="container margin-top-130 wrapper">
                 <div className="row">
                     <div className="col-lg-8 col-12">
@@ -83,13 +82,10 @@ function CustomerDetailPage({ language, languageData, handleLanguageChange }) {
                                     setSuccessMessage={setSuccessMessage}
                                     onLogout={handleLogout} 
                                     setIsEditing={setIsEditing}
-                                    langData={langData}
                                 />
                             ) : (
 
-                                <CompanyInfo 
-                                    language={language} 
-                                    languageData={languageData} 
+                                <CompanyInfo
                                     customerData={customerData} 
                                     setCustomerData={setCustomerData} 
                                     setSuccessMessage={setSuccessMessage}
@@ -99,9 +95,9 @@ function CustomerDetailPage({ language, languageData, handleLanguageChange }) {
                             )}
                         </div>
 
-                        <UploadFile langData={langData} />
+                        <UploadFile />
 
-                        <DocumentsBlock langData={langData} />
+                        <DocumentsBlock />
 
                         <div className="row mt-3 mb-5">
                             {/* Кнопка выхода из аккаунта */}
@@ -113,7 +109,7 @@ function CustomerDetailPage({ language, languageData, handleLanguageChange }) {
                     </div>
                 </div>
             </div>
-            <Footer language={language} languageData={languageData} />
+            <Footer />
         </>
     );
 }

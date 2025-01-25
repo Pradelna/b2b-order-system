@@ -156,6 +156,10 @@ class LandingPageSerializer(serializers.ModelSerializer):
             'vop_check': obj.customer_vop_check,
             'terms_use_check': obj.customer_terms_use_check,
             'gdpr_check': obj.customer_gdpr_check,
+            'uploaded_files': obj.customer_uploaded_files,
+            'important_files': obj.customer_important_files,
+            'send_to_check': obj.customer_send_to_check,
+            'wait_for_active': obj.customer_wait_for_active,
         }
 
     def get_buttons(self, obj):

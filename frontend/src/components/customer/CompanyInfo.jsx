@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useContext } from "react";
+import { useState, useEffect, useContext } from "react";
 import { LanguageContext } from "../../context/LanguageContext.jsx";
 import CustomerForm from "./CustomerForm";
 import { Link, useLocation } from "react-router-dom"; 

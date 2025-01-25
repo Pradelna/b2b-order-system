@@ -107,6 +107,10 @@ class LandingPage(models.Model):
     customer_vop_check = models.CharField("VOP read", max_length=200, blank=True, null=True)
     customer_terms_use_check = models.CharField("Terms of use read", max_length=200, blank=True, null=True)
     customer_gdpr_check = models.CharField("GDPR read", max_length=200, blank=True, null=True)
+    customer_uploaded_files = models.CharField("Uploaded files", max_length=200, blank=True, null=True)
+    customer_important_files = models.CharField("Important files", max_length=200, blank=True, null=True)
+    customer_send_to_check = models.CharField("Send to check", max_length=200, blank=True, null=True)
+    customer_wait_for_active = models.CharField("Wait for activation", max_length=200, blank=True, null=True)
 
     button_submit = models.CharField("Button submit", max_length=50, blank=True, null=True)
     button_upload = models.CharField("Button upload file", max_length=50, blank=True, null=True)
