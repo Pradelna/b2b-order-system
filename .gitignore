@@ -173,3 +173,9 @@ frontend/build
 frontend/node_modules
 frontend/package-lock.json
 frontend/src/components/customer
+
+.DS_Store
+.idea/
+frontend/.gitignore
+frontend/README.md
+frontend/src/assets/dom.webp
