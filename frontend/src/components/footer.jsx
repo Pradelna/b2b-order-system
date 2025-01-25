@@ -1,23 +1,15 @@
-import React from "react";
+import React, { useContext } from "react";
+import { LanguageContext } from "../context/LanguageContext.jsx";
 
-function Footer({ language, languageData }) {
-    // Проверяем, есть ли данные и соответствуют ли они текущему языку
-    if (!languageData || !Array.isArray(languageData)) {
-      console.warn("languageData отсутствует или имеет неверный формат:", languageData);
-      return null;
-    }
-  
-    const currentData = languageData.find(item => item.lang === language);
-  
-    if (!currentData) {
-      console.warn("Данные для текущего языка не найдены:", language);
-      return null;
-    }
-  
-    const { menu } = currentData;
+function Footer() {
+  const { currentData } = useContext(LanguageContext);
+  if (!currentData || !currentData.menu) {
+      return null; // Если данных нет, компонент ничего не отображает
+  }
+  const { menu } = currentData;
   
     if (!menu) {
-      console.warn("Меню отсутствует в данных:", currentData);
+      console.log("Меню отсутствует в данных:", currentData);
       return null;
     }
   

@@ -1,10 +1,13 @@
-import React from "react";
+import React, { useContext } from "react";
+import { LanguageContext } from "../../context/LanguageContext.jsx";
 
-function Price({ language, priceData }) {
-    const currentData = priceData.find(item => item.lang === language);
+function Price() {
+    const { currentData } = useContext(LanguageContext);
     if (!currentData || !currentData.price) {
         return null; // Если данных нет, компонент ничего не отображает
     }
+    // console.log(`Price currentData - ${currentData}`);
+    // console.log(currentData);
     const data = currentData.price;
 
   return (

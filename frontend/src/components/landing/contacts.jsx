@@ -1,7 +1,8 @@
-import React from "react";
+import React, { useContext } from "react";
+import { LanguageContext } from "../../context/LanguageContext.jsx";
 
-function Contacts({ language, langData }) {
-    const currentData = langData.find(item => item.lang === language);
+function Contacts() {
+    const { currentData } = useContext(LanguageContext);
     if (!currentData || !currentData.contacts) {
         return null; // Если данных нет, компонент ничего не отображает
     }

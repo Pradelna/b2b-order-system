@@ -162,5 +162,14 @@ cython_debug/
 #.idea/
 
 washpr/db.sqlite3
-washpr/landing/migrations
+washpr/accounts/migrations
+washpr/customer/migrations
+washpr/order/migrations
+washpr/place/migrations
 washpr/landing/static
+washpr/static
+
+frontend/build
+frontend/node_modules
+frontend/package-lock.json
+frontend/src/components/customer

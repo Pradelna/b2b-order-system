@@ -1,11 +1,13 @@
-import React from "react";
+import React, { useContext } from "react";
+import { LanguageContext } from "../../context/LanguageContext.jsx";
 
-function About({ language, bannerData }) {
-    const currentData = bannerData.find(item => item.lang === language);
-    const data = currentData['about_us'];
-  if (!data) {
+function About() {
+    const { currentData } = useContext(LanguageContext);
+    
+  if (!currentData || !currentData.about_us) {
     return null; // Если данных нет, компонент ничего не отображает
   }
+  const data = currentData.about_us;
 
   return (
     <section id="about" className="about">

@@ -1,11 +1,13 @@
-import React from "react";
+import React, { useContext } from "react";
+import { LanguageContext } from "../../context/LanguageContext.jsx";
 
-function Technology({ language, techData }) {
-    const currentData = techData.find(item => item.lang === language);
-    const data = currentData['technologies'];
-  if (!data) {
+function Technology() {
+    const { currentData } = useContext(LanguageContext);
+    
+  if (!currentData || !currentData.technologies) {
     return null; // Если данных нет, компонент ничего не отображает
   }
+  const data = currentData.technologies;
 
   return (
     <section id="technology" className="technology">
