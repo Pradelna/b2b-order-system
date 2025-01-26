@@ -1,22 +1,32 @@
-import React, { useState, useEffect } from "react";
-import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import { useState, useEffect } from "react";
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faTruck, faFileInvoiceDollar, faFileLines } from "@fortawesome/free-solid-svg-icons";
-import PropTypes from "prop-types";
-import { fetchWithAuth } from "../account/auth";
-import { Tooltip as ReactTooltip } from 'react-tooltip';
+import { fetchWithAuth } from "../account/auth.ts";
+import { Tooltip as ReactTooltip } from "react-tooltip";
 
-const OrderHistory = ({ placeId }) => {
-    const [orders, setOrders] = useState([]);
-    const [visibleOrders, setVisibleOrders] = useState(20);
-    const [hasMoreOrders, setHasMoreOrders] = useState(false);
-    const [loading, setLoading] = useState(true);
+interface Order {
+    id: number;
+    place_name: string;
+    date_pickup: string;
+    date_delivery: string;
+}
 
-    // Функция для загрузки заказов
+interface OrderHistoryProps {
+    placeId: number; // ID of the place to load orders for
+}
+
+const OrderHistory: React.FC<OrderHistoryProps> = ({ placeId }) => {
+    const [orders, setOrders] = useState<Order[]>([]);
+    const [visibleOrders, setVisibleOrders] = useState<number>(20);
+    const [hasMoreOrders, setHasMoreOrders] = useState<boolean>(false);
+    const [loading, setLoading] = useState<boolean>(true);
+
+    // Fetch orders from the API
     const fetchOrders = async () => {
         try {
             const response = await fetchWithAuth(`http://127.0.0.1:8000/api/order/${placeId}/orders/`);
             if (response.ok) {
-                const data = await response.json();
+                const data: Order[] = await response.json();
                 setOrders(data);
                 setHasMoreOrders(data.length > 10);
             } else {
@@ -33,7 +43,7 @@ const OrderHistory = ({ placeId }) => {
         fetchOrders();
     }, [placeId]);
 
-    // Функция для загрузки дополнительных заказов
+    // Load more orders when the user clicks "More"
     const loadMoreOrders = () => {
         setVisibleOrders((prev) => {
             const newVisibleCount = prev + 10;
@@ -49,15 +59,13 @@ const OrderHistory = ({ placeId }) => {
     return (
         <div className="order-history">
             <h3 className="account-info">Order History</h3>
-            <h3 className="detail-info">{orders.length > 0 ? orders[0].place_name : 'Unknown Place'}</h3>
+            <h3 className="detail-info">{orders.length > 0 ? orders[0].place_name : "Unknown Place"}</h3>
             {orders.length > 0 ? (
                 <div>
                     {orders.slice(0, visibleOrders).map((order) => (
                         <div key={order.id} className="card">
                             <div className="history-icon">
-                                <FontAwesomeIcon
-                                    icon={faTruck}
-                                />
+                                <FontAwesomeIcon icon={faTruck} />
                             </div>
                             <div className="invoice-icon">
                                 <FontAwesomeIcon
@@ -65,11 +73,11 @@ const OrderHistory = ({ placeId }) => {
                                     data-tooltip-id="invoice-tooltip"
                                     style={{ cursor: "pointer" }}
                                 />
-                                <ReactTooltip 
+                                <ReactTooltip
                                     id="invoice-tooltip"
                                     place="top"
-                                    content="Downlod invoice"
-                                    effect="solid" 
+                                    content="Download invoice"
+                                    effect="solid"
                                     className="custom-tooltip"
                                 />
                             </div>
@@ -79,18 +87,20 @@ const OrderHistory = ({ placeId }) => {
                                     data-tooltip-id="receipt-tooltip"
                                     style={{ cursor: "pointer" }}
                                 />
-                                <ReactTooltip 
+                                <ReactTooltip
                                     id="receipt-tooltip"
                                     place="top"
-                                    content="Downlod dodaci list"
-                                    effect="solid" 
+                                    content="Download dodaci list"
+                                    effect="solid"
                                     className="custom-tooltip"
                                 />
                             </div>
-                            {/* <p><strong>Type:</strong> {order.type_ship}</p> */}
-                            <p><strong>Pickup Date:</strong> {order.date_pickup}</p>
-                            <p><strong>Delivery Date:</strong> {order.date_delivery}</p>
-                            {/* <p><strong>Status:</strong> {order.end_order ? "Completed" : "In Progress"}</p> */}
+                            <p>
+                                <strong>Pickup Date:</strong> {order.date_pickup}
+                            </p>
+                            <p>
+                                <strong>Delivery Date:</strong> {order.date_delivery}
+                            </p>
                         </div>
                     ))}
                     {hasMoreOrders && (
@@ -104,10 +114,6 @@ const OrderHistory = ({ placeId }) => {
             )}
         </div>
     );
-};
-
-OrderHistory.propTypes = {
-    placeId: PropTypes.number.isRequired, // ID места для загрузки заказов
 };
 
 export default OrderHistory;

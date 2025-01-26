@@ -1,58 +1,64 @@
-// src/components/UploadFile.jsx
 import { useRef, useState, useEffect, useContext } from 'react';
-import { LanguageContext } from "../../context/LanguageContext.jsx";
+import { LanguageContext } from "../../context/LanguageContext";
 import { fetchWithAuth } from "../account/auth";
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import {faFilePdf} from "@fortawesome/free-solid-svg-icons";
+import { faFilePdf } from "@fortawesome/free-solid-svg-icons";
 
-const DocumentsBlock = () => {
+interface FileData {
+    file: string;
+}
+
+const DocumentsBlock: React.FC = () => {
     const { currentData } = useContext(LanguageContext);
-    const fileInputRef = useRef(null);
-    const [files, setFiles] = useState([]); // Список загруженных файлов
+    const fileInputRef = useRef<HTMLInputElement | null>(null);
+    const [files, setFiles] = useState<FileData[]>([]); // List of uploaded files
 
     useEffect(() => {
         fetchUploadedFiles();
     }, []);
 
-    // Загрузка списка файлов
+    // Fetch the list of uploaded files
     const fetchUploadedFiles = async () => {
         try {
             const response = await fetchWithAuth(`http://localhost:8000/api/customer/documents/for-customer/`);
             if (!response.ok) throw new Error('Failed to fetch files');
-            const data = await response.json();
-            // console.log("Fetched files:", data);
+            const data: FileData[] = await response.json();
             setFiles(data);
         } catch (error) {
             console.error('Error loading files:', error);
-            setError('Failed to load files');
         }
     };
 
+    if (!currentData) {
+        return null; // Render nothing if currentData is unavailable
+    }
+
     return (
-        <div className='row other-card'>
-
+        <div className="row other-card">
             <div className="card">
+                <h3 style={{ fontSize: "20px" }} className="mt-3">
+                    {currentData.customer.important_files}
+                </h3>
 
-                <h3 style={{fontSize:"20px"}} className='mt-3'>Important documents</h3>
-                <div style={{margin:"0 1px"}} className='row'>
+                {/* Display uploaded files */}
+                <div style={{ margin: "0 1px" }} className="row">
                     {files.map((file, index) => (
-                        <div className='col-12 form-control mb-2' style={{display:'flex'}} key={index}>
+                        <div className="col-12 form-control mb-2" style={{ display: 'flex' }} key={index}>
                             <a href={`http://localhost:8000${file.file}`} target="_blank" rel="noopener noreferrer">
-                            <FontAwesomeIcon
-                                    icon={faFilePdf}
-                                    className="file-uploaded"
-                                /> <span style={{marginLeft:"5px"}}>{file.file.split('/').pop()}</span>
+                                <FontAwesomeIcon icon={faFilePdf} className="file-uploaded" />
+                                <span style={{ marginLeft: "5px" }}>{file.file.split('/').pop()}</span>
                             </a>
-                 
                         </div>
                     ))}
                 </div>
+
+                {/* Static links for important documents */}
                 <div className="row mb-2">
                     <div className="col-12">
                         <div className="form-control">
                             <a href="#" target="_blank" rel="noopener noreferrer">
-                            <FontAwesomeIcon icon={faFilePdf} className="file-uploaded" />
-                            <span style={{marginLeft:"5px"}}>{ currentData.customer.vop }</span>
+                                <FontAwesomeIcon icon={faFilePdf} className="file-uploaded" />
+                                <span style={{ marginLeft: "5px" }}>{currentData.customer.vop}</span>
                             </a>
                         </div>
                     </div>
@@ -61,8 +67,8 @@ const DocumentsBlock = () => {
                     <div className="col-12">
                         <div className="form-control">
                             <a href="#" target="_blank" rel="noopener noreferrer">
-                            <FontAwesomeIcon icon={faFilePdf} className="file-uploaded" />
-                            <span style={{marginLeft:"5px"}}>{ currentData.customer.terms_use }</span>
+                                <FontAwesomeIcon icon={faFilePdf} className="file-uploaded" />
+                                <span style={{ marginLeft: "5px" }}>{currentData.customer.terms_use}</span>
                             </a>
                         </div>
                     </div>
@@ -71,14 +77,13 @@ const DocumentsBlock = () => {
                     <div className="col-12">
                         <div className="form-control">
                             <a href="#" target="_blank" rel="noopener noreferrer">
-                            <FontAwesomeIcon icon={faFilePdf} className="file-uploaded mr-3" />
-                            <span style={{marginLeft:"5px"}}>{ currentData.customer.gdpr }</span>
+                                <FontAwesomeIcon icon={faFilePdf} className="file-uploaded mr-3" />
+                                <span style={{ marginLeft: "5px" }}>{currentData.customer.gdpr}</span>
                             </a>
                         </div>
                     </div>
                 </div>
             </div>
-
         </div>
     );
 };

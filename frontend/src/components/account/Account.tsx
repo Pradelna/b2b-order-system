@@ -1,72 +1,89 @@
-import React, { useState, useEffect, useContext } from "react";
-import { LanguageContext } from "../../context/LanguageContext.jsx";
+import { useState, useEffect, useContext } from "react";
+import { LanguageContext } from "../../context/LanguageContext";
 import { useNavigate, useLocation } from "react-router-dom";
 import CompanyInfo from "../customer/CompanyInfo";
 import PlaceForm from "../place/PlaceForm";
-import OrderForm from "../order/OrderForm.jsx";
+import OrderForm from "../order/OrderForm";
 import OrderHistory from "../order/OrderHistory";
 import ButtonAllHistory from "../history/ButtonAllHistory";
 import ButtonsOrder from "../customer/ButtonsOrder";
-import { fetchWithAuth } from "../account/auth.js";
-import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import { fetchWithAuth } from "./auth";
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faClockRotateLeft, faHouse } from "@fortawesome/free-solid-svg-icons";
 
+// Define the props type for the component
+interface AccountProps {
+    customerData: Record<string, any> | null;
+    setCustomerData: (data: Record<string, any>) => void;
+}
 
-const Account = ({ customerData, setCustomerData }) => {
-  const { currentData, language, languageData } = useContext(LanguageContext);
-  if (!currentData || !currentData.service) {
-    return null; // Если данных нет, компонент ничего не отображает
-  }
-  const messageData = currentData.auth;
+const Account: React.FC<AccountProps> = ({ customerData, setCustomerData }) => {
+    const { currentData, language, languageData } = useContext(LanguageContext);
 
-    const [cardStyle, setCardStyle] = useState({ display: "none" });
-    const [cardContent, setCardContent] = useState("");
-    const [activeButton, setActiveButton] = useState(null);
+    // If the language context does not contain valid data, render nothing
+    if (!currentData || !currentData.service) {
+        return null;
+    }
+
+    const messageData = currentData.auth;
+
+    // Component state
+    const [cardStyle, setCardStyle] = useState<React.CSSProperties>({ display: "none" });
+    const [cardContent, setCardContent] = useState<string>("");
+    const [activeButton, setActiveButton] = useState<number | null>(null);
     const location = useLocation();
-    const [successMessage, setSuccessMessage] = useState(location.state?.successMessage || ""); 
-    const [showPlaceForm, setShowPlaceForm] = useState(false);
-    const [places, setPlaces] = useState([]);
-    const [orders, setOrders] = useState([]); // Список заказов
-    const [visibleOrders, setVisibleOrders] = useState(5); // Количество отображаемых заказов
+    const [successMessage, setSuccessMessage] = useState<string>(location.state?.successMessage || "");
+    const [showPlaceForm, setShowPlaceForm] = useState<boolean>(false);
+    const [places, setPlaces] = useState<Record<string, any>[]>([]);
+    const [orders, setOrders] = useState<Record<string, any>[]>([]);
+    const [visibleOrders, setVisibleOrders] = useState<number>(5);
     const navigate = useNavigate();
-    const [showOrderForm, setShowOrderForm] = useState(false);
-    const [currentPlaceId, setCurrentPlaceId] = useState(null);
-    const [selectedPlaceId, setSelectedPlaceId] = useState(null);
+    const [showOrderForm, setShowOrderForm] = useState<boolean>(false);
+    const [currentPlaceId, setCurrentPlaceId] = useState<number | null>(null);
+    const [selectedPlaceId, setSelectedPlaceId] = useState<number | null>(null);
 
-    const handleCardClick = (event, content, index, placeId) => {
+    // Handle card click event to show history
+    const handleCardClick = (
+        event: React.MouseEvent<HTMLDivElement>,
+        content: string,
+        index: number,
+        placeId: number
+    ) => {
         if (activeButton === index) {
             setCardStyle({ display: "none" });
             setActiveButton(null);
-            setSelectedPlaceId(null); // Сбрасываем выбранное место
+            setSelectedPlaceId(null); // Reset selected place ID
             return;
         }
-        const buttonRect = event.target.closest(".place-card").getBoundingClientRect();
-        const containerRect = document.querySelector(".col-history").getBoundingClientRect();
+
+        const buttonRect = (event.target as HTMLElement).closest(".place-card")!.getBoundingClientRect();
+        const containerRect = document.querySelector(".col-history")!.getBoundingClientRect();
         const cardHeight = buttonRect.bottom - containerRect.top;
-    
+
         setCardStyle({
             top: `0px`,
             minHeight: `${cardHeight}px`,
             display: "block",
         });
-    
+
         setCardContent(content);
         setActiveButton(index);
-        setSelectedPlaceId(placeId); // Устанавливаем ID выбранного места
+        setSelectedPlaceId(placeId); // Set the selected place ID
     };
 
-    const handleSuccess = (newPlace) => {
+    // Handle success when a new place is created
+    const handleSuccess = (newPlace: Record<string, any>) => {
         setSuccessMessage(`Place "${newPlace.place_name}" created successfully!`);
-        setPlaces((prevPlaces) => [...prevPlaces, newPlace]); // Добавляем новое место в список
+        setPlaces((prevPlaces) => [...prevPlaces, newPlace]); // Add the new place to the list
         setTimeout(() => setSuccessMessage(""), 5000);
-        setShowPlaceForm(false); // Скрыть форму после успешного создания
-        // console.log("Place created successfully:", newPlace);
+        setShowPlaceForm(false); // Hide the form
     };
 
+    // Fetch places on component mount
     useEffect(() => {
         const fetchPlaces = async () => {
             try {
-                const response = await fetchWithAuth("http://127.0.0.1:8000/api/place/list/"); 
+                const response = await fetchWithAuth("http://127.0.0.1:8000/api/place/list/");
                 if (response.ok) {
                     const data = await response.json();
                     setPlaces(data);
@@ -81,13 +98,14 @@ const Account = ({ customerData, setCustomerData }) => {
         fetchPlaces();
     }, []);
 
-    const handleOrderSuccess = (data) => {
+    // Handle success when a new order is created
+    const handleOrderSuccess = (data: Record<string, any>) => {
         alert(`Order created successfully!`);
-        setShowOrderForm(false); // Закрываем форму
+        setShowOrderForm(false); // Close the form
     };
-    
+
+    // Fetch orders on component mount
     useEffect(() => {
-        // Fetch orders
         const fetchOrders = async () => {
             try {
                 const response = await fetchWithAuth("http://127.0.0.1:8000/api/order/list/");
@@ -104,10 +122,6 @@ const Account = ({ customerData, setCustomerData }) => {
 
         fetchOrders();
     }, []);
-      
-    //   const loadMoreOrders = () => {
-    //     setVisibleOrders((prevVisibleOrders) => prevVisibleOrders + 10);
-    // };
 
     return (
         <div className="container margin-top-130 wrapper account-page">
@@ -115,37 +129,35 @@ const Account = ({ customerData, setCustomerData }) => {
                 <div className="col-xl-8 col-12">
                     <div id="company-top" className="row">
                         <div className="col-12">
-                            {successMessage && <p className="alert alert-success">{successMessage}</p>} 
+                            {successMessage && <p className="alert alert-success">{successMessage}</p>}
                         </div>
-                        
+
                         <div className={`${customerData && !customerData.error ? "col-6" : "col-12"}`}>
-                            <CompanyInfo 
-                                customerData={customerData} 
-                                setCustomerData={setCustomerData} 
-                                setSuccessMessage={setSuccessMessage} 
+                            <CompanyInfo
+                                customerData={customerData}
+                                setCustomerData={setCustomerData}
+                                setSuccessMessage={setSuccessMessage}
                             />
                         </div>
 
-                        {customerData && !customerData.error && (
-                            <ButtonAllHistory />
-                        )}
+                        {customerData && !customerData.error && <ButtonAllHistory />}
 
                         {customerData && !customerData.error && (
-                                <ButtonsOrder 
-                                onCreatePlace={() => setShowPlaceForm(true)} 
+                            <ButtonsOrder
+                                onCreatePlace={() => setShowPlaceForm(true)}
                                 onCreateOrder={() => setShowOrderForm(true)}
                             />
                         )}
                     </div>
 
                     {showPlaceForm && (
-                        <PlaceForm 
-                        onClose={() => setShowPlaceForm(false)} 
-                        onSuccess={(newPlace) => {
-                            setPlaces((prevPlaces) => [...prevPlaces, newPlace]);
-                            setShowPlaceForm(false);
-                        }}
-                    />
+                        <PlaceForm
+                            onClose={() => setShowPlaceForm(false)}
+                            onSuccess={(newPlace) => {
+                                setPlaces((prevPlaces) => [...prevPlaces, newPlace]);
+                                setShowPlaceForm(false);
+                            }}
+                        />
                     )}
 
                     <div className="row mt-5">
@@ -154,19 +166,14 @@ const Account = ({ customerData, setCustomerData }) => {
                         </div>
                         {places.map((place, index) => (
                             <div className="col-12 dashboard" key={index}>
-                                <div 
+                                <div
                                     className={`card place-card ${activeButton === index ? "active" : ""}`}
                                     onClick={(e) => handleCardClick(e, place.name, index, place.id)}
                                 >
                                     <div className="place">
-                                        {/* <img src="src/assets/dom.webp" alt="" /> */}
                                         <div className="place-icon">
-                                            <FontAwesomeIcon
-                                                icon={faHouse}
-                                                className="s"
-                                            />
+                                            <FontAwesomeIcon icon={faHouse} className="s" />
                                         </div>
-                                        
                                         <h5>{place.place_name}</h5>
                                         <p className="card-text">
                                             {place.rp_street}, {place.rp_city}, {place.rp_zip}
@@ -176,13 +183,17 @@ const Account = ({ customerData, setCustomerData }) => {
                                             onClick={() => {
                                                 setCurrentPlaceId(place.id);
                                                 setShowOrderForm(true);
-                                              }}
-                                        >new order</button>
+                                            }}
+                                        >
+                                            new order
+                                        </button>
                                         <button
                                             onClick={() => place.id && navigate(`/place/${place.id}`)}
-                                            disabled={!place.id} // Отключаем кнопку, если нет ID
+                                            disabled={!place.id} // Disable the button if no ID
                                             className="call details-place-button"
-                                        >details</button>
+                                        >
+                                            details
+                                        </button>
                                     </div>
                                 </div>
                             </div>
@@ -200,23 +211,18 @@ const Account = ({ customerData, setCustomerData }) => {
                             <FontAwesomeIcon icon={faClockRotateLeft} className="icon" />
                             <button
                                 onClick={() => selectedPlaceId && navigate(`/place/${selectedPlaceId}`)}
-                                disabled={!selectedPlaceId} // Отключаем кнопку, если место не выбрано
+                                disabled={!selectedPlaceId} // Disable the button if no place is selected
                                 className="details-place-button-in-history"
                             >
                                 Whole history
                             </button>
                             <h5>Orders history for</h5>
                             <div className="mt-1">
-                                <OrderHistory 
-                                    placeId={selectedPlaceId} 
-                                    // loadMoreOrders={loadMoreOrders} 
-                                    hasMoreOrders={visibleOrders < orders.length} 
-                                />
+                                <OrderHistory placeId={selectedPlaceId} hasMoreOrders={visibleOrders < orders.length} />
                             </div>
                         </div>
                     </div>
                 </div>
-                
             </div>
             {showOrderForm && (
                 <OrderForm
@@ -225,8 +231,8 @@ const Account = ({ customerData, setCustomerData }) => {
                     onSuccess={(newOrder) => {
                         console.log("Order created successfully:", newOrder);
                         setSuccessMessage(`Order created successfully`);
-                        setTimeout(() => setSuccessMessage(""), 5000); // Очистить сообщение через 5 секунд
-                        setShowOrderForm(false); // Закрыть форму
+                        setTimeout(() => setSuccessMessage(""), 5000); // Clear the message after 5 seconds
+                        setShowOrderForm(false); // Close the form
                     }}
                 />
             )}
