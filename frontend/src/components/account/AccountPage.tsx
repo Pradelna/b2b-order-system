@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+import {useState, useEffect, JSX} from "react";
 import { fetchWithAuth } from "./auth";
 import HeaderAccount from "../HeaderAccount";
 import Account from "./Account";

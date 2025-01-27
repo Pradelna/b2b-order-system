@@ -1,4 +1,4 @@
-import { useState, ChangeEvent, FormEvent } from "react";
+import React, { useState, ChangeEvent, FormEvent } from "react";
 import { fetchWithAuth } from "../account/auth";
 
 interface PlaceEditProps {
@@ -46,7 +46,6 @@ const PlaceEdit: React.FC<PlaceEditProps> = ({
     rp_person: "Contact Person",
     rp_phone: "Phone",
     rp_email: "Email",
-    id: "",
   };
 
   const handleChange = (e: ChangeEvent<HTMLInputElement>) => {
@@ -58,7 +57,7 @@ const PlaceEdit: React.FC<PlaceEditProps> = ({
     e.preventDefault();
     try {
       const response = await fetchWithAuth(
-          `http://127.0.0.1:8000/api/order/place/${place.id}/`,
+          `http://127.0.0.1:8000/api/place/edit/${place.id}/`,
           {
             method: "PUT",
             headers: {
@@ -67,6 +66,7 @@ const PlaceEdit: React.FC<PlaceEditProps> = ({
             body: JSON.stringify(formData),
           }
       );
+      console.log(formData);
       if (response.ok) {
         const updatedPlace = await response.json();
         onPlaceUpdated(updatedPlace);

@@ -1,4 +1,4 @@
-import { useState, useEffect, useContext } from "react";
+import React, { useState, useEffect, useContext } from "react";
 import { LanguageContext } from "../../context/LanguageContext.js";
 import { useParams, useNavigate } from "react-router-dom";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
@@ -187,8 +187,11 @@ const DetailPlace: React.FC<DetailPlaceProps> = () => {
                                     <div className="row mb-2">
                                         <div className="col-12">
                                             <div className="form-control">
-                                                <strong>Address:</strong> {place.rp_street},{" "}
-                                                {place.rp_city}, {place.rp_zip}
+                                                <strong>Address:</strong>
+                                                {place.rp_street},{" "}
+                                                {place.rp_number},{" "}
+                                                {place.rp_city},{" "}
+                                                {place.rp_zip}
                                             </div>
                                         </div>
                                     </div>

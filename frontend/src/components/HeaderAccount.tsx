@@ -1,6 +1,6 @@
-import { useContext } from "react";
-import { LanguageContext } from "../context/LanguageContext.js";
-import LanguageSwitcher from "./LanguageSwitcher.js";
+import React, { useContext, useState, useEffect } from "react";
+import { LanguageContext } from "../context/LanguageContext";
+import LanguageSwitcher from "./LanguageSwitcher";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import {
   faHouse,
@@ -8,9 +8,25 @@ import {
   faMobileScreen,
   faEnvelope,
 } from "@fortawesome/free-solid-svg-icons";
+import Loader from "@/components/Loader";
 
 const HeaderAccount: React.FC = () => {
   const { currentData } = useContext(LanguageContext);
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    if (currentData) {
+      setLoading(false);
+    }
+  }, [currentData]);
+
+  if (loading) {
+    return <><Loader /></>;
+  }
+
+  if (!currentData || !currentData.menu) {
+    return null; // Return null if data is missing
+  }
   const menuData = currentData?.menu;
 
   if (!menuData) {

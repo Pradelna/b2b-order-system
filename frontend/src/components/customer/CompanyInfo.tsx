@@ -1,6 +1,6 @@
 import React, { useState, useEffect, useContext } from "react";
-import { LanguageContext } from "../../context/LanguageContext.js";
-import CustomerForm from "./CustomerForm.js";
+import { LanguageContext } from "../../context/LanguageContext";
+import CustomerForm from "./CustomerForm";
 import { Link, useLocation } from "react-router-dom";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import {
@@ -15,7 +15,7 @@ import {
 } from "@fortawesome/free-solid-svg-icons";
 import { fetchWithAuth } from "../account/auth";
 import { Tooltip as ReactTooltip } from "react-tooltip";
-import Loader from "../Loader.js";
+import Loader from "../Loader";
 
 interface CustomerData {
     company_name: string;
@@ -148,33 +148,33 @@ const CompanyInfo: React.FC<CompanyInfoProps> = ({
             {/* Customer data display */}
             <h5 className="company-name">
                 <FontAwesomeIcon icon={faBuilding} className="icon" />{" "}
-                <span className="ms-1">{customerData.company_name}</span>
+                <span className="ms-1">{customerData?.company_name || "empty"}</span>
             </h5>
             <p className="company-info">
                 <FontAwesomeIcon icon={faLocationDot} className="icon" />{" "}
-                <span className="ms-2">{customerData.company_address}</span>
+                <span className="ms-2">{customerData?.company_address || "empty"}</span>
             </p>
             <p className="company-info">
                 <FontAwesomeIcon icon={faIdCard} className="icon" />{" "}
-                <span className="ms-1">IČO {customerData.company_ico}</span>
+                <span className="ms-1">IČO {customerData?.company_ico || "empty"}</span>
             </p>
             <p className="company-info">
                 <FontAwesomeIcon icon={faIdCard} className="icon" />{" "}
-                <span className="ms-1">DIČ {customerData.company_dic}</span>
+                <span className="ms-1">DIČ {customerData?.company_dic || "empty"}</span>
             </p>
             <p className="company-info">
                 <FontAwesomeIcon icon={faPhone} className="icon" />{" "}
-                <span className="ms-1">{customerData.company_phone}</span>
+                <span className="ms-1">{customerData?.company_phone || "empty"}</span>
             </p>
             <p className="company-info">
                 <FontAwesomeIcon icon={faEnvelope} className="icon" />{" "}
                 <span className="ms-1">
-          {customerData.company_email || "No email available"}
+          {customerData?.company_email || "empty"}
         </span>
             </p>
             <p className="company-info">
                 <FontAwesomeIcon icon={faUserTie} className="icon" />{" "}
-                <span className="ms-1">{customerData.company_person}</span>
+                <span className="ms-1">{customerData?.company_person || "empty"}</span>
             </p>
         </div>
     );
