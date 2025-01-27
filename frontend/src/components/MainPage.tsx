@@ -7,19 +7,19 @@ import Price from "./landing/Price";
 import Contacts from "./landing/Contacts";
 import Footer from "./Footer";
 
-function MainPage() {
+const MainPage: React.FC = () => {
     return (
-      <>
-        <Header />
-        <StartBanner />
-        <About />
-        <Services />
-        <Technology />
-        <Price  />
-        <Contacts />
-        <Footer />
-      </>
+        <>
+            <Header />
+            <StartBanner />
+            <About />
+            <Services />
+            <Technology />
+            <Price />
+            <Contacts />
+            <Footer />
+        </>
     );
-}
-  
+};
+
 export default MainPage;

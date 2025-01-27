@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useContext } from "react";
-import { LanguageContext } from "../../context/LanguageContext";
+import { LanguageContext } from "../../context/LanguageContext.js";
 import CustomerForm from "./CustomerForm.js";
 import { Link, useLocation } from "react-router-dom";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
@@ -15,7 +15,7 @@ import {
 } from "@fortawesome/free-solid-svg-icons";
 import { fetchWithAuth } from "../account/auth";
 import { Tooltip as ReactTooltip } from "react-tooltip";
-import Loader from "../Loader";
+import Loader from "../Loader.js";
 
 interface CustomerData {
     company_name: string;

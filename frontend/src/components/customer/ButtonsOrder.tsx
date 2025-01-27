@@ -1,6 +1,6 @@
 import React from "react";
 import { useContext } from "react";
-import { LanguageContext } from "../../context/LanguageContext";
+import { LanguageContext } from "../../context/LanguageContext.js";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faBuilding, faCartPlus } from "@fortawesome/free-solid-svg-icons";
 

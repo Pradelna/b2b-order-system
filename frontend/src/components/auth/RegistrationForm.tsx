@@ -1,9 +1,9 @@
 import React, { useState, useRef, useContext, FormEvent } from "react";
-import { LanguageContext } from "../../context/LanguageContext";
+import { LanguageContext } from "../../context/LanguageContext.js";
 import ReCAPTCHA from "react-google-recaptcha";
 import { fetchWithAuth } from "../account/auth";
-import Header from "../Header";
-import Footer from "../Footer";
+import Header from "../Header.js";
+import Footer from "../Footer.tsx";
 
 const RegistrationForm: React.FC = () => {
   const [email, setEmail] = useState<string>("");

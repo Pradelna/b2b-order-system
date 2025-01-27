@@ -1,5 +1,5 @@
 import { useState, useEffect, useContext } from "react";
-import { LanguageContext } from "../../context/LanguageContext";
+import { LanguageContext } from "../../context/LanguageContext.js";
 import { useParams, useNavigate } from "react-router-dom";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import {
@@ -8,8 +8,8 @@ import {
     faCartPlus,
     faPowerOff,
 } from "@fortawesome/free-solid-svg-icons";
-import HeaderAccount from "../HeaderAccount";
-import Footer from "../Footer";
+import HeaderAccount from "../HeaderAccount.js";
+import Footer from "../Footer.tsx";
 import PlaceEdit from "./PlaceEdit.js";
 import OrderForm from "../order/OrderForm";
 import { fetchWithAuth } from "../account/auth";

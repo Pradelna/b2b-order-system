@@ -1,8 +1,8 @@
 import { useState, useContext, FormEvent } from "react";
-import { LanguageContext } from "../../context/LanguageContext";
+import { LanguageContext } from "../../context/LanguageContext.js";
 import { useNavigate } from "react-router-dom";
-import Header from "../Header";
-import Footer from "../Footer";
+import Header from "../Header.js";
+import Footer from "../Footer.tsx";
 import { fetchWithAuth } from "../account/auth";
 
 const LoginForm: React.FC = () => {

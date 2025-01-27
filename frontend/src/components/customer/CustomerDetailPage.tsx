@@ -1,10 +1,10 @@
 import { useState, useEffect, useContext } from "react";
-import { LanguageContext } from "../../context/LanguageContext";
+import { LanguageContext } from "../../context/LanguageContext.js";
 import { useParams } from "react-router-dom";
 import CustomerEdit from "./CustomerEdit.js";
 import CompanyInfo from "./CompanyInfo";
-import HeaderAccount from "../HeaderAccount";
-import Footer from "../Footer";
+import HeaderAccount from "../HeaderAccount.js";
+import Footer from "../Footer.tsx";
 import { fetchWithAuth } from "../account/auth";
 import UploadFile from "./UploadFile.js";
 import DocumentsBlock from "./DocumentsBlock.js";

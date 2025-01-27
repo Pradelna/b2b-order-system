@@ -1,24 +1,33 @@
-import React, { useContext } from "react";
-import { LanguageContext } from "../context/LanguageContext.jsx";
+import { useContext } from "react";
+import { LanguageContext } from "../context/LanguageContext.js";
 
-function Footer() {
+interface MenuData {
+  technology: string;
+  prices: string;
+  services: string;
+  contacts: string;
+}
+
+const Footer: React.FC = () => {
   const { currentData } = useContext(LanguageContext);
+
   if (!currentData || !currentData.menu) {
-      return null; // Если данных нет, компонент ничего не отображает
+    return null; // If data is not available, the component does not render
   }
-  const { menu } = currentData;
-  
-    if (!menu) {
-      console.log("Меню отсутствует в данных:", currentData);
-      return null;
-    }
-  
-    return (
+
+  const menu: MenuData = currentData.menu;
+
+  if (!menu) {
+    console.log("Menu is missing in the data:", currentData);
+    return null;
+  }
+
+  return (
       <footer className="footer">
         <div className="container">
           <div className="footer__wrap">
             <a href="#" className="logo">
-              <img src="/wp-content/themes/praska/assets/img/logo.png" alt="" />
+              <img src="/wp-content/themes/praska/assets/img/logo.png" alt="Logo" />
             </a>
             <ul className="footer__list">
               <li>
@@ -39,18 +48,18 @@ function Footer() {
             </ul>
             <div className="contact">
               <a href="tel:+420734246834" className="tel">
-                <img src="/wp-content/themes/praska/assets/img/tel.png" alt="" />
+                <img src="/wp-content/themes/praska/assets/img/tel.png" alt="Phone" />
                 <span>+420 734 246 834</span>
               </a>
               <a href="mailto:pradelna1cz@gmail.com" className="mail">
-                <img src="/wp-content/themes/praska/assets/img/mail.png" alt="" />
+                <img src="/wp-content/themes/praska/assets/img/mail.png" alt="Email" />
                 <span>pradelna1cz@gmail.com</span>
               </a>
             </div>
           </div>
         </div>
       </footer>
-    );
-  }
+  );
+};
 
 export default Footer;
