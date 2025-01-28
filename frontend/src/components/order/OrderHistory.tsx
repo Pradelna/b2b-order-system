@@ -1,7 +1,7 @@
-import { useState, useEffect } from "react";
+import React, { useState, useEffect } from "react";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faTruck, faFileInvoiceDollar, faFileLines } from "@fortawesome/free-solid-svg-icons";
-import { fetchWithAuth } from "../account/auth.ts";
+import { fetchWithAuth } from "../account/auth";
 import { Tooltip as ReactTooltip } from "react-tooltip";
 
 interface Order {
@@ -13,10 +13,12 @@ interface Order {
 
 interface OrderHistoryProps {
     placeId: number; // ID of the place to load orders for
+    hasMoreOrders: boolean;
 }
 
 const OrderHistory: React.FC<OrderHistoryProps> = ({ placeId }) => {
-    const [orders, setOrders] = useState<Order[]>([]);
+    // const [orders, setOrders] = useState<Order[]>([]);
+    const [orders, setOrders] = useState([]);
     const [visibleOrders, setVisibleOrders] = useState<number>(20);
     const [hasMoreOrders, setHasMoreOrders] = useState<boolean>(false);
     const [loading, setLoading] = useState<boolean>(true);
@@ -24,6 +26,7 @@ const OrderHistory: React.FC<OrderHistoryProps> = ({ placeId }) => {
     // Fetch orders from the API
     const fetchOrders = async () => {
         try {
+            console.log("Fetching orders for place ID", placeId);
             const response = await fetchWithAuth(`http://127.0.0.1:8000/api/order/${placeId}/orders/`);
             if (response.ok) {
                 const data: Order[] = await response.json();
@@ -40,6 +43,10 @@ const OrderHistory: React.FC<OrderHistoryProps> = ({ placeId }) => {
     };
 
     useEffect(() => {
+        if (!placeId) {
+            console.error("Invalid placeId:", placeId);
+            return;
+        }
         fetchOrders();
     }, [placeId]);
 

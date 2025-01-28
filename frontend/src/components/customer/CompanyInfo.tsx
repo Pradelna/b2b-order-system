@@ -1,5 +1,4 @@
-import React, { useState, useEffect, useContext } from "react";
-import { LanguageContext } from "../../context/LanguageContext";
+import React, { useState, useEffect } from "react";
 import CustomerForm from "./CustomerForm";
 import { Link, useLocation } from "react-router-dom";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
@@ -42,7 +41,6 @@ const CompanyInfo: React.FC<CompanyInfoProps> = ({
                                                      setSuccessMessage,
                                                      setIsEditing,
                                                  }) => {
-    const { currentData } = useContext(LanguageContext);
     const [loading, setLoading] = useState<boolean>(true);
     const [userId, setUserId] = useState<string | null>(null);
     const location = useLocation();
@@ -52,14 +50,25 @@ const CompanyInfo: React.FC<CompanyInfoProps> = ({
         if (!customerData || !customerData.company_email) {
             setLoading(true);
             fetchWithAuth("http://127.0.0.1:8000/api/customer/data/")
-                .then((response) => response.json())
+                .then((response) => {
+                    if (!response.ok) {
+                        if (response.status === 404) {
+                            throw new Error("Customer not found"); // Явно обрабатываем 404
+                        }
+                        throw new Error("Failed to fetch customer data");
+                    }
+                    return response.json();
+                })
                 .then((data: CustomerData) => {
                     setCustomerData(data);
-                    setLoading(false);
                     setUserId(data.user_id);
+                    setLoading(false);
                 })
                 .catch((error) => {
-                    console.error("Error fetching customer data:", error);
+                    console.error("Error fetching customer data:", error.message);
+                    if (error.message === "Customer not found") {
+                        setCustomerData(null); // Setting the absence of data
+                    }
                     setLoading(false);
                 });
         } else {
@@ -100,7 +109,7 @@ const CompanyInfo: React.FC<CompanyInfoProps> = ({
         return (
             <div>
                 <p className="alert alert-danger">Add Customer Information</p>
-                <CustomerForm onSubmit={handleFormSubmit} currentData={currentData} />
+                <CustomerForm onSubmit={handleFormSubmit} />
             </div>
         );
     }

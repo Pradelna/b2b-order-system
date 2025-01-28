@@ -1,6 +1,6 @@
 import { useEffect, useContext } from "react";
 import { useParams, useNavigate } from "react-router-dom";
-import { LanguageContext } from "../context/LanguageContext.js";
+import { LanguageContext } from "../context/LanguageContext";
 import Header from "./Header";
 import StartBanner from "./landing/StartBanner";
 import About from "./landing/About";

@@ -1,16 +1,7 @@
-import { useState } from "react";
+import React, { useState } from "react";
 
-interface MenuDataItem {
-    id: number;
-    name: string;
-    link: string;
-}
 
-interface AccountMenuComponentProps {
-    menuData: MenuDataItem[];
-}
-
-const AccountMenuComponent: React.FC<AccountMenuComponentProps> = ({ menuData }) => {
+const AccountMenuComponent: React.FC = () => {
     const [error, setError] = useState<string | null>(null);
 
     return (
@@ -20,16 +11,7 @@ const AccountMenuComponent: React.FC<AccountMenuComponentProps> = ({ menuData })
 
             {/* Display content */}
             <div>
-                {/* Navigation section */}
-                <nav>
-                    <ul>
-                        {menuData.map((item) => (
-                            <li key={item.id}>
-                                <a href={item.link}>{item.name}</a>
-                            </li>
-                        ))}
-                    </ul>
-                </nav>
+
             </div>
         </div>
     );

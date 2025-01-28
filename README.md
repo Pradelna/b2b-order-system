@@ -36,12 +36,14 @@ pip install -r requirements.txt
 ```
 
 Create tables
+First for user
 ```sh
-python manage.py migrate
 python manage.py makemigrations accounts
-python manage.py makemigrations customer
-python manage.py makemigrations place
-python manage.py makemigrations order
+python manage.py migrate
+```
+Second for others
+```sh
+python manage.py makemigrations customer place order
 python manage.py migrate
 ```
 
@@ -57,7 +59,6 @@ cd frontend
 ```
 
 ```sh
-npm install vite --save-dev
 npm install
 ```
 

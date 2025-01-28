@@ -1,5 +1,5 @@
 import React, { useState, useContext, ChangeEvent, FormEvent } from "react";
-import { LanguageContext } from "@/context/LanguageContext.js";
+import { LanguageContext } from "@/context/LanguageContext";
 import { fetchWithAuth } from "../account/auth";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faSquareXmark } from "@fortawesome/free-solid-svg-icons";

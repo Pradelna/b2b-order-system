@@ -9,8 +9,18 @@ class CustomerSerializer(serializers.ModelSerializer):
     class Meta:
         model = Customer
         fields = [
-            'user_id', 'company_name', 'company_address', 'company_ico', 'company_dic',
-            'company_phone', 'company_person', 'company_email', 'vop', 'terms_of_use', 'gdpr',
+            'user_id',
+            'company_name',
+            'company_address',
+            'company_ico',
+            'company_dic',
+            'company_phone',
+            'company_person',
+            'company_email',
+            'vop',
+            'terms_of_use',
+            'gdpr',
+            'active'
         ]
         read_only_fields = ['user', 'user_id', 'company_email']  # Поле user остаётся только для чтения
 
@@ -26,7 +36,8 @@ class CustomerGetSerializer(serializers.ModelSerializer):
             'company_ico',
             'company_phone',
             'company_email',
-            'company_person'
+            'company_person',
+            'active'
         ]
         read_only_fields = ['user']  # Поле user заполняется автоматически
 

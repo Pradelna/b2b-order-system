@@ -128,7 +128,153 @@ const OrderForm: React.FC<OrderFormProps> = ({ placeId, onClose, onSuccess }) =>
           </div>
 
           {/* Type of Shipping */}
-          {/* ...Other form fields as in the original... */}
+          <div className="row mb-3">
+            <div className="col-3 label-form">
+              <label htmlFor="type_ship">Type of Shipping*</label>
+            </div>
+            <div className="col-9">
+              <select
+                  className="form-control"
+                  name="type_ship"
+                  value={formData.type_ship}
+                  onChange={handleChange}
+                  required
+              >
+                <option value="">Select Type</option>
+                <option value="pickup_ship_one">Clear for Dirty</option>
+                <option value="pickup_ship_dif">1 Day Clear, 2 Day Dirty</option>
+              </select>
+            </div>
+          </div>
+
+          {/* System or Days of the Week */}
+          <div className="row mb-3">
+            <div className="col-3 label-form">
+              <label htmlFor="system">System*</label>
+            </div>
+            <div className="col-9">
+              <select
+                  className="form-control"
+                  name="system"
+                  value={formData.system}
+                  onChange={handleChange}
+                  required={!useCustomDays}
+              >
+                <option value="">Select System</option>
+                <option value="Mon_Wed_Fri">Monday Wednesday Friday</option>
+                <option value="Tue_Thu">Tuesday Thursday</option>
+                <option value="Every_day">Every Day</option>
+                <option value="Own">Own Systems</option>
+              </select>
+            </div>
+          </div>
+
+          {useCustomDays && (
+              <div className="row mb-3">
+                <div className="col-3 label-form">
+                  <label>Days of the Week</label>
+                </div>
+                <div className="col-9">
+                  {["monday", "tuesday", "wednesday", "thursday", "friday"].map((day) => (
+                      <div className="form-check" key={day}>
+                        <input
+                            className="form-check-input"
+                            type="checkbox"
+                            name={day}
+                            checked={formData[day]}
+                            onChange={handleChange}
+                        />
+                        <label className="form-check-label" htmlFor={day}>
+                          {day.charAt(0).toUpperCase() + day.slice(1)}
+                        </label>
+                      </div>
+                  ))}
+                </div>
+              </div>
+          )}
+
+          {/* Date Pickup */}
+          <div className="row mb-3">
+            <div className="col-3 label-form">
+              <label htmlFor="date_pickup">Pick-up Date*</label>
+            </div>
+            <div className="col-9">
+              <input
+                  className="form-control"
+                  type="date"
+                  name="date_pickup"
+                  value={formData.date_pickup}
+                  onChange={handleChange}
+                  required
+              />
+            </div>
+          </div>
+
+          {/* Date Delivery */}
+          <div className="row mb-3">
+            <div className="col-3 label-form">
+              <label htmlFor="date_delivery">Delivery Date*</label>
+            </div>
+            <div className="col-9">
+              <input
+                  className="form-control"
+                  type="date"
+                  name="date_delivery"
+                  value={formData.date_delivery}
+                  onChange={handleChange}
+                  required
+              />
+            </div>
+          </div>
+
+          {/* Every Week */}
+          <div className="row mb-3">
+            <div className="col-3 label-form">
+              <label htmlFor="every_week">Every Week</label>
+            </div>
+            <div className="col-9">
+              <input
+                  className="form-check-input"
+                  type="checkbox"
+                  name="every_week"
+                  checked={formData.every_week}
+                  onChange={handleChange}
+              />
+            </div>
+          </div>
+
+          {/* Note */}
+          <div className="row mb-3">
+            <div className="col-3 label-form">
+              <label>Note</label>
+            </div>
+            <div className="col-9">
+              <input
+                  className="form-control"
+                  type="text"
+                  name="rp_customer_note"
+                  checked={formData.rp_customer_note}
+                  onChange={handleChange}
+              />
+            </div>
+          </div>
+
+          {/* Terms */}
+          <div className="row mb-3">
+            <div className="col-3 label-form">
+              <label htmlFor="terms">Terms of Use*</label>
+            </div>
+            <div className="col-9">
+              <input
+                  className="form-check-input"
+                  type="checkbox"
+                  name="terms"
+                  checked={formData.terms}
+                  onChange={handleChange}
+                  required
+              />
+            </div>
+          </div>
 
           {/* Submit and Close Buttons */}
           <div className="row mt-3">

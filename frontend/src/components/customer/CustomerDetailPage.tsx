@@ -1,5 +1,5 @@
 import { useState, useEffect, useContext } from "react";
-import { LanguageContext } from "../../context/LanguageContext.js";
+import { LanguageContext } from "../../context/LanguageContext";
 import { useParams } from "react-router-dom";
 import CustomerEdit from "./CustomerEdit.js";
 import CompanyInfo from "./CompanyInfo";

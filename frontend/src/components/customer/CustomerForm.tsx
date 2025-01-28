@@ -1,4 +1,4 @@
-import { useState, useContext, ChangeEvent, FormEvent } from "react";
+import React, { useState, useContext, ChangeEvent, FormEvent } from "react";
 import { LanguageContext } from "../../context/LanguageContext.js";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faFilePdf } from "@fortawesome/free-solid-svg-icons";
@@ -73,7 +73,90 @@ const CustomerForm: React.FC<CustomerFormProps> = ({ onSubmit }) => {
             </div>
           </div>
 
-          {/* Repeat similar structure for other fields */}
+          {/* Company address */}
+          <div className="row mb-1">
+            <div className="col-12 col-md-4 col-lg-3 label-form">
+              <label htmlFor="company_name">{currentData.customer.company_address}*</label>
+            </div>
+            <div className="col-12 col-md-8 col-lg-9">
+              <input
+                  className="form-control"
+                  type="text"
+                  name="company_address"
+                  value={formData.company_address}
+                  onChange={handleChange}
+                  required
+              />
+            </div>
+          </div>
+
+          {/* Company ico */}
+          <div className="row mb-1">
+            <div className="col-12 col-md-4 col-lg-3 label-form">
+              <label htmlFor="company_name">{currentData.customer.company_number}*</label>
+            </div>
+            <div className="col-12 col-md-8 col-lg-9">
+              <input
+                  className="form-control"
+                  type="text"
+                  name="company_ico"
+                  value={formData.company_ico}
+                  onChange={handleChange}
+                  required
+              />
+            </div>
+          </div>
+
+          {/* Company dic */}
+          <div className="row mb-1">
+            <div className="col-12 col-md-4 col-lg-3 label-form">
+              <label htmlFor="company_name">{currentData.customer.vat_number}*</label>
+            </div>
+            <div className="col-12 col-md-8 col-lg-9">
+              <input
+                  className="form-control"
+                  type="text"
+                  name="company_dic"
+                  value={formData.company_dic}
+                  onChange={handleChange}
+                  required
+              />
+            </div>
+          </div>
+
+          {/* Company phone */}
+          <div className="row mb-1">
+            <div className="col-12 col-md-4 col-lg-3 label-form">
+              <label htmlFor="company_name">{currentData.customer.phone}*</label>
+            </div>
+            <div className="col-12 col-md-8 col-lg-9">
+              <input
+                  className="form-control"
+                  type="text"
+                  name="company_phone"
+                  value={formData.company_phone}
+                  onChange={handleChange}
+                  required
+              />
+            </div>
+          </div>
+
+          {/* Company person */}
+          <div className="row mb-1">
+            <div className="col-12 col-md-4 col-lg-3 label-form">
+              <label htmlFor="company_name">{currentData.customer.full_name}*</label>
+            </div>
+            <div className="col-12 col-md-8 col-lg-9">
+              <input
+                  className="form-control"
+                  type="text"
+                  name="company_person"
+                  value={formData.company_person}
+                  onChange={handleChange}
+                  required
+              />
+            </div>
+          </div>
 
           {/* VOP Checkbox */}
           <div className="row">
