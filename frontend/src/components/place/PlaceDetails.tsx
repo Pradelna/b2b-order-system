@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useContext } from "react";
-import { LanguageContext } from "../../context/LanguageContext.js";
+import { LanguageContext } from "../../context/LanguageContext";
 import { useParams, useNavigate } from "react-router-dom";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import {
@@ -8,14 +8,15 @@ import {
     faCartPlus,
     faPowerOff,
 } from "@fortawesome/free-solid-svg-icons";
-import HeaderAccount from "../HeaderAccount.js";
-import Footer from "../Footer.tsx";
-import PlaceEdit from "./PlaceEdit.js";
+import HeaderAccount from "../HeaderAccount";
+import Footer from "../Footer";
+import PlaceEdit from "./PlaceEdit";
 import OrderForm from "../order/OrderForm";
 import { fetchWithAuth } from "../account/auth";
 import OrderHistory from "../order/OrderHistory";
 
 interface Place {
+    rp_number: any;
     id: number;
     place_name: string;
     rp_street: string;
@@ -43,7 +44,7 @@ interface Order {
     end_order: boolean;
 }
 
-const DetailPlace: React.FC<DetailPlaceProps> = () => {
+const DetailPlace: React.FC = () => {
     const { currentData } = useContext(LanguageContext);
     const { id } = useParams<{ id: string }>();
     const navigate = useNavigate();
@@ -187,7 +188,7 @@ const DetailPlace: React.FC<DetailPlaceProps> = () => {
                                     <div className="row mb-2">
                                         <div className="col-12">
                                             <div className="form-control">
-                                                <strong>Address:</strong>
+                                                <strong>Address:</strong>{" "}
                                                 {place.rp_street},{" "}
                                                 {place.rp_number},{" "}
                                                 {place.rp_city},{" "}

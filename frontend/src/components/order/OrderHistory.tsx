@@ -26,7 +26,7 @@ const OrderHistory: React.FC<OrderHistoryProps> = ({ placeId }) => {
     // Fetch orders from the API
     const fetchOrders = async () => {
         try {
-            console.log("Fetching orders for place ID", placeId);
+            // console.log("Fetching orders for place ID", placeId);
             const response = await fetchWithAuth(`http://127.0.0.1:8000/api/order/${placeId}/orders/`);
             if (response.ok) {
                 const data: Order[] = await response.json();
@@ -74,20 +74,20 @@ const OrderHistory: React.FC<OrderHistoryProps> = ({ placeId }) => {
                             <div className="history-icon">
                                 <FontAwesomeIcon icon={faTruck} />
                             </div>
-                            <div className="invoice-icon">
-                                <FontAwesomeIcon
-                                    icon={faFileInvoiceDollar}
-                                    data-tooltip-id="invoice-tooltip"
-                                    style={{ cursor: "pointer" }}
-                                />
-                                <ReactTooltip
-                                    id="invoice-tooltip"
-                                    place="top"
-                                    content="Download invoice"
-                                    effect="solid"
-                                    className="custom-tooltip"
-                                />
-                            </div>
+                            {/*<div className="invoice-icon">*/}
+                            {/*    <FontAwesomeIcon*/}
+                            {/*        icon={faFileInvoiceDollar}*/}
+                            {/*        data-tooltip-id="invoice-tooltip"*/}
+                            {/*        style={{ cursor: "pointer" }}*/}
+                            {/*    />*/}
+                            {/*    <ReactTooltip*/}
+                            {/*        id="invoice-tooltip"*/}
+                            {/*        place="top"*/}
+                            {/*        content="Download invoice"*/}
+                            {/*        effect="solid"*/}
+                            {/*        className="custom-tooltip"*/}
+                            {/*    />*/}
+                            {/*</div>*/}
                             <div className="receipt-icon">
                                 <FontAwesomeIcon
                                     icon={faFileLines}

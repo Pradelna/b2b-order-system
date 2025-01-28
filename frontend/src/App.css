@@ -27,7 +27,8 @@ a {
 }
 
 .dashboard-button {
-    border-radius: 16px;
+    /*border-radius: 16px;*/
+  cursor: pointer;
 }
 
 .card {
@@ -44,6 +45,14 @@ a {
 .card-body {
     position: relative;
     padding: 22px;
+}
+
+.company-card .card-body {
+  padding: 0;
+}
+
+#company-top .fa-gear {
+  z-index: 999;
 }
 
 .new-order-button {
@@ -108,8 +117,13 @@ a {
   }
 
   #company-top .card {
-    min-height: 262px;
+    /*min-height: 262px;*/
+    min-height: 120px;
   }
+
+#company-top .card .company-name{
+  margin: 28px 5px;
+}
 
   h1.detail-page  {
     font-size: 24px;
@@ -214,9 +228,8 @@ a {
     font-weight: bold;
   }
 
-#company-top .fa-clock-rotate-left,
-#company-top .fa-receipt {
-  height: 40px;
+#company-top .icon {
+  height: 30px;
   margin-right: 5px;
 }
 
@@ -227,8 +240,13 @@ a {
 
 .text-history {
   position: absolute;
-  bottom: 0px;
-  left: 5px;
+  bottom: 0;
+  left: 1px;
+}
+
+.front-name {
+  font-size: 18px;
+  font-weight: bold;
 }
 
 p.text-history {
@@ -588,7 +606,7 @@ svg.loader{
   padding: 20px;
   border-radius: 10px;
   box-shadow: 0 0 15px rgba(0, 0, 0, 0.2);
-  width: 500px;
+  width: 800px;
   max-width: 90%;
   z-index: 1051;
 }

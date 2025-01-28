@@ -155,6 +155,11 @@ const CompanyInfo: React.FC<CompanyInfoProps> = ({
             />
 
             {/* Customer data display */}
+            <div className="card-body">
+                <FontAwesomeIcon icon={faBuilding} className="icon" />{" "}
+                <p className="text-history front-name">{customerData?.company_name || "empty"}</p>
+            </div>
+            {isDetailPage && <div className="dop-info">
             <h5 className="company-name">
                 <FontAwesomeIcon icon={faBuilding} className="icon" />{" "}
                 <span className="ms-1">{customerData?.company_name || "empty"}</span>
@@ -178,13 +183,14 @@ const CompanyInfo: React.FC<CompanyInfoProps> = ({
             <p className="company-info">
                 <FontAwesomeIcon icon={faEnvelope} className="icon" />{" "}
                 <span className="ms-1">
-          {customerData?.company_email || "empty"}
-        </span>
+                  {customerData?.company_email || "empty"}
+                </span>
             </p>
             <p className="company-info">
                 <FontAwesomeIcon icon={faUserTie} className="icon" />{" "}
                 <span className="ms-1">{customerData?.company_person || "empty"}</span>
             </p>
+            </div>}
         </div>
     );
 };
