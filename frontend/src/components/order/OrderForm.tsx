@@ -88,7 +88,10 @@ const OrderForm: React.FC<OrderFormProps> = ({ placeId, onClose, onSuccess }) =>
       });
 
       if (response.ok) {
-        onSuccess("Order created successfully! OrderForm");
+        // onSuccess("Order created successfully! OrderForm");
+        const responseData = await response.json(); // Получаем объект нового заказа
+        const newOrder = responseData.order;
+        onSuccess(newOrder);
       } else {
         const errorData = await response.json();
         alert("Failed to create order: " + JSON.stringify(errorData));

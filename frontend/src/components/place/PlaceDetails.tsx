@@ -44,7 +44,7 @@ interface Order {
     end_order: boolean;
 }
 
-const DetailPlace: React.FC = () => {
+const PlaceDetails: React.FC = () => {
     const { currentData } = useContext(LanguageContext);
     const { id } = useParams<{ id: string }>();
     const navigate = useNavigate();
@@ -82,7 +82,7 @@ const DetailPlace: React.FC = () => {
         fetchPlace();
     }, [id]);
 
-    useEffect(() => {
+
         const fetchOrders = async () => {
             try {
                 const response = await fetchWithAuth(
@@ -97,7 +97,7 @@ const DetailPlace: React.FC = () => {
                     const history = orders.filter(
                         (order) => !(order.every_week && !order.end_order)
                     );
-
+                    console.log("fetchOrders:", current, history);
                     setCurrentOrder(current || null);
                     setOrderHistory(history);
                     setHasMoreOrders(history.length > 10);
@@ -111,6 +111,7 @@ const DetailPlace: React.FC = () => {
             }
         };
 
+    useEffect(() => {
         fetchOrders();
     }, [id]);
 
@@ -246,7 +247,7 @@ const DetailPlace: React.FC = () => {
 
                 <div className="row mt-4">
                     <div className="col-lg-8 col-md-10 col-12">
-                        <OrderHistory placeId={place.id} />
+                        <OrderHistory placeId={place.id} hasMoreOrders={false} orders={orderHistory}  />
                     </div>
                 </div>
 
@@ -255,11 +256,21 @@ const DetailPlace: React.FC = () => {
                         placeId={place.id}
                         onClose={() => setShowOrderForm(false)}
                         onSuccess={(newOrder) => {
+                            console.log(newOrder);
+                            // add a new order to the list
+                            setOrderHistory((prevOrders) => [newOrder, ...prevOrders]);
+                            // Обновляем текущий заказ, если он активный
+                            if (newOrder.every_week && !newOrder.end_order) {
+                                setCurrentOrder(newOrder);
+                            }
+
                             setSuccessMessage(
-                                `Order created successfully for place: ${newOrder.place}`
+                                `Order created successfully for place: ${newOrder.rp_place_title}`
                             );
                             setTimeout(() => setSuccessMessage(""), 5000);
                             setShowOrderForm(false);
+                            // Обновляем данные из API
+                            fetchOrders();
                         }}
                     />
                 )}
@@ -269,4 +280,4 @@ const DetailPlace: React.FC = () => {
     );
 };
 
-export default DetailPlace;
+export default PlaceDetails;

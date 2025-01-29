@@ -49,10 +49,15 @@ def create_order(request):
                 rp_place_zip=place.rp_zip,
                 rp_time_from=convert_date_to_unix(data['date_pickup']),
                 rp_time_to=convert_date_to_unix(data['date_delivery']),
-                # rp_contract_external_id=
+                rp_place_title=place.place_name,
+                place=place,
+                active=True,
             )
+            print(order)
+            order_data = OrderSerializer(order).data
+            print(order_data)
             return Response(
-                {"message": "Order created successfully!", "order_id": order.id},
+                {"message": "Order created successfully!", "order": order_data},
                 status=status.HTTP_201_CREATED
             )
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)

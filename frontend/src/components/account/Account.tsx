@@ -286,6 +286,8 @@ const Account: React.FC<AccountProps> = ({ customerData, setCustomerData }) => {
                             <div className="mt-1">
                                 <OrderHistory
                                     placeId={selectedPlaceId}
+                                    orders={orders}
+                                    setOrders={setOrders}
                                     hasMoreOrders={visibleOrders < orders.length}
                                 />
                             </div>
@@ -299,6 +301,7 @@ const Account: React.FC<AccountProps> = ({ customerData, setCustomerData }) => {
                     placeId={currentPlaceId}
                     onClose={() => setShowOrderForm(false)}
                     onSuccess={(newOrder) => {
+                        setOrders((prevOrders) => [...prevOrders, newOrder]);
                         handleOrderSuccess(currentPlaceId);
                     }}
                 />

@@ -117,11 +117,7 @@ const App: React.FC = () => {
             path="/place/:id"
             element={
               <PrivateRoute>
-                <PlaceDetails
-                  language={language}
-                  languageData={languageData}
-                  handleLanguageChange={handleLanguageChange}
-                />
+                <PlaceDetails />
               </PrivateRoute>
             }
           />

@@ -6,7 +6,7 @@ class OrderSerializer(serializers.ModelSerializer):
     class Meta:
         model = Order
         fields = [
-            'place', 'type_ship', 'system', 'monday', 'tuesday', 'wednesday', 'thursday',
+            'place', 'rp_place_title', 'type_ship', 'system', 'monday', 'tuesday', 'wednesday', 'thursday',
             'friday', 'date_pickup', 'date_delivery', 'every_week', 'rp_customer_note', 'terms'
         ]
         extra_kwargs = {

@@ -14,11 +14,11 @@ interface Order {
 interface OrderHistoryProps {
     placeId: number; // ID of the place to load orders for
     hasMoreOrders: boolean;
+    orders?: Order[]; // Сделано необязательным для защиты
+    setOrders?: (orders: Order[]) => void; // Передача функции для обновления списка заказов
 }
 
-const OrderHistory: React.FC<OrderHistoryProps> = ({ placeId }) => {
-    // const [orders, setOrders] = useState<Order[]>([]);
-    const [orders, setOrders] = useState([]);
+const OrderHistory: React.FC<OrderHistoryProps> = ({ placeId, orders = [], setOrders}) => {
     const [visibleOrders, setVisibleOrders] = useState<number>(20);
     const [hasMoreOrders, setHasMoreOrders] = useState<boolean>(false);
     const [loading, setLoading] = useState<boolean>(true);
@@ -30,7 +30,9 @@ const OrderHistory: React.FC<OrderHistoryProps> = ({ placeId }) => {
             const response = await fetchWithAuth(`http://127.0.0.1:8000/api/order/${placeId}/orders/`);
             if (response.ok) {
                 const data: Order[] = await response.json();
-                setOrders(data);
+                if (setOrders) {
+                    setOrders(data);
+                }
                 setHasMoreOrders(data.length > 10);
             } else {
                 console.error("Failed to fetch orders");
@@ -59,6 +61,8 @@ const OrderHistory: React.FC<OrderHistoryProps> = ({ placeId }) => {
         });
     };
 
+    console.log("Order history updated:", orders);
+
     if (loading) {
         return <p>Loading order history...</p>;
     }
@@ -69,7 +73,9 @@ const OrderHistory: React.FC<OrderHistoryProps> = ({ placeId }) => {
             <h3 className="detail-info">{orders.length > 0 ? orders[0].place_name : "Unknown Place"}</h3>
             {orders.length > 0 ? (
                 <div>
-                    {orders.slice(0, visibleOrders).map((order) => (
+                    {orders.slice(0, visibleOrders)
+                        .sort((a, b) => b.id - a.id)
+                        .map((order) => (
                         <div key={order.id} className="card">
                             <div className="history-icon">
                                 <FontAwesomeIcon icon={faTruck} />
