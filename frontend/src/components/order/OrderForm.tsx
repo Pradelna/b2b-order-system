@@ -86,45 +86,40 @@ const OrderForm: React.FC<OrderFormProps> = ({ placeId, onClose, onSuccess }) =>
   };
 
   // Handle input changes
-  const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>) => {
-    const { name, type, value } = e.target;
-
-    // Проверяем, чекбокс ли это
-    const newValue = type === "checkbox" ? (e.target as HTMLInputElement).checked : value;
-
+  const handleCheckboxChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const { name, checked } = e.target;
     setFormData((prev) => ({
       ...prev,
-      [name]: newValue,
+      [name]: checked,
     }));
+  };
 
-    console.log(`🔄 Updated ${name} to ${newValue}`);
+  const handleDateChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const { name, value } = e.target;
+    const formattedDate = new Date(value).toISOString().split("T")[0];
+    setFormData((prev) => ({
+      ...prev,
+      [name]: formattedDate,
+    }));
+  };
 
-    if (name === "system") {
-      const availableDates = getAvailableDates();
-      setFormData((prev) => ({
-        ...prev,
-        date_start_day: availableDates[0] || prev.date_start_day, // Update date selection to first valid option
-      }));
-      // Toggle custom days based on system selection
-      if (value === "Own") {
-        setUseCustomDays(true);
-      } else if (name === "system") {
-        setUseCustomDays(false);
-      }
-    }
-    // Ensure dates are properly formatted
-    if (name === "date_pickup" || name === "date_delivery" || name === "date_start_day") {
-      const formattedDate = new Date(value).toISOString().split("T")[0]; // Convert to YYYY-MM-DD
-      setFormData((prev) => ({
-        ...prev,
-        [name]: formattedDate,
-      }));
-    } else {
-      setFormData((prev) => ({
-        ...prev,
-        [name]: value,
-      }));
-    }
+  const handleSystemChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
+    const { name, value } = e.target;
+    const availableDates = getAvailableDates();
+    setFormData((prev) => ({
+      ...prev,
+      [name]: value,
+      date_start_day: availableDates[0] || prev.date_start_day,
+    }));
+    setUseCustomDays(value === "Own");
+  };
+
+  const handleInputChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
+    const { name, value } = e.target;
+    setFormData((prev) => ({
+      ...prev,
+      [name]: value, // Обновляем значение для select
+    }));
   };
 
   const handleSubmit = async (e: React.FormEvent) => {
@@ -176,6 +171,7 @@ const OrderForm: React.FC<OrderFormProps> = ({ placeId, onClose, onSuccess }) =>
 
   return (
     <div className="modal-backdrop">
+      <div className="modal-wrapper">
       <div className="modal-content">
         <h3>Create New Order</h3>
         <form key={JSON.stringify(formData)} onSubmit={handleSubmit}>
@@ -189,7 +185,7 @@ const OrderForm: React.FC<OrderFormProps> = ({ placeId, onClose, onSuccess }) =>
                   className="form-control"
                   name="place"
                   value={placeId || formData.place || ""}
-                  onChange={handleChange}
+                  onChange={handleInputChange}
                   required
                   disabled={!!placeId}
               >
@@ -213,7 +209,7 @@ const OrderForm: React.FC<OrderFormProps> = ({ placeId, onClose, onSuccess }) =>
                   className="form-control"
                   name="type_ship"
                   value={formData.type_ship}
-                  onChange={handleChange}
+                  onChange={handleInputChange}
                   required
               >
                 <option value="">Select Type</option>
@@ -233,7 +229,7 @@ const OrderForm: React.FC<OrderFormProps> = ({ placeId, onClose, onSuccess }) =>
                   className="form-control"
                   name="system"
                   value={formData.system}
-                  onChange={handleChange}
+                  onChange={handleSystemChange}
                   required={!useCustomDays}
               >
                 <option value="">Select System</option>
@@ -249,9 +245,9 @@ const OrderForm: React.FC<OrderFormProps> = ({ placeId, onClose, onSuccess }) =>
 
           {useCustomDays && (
               <div className="row mb-3">
-                <div className="col-12 label-form">
-                  <label>Days of the Week</label>
-                </div>
+                {/*<div className="col-12 label-form">*/}
+                {/*  <label>Days of the Week</label>*/}
+                {/*</div>*/}
                 <div className="col-12">
                   {["monday", "tuesday", "wednesday", "thursday", "friday"].map((day) => (
                       <div className="form-check" key={day}>
@@ -260,7 +256,7 @@ const OrderForm: React.FC<OrderFormProps> = ({ placeId, onClose, onSuccess }) =>
                             type="checkbox"
                             name={day}
                             checked={formData[day]}
-                            onChange={handleChange}
+                            onChange={handleCheckboxChange}
                         />
                         <label className="form-check-label" htmlFor={day}>
                           {day.charAt(0).toUpperCase() + day.slice(1)}
@@ -283,7 +279,7 @@ const OrderForm: React.FC<OrderFormProps> = ({ placeId, onClose, onSuccess }) =>
                       className="form-control"
                       name="date_start_day"
                       value={formData.date_start_day}
-                      onChange={handleChange}
+                      onChange={handleDateChange}
                       required
                   >
                     {getAvailableDates().map((date) => (
@@ -313,7 +309,7 @@ const OrderForm: React.FC<OrderFormProps> = ({ placeId, onClose, onSuccess }) =>
                         className="form-control"
                         name="date_pickup"
                         value={formData.date_pickup}
-                        onChange={handleChange}
+                        onChange={handleDateChange}
                         required
                     >
                       {getAvailableDates().map((date) => (
@@ -339,7 +335,7 @@ const OrderForm: React.FC<OrderFormProps> = ({ placeId, onClose, onSuccess }) =>
                         className="form-control"
                         name="date_delivery"
                         value={formData.date_delivery}
-                        onChange={handleChange}
+                        onChange={handleDateChange}
                         required
                     >
                       {getAvailableDates().map((date) => (
@@ -359,19 +355,24 @@ const OrderForm: React.FC<OrderFormProps> = ({ placeId, onClose, onSuccess }) =>
 
           {/* Every Week */}
           <div className="row mb-3">
-            <div className="col-3 label-form">
-              <label htmlFor="every_week">Every Week</label>
+            <div className="col-1">
+              <div className="checkbox-wrapper-19">
+                <input
+                    id="every_week"
+                    className="form-check-input"
+                    type="checkbox"
+                    name="every_week"
+                    checked={formData.every_week}
+                    onChange={handleCheckboxChange}
+                    required
+                />
+                <label htmlFor="every_week" className="check-box" />
+              </div>
             </div>
-            <div className="col-9 label-form">
-              <input
-                  className="form-check-input"
-                  type="checkbox"
-                  name="every_week"
-                  checked={formData.every_week}
-                  onChange={handleChange}
-              />
-            </div>
+            <div className="col-11">Every Week</div>
           </div>
+
+
 
           {/* Note */}
           <div className="row mb-3">
@@ -382,9 +383,9 @@ const OrderForm: React.FC<OrderFormProps> = ({ placeId, onClose, onSuccess }) =>
               <textarea
                   className="form-control"
                   name="rp_customer_note"
-                  value={formData.rp_customer_note} // Use value instead of checked
-                  onChange={handleChange}
-                  rows={4} // Allows multiple lines
+                  value={formData.rp_customer_note}
+                  onChange={handleInputChange}
+                  rows={3} // Allows multiple lines
                   placeholder="Enter your notes here..."
               />
             </div>
@@ -401,7 +402,7 @@ const OrderForm: React.FC<OrderFormProps> = ({ placeId, onClose, onSuccess }) =>
                     type="checkbox"
                     name="terms"
                     checked={formData.terms}
-                    onChange={handleChange}
+                    onChange={handleCheckboxChange}
                     required
                 />
                 <label htmlFor="terms" className="check-box" />
@@ -444,6 +445,7 @@ const OrderForm: React.FC<OrderFormProps> = ({ placeId, onClose, onSuccess }) =>
           </div>
         </form>
       </div>
+    </div>
     </div>
 );
 };
