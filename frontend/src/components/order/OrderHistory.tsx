@@ -19,7 +19,7 @@ interface OrderHistoryProps {
 }
 
 const OrderHistory: React.FC<OrderHistoryProps> = ({ placeId, orders = [], setOrders}) => {
-    const [visibleOrders, setVisibleOrders] = useState<number>(20);
+    const [visibleOrders, setVisibleOrders] = useState<number>(10);
     const [hasMoreOrders, setHasMoreOrders] = useState<boolean>(false);
     const [loading, setLoading] = useState<boolean>(true);
 
@@ -61,8 +61,6 @@ const OrderHistory: React.FC<OrderHistoryProps> = ({ placeId, orders = [], setOr
         });
     };
 
-    console.log("Order history updated:", orders);
-
     if (loading) {
         return <p>Loading order history...</p>;
     }
@@ -70,7 +68,7 @@ const OrderHistory: React.FC<OrderHistoryProps> = ({ placeId, orders = [], setOr
     return (
         <div className="order-history">
             <h3 className="account-info">Order History</h3>
-            <h3 className="detail-info">{orders.length > 0 ? orders[0].place_name : "Unknown Place"}</h3>
+            <h3 className="detail-info">{orders.length > 0 ? orders[0].place_name : ""}</h3>
             {orders.length > 0 ? (
                 <div>
                     {orders.slice(0, visibleOrders)

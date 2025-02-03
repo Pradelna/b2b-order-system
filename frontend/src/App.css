@@ -22,18 +22,28 @@ a {
   color: #00aab7;
 }
 
+.message-block {
+  height: 54px;
+}
+
+.message-block-76 {
+  height: 76px;
+}
+
 .margin-top-130 {
     margin-top: 130px;
 }
 
+.margin-top-90 {
+  margin-top: 90px;
+}
+
 .dashboard-button {
-    /*border-radius: 16px;*/
   cursor: pointer;
 }
 
 .card {
-  /* border: solid 2px #00aab7; */
-  border: solid 0px #00aab7;
+  /*border: solid 0px #00aab7;*/
   border-radius: 16px;
   box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
   transition: transform 0.3s ease, box-shadow 0.3s ease;
@@ -117,7 +127,7 @@ a {
   }
 
   #company-top .card {
-    /*min-height: 262px;*/
+    border: solid 1px #e1f6f8;
     min-height: 120px;
   }
 
@@ -488,20 +498,19 @@ p.text-history {
   border-radius: 16px;
 }
 
-.other-card {
-  margin-top: 20px;
+.card {
+  border: solid 1px #fff;
 }
 
 .other-card .card {
   min-height: 260px;
-  /* border: solid 2px #00aab7; */
-  border: solid 0px #00aab7;
   border-radius: 16px;
   box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
   transition: transform 0.3s ease, box-shadow 0.3s ease;
   font-family: "Roboto", sans-serif;
   position: relative;
   padding: 20px;
+  margin-top: 20px;
 }
 
 .btn-upload {

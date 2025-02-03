@@ -97,7 +97,7 @@ const PlaceDetails: React.FC = () => {
                     const history = orders.filter(
                         (order) => !(order.every_week && !order.end_order)
                     );
-                    console.log("fetchOrders:", current, history);
+
                     setCurrentOrder(current || null);
                     setOrderHistory(history);
                     setHasMoreOrders(history.length > 10);
@@ -135,12 +135,36 @@ const PlaceDetails: React.FC = () => {
         }
     };
 
-    const loadMoreOrders = () => {
-        setVisibleOrders((prevVisibleOrders) => {
-            const newVisibleCount = prevVisibleOrders + 10;
-            setHasMoreOrders(newVisibleCount < orderHistory.length);
-            return newVisibleCount;
-        });
+    const handleStopOrder = async (orderId: number) => {
+        if (window.confirm("Are you sure you want to stop this order?")) {
+            try {
+                const response = await fetchWithAuth(`http://127.0.0.1:8000/api/order/update/${orderId}/`, {
+                    method: "PUT",
+                    headers: {
+                        "Content-Type": "application/json",
+                    },
+                    body: JSON.stringify({ end_order: true }),
+                });
+
+                if (response.ok) {
+                    const updatedOrder = await response.json();
+                    setCurrentOrder(null); // del current order
+                    setOrderHistory((prevOrders) => {
+                        // add ex current order
+                        if (prevOrders.some((order) => order.id === updatedOrder.id)) {
+                            return prevOrders;
+                        }
+                        return [updatedOrder, ...prevOrders];
+                    });
+                    setSuccessMessage("Order successfully stopped.");
+                    setTimeout(() => setSuccessMessage(""), 5000);
+                } else {
+                    console.error("Failed to stop order.");
+                }
+            } catch (error) {
+                console.error("Error stopping order:", error);
+            }
+        }
     };
 
     if (loading) return <p>Loading...</p>;
@@ -150,13 +174,20 @@ const PlaceDetails: React.FC = () => {
         <>
             <HeaderAccount />
 
-            <div className="container margin-top-130 wrapper place-detail-page">
-                <div className="row other-card">
+            <div className="container margin-top-90 wrapper place-detail-page">
+                <div className="row message-block">
                     <div className="col-lg-8 col-md-10 col-12">
                         {successMessage && (
                             <p className="alert alert-success">{successMessage}</p>
                         )}
                     </div>
+                </div>
+                <div className="row other-card">
+                    {/*<div className="col-lg-8 col-md-10 col-12">*/}
+                    {/*    {successMessage && (*/}
+                    {/*        <p className="alert alert-success">{successMessage}</p>*/}
+                    {/*    )}*/}
+                    {/*</div>*/}
 
                     <div className="col-lg-8 col-md-10 col-12">
                         <div className="card place-details">
@@ -228,8 +259,10 @@ const PlaceDetails: React.FC = () => {
                     <div className="row current-order other-card">
                         <div className="col-lg-8 col-md-10 col-12">
                             <div className="card current-order">
-                                <h3>Current Order</h3>
+
+                                <h3>Current Order #{currentOrder.id}</h3>
                                 <div className="order-details">
+
                                     <div className="form-control mb-2">
                                         <strong>Status:</strong> {currentOrder.rp_status}
                                     </div>
@@ -237,9 +270,42 @@ const PlaceDetails: React.FC = () => {
                                         <strong>Type of Shipping:</strong> {currentOrder.type_ship}
                                     </div>
                                     <div className="form-control mb-2">
+                                        <strong>System:</strong> {currentOrder.system || "Custom Days"}
+                                    </div>
+
+                                    {currentOrder.system === "Own" && (
+                                        <div className="form-control mb-2">
+                                            <strong>Days: </strong>
+
+                                            {currentOrder.monday && <span>Monday </span>}
+                                            {currentOrder.tuesday && <span>Tuesday </span>}
+                                            {currentOrder.wednesday && <span>Wednesday </span>}
+                                            {currentOrder.thursday && <span>Thursday </span>}
+                                            {currentOrder.friday && <span>Friday </span>}
+
+                                        </div>
+                                    )}
+
+                                    <div className="form-control mb-2">
                                         <strong>Pickup Date:</strong> {currentOrder.date_pickup}
                                     </div>
+                                    <div className="form-control mb-2">
+                                        <strong>Delivery Date:</strong> {currentOrder.date_delivery}
+                                    </div>
+                                    <div className="form-control mb-2">
+                                        <strong>Note:</strong> {currentOrder.rp_problem_description || "None"}
+                                    </div>
+
                                 </div>
+
+                                <button
+                                    className="btn-link mt-2"
+                                    onClick={() => handleStopOrder(currentOrder!.id)}
+                                >
+                                    <FontAwesomeIcon icon={faPowerOff} className="icon" />
+                                    <span className="ms-2">stop order</span>
+                                </button>
+
                             </div>
                         </div>
                     </div>
@@ -256,18 +322,16 @@ const PlaceDetails: React.FC = () => {
                         placeId={place.id}
                         onClose={() => setShowOrderForm(false)}
                         onSuccess={(newOrder) => {
-                            console.log(newOrder);
                             // add a new order to the list
                             setOrderHistory((prevOrders) => [newOrder, ...prevOrders]);
                             // Обновляем текущий заказ, если он активный
                             if (newOrder.every_week && !newOrder.end_order) {
                                 setCurrentOrder(newOrder);
                             }
-
                             setSuccessMessage(
                                 `Order created successfully for place: ${newOrder.rp_place_title}`
                             );
-                            setTimeout(() => setSuccessMessage(""), 5000);
+                            setTimeout(() => setSuccessMessage(""), 50000);
                             setShowOrderForm(false);
                             // Обновляем данные из API
                             fetchOrders();

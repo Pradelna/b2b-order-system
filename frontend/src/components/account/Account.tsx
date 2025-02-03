@@ -117,12 +117,6 @@ const Account: React.FC<AccountProps> = ({ customerData, setCustomerData }) => {
         setShowPlaceForm(true); // Показываем форму создания места
     };
 
-    // const handlePlaceSuccess = (newPlace: Place) => {
-    //     setSuccessMessage(`Place "${newPlace.place_name}" created successfully!`);
-    //     setTimeout(() => setSuccessMessage(""), 5000);
-    //     setShowPlaceForm(false); // Закрыть форму создания места
-    // };
-
     useEffect(() => {
         if (location.state?.successMessage) {
             setTimeout(() => {
@@ -150,13 +144,20 @@ const Account: React.FC<AccountProps> = ({ customerData, setCustomerData }) => {
     }, []);
 
     return (
-        <div className="container margin-top-130 wrapper account-page">
+        <div className="container margin-top-90 wrapper account-page">
+            <div className="row message-block-76">
+                <div className="col-lg-8 col-md-10 col-12">
+                    {successMessage && (
+                        <p className="alert alert-success">{successMessage}</p>
+                    )}
+                </div>
+            </div>
             <div className="row">
                 <div className="col-xl-8 col-12">
                     <div id="company-top" className="row">
-                        <div className="col-12">
-                            {successMessage && <p className="alert alert-success">{successMessage}</p>}
-                        </div>
+                        {/*<div className="col-12">*/}
+                        {/*    {successMessage && <p className="alert alert-success">{successMessage}</p>}*/}
+                        {/*</div>*/}
 
                         <div className={`${customerData && !customerData.error ? "col-6" : "col-12"}`}>
                             <CompanyInfo
@@ -228,7 +229,7 @@ const Account: React.FC<AccountProps> = ({ customerData, setCustomerData }) => {
                         </div>
                     </div>
 
-                    <div className="row mt-4">
+                    <div className="row mt-4 mb-4">
                         {places.map((place, index) => (
                             <div className="col-12 dashboard" key={place.id}>
                                 <div

@@ -81,6 +81,7 @@ class Order(models.Model):
     rp_salesman_email = models.IntegerField("salesman_email", null=True, blank=True)
     rp_assigned_user_id = models.IntegerField("assigned_user_id", null=True, blank=True)
     rp_branch_office_id = models.IntegerField("salesman_email", null=True, blank=True)
+    rp_status = models.IntegerField("status", null=True, blank=True)
     end_order = models.BooleanField("End repeating order", default=False)
 
     def __str__(self):
