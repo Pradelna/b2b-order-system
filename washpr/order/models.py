@@ -1,34 +1,11 @@
-from datetime import datetime
+from datetime import datetime, timedelta
 
 from django.db import models
 from customer.models import Customer
 from place.models import Place
 
 
-class WrongPlace(models.Model):
-    customer = models.ForeignKey(Customer, on_delete=models.CASCADE, related_name="order_customer_place")
-    place_name = models.CharField("Place name", max_length=250)
-    active = models.BooleanField("Active", default=True)
-    rp_client_external_id = models.CharField("ItineraryClient external id", max_length=250, null=True, blank=True)
-    rp_client_name = models.CharField("Customer name", max_length=250, null=True, blank=True)
-    rp_client_id = models.IntegerField("ItineraryClient id", null=True, blank=True)
-    rp_id = models.IntegerField("ItineraryPlace id", null=True, blank=True)
-    rp_external_id = models.CharField("ItineraryPlace external id", max_length=250, null=True, blank=True)
-    rp_title = models.CharField("ItineraryPlace title", max_length=250, null=True, blank=True)
-    rp_city = models.CharField("ItineraryPlace city", max_length=250)
-    rp_street = models.CharField("ItineraryPlace street", max_length=250)
-    rp_number = models.CharField("ItineraryPlace number", max_length=50)
-    rp_zip = models.IntegerField("ItineraryPlace zip")
-    rp_person = models.CharField("ItineraryPlace contact person", max_length=250, null=True, blank=True)
-    rp_phone = models.CharField("ItineraryPlace phone number", max_length=50, null=True, blank=True)
-    rp_email = models.CharField("ItineraryPlace email", max_length=250, null=True, blank=True)
-
-    def __str__(self):
-        return f"Place of {self.customer.company_name} - {self.place_name}"
-
-    class Meta:
-        verbose_name = 'Worng Place'
-        verbose_name_plural = 'Wrong Places'
+TOMMOROW = datetime.now() + timedelta(days=1)
 
 
 class Order(models.Model):
@@ -42,9 +19,11 @@ class Order(models.Model):
         ('Mon_Wed_Fri', 'Monday Wednesday Friday'),
         ('Tue_Thu', 'Tuesday Thursday'),
         ('Every_day', 'Every day'),
-        ('Own', 'Own system')
+        ('Own', 'Own system'),
+        ('One_time', 'One time order')
     ]
     system = models.CharField("System days", max_length=100, null=True, blank=True, choices=choice_system)
+    date_start_day = models.DateField("Start day", default=TOMMOROW)
     monday = models.BooleanField("Monday", default=False)
     tuesday = models.BooleanField("tuesday", default=False)
     wednesday = models.BooleanField("wednesday", default=False)
