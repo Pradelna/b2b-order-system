@@ -62,6 +62,8 @@ class Order(models.Model):
     rp_branch_office_id = models.IntegerField("salesman_email", null=True, blank=True)
     rp_status = models.IntegerField("status", null=True, blank=True)
     end_order = models.BooleanField("End repeating order", default=False)
+    canceled = models.BooleanField("Canceled mistaken order", default=False)
+    created_at = models.DateTimeField(auto_now_add=True)
 
     def __str__(self):
         return f"Order of {self.place.customer.company_name} - {self.place.place_name} - {self.id}"

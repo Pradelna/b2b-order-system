@@ -26,7 +26,6 @@ def create_order(request):
         place = Place.objects.get(id=data.get('place'), customer__user=request.user)
         # Добавляем валидацию для других полей через сериализатор
         serializer = OrderSerializer(data=data)
-        print(serializer)
         if serializer.is_valid():
             # n = 0
             # limit = 20
@@ -78,7 +77,7 @@ def create_order(request):
 def get_place_orders(request, place_id):
     try:
         # Получаем заказы, связанные с данным местом
-        orders = Order.objects.filter(place_id=place_id)
+        orders = Order.objects.filter(place_id=place_id).order_by('-id')
 
         # Сериализуем заказы
         serializer = GetOrderSerializer(orders, many=True)

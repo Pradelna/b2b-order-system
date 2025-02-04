@@ -1,8 +1,9 @@
 import React, { useState, useEffect } from "react";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { faTruck, faFileInvoiceDollar, faFileLines } from "@fortawesome/free-solid-svg-icons";
+import { faTruck, faFileInvoiceDollar, faFileLines, faCheckCircle, faBan } from "@fortawesome/free-solid-svg-icons";
 import { fetchWithAuth } from "../account/auth";
 import { Tooltip as ReactTooltip } from "react-tooltip";
+import {Form} from "react-router-dom";
 
 interface Order {
     id: number;
@@ -22,6 +23,9 @@ const OrderHistory: React.FC<OrderHistoryProps> = ({ placeId, orders = [], setOr
     const [visibleOrders, setVisibleOrders] = useState<number>(10);
     const [hasMoreOrders, setHasMoreOrders] = useState<boolean>(false);
     const [loading, setLoading] = useState<boolean>(true);
+    const [expandedOrders, setExpandedOrders] = useState<{ [key: number]: boolean }>({});
+    const [cancelableOrders, setCancelableOrders] = useState<{ [key: number]: boolean }>({});
+    const [successMessage, setSuccessMessage] = useState<string>("");
 
     // Fetch orders from the API
     const fetchOrders = async () => {
@@ -61,6 +65,54 @@ const OrderHistory: React.FC<OrderHistoryProps> = ({ placeId, orders = [], setOr
         });
     };
 
+    const toggleExpand = (orderId: number) => {
+        setExpandedOrders((prev) => ({
+            ...prev,
+            [orderId]: !prev[orderId]
+        }));
+    };
+
+    useEffect(() => {
+        const checkCancelableOrders = () => {
+            const now = new Date().getTime();
+            const updatedCancelableOrders: { [key: number]: boolean } = {};
+            orders.forEach((order) => {
+                const createdTime = new Date(order.created_at).getTime();
+                const timeDiff = (now - createdTime) / 60000; // Разница в минутах
+                updatedCancelableOrders[order.id] = timeDiff < 30;
+            });
+            setCancelableOrders(updatedCancelableOrders);
+        };
+
+        checkCancelableOrders();
+        const interval = setInterval(checkCancelableOrders, 60000); // Проверять каждую минуту
+        return () => clearInterval(interval);
+    }, [orders]);
+
+    const handleCancelOrder = async (orderId: number) => {
+        if (window.confirm("Are you sure you want to cancel this order?")) {
+            try {
+                const response = await fetchWithAuth(`http://127.0.0.1:8000/api/order/update/${orderId}/`, {
+                    method: "PUT",
+                    headers: {
+                        "Content-Type": "application/json",
+                    },
+                    body: JSON.stringify({ canceled: true }),
+                });
+
+                if (response.ok) {
+                    const updatedOrder = await response.json();
+                    setSuccessMessage("Order successfully canceled!.");
+                    setTimeout(() => setSuccessMessage(""), 10000);
+                } else {
+                    console.error("Failed to stop order.");
+                }
+            } catch (error) {
+                console.error("Error stopping order:", error);
+            }
+        }
+    };
+
     if (loading) {
         return <p>Loading order history...</p>;
     }
@@ -69,12 +121,19 @@ const OrderHistory: React.FC<OrderHistoryProps> = ({ placeId, orders = [], setOr
         <div className="order-history">
             <h3 className="account-info">Order History</h3>
             <h3 className="detail-info">{orders.length > 0 ? orders[0].place_name : ""}</h3>
+            {successMessage && (
+                <p className="alert alert-success mb-2">{successMessage}</p>
+            )}
             {orders.length > 0 ? (
                 <div>
                     {orders.slice(0, visibleOrders)
-                        .sort((a, b) => b.id - a.id)
+                        // .sort((a, b) => b.id - a.id)
                         .map((order) => (
-                        <div key={order.id} className="card">
+                        <div
+                            key={order.id}
+                            className={`card ${expandedOrders[order.id] ? "expanded" : ""}`}
+                            onClick={() => toggleExpand(order.id)}
+                        >
                             <div className="history-icon">
                                 <FontAwesomeIcon icon={faTruck} />
                             </div>
@@ -107,11 +166,44 @@ const OrderHistory: React.FC<OrderHistoryProps> = ({ placeId, orders = [], setOr
                                 />
                             </div>
                             <p>
-                                <strong>Pickup Date:</strong> {order.date_pickup}
+                                {order.canceled ? (
+                                    <>
+                                        <FontAwesomeIcon icon={faBan} style={{ color: "red", height: "18px" }}/>
+                                        <strong className="ms-2">Canceled</strong>
+                                    </>
+                                ) : (
+                                    <>
+                                        <FontAwesomeIcon icon={faCheckCircle} style={{ color: "#00aab7", height: "18px" }}/>
+                                        <strong className="ms-2">Completed</strong>
+                                    </>
+                                    )}
                             </p>
+                            {/*<p>*/}
+                            {/*    <strong>Pickup Date:</strong> {order.date_pickup}*/}
+                            {/*</p>*/}
                             <p>
-                                <strong>Delivery Date:</strong> {order.date_delivery}
+                                <strong>Number order:</strong> {order.id}
                             </p>
+                            {/* Дополнительная информация показывается только если карточка развернута */}
+                            {expandedOrders[order.id] && (
+                                <div className="expanded-content">
+                                    <p><strong>Pickup Date:</strong> {order.system}</p>
+                                    <p><strong>Delivery Date:</strong> {order.type_ship}</p>
+                                </div>
+                            )}
+                            {/* Кнопка отмены заказа (только если заказ можно отменить) */}
+                            {cancelableOrders[order.id] && !order.canceled && (
+                                <button
+                                    className="btn btn-link cancel-order"
+                                    onClick={(e) => {
+                                        e.stopPropagation(); // Чтобы не срабатывал toggleExpand
+                                        handleCancelOrder(order.id);
+                                    }}
+                                >
+                                    Cancel Order
+                                </button>
+                            )}
+
                         </div>
                     ))}
                     {hasMoreOrders && (

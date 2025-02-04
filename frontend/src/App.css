@@ -139,6 +139,10 @@ a {
     font-size: 24px;
   }
 
+  .detail-page .card {
+    border: solid 0px;
+  }
+
   #company-top .card:hover {
     transform: translateY(-5px);
     box-shadow: 0 6px 12px rgba(0, 0, 0, 0.35);
@@ -308,6 +312,10 @@ p.text-history {
   opacity: 0;
   display: none;
   transition: height 0.3s ease, top 0.3s ease, opacity 0.3s ease, box-shadow 0.3s;
+}
+
+#card-history .cancel-order {
+  display: none;
 }
 
 #card-history.active {
@@ -778,6 +786,22 @@ svg.loader{
   border: solid 2px #00aab7;
   cursor: pointer; /* Изменение курсора */
   transition: all 0.3s ease; /* Плавный переход при наведении */
+}
+
+.place-detail-page .card {
+  cursor: pointer;
+  overflow: hidden;
+  transition: height 0.3s ease-in-out;
+}
+
+.place-detail-page .expanded {
+  height: 170px;
+}
+
+.cancel-order {
+  position: absolute;
+  top: 18px;
+  right: 86px;
 }
 
 /*checkbox*/
