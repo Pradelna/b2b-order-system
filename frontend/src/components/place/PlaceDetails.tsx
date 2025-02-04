@@ -1,19 +1,23 @@
 import React, { useState, useEffect, useContext } from "react";
 import { LanguageContext } from "../../context/LanguageContext";
-import { useParams, useNavigate } from "react-router-dom";
+import { useParams, useNavigate, Link } from "react-router-dom";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import {
     faPenToSquare,
     faSquareXmark,
     faCartPlus,
     faPowerOff,
+    faCircleCheck,
+    faStopwatch
 } from "@fortawesome/free-solid-svg-icons";
 import HeaderAccount from "../HeaderAccount";
 import Footer from "../Footer";
 import PlaceEdit from "./PlaceEdit";
 import OrderForm from "../order/OrderForm";
-import { fetchWithAuth } from "../account/auth";
 import OrderHistory from "../order/OrderHistory";
+import OrderSuccess from "../order/OrderSuccess";
+import { fetchWithAuth } from "../account/auth";
+
 
 interface Place {
     rp_number: any;
@@ -54,6 +58,7 @@ const PlaceDetails: React.FC = () => {
     const [showEditForm, setShowEditForm] = useState<boolean>(false);
     const [showOrderForm, setShowOrderForm] = useState<boolean>(false);
     const [successMessage, setSuccessMessage] = useState<string>("");
+    const [successOrderMessage, setSuccessOrderMessage] = useState(null);
 
     const [currentOrder, setCurrentOrder] = useState<Order | null>(null);
     const [orderHistory, setOrderHistory] = useState<Order[]>([]);
@@ -157,7 +162,7 @@ const PlaceDetails: React.FC = () => {
                         return [updatedOrder, ...prevOrders];
                     });
                     setSuccessMessage("Order successfully stopped.");
-                    setTimeout(() => setSuccessMessage(""), 5000);
+                    setTimeout(() => setSuccessMessage(""), 10000);
                 } else {
                     console.error("Failed to stop order.");
                 }
@@ -183,11 +188,6 @@ const PlaceDetails: React.FC = () => {
                     </div>
                 </div>
                 <div className="row other-card">
-                    {/*<div className="col-lg-8 col-md-10 col-12">*/}
-                    {/*    {successMessage && (*/}
-                    {/*        <p className="alert alert-success">{successMessage}</p>*/}
-                    {/*    )}*/}
-                    {/*</div>*/}
 
                     <div className="col-lg-8 col-md-10 col-12">
                         <div className="card place-details">
@@ -331,12 +331,17 @@ const PlaceDetails: React.FC = () => {
                             setSuccessMessage(
                                 `Order created successfully for place: ${newOrder.rp_place_title}`
                             );
-                            setTimeout(() => setSuccessMessage(""), 50000);
+                            setTimeout(() => setSuccessMessage(""), 10000);
                             setShowOrderForm(false);
+                            setSuccessOrderMessage(newOrder);
                             // Обновляем данные из API
                             fetchOrders();
                         }}
                     />
+                )}
+
+                {successOrderMessage && (
+                    <OrderSuccess newOrder={successOrderMessage} onClose={() => setSuccessOrderMessage(null)} />
                 )}
             </div>
             <Footer />

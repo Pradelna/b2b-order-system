@@ -1,10 +1,11 @@
 import React, { useState, useEffect, useContext } from "react";
 import { LanguageContext } from "../../context/LanguageContext";
-import { useNavigate, useLocation } from "react-router-dom";
+import {useNavigate, useLocation, Link} from "react-router-dom";
 import CompanyInfo from "../customer/CompanyInfo";
 import PlaceForm from "../place/PlaceForm";
 import OrderForm from "../order/OrderForm";
 import OrderHistory from "../order/OrderHistory";
+import OrderSuccess from "../order/OrderSuccess";
 import { fetchWithAuth } from "./auth";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import {
@@ -12,8 +13,9 @@ import {
     faHouse,
     faCartPlus,
     faBuilding,
-    faFileInvoiceDollar
+    faFileInvoiceDollar, faCircleCheck, faStopwatch
 } from "@fortawesome/free-solid-svg-icons";
+
 
 interface AccountProps {
     customerData: Record<string, any> | null;
@@ -49,6 +51,7 @@ const Account: React.FC<AccountProps> = ({ customerData, setCustomerData }) => {
     const [showOrderForm, setShowOrderForm] = useState<boolean>(false);
     const [currentPlaceId, setCurrentPlaceId] = useState<number | null>(null);
     const [selectedPlaceId, setSelectedPlaceId] = useState<number | null>(null);
+    const [successOrderMessage, setSuccessOrderMessage] = useState(null);
 
     const handleCardClick = (
         event: React.MouseEvent<HTMLDivElement>,
@@ -304,8 +307,13 @@ const Account: React.FC<AccountProps> = ({ customerData, setCustomerData }) => {
                     onSuccess={(newOrder) => {
                         setOrders((prevOrders) => [...prevOrders, newOrder]);
                         handleOrderSuccess(currentPlaceId);
+                        setSuccessOrderMessage(newOrder);
                     }}
                 />
+            )}
+
+            {successOrderMessage && (
+                <OrderSuccess newOrder={successOrderMessage} onClose={() => setSuccessOrderMessage(null)} />
             )}
         </div>
     );

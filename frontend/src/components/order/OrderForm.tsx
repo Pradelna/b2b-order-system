@@ -16,6 +16,8 @@ const OrderForm: React.FC<OrderFormProps> = ({ placeId, onClose, onSuccess }) =>
   const tomorrow = new Date();
   tomorrow.setDate(tomorrow.getDate() + 1); // Get tomorrow's date
   const formattedTomorrow = tomorrow.toISOString().split("T")[0]; // Convert to YYYY-MM-DD
+  const [successMessage, setSuccessMessage] = useState<string | null>(null);
+
   const [formData, setFormData] = useState({
     place: placeId || "",
     type_ship: "",
@@ -133,14 +135,14 @@ const OrderForm: React.FC<OrderFormProps> = ({ placeId, onClose, onSuccess }) =>
 
     const formattedData = {
       ...formData,
-      system: useCustomDays ? null : formData.system,
+      system: formData.system,
       place: placeId || formData.place,
       date_pickup: formatDate(formData.date_pickup),
       date_delivery: formatDate(formData.date_delivery),
       date_start_day: formatDate(formData.date_start_day),
     };
 
-    console.log("🚀 Submitting Order Data:", formattedData); // Debug log
+    // console.log("🚀 Submitting Order Data:", formattedData); // Debug log
 
     try {
       const response = await fetchWithAuth("http://127.0.0.1:8000/api/order/create/", {
@@ -155,7 +157,8 @@ const OrderForm: React.FC<OrderFormProps> = ({ placeId, onClose, onSuccess }) =>
 
       if (response.ok) {
         console.log("✅ Order Created:", responseData);
-        onSuccess(responseData.order);
+        onSuccess(responseData);
+        setSuccessMessage(`Order created successfully: ${responseData}`);
       } else {
         console.error("❌ Failed Response:", responseData);
         alert("Failed to create order: " + JSON.stringify(responseData));
@@ -164,10 +167,6 @@ const OrderForm: React.FC<OrderFormProps> = ({ placeId, onClose, onSuccess }) =>
       console.error("🔥 Error submitting form:", error);
     }
   };
-
-  useEffect(() => {
-    console.log("🟢 FormData Updated:", formData);
-  }, [formData]);
 
   return (
     <div className="modal-backdrop">
@@ -364,7 +363,6 @@ const OrderForm: React.FC<OrderFormProps> = ({ placeId, onClose, onSuccess }) =>
                     name="every_week"
                     checked={formData.every_week}
                     onChange={handleCheckboxChange}
-                    required
                 />
                 <label htmlFor="every_week" className="check-box" />
               </div>
@@ -411,29 +409,6 @@ const OrderForm: React.FC<OrderFormProps> = ({ placeId, onClose, onSuccess }) =>
             <div className="col-11">Terms of Use</div>
           </div>
 
-
-          {/* Terms */}
-          {/*<div className="row mb-3">*/}
-          {/*  <div className="col-3 label-form">*/}
-          {/*    <label htmlFor="terms">Terms of Use*</label>*/}
-          {/*  </div>*/}
-          {/*  <div className="col-9 label-form">*/}
-          {/*    <input*/}
-          {/*        className="form-check-input"*/}
-          {/*        type="checkbox"*/}
-          {/*        name="terms"*/}
-          {/*        checked={formData.terms}*/}
-          {/*        onChange={handleChange}*/}
-          {/*        required*/}
-          {/*    />*/}
-          {/*  </div>*/}
-          {/*</div>*/}
-
-          {/*<div className="checkbox-wrapper-19">*/}
-          {/*  <input type="checkbox" id="cbtest-19"/>*/}
-          {/*  <label htmlFor="cbtest-19" className="check-box" />*/}
-          {/*</div>*/}
-
           {/* Submit and Close Buttons */}
           <div className="row mt-3">
             <button className="btn-submit me-2" type="submit">
@@ -446,6 +421,7 @@ const OrderForm: React.FC<OrderFormProps> = ({ placeId, onClose, onSuccess }) =>
         </form>
       </div>
     </div>
+
     </div>
 );
 };
