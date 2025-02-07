@@ -447,6 +447,12 @@ p.text-history {
   color: white;
 }
 
+.btn-link:active,
+:not(.btn-check)+.btn:active{
+  background-color: #00aab7;
+  color: white;
+}
+
 .btn-red {
   background-color: #d90505;
   text-transform: uppercase;
@@ -810,6 +816,7 @@ svg.loader{
    box-sizing: border-box;
    --background-color: #fff;
    --checkbox-height: 25px;
+   position: relative;
  }
 
 @-moz-keyframes dothabottomcheck-19 {
@@ -876,7 +883,10 @@ svg.loader{
 }
 
 .checkbox-wrapper-19 input[type=checkbox] {
-  display: none;
+  opacity: 0;
+  position: absolute;
+  top: 5%;
+  right: 20%;
 }
 
 .checkbox-wrapper-19 .check-box {
@@ -885,7 +895,8 @@ svg.loader{
   background-color: transparent;
   border: calc(var(--checkbox-height) * .1) solid #000;
   border-radius: 5px;
-  position: relative;
+  position: absolute;
+  top: 0;
   display: inline-block;
   -moz-box-sizing: border-box;
   -webkit-box-sizing: border-box;
@@ -959,3 +970,4 @@ svg.loader{
 }
 
 /*end checkbox*/
+

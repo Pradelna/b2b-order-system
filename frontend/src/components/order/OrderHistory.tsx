@@ -25,7 +25,9 @@ const OrderHistory: React.FC<OrderHistoryProps> = ({ placeId, orders = [], setOr
     const [loading, setLoading] = useState<boolean>(true);
     const [expandedOrders, setExpandedOrders] = useState<{ [key: number]: boolean }>({});
     const [cancelableOrders, setCancelableOrders] = useState<{ [key: number]: boolean }>({});
+    const [canceledOrder, setCanceledOrder] = useState<{ [key: number]: boolean }>({});
     const [successMessage, setSuccessMessage] = useState<string>("");
+    const [updatedOrder, setUpdatedOrder] = useState<any>(null);
 
     // Fetch orders from the API
     const fetchOrders = async () => {
@@ -47,6 +49,7 @@ const OrderHistory: React.FC<OrderHistoryProps> = ({ placeId, orders = [], setOr
             setLoading(false);
         }
     };
+
 
     useEffect(() => {
         if (!placeId) {
@@ -76,12 +79,16 @@ const OrderHistory: React.FC<OrderHistoryProps> = ({ placeId, orders = [], setOr
         const checkCancelableOrders = () => {
             const now = new Date().getTime();
             const updatedCancelableOrders: { [key: number]: boolean } = {};
+            const updatedCanceledOrder: { [key: number]: boolean } = {};
             orders.forEach((order) => {
                 const createdTime = new Date(order.created_at).getTime();
                 const timeDiff = (now - createdTime) / 60000; // Разница в минутах
                 updatedCancelableOrders[order.id] = timeDiff < 30;
+                updatedCanceledOrder[order.id] = order.canceled
             });
             setCancelableOrders(updatedCancelableOrders);
+            setCanceledOrder(updatedCanceledOrder);
+            console.log(canceledOrder);
         };
 
         checkCancelableOrders();
@@ -101,7 +108,10 @@ const OrderHistory: React.FC<OrderHistoryProps> = ({ placeId, orders = [], setOr
                 });
 
                 if (response.ok) {
-                    const updatedOrder = await response.json();
+                    const dataUpdatedOrder = await response.json();
+                    setUpdatedOrder(dataUpdatedOrder)
+                    console.log(updatedOrder);
+                    fetchOrders();
                     setSuccessMessage("Order successfully canceled!.");
                     setTimeout(() => setSuccessMessage(""), 10000);
                 } else {
@@ -113,6 +123,8 @@ const OrderHistory: React.FC<OrderHistoryProps> = ({ placeId, orders = [], setOr
         }
     };
 
+    console.log(updatedOrder);
+
     if (loading) {
         return <p>Loading order history...</p>;
     }
@@ -122,7 +134,7 @@ const OrderHistory: React.FC<OrderHistoryProps> = ({ placeId, orders = [], setOr
             <h3 className="account-info">Order History</h3>
             <h3 className="detail-info">{orders.length > 0 ? orders[0].place_name : ""}</h3>
             {successMessage && (
-                <p className="alert alert-success mb-2">{successMessage}</p>
+                <p className="alert alert-success mb-3">{successMessage}</p>
             )}
             {orders.length > 0 ? (
                 <div>
@@ -166,15 +178,25 @@ const OrderHistory: React.FC<OrderHistoryProps> = ({ placeId, orders = [], setOr
                                 />
                             </div>
                             <p>
-                                {order.canceled ? (
+                                {order.canceled || (updatedOrder?.id === order.id) ? (
                                     <>
                                         <FontAwesomeIcon icon={faBan} style={{ color: "red", height: "18px" }}/>
                                         <strong className="ms-2">Canceled</strong>
                                     </>
                                 ) : (
                                     <>
-                                        <FontAwesomeIcon icon={faCheckCircle} style={{ color: "#00aab7", height: "18px" }}/>
-                                        <strong className="ms-2">Completed</strong>
+                                        {cancelableOrders[order.id] && !order.canceled ? (
+                                            <>
+                                                <FontAwesomeIcon icon={faCheckCircle} style={{ color: "#00aab7", height: "18px" }}/>
+                                                <strong className="ms-2">New</strong>
+                                            </>
+                                        ) : (
+                                            <>
+                                                <FontAwesomeIcon icon={faCheckCircle} style={{ color: "#00aab7", height: "18px" }}/>
+                                                <strong className="ms-2">Completed</strong>
+                                            </>
+                                        )}
+
                                     </>
                                     )}
                             </p>
@@ -192,7 +214,7 @@ const OrderHistory: React.FC<OrderHistoryProps> = ({ placeId, orders = [], setOr
                                 </div>
                             )}
                             {/* Кнопка отмены заказа (только если заказ можно отменить) */}
-                            {cancelableOrders[order.id] && !order.canceled && (
+                            {cancelableOrders[order.id] && !order.canceled && (updatedOrder?.id !== order.id) && (
                                 <button
                                     className="btn btn-link cancel-order"
                                     onClick={(e) => {

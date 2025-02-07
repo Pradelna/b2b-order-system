@@ -17,6 +17,7 @@ const OrderForm: React.FC<OrderFormProps> = ({ placeId, onClose, onSuccess }) =>
   tomorrow.setDate(tomorrow.getDate() + 1); // Get tomorrow's date
   const formattedTomorrow = tomorrow.toISOString().split("T")[0]; // Convert to YYYY-MM-DD
   const [successMessage, setSuccessMessage] = useState<string | null>(null);
+  const [showError, setShowError] = useState(false);
 
   const [formData, setFormData] = useState({
     place: placeId || "",
@@ -383,7 +384,7 @@ const OrderForm: React.FC<OrderFormProps> = ({ placeId, onClose, onSuccess }) =>
                   name="rp_customer_note"
                   value={formData.rp_customer_note}
                   onChange={handleInputChange}
-                  rows={3} // Allows multiple lines
+                  rows={2} // Allows multiple lines
                   placeholder="Enter your notes here..."
               />
             </div>
@@ -402,11 +403,16 @@ const OrderForm: React.FC<OrderFormProps> = ({ placeId, onClose, onSuccess }) =>
                     checked={formData.terms}
                     onChange={handleCheckboxChange}
                     required
+                    style={{ opacity: 0 }}
                 />
+
                 <label htmlFor="terms" className="check-box" />
               </div>
             </div>
-            <div className="col-11">Terms of Use</div>
+            <div className="col-11">
+              Terms of Use
+              {showError && !formData.terms && (<p className="text-danger mt-1">You must accept the Terms of Use</p>)}
+            </div>
           </div>
 
           {/* Submit and Close Buttons */}

@@ -17,6 +17,7 @@ import OrderForm from "../order/OrderForm";
 import OrderHistory from "../order/OrderHistory";
 import OrderSuccess from "../order/OrderSuccess";
 import { fetchWithAuth } from "../account/auth";
+import {Tooltip as ReactTooltip} from "react-tooltip";
 
 
 interface Place {
@@ -192,21 +193,43 @@ const PlaceDetails: React.FC = () => {
                     <div className="col-lg-8 col-md-10 col-12">
                         <div className="card place-details">
                             {!showEditForm ? (
+                                <>
                                 <FontAwesomeIcon
                                     icon={faPenToSquare}
                                     className="settings"
                                     style={{ cursor: "pointer" }}
                                     onClick={() => setShowEditForm(true)}
+                                    data-tooltip-id="edit-card-tooltip"
                                 />
+                                <ReactTooltip
+                                    id="edit-card-tooltip"
+                                    place="top"
+                                    arrowPlace="top"
+                                    effect="solid"
+                                    delayShow={120}
+                                    content="Edit place information"
+                                    globalEventOff="click"
+                                />
+                                </>
                             ) : (
                                 <FontAwesomeIcon
                                     icon={faSquareXmark}
                                     className="settings"
                                     style={{ cursor: "pointer" }}
                                     onClick={() => setShowEditForm(false)}
+                                    data-tooltip-id="close-tooltip"
                                 />
                             )}
 
+                            <ReactTooltip
+                                id="close-tooltip"
+                                place="top"
+                                effect="solid"
+                                delayShow={100}
+                                content="Close"
+                                className="custom-tooltip"
+                                globalEventOff="click"
+                            />
                             <h1>Place Details</h1>
                             {!showEditForm ? (
                                 <div>

@@ -8,7 +8,7 @@ class OrderSerializer(serializers.ModelSerializer):
         fields = [
             'place', 'rp_place_title', 'type_ship', 'system', 'monday', 'tuesday', 'wednesday', 'thursday',
             'friday', 'date_pickup', 'date_delivery', 'every_week', 'rp_customer_note', 'terms', 'active',
-            'end_order', 'rp_status', 'date_start_day', 'created_at', 'canceled'
+            'end_order', 'rp_status', 'date_start_day', 'created_at', 'canceled', 'id'
         ]
         extra_kwargs = {
             'terms': {'required': True},
@@ -16,7 +16,7 @@ class OrderSerializer(serializers.ModelSerializer):
             'date_pickup': {'required': True},
             'date_delivery': {'required': True},
         }
-        read_only_fields = ['created_at']
+        read_only_fields = ['created_at', 'id']
 
     def validate(self, data):
         # Дополнительная валидация
