@@ -1,4 +1,4 @@
-import { useState, useEffect, useContext } from "react";
+import React, { useState, useEffect, useContext } from "react";
 import { LanguageContext } from "../../context/LanguageContext";
 import { useParams } from "react-router-dom";
 import CustomerEdit from "./CustomerEdit.js";
@@ -75,11 +75,17 @@ const CustomerDetailPage: React.FC = () => {
     return (
         <>
             <HeaderAccount />
-            <div className="container margin-top-130 wrapper">
+            <div className="container margin-top-90 wrapper">
+                <div className="row message-block-76">
+                    <div className="col-lg-8 col-md-10 col-12">
+                        {successMessage && (
+                            <p className="alert alert-success">{successMessage}</p>
+                        )}
+                    </div>
+                </div>
                 <div className="row">
                     <div className="col-lg-8 col-12">
                         <div className="row detail-page">
-                            {successMessage && <p className="alert alert-success">{successMessage}</p>}
 
                             {isEditing ? (
                                 <CustomerEdit

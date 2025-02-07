@@ -8,7 +8,7 @@ import {
     faCartPlus,
     faPowerOff,
     faCircleCheck,
-    faStopwatch
+    faStopwatch, faFileInvoiceDollar
 } from "@fortawesome/free-solid-svg-icons";
 import HeaderAccount from "../HeaderAccount";
 import Footer from "../Footer";
@@ -18,6 +18,7 @@ import OrderHistory from "../order/OrderHistory";
 import OrderSuccess from "../order/OrderSuccess";
 import { fetchWithAuth } from "../account/auth";
 import {Tooltip as ReactTooltip} from "react-tooltip";
+import NavButtons from "@/components/account/NavButtons.js";
 
 
 interface Place {
@@ -182,7 +183,10 @@ const PlaceDetails: React.FC = () => {
 
             <div className="container margin-top-90 wrapper place-detail-page">
                 <div className="row message-block">
-                    <div className="col-lg-8 col-md-10 col-12">
+                    <div className="col-3">
+                        <NavButtons />
+                    </div>
+                    <div className="col-lg-6 col-md-4 col-4">
                         {successMessage && (
                             <p className="alert alert-success">{successMessage}</p>
                         )}
@@ -352,7 +356,7 @@ const PlaceDetails: React.FC = () => {
                                 setCurrentOrder(newOrder);
                             }
                             setSuccessMessage(
-                                `Order created successfully for place: ${newOrder.rp_place_title}`
+                                `Order created successfully`
                             );
                             setTimeout(() => setSuccessMessage(""), 10000);
                             setShowOrderForm(false);
