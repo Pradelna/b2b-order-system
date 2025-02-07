@@ -18,6 +18,7 @@ import LoaderTestPage from "./components/LoaderTestPage";
 import PlaceDetails from "./components/place/PlaceDetails";
 
 import "./App.css";
+import ReportList from "./components/order/ReportList";
 
 // Define the shape of the language data
 interface LanguageData {
@@ -120,6 +121,16 @@ const App: React.FC = () => {
                 <PlaceDetails />
               </PrivateRoute>
             }
+          />
+
+          {/* Place details page */}
+          <Route
+              path="/invoices"
+              element={
+                <PrivateRoute>
+                  <ReportList />
+                </PrivateRoute>
+              }
           />
 
           {/* Fallback for unknown routes */}

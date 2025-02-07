@@ -1,5 +1,5 @@
 from rest_framework import serializers
-from .models import Order
+from .models import Order, ReportFile, OrderReport
 
 
 class OrderSerializer(serializers.ModelSerializer):
@@ -44,3 +44,20 @@ class GetOrderSerializer(serializers.ModelSerializer):
             'every_week', 'terms', 'end_order', 'rp_problem_description', 'date_start_day', 'canceled'
         ]
         read_only_fields = ['id', 'place', 'created_at']
+
+
+class ReportFileSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = ReportFile
+        fields = ["id", "file", "uploaded_at"]
+
+class OrderReportSerializer(serializers.ModelSerializer):
+    files = ReportFileSerializer(many=True, read_only=True)  # Fetch associated files
+    orders_count = serializers.SerializerMethodField()  # Get number of orders
+
+    class Meta:
+        model = OrderReport
+        fields = ["id", "report_month", "created_at", "orders", "orders_count", "files"]
+
+    def get_orders_count(self, obj):
+        return obj.orders.count()

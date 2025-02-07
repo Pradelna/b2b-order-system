@@ -693,9 +693,13 @@ svg.loader{
 }
 
 .place-icon svg,
-.invoice-icon svg,
 .receipt-icon svg {
   height: 20px;
+}
+
+.invoice-icon svg {
+  height: 20px;
+  width: 15px;
 }
 
 .place-icon {
@@ -728,7 +732,26 @@ svg.loader{
   padding: 15px 18px;
   position: absolute;
   top: 20px;
-  right: 88px;
+  left: 20px;
+}
+
+
+
+.download-invoice {
+  position: absolute;
+  top: 20px;
+  right: 20px;
+}
+
+.download-invoice svg{
+  height: 20px;
+}
+
+.btn-download {
+  background-color: #e1f6f8;
+  height: 50px;
+  width: 150px;
+  padding: 14px;
 }
 
 .receipt-icon {
