@@ -39,11 +39,11 @@ class GetOrderSerializer(serializers.ModelSerializer):
     class Meta:
         model = Order
         fields = [
-            'id', 'place', 'place_name', 'type_ship', 'system', 'monday', 'tuesday',
+            'id', 'place', 'user', 'place_name', 'type_ship', 'system', 'monday', 'tuesday',
             'wednesday', 'thursday', 'friday', 'date_pickup', 'date_delivery', 'created_at',
             'every_week', 'terms', 'end_order', 'rp_problem_description', 'date_start_day', 'canceled'
         ]
-        read_only_fields = ['id', 'place', 'created_at']
+        read_only_fields = ['id', 'user', 'place', 'created_at']
 
 
 class ReportFileSerializer(serializers.ModelSerializer):

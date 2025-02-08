@@ -1,72 +1,69 @@
 import React, { useState, useEffect } from "react";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { faTruck, faFileLines, faCheckCircle, faBan } from "@fortawesome/free-solid-svg-icons";
+import {
+    faTruck,
+    faFileLines,
+    faBan
+} from "@fortawesome/free-solid-svg-icons";
 import { fetchWithAuth } from "../account/auth";
-import { Tooltip as ReactTooltip } from "react-tooltip";
-import {Form} from "react-router-dom";
+import { Tooltip } from "react-tooltip";
+import HeaderAccount from "../HeaderAccount";
+import NavButtons from "../account/NavButtons";
+import Footer from "../Footer";
 
 interface Order {
     id: number;
     place_name: string;
     date_pickup: string;
     date_delivery: string;
+    system: string;
+    type_ship: string;
+    user: number; // ✅ Ensure user ID exists in the API response
 }
 
-interface OrderHistoryProps {
-    placeId: number; // ID of the place to load orders for
-    hasMoreOrders: boolean;
-    orders?: Order[]; // Сделано необязательным для защиты
-    setOrders?: (orders: Order[]) => void; // Передача функции для обновления списка заказов
-}
-
-const AllOrderHistory: React.FC<OrderHistoryProps> = ({ placeId, orders = [], setOrders}) => {
-    const [visibleOrders, setVisibleOrders] = useState<number>(10);
+const AllOrderHistory: React.FC = () => {
+    const [orders, setOrders] = useState<Order[]>([]);
+    const [visibleOrders, setVisibleOrders] = useState<number>(20);
     const [hasMoreOrders, setHasMoreOrders] = useState<boolean>(false);
     const [loading, setLoading] = useState<boolean>(true);
     const [expandedOrders, setExpandedOrders] = useState<{ [key: number]: boolean }>({});
-    const [cancelableOrders, setCancelableOrders] = useState<{ [key: number]: boolean }>({});
-    const [successMessage, setSuccessMessage] = useState<string>("");
-    const [updatedOrder, setUpdatedOrder] = useState<any>(null);
+    const [customerId, setCustomerId] = useState<number | null>(null); // ✅ Fix type
 
-    // Fetch orders from the API
-    const fetchOrders = async () => {
-        try {
-            // console.log("Fetching orders for place ID", placeId);
-            const response = await fetchWithAuth(`http://127.0.0.1:8000/api/order/${placeId}/orders/`);
-            if (response.ok) {
-                const data: Order[] = await response.json();
-                if (setOrders) {
-                    setOrders(data);
-                }
-                setHasMoreOrders(data.length > 10);
-            } else {
-                console.error("Failed to fetch orders");
-            }
-        } catch (error) {
-            console.error("Error fetching orders:", error);
-        } finally {
-            setLoading(false);
-        }
-    };
-
-
+    // ✅ Fetch Orders on Mount
     useEffect(() => {
-        if (!placeId) {
-            console.error("Invalid placeId:", placeId);
-            return;
-        }
-        fetchOrders();
-    }, [placeId]);
+        const fetchOrders = async () => {
+            try {
+                const response = await fetchWithAuth("http://127.0.0.1:8000/api/order/all-orders/");
+                if (response.ok) {
+                    const data: Order[] = await response.json();
+                    setOrders(data.sort((a, b) => b.id - a.id)); // ✅ Sort orders (newest first)
+                    setHasMoreOrders(data.length > visibleOrders);
+                } else {
+                    console.error("Failed to fetch orders");
+                }
+            } catch (error) {
+                console.error("Error fetching orders:", error);
+            } finally {
+                setLoading(false);
+            }
+        };
 
-    // Load more orders when the user clicks "More"
+        fetchOrders();
+    }, []); // ✅ Run only once on mount
+
+    // ✅ Set customerId AFTER orders are fetched
+    useEffect(() => {
+        if (orders.length > 0) {
+            setCustomerId(orders[0].user); // ✅ Now it's safe to access orders[0]
+        }
+    }, [orders]); // ✅ Run when `orders` is updated
+
+    // ✅ Load More Orders
     const loadMoreOrders = () => {
-        setVisibleOrders((prev) => {
-            const newVisibleCount = prev + 10;
-            setHasMoreOrders(newVisibleCount < orders.length);
-            return newVisibleCount;
-        });
+        setVisibleOrders((prev) => prev + 10);
     };
 
+    // ✅ Toggle Expanded Order
     const toggleExpand = (orderId: number) => {
         setExpandedOrders((prev) => ({
             ...prev,
@@ -74,148 +71,87 @@ const AllOrderHistory: React.FC<OrderHistoryProps> = ({ placeId, orders = [], se
         }));
     };
 
-    useEffect(() => {
-        const checkCancelableOrders = () => {
-            const now = new Date().getTime();
-            const updatedCancelableOrders: { [key: number]: boolean } = {};
-            orders.forEach((order) => {
-                const createdTime = new Date(order.created_at).getTime();
-                const timeDiff = (now - createdTime) / 60000; // Разница в минутах
-                updatedCancelableOrders[order.id] = timeDiff < 30;
-            });
-            setCancelableOrders(updatedCancelableOrders);
-        };
-
-        checkCancelableOrders();
-        const interval = setInterval(checkCancelableOrders, 60000); // Проверять каждую минуту
-        return () => clearInterval(interval);
-    }, [orders]);
-
-    const handleCancelOrder = async (orderId: number) => {
-        if (window.confirm("Are you sure you want to cancel this order?")) {
-            try {
-                const response = await fetchWithAuth(`http://127.0.0.1:8000/api/order/update/${orderId}/`, {
-                    method: "PUT",
-                    headers: {
-                        "Content-Type": "application/json",
-                    },
-                    body: JSON.stringify({ canceled: true }),
-                });
-
-                if (response.ok) {
-                    const dataUpdatedOrder = await response.json();
-                    setUpdatedOrder(dataUpdatedOrder)
-                    setSuccessMessage("Order successfully canceled!.");
-                    setTimeout(() => setSuccessMessage(""), 10000);
-                } else {
-                    console.error("Failed to stop order.");
-                }
-            } catch (error) {
-                console.error("Error stopping order:", error);
-            }
-        }
-    };
-
-    if (loading) {
-        return <p>Loading order history...</p>;
-    }
+    if (loading) return <p>Loading order history...</p>;
 
     return (
-        <div className="order-history">
-            <h3 className="account-info">Order History</h3>
-            <h3 className="detail-info">{orders.length > 0 ? orders[0].place_name : ""}</h3>
-            {successMessage && (
-                <p className="alert alert-success mb-3">{successMessage}</p>
-            )}
-            {orders.length > 0 ? (
-                <div>
-                    {orders.slice(0, visibleOrders)
-                        // .sort((a, b) => b.id - a.id)
-                        .map((order) => (
-                            <div
-                                key={order.id}
-                                className={`card ${expandedOrders[order.id] ? "expanded" : ""}`}
-                                onClick={() => toggleExpand(order.id)}
-                            >
-                                <div className="history-icon">
-                                    <FontAwesomeIcon icon={faTruck} />
-                                </div>
+        <>
+            <HeaderAccount customerId={customerId} />
 
-                                <div className="receipt-icon">
-                                    <FontAwesomeIcon
-                                        icon={faFileLines}
-                                        data-tooltip-id="receipt-tooltip"
-                                        style={{ cursor: "pointer" }}
-                                    />
-                                    <ReactTooltip
-                                        id="receipt-tooltip"
-                                        place="top"
-                                        content="Download dodaci list"
-                                        effect="solid"
-                                        className="custom-tooltip"
-                                    />
-                                </div>
-                                <p>
-                                    {order.canceled || (updatedOrder?.id === order.id) ? (
-                                        <>
-                                            <FontAwesomeIcon icon={faBan} style={{ color: "red", height: "18px" }}/>
-                                            <strong className="ms-2">Canceled</strong>
-                                        </>
-                                    ) : (
-                                        <>
-                                            {cancelableOrders[order.id] && !order.canceled ? (
-                                                <>
-                                                    <FontAwesomeIcon icon={faCheckCircle} style={{ color: "#00aab7", height: "18px" }}/>
-                                                    <strong className="ms-2">New</strong>
-                                                </>
-                                            ) : (
-                                                <>
-                                                    <FontAwesomeIcon icon={faCheckCircle} style={{ color: "#00aab7", height: "18px" }}/>
-                                                    <strong className="ms-2">Completed</strong>
-                                                </>
-                                            )}
-
-                                        </>
-                                    )}
-                                </p>
-                                {/*<p>*/}
-                                {/*    <strong>Pickup Date:</strong> {order.date_pickup}*/}
-                                {/*</p>*/}
-                                <p>
-                                    <strong>Number order:</strong> {order.id}
-                                </p>
-                                {/* Дополнительная информация показывается только если карточка развернута */}
-                                {expandedOrders[order.id] && (
-                                    <div className="expanded-content">
-                                        <p><strong>Pickup Date:</strong> {order.system}</p>
-                                        <p><strong>Delivery Date:</strong> {order.type_ship}</p>
-                                    </div>
-                                )}
-                                {/* Кнопка отмены заказа (только если заказ можно отменить) */}
-                                {cancelableOrders[order.id] && !order.canceled && (updatedOrder?.id !== order.id) && (
-                                    <button
-                                        className="btn btn-link cancel-order"
-                                        onClick={(e) => {
-                                            e.stopPropagation(); // Чтобы не срабатывал toggleExpand
-                                            handleCancelOrder(order.id);
-                                        }}
-                                    >
-                                        Cancel Order
-                                    </button>
-                                )}
-
-                            </div>
-                        ))}
-                    {hasMoreOrders && (
-                        <button onClick={loadMoreOrders} className="btn btn-history btn-link mt-3 mb-5">
-                            More
-                        </button>
-                    )}
+            <div className="container margin-top-90 wrapper place-detail-page">
+                <div className="row message-block">
+                    <div className="col-1 back-button">
+                        <NavButtons />
+                    </div>
                 </div>
-            ) : (
-                <p>No order history available.</p>
-            )}
-        </div>
+
+                <div className="row mt-4">
+                    <div className="col-lg-8 col-md-10 col-12">
+                        <div className="order-history">
+                            <h3 className="account-info">Order History</h3>
+
+                            {orders.length > 0 ? (
+                                <div>
+                                    {orders.slice(0, visibleOrders).map((order) => (
+                                        <div
+                                            key={order.id}
+                                            className={`card ${expandedOrders[order.id] ? "expanded" : ""}`}
+                                            onClick={() => toggleExpand(order.id)}
+                                        >
+                                            <div className="history-icon">
+                                                <FontAwesomeIcon icon={faTruck} />
+                                            </div>
+
+                                            <div className="receipt-icon">
+                                                <FontAwesomeIcon
+                                                    icon={faFileLines}
+                                                    data-tooltip-id={`receipt-tooltip-${order.id}`}
+                                                    style={{ cursor: "pointer" }}
+                                                />
+                                                <Tooltip
+                                                    id={`receipt-tooltip-${order.id}`}
+                                                    place="top"
+                                                    content="Download dodaci list"
+                                                    effect="solid"
+                                                    className="custom-tooltip"
+                                                />
+                                            </div>
+
+                                            <p>
+                                                <FontAwesomeIcon icon={faBan} style={{ color: "red", height: "18px" }} />
+                                                <strong className="ms-2">Status</strong>
+                                            </p>
+
+                                            <p>
+                                                <strong>Order Number:</strong> {order.id}
+                                            </p>
+
+                                            {expandedOrders[order.id] && (
+                                                <div className="expanded-content">
+                                                    <p><strong>System:</strong> {order.system}</p>
+                                                    <p><strong>Type of Shipping:</strong> {order.type_ship}</p>
+                                                    <p><strong>Pickup Date:</strong> {order.date_pickup}</p>
+                                                    <p><strong>Delivery Date:</strong> {order.date_delivery}</p>
+                                                </div>
+                                            )}
+                                        </div>
+                                    ))}
+
+                                    {hasMoreOrders && (
+                                        <button onClick={loadMoreOrders} className="btn btn-history btn-link mt-3 mb-5">
+                                            Load More
+                                        </button>
+                                    )}
+                                </div>
+                            ) : (
+                                <p>No order history available.</p>
+                            )}
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <Footer />
+        </>
     );
 };
 
