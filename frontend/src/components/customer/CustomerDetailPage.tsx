@@ -8,6 +8,7 @@ import Footer from "../Footer.tsx";
 import { fetchWithAuth } from "../account/auth";
 import UploadFile from "./UploadFile.js";
 import DocumentsBlock from "./DocumentsBlock.js";
+import NavButtons from "@/components/account/NavButtons.js";
 
 interface CustomerData {
     company_name: string;
@@ -74,10 +75,13 @@ const CustomerDetailPage: React.FC = () => {
 
     return (
         <>
-            <HeaderAccount />
+            <HeaderAccount customerId={customerId} />
             <div className="container margin-top-90 wrapper">
                 <div className="row message-block-76">
-                    <div className="col-lg-8 col-md-10 col-12">
+                    <div className="col-1 back-button">
+                        <NavButtons />
+                    </div>
+                    <div className="col-lg-7 col-md-9 col-11">
                         {successMessage && (
                             <p className="alert alert-success">{successMessage}</p>
                         )}

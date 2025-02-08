@@ -5,6 +5,7 @@ import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import {faFilePdf, faDownload, faSpinner, faFileInvoiceDollar} from "@fortawesome/free-solid-svg-icons";
 import HeaderAccount from "../HeaderAccount";
 import Footer from "../Footer";
+import NavButtons from "../account/NavButtons";
 
 interface Report {
     id: number;
@@ -22,6 +23,7 @@ interface ReportFile {
 const ReportList: React.FC = () => {
     const [reports, setReports] = useState<Report[]>([]);
     const [loading, setLoading] = useState<boolean>(true);
+    const [customerId, setCustomerId] = useState<Customer | null>(null);
 
     useEffect(() => {
         const fetchReports = async () => {
@@ -30,6 +32,7 @@ const ReportList: React.FC = () => {
                 if (response.ok) {
                     const data: Report[] = await response.json();
                     setReports(data);
+                    setCustomerId(data[0].user);
                 } else {
                     console.error("Failed to fetch reports");
                 }
@@ -39,7 +42,6 @@ const ReportList: React.FC = () => {
                 setLoading(false);
             }
         };
-
         fetchReports();
     }, []);
 
@@ -49,8 +51,14 @@ const ReportList: React.FC = () => {
 
     return (
         <>
-            <HeaderAccount />
+            <HeaderAccount customerId={customerId} />
         <div className="container margin-top-90 wrapper invoices-page">
+            <div className="row message-block-76">
+                <div className="col-1 back-button">
+                    <NavButtons />
+                </div>
+
+            </div>
             <h3 style={{fontSize:"24px"}}>Your Invoices</h3>
             <div className="row">
             {reports.length > 0 ? (

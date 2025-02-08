@@ -56,6 +56,7 @@ const PlaceDetails: React.FC = () => {
     const navigate = useNavigate();
 
     const [place, setPlace] = useState<Place | null>(null);
+    const [customerId, setCustomerId] = useState<Customer | null>(null);
     const [loading, setLoading] = useState<boolean>(true);
     const [showEditForm, setShowEditForm] = useState<boolean>(false);
     const [showOrderForm, setShowOrderForm] = useState<boolean>(false);
@@ -76,6 +77,7 @@ const PlaceDetails: React.FC = () => {
                 if (response.ok) {
                     const data = await response.json();
                     setPlace(data);
+                    setCustomerId(data.customer);
                 } else {
                     console.error("Failed to fetch place details.");
                 }
@@ -87,7 +89,7 @@ const PlaceDetails: React.FC = () => {
         };
 
         fetchPlace();
-    }, [id]);
+    }, [id, customerId]);
 
 
         const fetchOrders = async () => {
@@ -179,14 +181,14 @@ const PlaceDetails: React.FC = () => {
 
     return (
         <>
-            <HeaderAccount />
+            <HeaderAccount customerId={customerId} />
 
             <div className="container margin-top-90 wrapper place-detail-page">
                 <div className="row message-block">
-                    <div className="col-3">
+                    <div className="col-1 back-button">
                         <NavButtons />
                     </div>
-                    <div className="col-lg-6 col-md-4 col-4">
+                    <div className="col-lg-7 col-md-9 col-11">
                         {successMessage && (
                             <p className="alert alert-success">{successMessage}</p>
                         )}

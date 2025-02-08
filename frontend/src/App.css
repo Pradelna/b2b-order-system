@@ -1004,3 +1004,10 @@ svg.loader{
 
 /*end checkbox*/
 
+.back-button {
+  padding: 15px 12px;
+}
+
+p.back-link {
+  margin-bottom: 0;
+}
