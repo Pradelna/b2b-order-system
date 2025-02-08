@@ -3,13 +3,14 @@ import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import {
     faTruck,
     faFileLines,
-    faBan
+    faBan, faCheckCircle
 } from "@fortawesome/free-solid-svg-icons";
 import { fetchWithAuth } from "../account/auth";
 import { Tooltip } from "react-tooltip";
 import HeaderAccount from "../HeaderAccount";
 import NavButtons from "../account/NavButtons";
 import Footer from "../Footer";
+import {Skeleton} from "@mui/material";
 
 interface Order {
     id: number;
@@ -23,11 +24,12 @@ interface Order {
 
 const AllOrderHistory: React.FC = () => {
     const [orders, setOrders] = useState<Order[]>([]);
-    const [visibleOrders, setVisibleOrders] = useState<number>(20);
+    const [visibleOrders, setVisibleOrders] = useState<number>(10);
     const [hasMoreOrders, setHasMoreOrders] = useState<boolean>(false);
     const [loading, setLoading] = useState<boolean>(true);
     const [expandedOrders, setExpandedOrders] = useState<{ [key: number]: boolean }>({});
     const [customerId, setCustomerId] = useState<number | null>(null); // ✅ Fix type
+    const [forceWait, setForceWait] = useState<boolean>(true);
 
     // ✅ Fetch Orders on Mount
     useEffect(() => {
@@ -38,6 +40,7 @@ const AllOrderHistory: React.FC = () => {
                     const data: Order[] = await response.json();
                     setOrders(data.sort((a, b) => b.id - a.id)); // ✅ Sort orders (newest first)
                     setHasMoreOrders(data.length > visibleOrders);
+                    console.log(data);
                 } else {
                     console.error("Failed to fetch orders");
                 }
@@ -47,8 +50,10 @@ const AllOrderHistory: React.FC = () => {
                 setLoading(false);
             }
         };
-
         fetchOrders();
+        // Ensure skeleton is shown for at least 2 seconds
+        const timer = setTimeout(() => setForceWait(false), 2000);
+        return () => clearTimeout(timer); // Cleanup
     }, []); // ✅ Run only once on mount
 
     // ✅ Set customerId AFTER orders are fetched
@@ -71,7 +76,6 @@ const AllOrderHistory: React.FC = () => {
         }));
     };
 
-    if (loading) return <p>Loading order history...</p>;
 
     return (
         <>
@@ -86,8 +90,24 @@ const AllOrderHistory: React.FC = () => {
 
                 <div className="row mt-4">
                     <div className="col-lg-8 col-md-10 col-12">
+
                         <div className="order-history">
+
                             <h3 className="account-info">Order History</h3>
+
+                            {loading || forceWait ? (
+                                [...Array(5)].map((_, index) => (
+                                    <Skeleton
+                                        variant="rectangular"
+                                        width="100%" height={80}
+                                        className="mb-3"
+                                        sx={{ borderRadius: "16px", marginBottom: 1 }}
+                                        key={index}
+                                    />
+                                ))
+                            ) : (<>
+
+
 
                             {orders.length > 0 ? (
                                 <div>
@@ -117,7 +137,7 @@ const AllOrderHistory: React.FC = () => {
                                             </div>
 
                                             <p>
-                                                <FontAwesomeIcon icon={faBan} style={{ color: "red", height: "18px" }} />
+                                                <FontAwesomeIcon icon={faCheckCircle} style={{ color: "#00aab7", height: "18px" }} />
                                                 <strong className="ms-2">Status</strong>
                                             </p>
 
@@ -145,6 +165,7 @@ const AllOrderHistory: React.FC = () => {
                             ) : (
                                 <p>No order history available.</p>
                             )}
+                            </>)}
                         </div>
                     </div>
                 </div>
