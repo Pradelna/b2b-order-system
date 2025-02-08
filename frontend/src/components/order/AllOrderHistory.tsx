@@ -19,7 +19,7 @@ interface OrderHistoryProps {
     setOrders?: (orders: Order[]) => void; // Передача функции для обновления списка заказов
 }
 
-const OrderHistory: React.FC<OrderHistoryProps> = ({ placeId, orders = [], setOrders}) => {
+const AllOrderHistory: React.FC<OrderHistoryProps> = ({ placeId, orders = [], setOrders}) => {
     const [visibleOrders, setVisibleOrders] = useState<number>(10);
     const [hasMoreOrders, setHasMoreOrders] = useState<boolean>(false);
     const [loading, setLoading] = useState<boolean>(true);
@@ -219,4 +219,4 @@ const OrderHistory: React.FC<OrderHistoryProps> = ({ placeId, orders = [], setOr
     );
 };
 
-export default OrderHistory;
+export default AllOrderHistory;
