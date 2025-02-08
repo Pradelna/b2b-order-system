@@ -1,21 +1,28 @@
 import React, { useState, useEffect, useContext } from "react";
-import { LanguageContext } from "../../context/LanguageContext.js";
-import { useParams, useNavigate } from "react-router-dom";
+import { LanguageContext } from "../../context/LanguageContext";
+import { useParams, useNavigate, Link } from "react-router-dom";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import {
     faPenToSquare,
     faSquareXmark,
     faCartPlus,
     faPowerOff,
+    faCircleCheck,
+    faStopwatch, faFileInvoiceDollar
 } from "@fortawesome/free-solid-svg-icons";
-import HeaderAccount from "../HeaderAccount.js";
-import Footer from "../Footer.tsx";
-import PlaceEdit from "./PlaceEdit.js";
+import HeaderAccount from "../HeaderAccount";
+import Footer from "../Footer";
+import PlaceEdit from "./PlaceEdit";
 import OrderForm from "../order/OrderForm";
-import { fetchWithAuth } from "../account/auth";
 import OrderHistory from "../order/OrderHistory";
+import OrderSuccess from "../order/OrderSuccess";
+import { fetchWithAuth } from "../account/auth";
+import {Tooltip as ReactTooltip} from "react-tooltip";
+import NavButtons from "@/components/account/NavButtons.js";
+
 
 interface Place {
+    rp_number: any;
     id: number;
     place_name: string;
     rp_street: string;
@@ -43,16 +50,18 @@ interface Order {
     end_order: boolean;
 }
 
-const DetailPlace: React.FC<DetailPlaceProps> = () => {
+const PlaceDetails: React.FC = () => {
     const { currentData } = useContext(LanguageContext);
     const { id } = useParams<{ id: string }>();
     const navigate = useNavigate();
 
     const [place, setPlace] = useState<Place | null>(null);
+    const [customerId, setCustomerId] = useState<Customer | null>(null);
     const [loading, setLoading] = useState<boolean>(true);
     const [showEditForm, setShowEditForm] = useState<boolean>(false);
     const [showOrderForm, setShowOrderForm] = useState<boolean>(false);
     const [successMessage, setSuccessMessage] = useState<string>("");
+    const [successOrderMessage, setSuccessOrderMessage] = useState(null);
 
     const [currentOrder, setCurrentOrder] = useState<Order | null>(null);
     const [orderHistory, setOrderHistory] = useState<Order[]>([]);
@@ -68,6 +77,7 @@ const DetailPlace: React.FC<DetailPlaceProps> = () => {
                 if (response.ok) {
                     const data = await response.json();
                     setPlace(data);
+                    setCustomerId(data.customer);
                 } else {
                     console.error("Failed to fetch place details.");
                 }
@@ -79,9 +89,9 @@ const DetailPlace: React.FC<DetailPlaceProps> = () => {
         };
 
         fetchPlace();
-    }, [id]);
+    }, [id, customerId]);
 
-    useEffect(() => {
+
         const fetchOrders = async () => {
             try {
                 const response = await fetchWithAuth(
@@ -110,6 +120,7 @@ const DetailPlace: React.FC<DetailPlaceProps> = () => {
             }
         };
 
+    useEffect(() => {
         fetchOrders();
     }, [id]);
 
@@ -133,12 +144,36 @@ const DetailPlace: React.FC<DetailPlaceProps> = () => {
         }
     };
 
-    const loadMoreOrders = () => {
-        setVisibleOrders((prevVisibleOrders) => {
-            const newVisibleCount = prevVisibleOrders + 10;
-            setHasMoreOrders(newVisibleCount < orderHistory.length);
-            return newVisibleCount;
-        });
+    const handleStopOrder = async (orderId: number) => {
+        if (window.confirm("Are you sure you want to stop this order?")) {
+            try {
+                const response = await fetchWithAuth(`http://127.0.0.1:8000/api/order/update/${orderId}/`, {
+                    method: "PUT",
+                    headers: {
+                        "Content-Type": "application/json",
+                    },
+                    body: JSON.stringify({ end_order: true }),
+                });
+
+                if (response.ok) {
+                    const updatedOrder = await response.json();
+                    setCurrentOrder(null); // del current order
+                    setOrderHistory((prevOrders) => {
+                        // add ex current order
+                        if (prevOrders.some((order) => order.id === updatedOrder.id)) {
+                            return prevOrders;
+                        }
+                        return [updatedOrder, ...prevOrders];
+                    });
+                    setSuccessMessage("Order successfully stopped.");
+                    setTimeout(() => setSuccessMessage(""), 10000);
+                } else {
+                    console.error("Failed to stop order.");
+                }
+            } catch (error) {
+                console.error("Error stopping order:", error);
+            }
+        }
     };
 
     if (loading) return <p>Loading...</p>;
@@ -146,34 +181,61 @@ const DetailPlace: React.FC<DetailPlaceProps> = () => {
 
     return (
         <>
-            <HeaderAccount />
+            <HeaderAccount customerId={customerId} />
 
-            <div className="container margin-top-130 wrapper place-detail-page">
-                <div className="row other-card">
-                    <div className="col-lg-8 col-md-10 col-12">
+            <div className="container margin-top-90 wrapper place-detail-page">
+                <div className="row message-block">
+                    <div className="col-1 back-button">
+                        <NavButtons />
+                    </div>
+                    <div className="col-lg-7 col-md-9 col-11">
                         {successMessage && (
                             <p className="alert alert-success">{successMessage}</p>
                         )}
                     </div>
+                </div>
+                <div className="row other-card">
 
                     <div className="col-lg-8 col-md-10 col-12">
                         <div className="card place-details">
                             {!showEditForm ? (
+                                <>
                                 <FontAwesomeIcon
                                     icon={faPenToSquare}
                                     className="settings"
                                     style={{ cursor: "pointer" }}
                                     onClick={() => setShowEditForm(true)}
+                                    data-tooltip-id="edit-card-tooltip"
                                 />
+                                <ReactTooltip
+                                    id="edit-card-tooltip"
+                                    place="top"
+                                    arrowPlace="top"
+                                    effect="solid"
+                                    delayShow={120}
+                                    content="Edit place information"
+                                    globalEventOff="click"
+                                />
+                                </>
                             ) : (
                                 <FontAwesomeIcon
                                     icon={faSquareXmark}
                                     className="settings"
                                     style={{ cursor: "pointer" }}
                                     onClick={() => setShowEditForm(false)}
+                                    data-tooltip-id="close-tooltip"
                                 />
                             )}
 
+                            <ReactTooltip
+                                id="close-tooltip"
+                                place="top"
+                                effect="solid"
+                                delayShow={100}
+                                content="Close"
+                                className="custom-tooltip"
+                                globalEventOff="click"
+                            />
                             <h1>Place Details</h1>
                             {!showEditForm ? (
                                 <div>
@@ -187,7 +249,7 @@ const DetailPlace: React.FC<DetailPlaceProps> = () => {
                                     <div className="row mb-2">
                                         <div className="col-12">
                                             <div className="form-control">
-                                                <strong>Address:</strong>
+                                                <strong>Address:</strong>{" "}
                                                 {place.rp_street},{" "}
                                                 {place.rp_number},{" "}
                                                 {place.rp_city},{" "}
@@ -226,8 +288,10 @@ const DetailPlace: React.FC<DetailPlaceProps> = () => {
                     <div className="row current-order other-card">
                         <div className="col-lg-8 col-md-10 col-12">
                             <div className="card current-order">
-                                <h3>Current Order</h3>
+
+                                <h3>Current Order #{currentOrder.id}</h3>
                                 <div className="order-details">
+
                                     <div className="form-control mb-2">
                                         <strong>Status:</strong> {currentOrder.rp_status}
                                     </div>
@@ -235,9 +299,42 @@ const DetailPlace: React.FC<DetailPlaceProps> = () => {
                                         <strong>Type of Shipping:</strong> {currentOrder.type_ship}
                                     </div>
                                     <div className="form-control mb-2">
+                                        <strong>System:</strong> {currentOrder.system || "Custom Days"}
+                                    </div>
+
+                                    {currentOrder.system === "Own" && (
+                                        <div className="form-control mb-2">
+                                            <strong>Days: </strong>
+
+                                            {currentOrder.monday && <span>Monday </span>}
+                                            {currentOrder.tuesday && <span>Tuesday </span>}
+                                            {currentOrder.wednesday && <span>Wednesday </span>}
+                                            {currentOrder.thursday && <span>Thursday </span>}
+                                            {currentOrder.friday && <span>Friday </span>}
+
+                                        </div>
+                                    )}
+
+                                    <div className="form-control mb-2">
                                         <strong>Pickup Date:</strong> {currentOrder.date_pickup}
                                     </div>
+                                    <div className="form-control mb-2">
+                                        <strong>Delivery Date:</strong> {currentOrder.date_delivery}
+                                    </div>
+                                    <div className="form-control mb-2">
+                                        <strong>Note:</strong> {currentOrder.rp_problem_description || "None"}
+                                    </div>
+
                                 </div>
+
+                                <button
+                                    className="btn-link mt-2"
+                                    onClick={() => handleStopOrder(currentOrder!.id)}
+                                >
+                                    <FontAwesomeIcon icon={faPowerOff} className="icon" />
+                                    <span className="ms-2">stop order</span>
+                                </button>
+
                             </div>
                         </div>
                     </div>
@@ -245,7 +342,7 @@ const DetailPlace: React.FC<DetailPlaceProps> = () => {
 
                 <div className="row mt-4">
                     <div className="col-lg-8 col-md-10 col-12">
-                        <OrderHistory placeId={place.id} />
+                        <OrderHistory placeId={place.id} hasMoreOrders={false} orders={orderHistory}  />
                     </div>
                 </div>
 
@@ -254,13 +351,26 @@ const DetailPlace: React.FC<DetailPlaceProps> = () => {
                         placeId={place.id}
                         onClose={() => setShowOrderForm(false)}
                         onSuccess={(newOrder) => {
+                            // add a new order to the list
+                            setOrderHistory((prevOrders) => [newOrder, ...prevOrders]);
+                            // Обновляем текущий заказ, если он активный
+                            if (newOrder.every_week && !newOrder.end_order) {
+                                setCurrentOrder(newOrder);
+                            }
                             setSuccessMessage(
-                                `Order created successfully for place: ${newOrder.place}`
+                                `Order created successfully`
                             );
-                            setTimeout(() => setSuccessMessage(""), 5000);
+                            setTimeout(() => setSuccessMessage(""), 10000);
                             setShowOrderForm(false);
+                            setSuccessOrderMessage(newOrder);
+                            // Обновляем данные из API
+                            fetchOrders();
                         }}
                     />
+                )}
+
+                {successOrderMessage && (
+                    <OrderSuccess newOrder={successOrderMessage} onClose={() => setSuccessOrderMessage(null)} />
                 )}
             </div>
             <Footer />
@@ -268,4 +378,4 @@ const DetailPlace: React.FC<DetailPlaceProps> = () => {
     );
 };
 
-export default DetailPlace;
+export default PlaceDetails;

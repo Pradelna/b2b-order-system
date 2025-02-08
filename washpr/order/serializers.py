@@ -1,13 +1,14 @@
 from rest_framework import serializers
-from .models import Order
+from .models import Order, ReportFile, OrderReport
 
 
 class OrderSerializer(serializers.ModelSerializer):
     class Meta:
         model = Order
         fields = [
-            'place', 'type_ship', 'system', 'monday', 'tuesday', 'wednesday', 'thursday',
-            'friday', 'date_pickup', 'date_delivery', 'every_week', 'rp_customer_note', 'terms'
+            'place', 'rp_place_title', 'type_ship', 'system', 'monday', 'tuesday', 'wednesday', 'thursday',
+            'friday', 'date_pickup', 'date_delivery', 'every_week', 'rp_customer_note', 'terms', 'active',
+            'end_order', 'rp_status', 'date_start_day', 'created_at', 'canceled', 'id'
         ]
         extra_kwargs = {
             'terms': {'required': True},
@@ -15,14 +16,15 @@ class OrderSerializer(serializers.ModelSerializer):
             'date_pickup': {'required': True},
             'date_delivery': {'required': True},
         }
+        read_only_fields = ['created_at', 'id']
 
     def validate(self, data):
         # Дополнительная валидация
-        if data.get('system') is None and not any([data.get(day) for day in [
+        if not self.partial and data.get('system') is None and not any([data.get(day) for day in [
             'monday', 'tuesday', 'wednesday', 'thursday', 'friday'
         ]]):
             raise serializers.ValidationError("Either 'system' or at least one day of the week must be selected.")
-        if not data.get('every_week'):
+        if not self.partial and not data.get('every_week'):
             if data.get('date_delivery') < data.get('date_pickup'):
                 raise serializers.ValidationError("Delivery date cannot be earlier than pick-up date.")
         return data
@@ -38,7 +40,25 @@ class GetOrderSerializer(serializers.ModelSerializer):
         model = Order
         fields = [
             'id', 'place', 'place_name', 'type_ship', 'system', 'monday', 'tuesday',
-            'wednesday', 'thursday', 'friday', 'date_pickup', 'date_delivery',
-            'every_week', 'terms', 'end_order', 'rp_problem_description'
+            'wednesday', 'thursday', 'friday', 'date_pickup', 'date_delivery', 'created_at',
+            'every_week', 'terms', 'end_order', 'rp_problem_description', 'date_start_day', 'canceled'
         ]
-        read_only_fields = ['id', 'place']
+        read_only_fields = ['id', 'place', 'created_at']
+
+
+class ReportFileSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = ReportFile
+        fields = ["id", "file", "uploaded_at"]
+
+class OrderReportSerializer(serializers.ModelSerializer):
+    files = ReportFileSerializer(many=True, read_only=True)  # Fetch associated files
+    orders_count = serializers.SerializerMethodField()  # Get number of orders
+
+    class Meta:
+        model = OrderReport
+        fields = ["id", "report_month", "created_at", "orders", "orders_count", "files", "user"]
+        read_only_fields = ['user']
+
+    def get_orders_count(self, obj):
+        return obj.orders.count()
