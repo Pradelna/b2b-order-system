@@ -105,6 +105,20 @@ def get_orders(request):
         return Response({"error": str(e)}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
 
 
+@api_view(['GET'])
+@permission_classes([IsAuthenticated])
+def get_all_orders(request):
+    try:
+        user = request.user
+        orders = Order.objects.filter(user=user)
+        serializer = GetOrderSerializer(orders, many=True)
+        # print(serializer.data)
+        print("ok")
+        return Response(serializer.data, status=status.HTTP_200_OK)
+    except Exception as e:
+        return Response({"error": str(e)}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+
+
 @api_view(['PUT'])
 @permission_classes([IsAuthenticated])
 def update_order(request, order_id):

@@ -172,12 +172,14 @@ const Account: React.FC<AccountProps> = ({ customerData, setCustomerData }) => {
 
                         {customerData && !customerData.error && (
                             <div className="col-2">
-                                <div className="card dashboard-button">
-                                    <div className="card-body button-history">
-                                        <FontAwesomeIcon icon={faClockRotateLeft} className="icon" />
-                                        <p className="text-history">All history</p>
+                                <Link to="/all-orders" className="text-decoration-none">
+                                    <div className="card dashboard-button">
+                                        <div className="card-body button-history">
+                                            <FontAwesomeIcon icon={faClockRotateLeft} className="icon" />
+                                            <p className="text-history">All history</p>
+                                        </div>
                                     </div>
-                                </div>
+                                </Link>
                             </div>
                         ) }
 

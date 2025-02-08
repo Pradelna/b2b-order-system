@@ -19,6 +19,7 @@ import PlaceDetails from "./components/place/PlaceDetails";
 
 import "./App.css";
 import ReportList from "./components/order/ReportList";
+import AllOrderHistory from "./components/order/AllOrderHistory";
 
 // Define the shape of the language data
 interface LanguageData {
@@ -123,12 +124,22 @@ const App: React.FC = () => {
             }
           />
 
-          {/* Place details page */}
+          {/* Invoices page */}
           <Route
               path="/invoices"
               element={
                 <PrivateRoute>
                   <ReportList />
+                </PrivateRoute>
+              }
+          />
+
+          {/* All order history page */}
+          <Route
+              path="/all-orders"
+              element={
+                <PrivateRoute>
+                  <AllOrderHistory />
                 </PrivateRoute>
               }
           />
