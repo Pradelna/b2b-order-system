@@ -15,6 +15,7 @@ import {
     faBuilding,
     faFileInvoiceDollar, faCircleCheck, faStopwatch
 } from "@fortawesome/free-solid-svg-icons";
+import {Skeleton} from "@mui/material";
 
 
 interface AccountProps {
@@ -52,6 +53,8 @@ const Account: React.FC<AccountProps> = ({ customerData, setCustomerData }) => {
     const [currentPlaceId, setCurrentPlaceId] = useState<number | null>(null);
     const [selectedPlaceId, setSelectedPlaceId] = useState<number | null>(null);
     const [successOrderMessage, setSuccessOrderMessage] = useState(null);
+    const [loading, setLoading] = useState<boolean>(true);
+    const [forceWait, setForceWait] = useState<boolean>(true);
 
     const handleCardClick = (
         event: React.MouseEvent<HTMLDivElement>,
@@ -88,21 +91,29 @@ const Account: React.FC<AccountProps> = ({ customerData, setCustomerData }) => {
     };
 
     useEffect(() => {
+        setLoading(true);
         const fetchPlaces = async () => {
             try {
                 const response = await fetchWithAuth("http://127.0.0.1:8000/api/place/list/");
                 if (response.ok) {
                     const data = await response.json();
                     setPlaces(data);
+                    setLoading(false);
                 } else {
                     console.error("Failed to fetch places");
+                    setLoading(false);
                 }
             } catch (error) {
                 console.error("Error fetching places:", error);
+                setLoading(false);
             }
         };
 
         fetchPlaces();
+        setLoading(false);
+        // Ensure skeleton is shown for at least 2 seconds
+        const timer = setTimeout(() => setForceWait(false), 1000);
+        return () => clearTimeout(timer); // Cleanup
     }, []);
 
     const handleCreateOrder = () => {
@@ -163,49 +174,74 @@ const Account: React.FC<AccountProps> = ({ customerData, setCustomerData }) => {
                         {/*</div>*/}
 
                         <div className={`${customerData && !customerData.error ? "col-6" : "col-12"}`}>
+                            {loading || forceWait ? (
+                                <Skeleton
+                                    variant="rectangular"
+                                    width="100%" height={120}
+                                    className="mb-3"
+                                    sx={{ borderRadius: "16px", marginBottom: 1 }}
+                                />
+                            ) : (
                             <CompanyInfo
                                 customerData={customerData}
                                 setCustomerData={setCustomerData}
                                 setSuccessMessage={setSuccessMessage}
                             />
+                                )}
                         </div>
 
                         {customerData && !customerData.error && (
-                            <div className="col-2">
-                                <Link to="/all-orders" className="text-decoration-none">
-                                    <div className="card dashboard-button">
-                                        <div className="card-body button-history">
-                                            <FontAwesomeIcon icon={faClockRotateLeft} className="icon" />
-                                            <p className="text-history">All history</p>
+                            <>
+                                {loading || forceWait ? (
+                                        [...Array(3)].map((_, index) => (
+                                        <div className="col-2">
+                                            <Skeleton
+                                                variant="rectangular"
+                                                width="100%" height={120}
+                                                className="mb-3"
+                                                sx={{ borderRadius: "16px", marginBottom: 1 }}
+                                                key={index}
+                                            />
                                         </div>
-                                    </div>
-                                </Link>
-                            </div>
-                        ) }
+                                        ))
+                                ) : (
+                                    <>
 
-                        {customerData && !customerData.error && (
-                            <div className="col-2">
-                                <Link to="/invoices" className="text-decoration-none">
-                                    <div className="card dashboard-button">
-                                        <div className="card-body">
-                                            <FontAwesomeIcon icon={faFileInvoiceDollar} className="icon" />
-                                            <p className="text-history">{currentData.service.invoices || "Invoices"}</p>
+                                        <div className="col-2">
+                                            <Link to="/all-orders" className="text-decoration-none">
+                                                <div className="card dashboard-button">
+                                                    <div className="card-body button-history">
+                                                        <FontAwesomeIcon icon={faClockRotateLeft} className="icon" />
+                                                        <p className="text-history">All history</p>
+                                                    </div>
+                                                </div>
+                                            </Link>
                                         </div>
-                                    </div>
-                                </Link>
-                            </div>
-                        ) }
 
-                        {customerData && !customerData.error && (
-                            <div className="col-2">
-                                {/* New Order Button */}
-                                <div className="card dashboard-button" onClick={handleCreateOrder}>
-                                    <div className="card-body">
-                                        <FontAwesomeIcon icon={faCartPlus} className="icon" />
-                                        <p className="text-history">{currentData.service.new_order || "New Order"}</p>
-                                    </div>
-                                </div>
-                            </div>
+                                        <div className="col-2">
+                                            <Link to="/invoices" className="text-decoration-none">
+                                                <div className="card dashboard-button">
+                                                    <div className="card-body">
+                                                        <FontAwesomeIcon icon={faFileInvoiceDollar} className="icon" />
+                                                        <p className="text-history">{currentData.service.invoices || "Invoices"}</p>
+                                                    </div>
+                                                </div>
+                                            </Link>
+                                        </div>
+
+                                        <div className="col-2">
+                                            {/* New Order Button */}
+                                            <div className="card dashboard-button" onClick={handleCreateOrder}>
+                                                <div className="card-body">
+                                                    <FontAwesomeIcon icon={faCartPlus} className="icon" />
+                                                    <p className="text-history">{currentData.service.new_order || "New Order"}</p>
+                                                </div>
+                                            </div>
+                                        </div>
+
+                                    </>
+                                )}
+                            </>
                         )}
                     </div>
 
@@ -237,6 +273,19 @@ const Account: React.FC<AccountProps> = ({ customerData, setCustomerData }) => {
                     </div>
 
                     <div className="row mt-4 mb-4">
+                        {loading || forceWait ? (
+                            [...Array(3)].map((_, index) => (
+                                <>
+                                    <Skeleton
+                                        variant="rectangular"
+                                        width="100%" height={90}
+                                        className="mb-3"
+                                        sx={{ borderRadius: "24px", marginBottom: 1 }}
+                                        key={index}
+                                    />
+                                </>
+                            ))
+                        ) : ( <>
                         {places.map((place, index) => (
                             <div className="col-12 dashboard" key={place.id}>
                                 <div
@@ -271,6 +320,7 @@ const Account: React.FC<AccountProps> = ({ customerData, setCustomerData }) => {
                                 </div>
                             </div>
                         ))}
+                        </> )}
                     </div>
                 </div>
 

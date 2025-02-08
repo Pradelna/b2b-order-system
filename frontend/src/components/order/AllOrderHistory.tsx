@@ -52,7 +52,7 @@ const AllOrderHistory: React.FC = () => {
         };
         fetchOrders();
         // Ensure skeleton is shown for at least 2 seconds
-        const timer = setTimeout(() => setForceWait(false), 2000);
+        const timer = setTimeout(() => setForceWait(false), 1000);
         return () => clearTimeout(timer); // Cleanup
     }, []); // ✅ Run only once on mount
 
