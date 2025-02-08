@@ -1,11 +1,16 @@
+from django.contrib.auth.mixins import LoginRequiredMixin
 from rest_framework.decorators import api_view, permission_classes
 from rest_framework.permissions import IsAuthenticated
 from rest_framework.response import Response
-from rest_framework import status
+from rest_framework import status, permissions, generics
 from place.models import Place
-from .models import Order
-from .serializers import OrderSerializer, GetOrderSerializer
+from rest_framework.views import APIView
+
+from .models import Order, OrderReport
+from .serializers import OrderSerializer, GetOrderSerializer, OrderReportSerializer
 from datetime import datetime
+
+from customer.models import Customer
 
 
 def convert_date_to_unix(date_str):
@@ -32,6 +37,7 @@ def create_order(request):
             # while n <= limit:
             #     n += 1
             #     order_n = Order(
+            #         user=request.user,
             #         place=place,
             #         type_ship='pickup_ship_one',
             #         system='every_day',
@@ -52,6 +58,7 @@ def create_order(request):
                 rp_place_title=place.place_name,
                 place=place,
                 active=True,
+                user=request.user,
             )
             order_data = OrderSerializer(order).data
             return Response(
@@ -114,3 +121,51 @@ def update_order(request, order_id):
     # if not serializer.is_valid():
     #     print(serializer.errors)
     return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
+
+class UserReportListView(generics.ListAPIView, LoginRequiredMixin):
+    """ Returns a list of reports for the authenticated user. """
+    serializer_class = OrderReportSerializer
+    permission_classes = [permissions.IsAuthenticated]
+
+    def get_queryset(self):
+        customer = self.request.user.customer
+        return OrderReport.objects.filter(user=self.request.user.customer).order_by("-report_month")
+
+
+class UserReportDetailView(generics.RetrieveAPIView, LoginRequiredMixin):
+    """ Returns a specific report by ID. """
+    serializer_class = OrderReportSerializer
+    permission_classes = [permissions.IsAuthenticated]
+
+    def get_queryset(self):
+        return OrderReport.objects.filter(user=self.request.user)
+
+
+class GenerateMonthlyReport(APIView):
+    """
+    Endpoint to generate a monthly report for a user.
+    It checks for orders in the past month that haven't been included in a report.
+    """
+    permission_classes = [permissions.IsAuthenticated]
+
+    def post(self, request):
+        user = request.user
+        from datetime import datetime, timedelta
+        from order.models import Order
+
+        today = datetime.today()
+        first_day_of_month = today.replace(day=1)
+        last_month = first_day_of_month - timedelta(days=1)
+
+        # Get orders that are not yet in a report
+        existing_orders = OrderReport.objects.filter(user=user).values_list("orders", flat=True)
+        new_orders = Order.objects.filter(user=user, created_at__year=last_month.year, created_at__month=last_month.month).exclude(id__in=existing_orders)
+
+        if new_orders.exists():
+            report = OrderReport.objects.create(user=user, report_month=last_month)
+            report.orders.set(new_orders)
+            report.save()
+            return Response({"message": "Report generated successfully", "report_id": report.id}, status=201)
+
+        return Response({"message": "No new orders to report"}, status=200)

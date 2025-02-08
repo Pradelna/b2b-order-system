@@ -59,10 +59,10 @@ const Header: React.FC = () => {
 
               {/* Contact Information */}
               <div className="contact">
-                <a href="/" className="mail">
-                  <FontAwesomeIcon icon={faHouse} className="icon" />
-                  <span>{menuData.header_home}</span>
-                </a>
+                {/*<a href="/" className="mail">*/}
+                {/*  <FontAwesomeIcon icon={faHouse} className="icon" />*/}
+                {/*  <span>{menuData.header_home}</span>*/}
+                {/*</a>*/}
                 <a href="tel:+420734246834" className="tel">
                   <FontAwesomeIcon icon={faMobileScreen} className="icon" />
                   <span>+420 734 246 834</span>

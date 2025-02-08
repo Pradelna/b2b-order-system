@@ -143,6 +143,7 @@ a {
     border: solid 0px;
   }
 
+  .message-block .card:hover,
   #company-top .card:hover {
     transform: translateY(-5px);
     box-shadow: 0 6px 12px rgba(0, 0, 0, 0.35);
@@ -693,9 +694,13 @@ svg.loader{
 }
 
 .place-icon svg,
-.invoice-icon svg,
 .receipt-icon svg {
   height: 20px;
+}
+
+.invoice-icon svg {
+  height: 20px;
+  width: 15px;
 }
 
 .place-icon {
@@ -728,7 +733,26 @@ svg.loader{
   padding: 15px 18px;
   position: absolute;
   top: 20px;
-  right: 88px;
+  left: 20px;
+}
+
+
+
+.download-invoice {
+  position: absolute;
+  top: 20px;
+  right: 20px;
+}
+
+.download-invoice svg{
+  height: 20px;
+}
+
+.btn-download {
+  background-color: #e1f6f8;
+  height: 50px;
+  width: 150px;
+  padding: 14px;
 }
 
 .receipt-icon {
@@ -802,6 +826,15 @@ svg.loader{
 
 .place-detail-page .expanded {
   height: 170px;
+}
+
+.message-block .card {
+  height: 54px;
+  width: auto;
+  padding: 17px 8px;
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
+  background: #e1f6f8;
+  border: none;
 }
 
 .cancel-order {
@@ -971,3 +1004,10 @@ svg.loader{
 
 /*end checkbox*/
 
+.back-button {
+  padding: 15px 12px;
+}
+
+p.back-link {
+  margin-bottom: 0;
+}

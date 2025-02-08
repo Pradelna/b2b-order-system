@@ -81,7 +81,7 @@ const CustomerEdit: React.FC<CustomerEditProps> = ({
             const updatedData = await response.json();
             setCustomerData(updatedData);
             setSuccessMessage("Customer data updated successfully!");
-            setTimeout(() => setSuccessMessage(""), 5000);
+            setTimeout(() => setSuccessMessage(""), 10000);
             setIsEditing(false);
         } catch (error) {
             console.error("Error updating customer data:", error);

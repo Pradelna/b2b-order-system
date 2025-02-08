@@ -1,15 +1,30 @@
+import os
 from datetime import datetime, timedelta
-
+from django.contrib.auth import get_user_model
 from django.db import models
 from customer.models import Customer
 from place.models import Place
 
 
+User = get_user_model()
+
 TOMMOROW = datetime.now() + timedelta(days=1)
+
+
+def report_file_path(instance, filename):
+    """
+    Формируем путь для загрузки файлов в формате:
+    invoices/{user_id}/YYYY-MM/{filename}
+    """
+    report_month_str = instance.report.report_month.strftime("%Y-%m")  # Пример: "2025-02"
+    user_id = instance.report.user.id  # Получаем ID пользователя
+
+    return os.path.join("invoices", str(user_id), report_month_str, filename)
 
 
 class Order(models.Model):
     place = models.ForeignKey(Place, on_delete=models.CASCADE, related_name="order_place")
+    user = models.ForeignKey(User, on_delete=models.CASCADE, related_name="orders", db_index=True, null=True, blank=True)
     choice_type_ship = [
         ('pickup_ship_one', 'clear for durty'),
         ('pickup_ship_dif', '1 day clear, 2 day durty')
@@ -63,6 +78,7 @@ class Order(models.Model):
     rp_status = models.IntegerField("status", null=True, blank=True)
     end_order = models.BooleanField("End repeating order", default=False)
     canceled = models.BooleanField("Canceled mistaken order", default=False)
+    reported = models.BooleanField("Canceled mistaken order", default=False)
     created_at = models.DateTimeField(auto_now_add=True)
 
     def __str__(self):
@@ -71,3 +87,25 @@ class Order(models.Model):
     class Meta:
         verbose_name = 'Order'
         verbose_name_plural = 'Orders'
+        indexes = [
+            models.Index(fields=["reported"]),  # Ускоряет поиск невключенных заказов
+            models.Index(fields=["user", "created_at"])  # Оптимизация фильтрации по пользователю
+        ]
+
+
+class OrderReport(models.Model):
+    user = models.ForeignKey(Customer, on_delete=models.CASCADE, related_name="order_reports")
+    report_month = models.DateField()
+    orders = models.ManyToManyField("Order", related_name="reports")
+    created_at = models.DateTimeField(auto_now_add=True)
+
+    def __str__(self):
+        return f"Report for {self.user} - {self.report_month.strftime('%B %Y')}"
+
+class ReportFile(models.Model):
+    report = models.ForeignKey(OrderReport, on_delete=models.CASCADE, related_name="files")
+    file = models.FileField(upload_to=report_file_path)
+    uploaded_at = models.DateTimeField(auto_now_add=True)
+
+    def __str__(self):
+        return f"File {self.file.name} for Report {self.report.id}"
