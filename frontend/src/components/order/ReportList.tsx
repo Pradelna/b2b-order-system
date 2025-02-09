@@ -31,8 +31,10 @@ const ReportList: React.FC = () => {
                 const response = await fetchWithAuth("http://127.0.0.1:8000/api/order/reports/");
                 if (response.ok) {
                     const data: Report[] = await response.json();
-                    setReports(data);
-                    setCustomerId(data[0].user);
+                    setReports(data.results);
+                    console.log(data);
+                    setCustomerId(data.results[0].user);
+                    console.log(data.results[0].user);
                 } else {
                     console.error("Failed to fetch reports");
                 }

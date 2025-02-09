@@ -1,7 +1,9 @@
 from django.contrib.auth.mixins import LoginRequiredMixin
+from django.db.models.expressions import result
 from rest_framework.decorators import api_view, permission_classes
 from rest_framework.permissions import IsAuthenticated
 from rest_framework.response import Response
+from rest_framework.pagination import LimitOffsetPagination
 from rest_framework import status, permissions, generics
 from place.models import Place
 from rest_framework.views import APIView
@@ -10,7 +12,7 @@ from .models import Order, OrderReport
 from .serializers import OrderSerializer, GetOrderSerializer, OrderReportSerializer
 from datetime import datetime
 
-from customer.models import Customer
+# from customer.models import Customer
 
 
 def convert_date_to_unix(date_str):
@@ -19,6 +21,19 @@ def convert_date_to_unix(date_str):
         return int(date.timestamp())  # Преобразуем в Unix Timestamp
     except ValueError:
         return None
+
+
+# class OrderPagination(LimitOffsetPagination):
+#     default_limit = 20
+#     max_limit = 50  # Prevent large requests
+#
+#
+# class PlaceOrderListView(generics.ListAPIView, LoginRequiredMixin):
+#     serializer_class = GetOrderSerializer
+#     pagination_class = OrderPagination
+#
+#     def get_queryset(self):
+#         return Order.objects.filter(user=self.request.user).order_by("-id")
 
 
 @api_view(['POST'])
@@ -79,6 +94,32 @@ def create_order(request):
         )
 
 
+# class CustomLimitOffsetPagination(LimitOffsetPagination):
+#     default_limit = 20  # По умолчанию 20 заказов
+#     max_limit = 100  # Максимальный лимит 100
+
+
+# @api_view(['GET'])
+# @permission_classes([IsAuthenticated])
+# def get_place_orders(request, place_id):
+#     orders = Order.objects.filter(place_id=place_id).order_by('-id')  # Самые новые заказы первыми
+#     paginator = CustomLimitOffsetPagination()
+#
+#     # ✅ Важно! Передаём request в paginate_queryset()
+#     paginated_orders = paginator.paginate_queryset(orders, request, view=None)
+#
+#     # ✅ Проверяем, есть ли заказы
+#     if paginated_orders is not None:
+#         serializer = GetOrderSerializer(paginated_orders, many=True)
+#         print(len(serializer.data))
+#         return paginator.get_paginated_response(serializer.data)
+#
+#     # Если заказов нет, возвращаем обычный JSON
+#     serializer = GetOrderSerializer(orders, many=True)
+#     return Response(serializer.data)
+
+
+
 @api_view(['GET'])
 @permission_classes([IsAuthenticated])
 def get_place_orders(request, place_id):
@@ -132,8 +173,6 @@ def update_order(request, order_id):
     if serializer.is_valid():
         serializer.save()
         return Response(serializer.data)
-    # if not serializer.is_valid():
-    #     print(serializer.errors)
     return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
 
@@ -143,7 +182,6 @@ class UserReportListView(generics.ListAPIView, LoginRequiredMixin):
     permission_classes = [permissions.IsAuthenticated]
 
     def get_queryset(self):
-        customer = self.request.user.customer
         return OrderReport.objects.filter(user=self.request.user.customer).order_by("-report_month")
 
 

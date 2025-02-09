@@ -5,6 +5,8 @@ from .views import create_order, get_place_orders, get_orders, update_order, Use
 urlpatterns = [
     path('create/', create_order, name='create_order'),
     path('<int:place_id>/orders/', get_place_orders, name='get_place_orders'),
+    # path('<int:place_id>/orders-pl/', get_place_orders_temp, name='get_place_orderspl'),
+    path('<int:place_id>/orders/', get_place_orders, name='get_place_orders'),
     path('list/', get_orders, name='get_orders'),
     path('all-orders/', get_all_orders, name='get_all_orders'),
     path('update/<int:order_id>/', update_order, name='update_order'),

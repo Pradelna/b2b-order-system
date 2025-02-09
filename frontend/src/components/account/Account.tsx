@@ -169,18 +169,25 @@ const Account: React.FC<AccountProps> = ({ customerData, setCustomerData }) => {
             <div className="row">
                 <div className="col-xl-8 col-12">
                     <div id="company-top" className="row">
-                        {/*<div className="col-12">*/}
-                        {/*    {successMessage && <p className="alert alert-success">{successMessage}</p>}*/}
-                        {/*</div>*/}
 
                         <div className={`${customerData && !customerData.error ? "col-6" : "col-12"}`}>
                             {loading || forceWait ? (
-                                <Skeleton
-                                    variant="rectangular"
-                                    width="100%" height={120}
-                                    className="mb-3"
-                                    sx={{ borderRadius: "16px", marginBottom: 1 }}
-                                />
+                                <>
+                                    <div className="card dashboard-button">
+                                        <div className="card-body button-history">
+                                            <Skeleton
+                                                variant="rectangular"
+                                                width={36} height={36}
+                                                sx={{ borderRadius: "18px", marginBottom: 2 }}
+                                            />
+                                            <Skeleton
+                                                variant="rectangular"
+                                                width={180} height={20}
+                                                sx={{ borderRadius: "6px", marginBottom: 0 }}
+                                            />
+                                        </div>
+                                    </div>
+                                </>
                             ) : (
                             <CompanyInfo
                                 customerData={customerData}
@@ -194,14 +201,23 @@ const Account: React.FC<AccountProps> = ({ customerData, setCustomerData }) => {
                             <>
                                 {loading || forceWait ? (
                                         [...Array(3)].map((_, index) => (
-                                        <div className="col-2">
-                                            <Skeleton
-                                                variant="rectangular"
-                                                width="100%" height={120}
-                                                className="mb-3"
-                                                sx={{ borderRadius: "16px", marginBottom: 1 }}
-                                                key={index}
-                                            />
+                                        <div className="col-2" key={index}>
+                                            <div className="card dashboard-button">
+                                                <div className="card-body button-history">
+                                                    <Skeleton
+                                                        variant="rectangular"
+                                                        width={36} height={36}
+                                                        className=""
+                                                        sx={{ borderRadius: "18px", marginBottom: 2 }}
+                                                    />
+                                                    <Skeleton
+                                                        variant="rectangular"
+                                                        width={70} height={20}
+                                                        className=""
+                                                        sx={{ borderRadius: "6px", marginBottom: 0 }}
+                                                    />
+                                                </div>
+                                            </div>
                                         </div>
                                         ))
                                 ) : (
@@ -264,26 +280,45 @@ const Account: React.FC<AccountProps> = ({ customerData, setCustomerData }) => {
                         )}
 
                         <div className="col-3 text-left">
+                            {loading || forceWait ? (
+                                <Skeleton
+                                    variant="rectangular"
+                                    width={200} height={55}
+                                    className=""
+                                    sx={{ borderRadius: "26px", marginTop: 0 }}
+                                />
+                            ) : (
                             <button className="btn-link" onClick={handleCreatePlace}>
                                 <FontAwesomeIcon icon={faHouse} className="icon" />
                                 <span className="ms-2">{currentData.service.new_place || "New Place"}</span>
 
                             </button>
+                                )}
                         </div>
                     </div>
 
                     <div className="row mt-4 mb-4">
                         {loading || forceWait ? (
                             [...Array(3)].map((_, index) => (
-                                <>
-                                    <Skeleton
-                                        variant="rectangular"
-                                        width="100%" height={90}
-                                        className="mb-3"
-                                        sx={{ borderRadius: "24px", marginBottom: 1 }}
-                                        key={index}
-                                    />
-                                </>
+                                <div className="col-12 dashboard" key={index}>
+                                    <div className="card place-card">
+                                        <div className="place">
+                                            <div className="place-icon-skeleton"></div>
+                                            <Skeleton
+                                                variant="rectangular"
+                                                width={140} height={20}
+                                                className="mt-1"
+                                                sx={{ borderRadius: "6px", marginTop: 0 }}
+                                            />
+                                            <Skeleton
+                                                variant="rectangular"
+                                                width={200} height={20}
+                                                className=""
+                                                sx={{ borderRadius: "6px", marginTop: 1 }}
+                                            />
+                                        </div>
+                                    </div>
+                                </div>
                             ))
                         ) : ( <>
                         {places.map((place, index) => (

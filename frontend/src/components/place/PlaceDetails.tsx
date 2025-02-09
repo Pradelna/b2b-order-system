@@ -95,7 +95,7 @@ const PlaceDetails: React.FC = () => {
         const fetchOrders = async () => {
             try {
                 const response = await fetchWithAuth(
-                    `http://127.0.0.1:8000/api/order/${id}/orders/`
+                    `http://127.0.0.1:8000/api/order/${id}/orders-pl/`
                 );
                 if (response.ok) {
                     const orders: Order[] = await response.json();
@@ -342,7 +342,12 @@ const PlaceDetails: React.FC = () => {
 
                 <div className="row mt-4">
                     <div className="col-lg-8 col-md-10 col-12">
-                        <OrderHistory placeId={place.id} hasMoreOrders={false} orders={orderHistory}  />
+                        <OrderHistory
+                            placeId={place.id}
+                            hasMoreOrders={false}
+                            orders={orderHistory}
+                            setOrders={setOrderHistory}
+                        />
                     </div>
                 </div>
 
