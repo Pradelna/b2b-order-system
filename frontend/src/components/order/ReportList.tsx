@@ -6,6 +6,7 @@ import {faFilePdf, faDownload, faSpinner, faFileInvoiceDollar} from "@fortawesom
 import HeaderAccount from "../HeaderAccount";
 import Footer from "../Footer";
 import NavButtons from "../account/NavButtons";
+import {Skeleton} from "@mui/material";
 
 interface Report {
     id: number;
@@ -24,6 +25,7 @@ const ReportList: React.FC = () => {
     const [reports, setReports] = useState<Report[]>([]);
     const [loading, setLoading] = useState<boolean>(true);
     const [customerId, setCustomerId] = useState<Customer | null>(null);
+    const [forceWait, setForceWait] = useState<boolean>(true);
 
     useEffect(() => {
         const fetchReports = async () => {
@@ -32,7 +34,9 @@ const ReportList: React.FC = () => {
                 if (response.ok) {
                     const data: Report[] = await response.json();
                     setReports(data);
+                    console.log(data);
                     setCustomerId(data[0].user);
+                    console.log(data[0].user);
                 } else {
                     console.error("Failed to fetch reports");
                 }
@@ -43,11 +47,10 @@ const ReportList: React.FC = () => {
             }
         };
         fetchReports();
+        // Ensure skeleton is shown for at least 2 seconds
+        const timer = setTimeout(() => setForceWait(false), 1000);
+        return () => clearTimeout(timer); // Cleanup
     }, []);
-
-    if (loading) {
-        return <p><FontAwesomeIcon icon={faSpinner} spin /> Loading reports...</p>;
-    }
 
     return (
         <>
@@ -61,6 +64,33 @@ const ReportList: React.FC = () => {
             </div>
             <h3 style={{fontSize:"24px"}}>Your Invoices</h3>
             <div className="row">
+
+                {loading || forceWait ? (
+                    [...Array(3)].map((_, index) => (
+
+                        <div className="order-history col-lg-8 col-md-10 col-12" key={index}>
+
+                            <div className="card">
+                                <div className="place-icon-skeleton"></div>
+                                <Skeleton
+                                    variant="rectangular"
+                                    width={140} height={20}
+                                    className=""
+                                    sx={{ borderRadius: "6px", marginTop: 0 }}
+                                />
+                                <Skeleton
+                                    variant="rectangular"
+                                    width={200} height={20}
+                                    className=""
+                                    sx={{ borderRadius: "6px", marginTop: 1 }}
+                                />
+                            </div>
+
+                        </div>
+                    ))
+                ) : (
+                    <>
+
             {reports.length > 0 ? (
                 <div className="order-history col-lg-8 col-md-10 col-12">
                     {reports.map((report) => (
@@ -101,6 +131,7 @@ const ReportList: React.FC = () => {
             ) : (
                 <p>No reports available.</p>
             )}
+                    </>)}
             </div>
         </div>
             <Footer />

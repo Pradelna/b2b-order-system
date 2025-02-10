@@ -19,6 +19,7 @@ import OrderSuccess from "../order/OrderSuccess";
 import { fetchWithAuth } from "../account/auth";
 import {Tooltip as ReactTooltip} from "react-tooltip";
 import NavButtons from "@/components/account/NavButtons.js";
+import {Skeleton} from "@mui/material";
 
 
 interface Place {
@@ -67,6 +68,7 @@ const PlaceDetails: React.FC = () => {
     const [orderHistory, setOrderHistory] = useState<Order[]>([]);
     const [visibleOrders, setVisibleOrders] = useState<number>(10);
     const [hasMoreOrders, setHasMoreOrders] = useState<boolean>(false);
+    const [forceWait, setForceWait] = useState<boolean>(true);
 
     useEffect(() => {
         const fetchPlace = async () => {
@@ -89,13 +91,16 @@ const PlaceDetails: React.FC = () => {
         };
 
         fetchPlace();
+        // Ensure skeleton is shown for at least 2 seconds
+        const timer = setTimeout(() => setForceWait(false), 1000);
+        return () => clearTimeout(timer); // Cleanup
     }, [id, customerId]);
 
 
         const fetchOrders = async () => {
             try {
                 const response = await fetchWithAuth(
-                    `http://127.0.0.1:8000/api/order/${id}/orders/`
+                    `http://127.0.0.1:8000/api/order/${id}/orders-pl/`
                 );
                 if (response.ok) {
                     const orders: Order[] = await response.json();
@@ -176,7 +181,6 @@ const PlaceDetails: React.FC = () => {
         }
     };
 
-    if (loading) return <p>Loading...</p>;
     if (!place) return <p>Place not found.</p>;
 
     return (
@@ -197,6 +201,31 @@ const PlaceDetails: React.FC = () => {
                 <div className="row other-card">
 
                     <div className="col-lg-8 col-md-10 col-12">
+
+                        {loading || forceWait ? (
+                            <div className="card place-details">
+                                <Skeleton
+                                    variant="rectangular"
+                                    width={130} height={36}
+                                    sx={{ borderRadius: "6px", marginBottom: 2 }}
+                                />
+                                <Skeleton
+                                    variant="rectangular"
+                                    width="100%" height={36}
+                                    sx={{ borderRadius: "18px", marginBottom: 1 }}
+                                />
+                                <Skeleton
+                                    variant="rectangular"
+                                    width="100%" height={36}
+                                    sx={{ borderRadius: "18px", marginBottom: 1 }}
+                                />
+                                <Skeleton
+                                    variant="rectangular"
+                                    width="100%" height={36}
+                                    sx={{ borderRadius: "18px", marginBottom: 1 }}
+                                />
+                            </div>
+                        ) : (
                         <div className="card place-details">
                             {!showEditForm ? (
                                 <>
@@ -281,6 +310,8 @@ const PlaceDetails: React.FC = () => {
                                 />
                             )}
                         </div>
+                        )}
+
                     </div>
                 </div>
 
@@ -342,7 +373,12 @@ const PlaceDetails: React.FC = () => {
 
                 <div className="row mt-4">
                     <div className="col-lg-8 col-md-10 col-12">
-                        <OrderHistory placeId={place.id} hasMoreOrders={false} orders={orderHistory}  />
+                        <OrderHistory
+                            placeId={place.id}
+                            hasMoreOrders={false}
+                            orders={orderHistory}
+                            setOrders={setOrderHistory}
+                        />
                     </div>
                 </div>
 

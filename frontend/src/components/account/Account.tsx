@@ -15,6 +15,7 @@ import {
     faBuilding,
     faFileInvoiceDollar, faCircleCheck, faStopwatch
 } from "@fortawesome/free-solid-svg-icons";
+import {Skeleton} from "@mui/material";
 
 
 interface AccountProps {
@@ -52,6 +53,8 @@ const Account: React.FC<AccountProps> = ({ customerData, setCustomerData }) => {
     const [currentPlaceId, setCurrentPlaceId] = useState<number | null>(null);
     const [selectedPlaceId, setSelectedPlaceId] = useState<number | null>(null);
     const [successOrderMessage, setSuccessOrderMessage] = useState(null);
+    const [loading, setLoading] = useState<boolean>(true);
+    const [forceWait, setForceWait] = useState<boolean>(true);
 
     const handleCardClick = (
         event: React.MouseEvent<HTMLDivElement>,
@@ -88,21 +91,29 @@ const Account: React.FC<AccountProps> = ({ customerData, setCustomerData }) => {
     };
 
     useEffect(() => {
+        setLoading(true);
         const fetchPlaces = async () => {
             try {
                 const response = await fetchWithAuth("http://127.0.0.1:8000/api/place/list/");
                 if (response.ok) {
                     const data = await response.json();
                     setPlaces(data);
+                    setLoading(false);
                 } else {
                     console.error("Failed to fetch places");
+                    setLoading(false);
                 }
             } catch (error) {
                 console.error("Error fetching places:", error);
+                setLoading(false);
             }
         };
 
         fetchPlaces();
+        setLoading(false);
+        // Ensure skeleton is shown for at least 2 seconds
+        const timer = setTimeout(() => setForceWait(false), 1000);
+        return () => clearTimeout(timer); // Cleanup
     }, []);
 
     const handleCreateOrder = () => {
@@ -158,54 +169,95 @@ const Account: React.FC<AccountProps> = ({ customerData, setCustomerData }) => {
             <div className="row">
                 <div className="col-xl-8 col-12">
                     <div id="company-top" className="row">
-                        {/*<div className="col-12">*/}
-                        {/*    {successMessage && <p className="alert alert-success">{successMessage}</p>}*/}
-                        {/*</div>*/}
 
                         <div className={`${customerData && !customerData.error ? "col-6" : "col-12"}`}>
+                            {loading || forceWait ? (
+                                <>
+                                    <div className="card dashboard-button">
+                                        <div className="card-body button-history">
+                                            <Skeleton
+                                                variant="rectangular"
+                                                width={36} height={36}
+                                                sx={{ borderRadius: "18px", marginBottom: 2 }}
+                                            />
+                                            <Skeleton
+                                                variant="rectangular"
+                                                width={180} height={20}
+                                                sx={{ borderRadius: "6px", marginBottom: 0 }}
+                                            />
+                                        </div>
+                                    </div>
+                                </>
+                            ) : (
                             <CompanyInfo
                                 customerData={customerData}
                                 setCustomerData={setCustomerData}
                                 setSuccessMessage={setSuccessMessage}
                             />
+                                )}
                         </div>
 
                         {customerData && !customerData.error && (
-                            <div className="col-2">
-                                <Link to="/all-orders" className="text-decoration-none">
-                                    <div className="card dashboard-button">
-                                        <div className="card-body button-history">
-                                            <FontAwesomeIcon icon={faClockRotateLeft} className="icon" />
-                                            <p className="text-history">All history</p>
+                            <>
+                                {loading || forceWait ? (
+                                        [...Array(3)].map((_, index) => (
+                                        <div className="col-2" key={index}>
+                                            <div className="card dashboard-button">
+                                                <div className="card-body button-history">
+                                                    <Skeleton
+                                                        variant="rectangular"
+                                                        width={36} height={36}
+                                                        className=""
+                                                        sx={{ borderRadius: "18px", marginBottom: 2 }}
+                                                    />
+                                                    <Skeleton
+                                                        variant="rectangular"
+                                                        width={70} height={20}
+                                                        className=""
+                                                        sx={{ borderRadius: "6px", marginBottom: 0 }}
+                                                    />
+                                                </div>
+                                            </div>
                                         </div>
-                                    </div>
-                                </Link>
-                            </div>
-                        ) }
+                                        ))
+                                ) : (
+                                    <>
 
-                        {customerData && !customerData.error && (
-                            <div className="col-2">
-                                <Link to="/invoices" className="text-decoration-none">
-                                    <div className="card dashboard-button">
-                                        <div className="card-body">
-                                            <FontAwesomeIcon icon={faFileInvoiceDollar} className="icon" />
-                                            <p className="text-history">{currentData.service.invoices || "Invoices"}</p>
+                                        <div className="col-2">
+                                            <Link to="/all-orders" className="text-decoration-none">
+                                                <div className="card dashboard-button">
+                                                    <div className="card-body button-history">
+                                                        <FontAwesomeIcon icon={faClockRotateLeft} className="icon" />
+                                                        <p className="text-history">All history</p>
+                                                    </div>
+                                                </div>
+                                            </Link>
                                         </div>
-                                    </div>
-                                </Link>
-                            </div>
-                        ) }
 
-                        {customerData && !customerData.error && (
-                            <div className="col-2">
-                                {/* New Order Button */}
-                                <div className="card dashboard-button" onClick={handleCreateOrder}>
-                                    <div className="card-body">
-                                        <FontAwesomeIcon icon={faCartPlus} className="icon" />
-                                        <p className="text-history">{currentData.service.new_order || "New Order"}</p>
-                                    </div>
-                                </div>
-                            </div>
+                                        <div className="col-2">
+                                            <Link to="/invoices" className="text-decoration-none">
+                                                <div className="card dashboard-button">
+                                                    <div className="card-body">
+                                                        <FontAwesomeIcon icon={faFileInvoiceDollar} className="icon" />
+                                                        <p className="text-history">{currentData.service.invoices || "Invoices"}</p>
+                                                    </div>
+                                                </div>
+                                            </Link>
+                                        </div>
+
+                                        <div className="col-2">
+                                            {/* New Order Button */}
+                                            <div className="card dashboard-button" onClick={handleCreateOrder}>
+                                                <div className="card-body">
+                                                    <FontAwesomeIcon icon={faCartPlus} className="icon" />
+                                                    <p className="text-history">{currentData.service.new_order || "New Order"}</p>
+                                                </div>
+                                            </div>
+                                        </div>
+
+                                    </>
+                                )}
+                            </>
                         )}
                     </div>
 
@@ -228,15 +280,47 @@ const Account: React.FC<AccountProps> = ({ customerData, setCustomerData }) => {
                         )}
 
                         <div className="col-3 text-left">
+                            {loading || forceWait ? (
+                                <Skeleton
+                                    variant="rectangular"
+                                    width={200} height={55}
+                                    className=""
+                                    sx={{ borderRadius: "26px", marginTop: 0 }}
+                                />
+                            ) : (
                             <button className="btn-link" onClick={handleCreatePlace}>
                                 <FontAwesomeIcon icon={faHouse} className="icon" />
                                 <span className="ms-2">{currentData.service.new_place || "New Place"}</span>
 
                             </button>
+                                )}
                         </div>
                     </div>
 
                     <div className="row mt-4 mb-4">
+                        {loading || forceWait ? (
+                            [...Array(3)].map((_, index) => (
+                                <div className="col-12 dashboard" key={index}>
+                                    <div className="card place-card">
+                                        <div className="place">
+                                            <div className="place-icon-skeleton"></div>
+                                            <Skeleton
+                                                variant="rectangular"
+                                                width={140} height={20}
+                                                className="mt-1"
+                                                sx={{ borderRadius: "6px", marginTop: 0 }}
+                                            />
+                                            <Skeleton
+                                                variant="rectangular"
+                                                width={200} height={20}
+                                                className=""
+                                                sx={{ borderRadius: "6px", marginTop: 1 }}
+                                            />
+                                        </div>
+                                    </div>
+                                </div>
+                            ))
+                        ) : ( <>
                         {places.map((place, index) => (
                             <div className="col-12 dashboard" key={place.id}>
                                 <div
@@ -271,6 +355,7 @@ const Account: React.FC<AccountProps> = ({ customerData, setCustomerData }) => {
                                 </div>
                             </div>
                         ))}
+                        </> )}
                     </div>
                 </div>
 

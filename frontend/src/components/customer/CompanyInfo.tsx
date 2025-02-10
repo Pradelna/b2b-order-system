@@ -15,6 +15,7 @@ import {
 import { fetchWithAuth } from "../account/auth";
 import { Tooltip as ReactTooltip } from "react-tooltip";
 import Loader from "../Loader";
+import {Skeleton} from "@mui/material";
 
 interface CustomerData {
     company_name: string;
@@ -100,7 +101,13 @@ const CompanyInfo: React.FC<CompanyInfoProps> = ({
     if (loading) {
         return (
             <div>
-                <Loader />
+                <Skeleton
+                    variant="rectangular"
+                    width="100%" height={120}
+                    className="mb-3"
+                    sx={{ borderRadius: "16px", marginBottom: 1 }}
+
+                />
             </div>
         );
     }

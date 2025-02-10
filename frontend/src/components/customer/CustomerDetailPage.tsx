@@ -9,6 +9,7 @@ import { fetchWithAuth } from "../account/auth";
 import UploadFile from "./UploadFile.js";
 import DocumentsBlock from "./DocumentsBlock.js";
 import NavButtons from "@/components/account/NavButtons.js";
+import {Skeleton} from "@mui/material";
 
 interface CustomerData {
     company_name: string;
@@ -28,6 +29,7 @@ const CustomerDetailPage: React.FC = () => {
     const [isEditing, setIsEditing] = useState<boolean>(false);
     const [successMessage, setSuccessMessage] = useState<string>("");
     const [loading, setLoading] = useState<boolean>(true);
+    const [forceWait, setForceWait] = useState<boolean>(true);
 
     const fetchCustomerData = async () => {
         const token = localStorage.getItem("accessToken");
@@ -61,6 +63,9 @@ const CustomerDetailPage: React.FC = () => {
 
     useEffect(() => {
         fetchCustomerData();
+        // Ensure skeleton is shown for at least 2 seconds
+        const timer = setTimeout(() => setForceWait(false), 1000);
+        return () => clearTimeout(timer); // Cleanup
     }, [customerId]);
 
     const handleLogout = () => {
@@ -91,6 +96,26 @@ const CustomerDetailPage: React.FC = () => {
                     <div className="col-lg-8 col-12">
                         <div className="row detail-page">
 
+                            {loading || forceWait ? (
+
+                                <div className="card place-details mb-3">
+                                    <Skeleton
+                                        variant="rectangular"
+                                        width={130} height={30}
+                                        sx={{ borderRadius: "6px", marginBottom: 2 }}
+                                    />
+                                    {[...Array(5)].map((_, index) => (
+                                        <Skeleton
+                                            variant="rectangular"
+                                            width={150} height={21}
+                                            sx={{borderRadius: "6px", marginBottom: 1}}
+                                            key={index}
+                                        />
+                                    ))}
+                                </div>
+
+                            ) : ( <>
+
                             {isEditing ? (
                                 <CustomerEdit
                                     customerData={customerData}
@@ -107,7 +132,61 @@ const CustomerDetailPage: React.FC = () => {
                                     setIsEditing={setIsEditing}
                                 />
                             )}
+                            </> )}
+
                         </div>
+
+                        {loading || forceWait ? (<>
+                        <div className="row detail-page mt-1">
+                            <div className="card place-details">
+                                <Skeleton
+                                    variant="rectangular"
+                                    width={190} height={36}
+                                    sx={{ borderRadius: "18px", marginBottom: 2 }}
+                                />
+                                <Skeleton
+                                    variant="rectangular"
+                                    width={150} height={30}
+                                    sx={{borderRadius: "6px", marginBottom: 1}}
+                                />
+                                <Skeleton
+                                    variant="rectangular"
+                                    width="100%" height={28}
+                                    sx={{borderRadius: "16px", marginBottom: 1}}
+                                />
+                                <Skeleton
+                                    variant="rectangular"
+                                    width="100%" height={28}
+                                    sx={{borderRadius: "16px", marginBottom: 3}}
+                                />
+                            </div>
+                        </div>
+                        <div className="row detail-page mt-3">
+                            <div className="card place-details mt-2">
+                                <Skeleton
+                                    variant="rectangular"
+                                    width={150} height={30}
+                                    sx={{ borderRadius: "6px", marginBottom: 2 }}
+                                />
+                                <Skeleton
+                                    variant="rectangular"
+                                    width="100%" height={28}
+                                    sx={{borderRadius: "16px", marginBottom: 1}}
+                                />
+                                <Skeleton
+                                    variant="rectangular"
+                                    width="100%" height={28}
+                                    sx={{borderRadius: "16px", marginBottom: 1}}
+                                />
+                                <Skeleton
+                                    variant="rectangular"
+                                    width="100%" height={28}
+                                    sx={{borderRadius: "16px", marginBottom: 1}}
+                                />
+                            </div>
+                        </div>
+                        </>) : (<>
+
 
                         <UploadFile />
 
@@ -119,6 +198,9 @@ const CustomerDetailPage: React.FC = () => {
                                 Log Out
                             </button>
                         </div>
+
+                        </>)}
+
                     </div>
                 </div>
             </div>

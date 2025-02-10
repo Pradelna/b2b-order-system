@@ -4,6 +4,7 @@ import { faTruck, faFileLines, faCheckCircle, faBan } from "@fortawesome/free-so
 import { fetchWithAuth } from "../account/auth";
 import { Tooltip as ReactTooltip } from "react-tooltip";
 import {Form} from "react-router-dom";
+import {Skeleton} from "@mui/material";
 
 interface Order {
     id: number;
@@ -27,6 +28,7 @@ const OrderHistory: React.FC<OrderHistoryProps> = ({ placeId, orders = [], setOr
     const [cancelableOrders, setCancelableOrders] = useState<{ [key: number]: boolean }>({});
     const [successMessage, setSuccessMessage] = useState<string>("");
     const [updatedOrder, setUpdatedOrder] = useState<any>(null);
+    const [forceWait, setForceWait] = useState<boolean>(true);
 
     // Fetch orders from the API
     const fetchOrders = async () => {
@@ -56,6 +58,9 @@ const OrderHistory: React.FC<OrderHistoryProps> = ({ placeId, orders = [], setOr
             return;
         }
         fetchOrders();
+        // Ensure skeleton is shown for at least 2 seconds
+        const timer = setTimeout(() => setForceWait(false), 1000);
+        return () => clearTimeout(timer); // Cleanup
     }, [placeId]);
 
     // Load more orders when the user clicks "More"
@@ -116,9 +121,6 @@ const OrderHistory: React.FC<OrderHistoryProps> = ({ placeId, orders = [], setOr
         }
     };
 
-    if (loading) {
-        return <p>Loading order history...</p>;
-    }
 
     return (
         <div className="order-history">
@@ -127,94 +129,123 @@ const OrderHistory: React.FC<OrderHistoryProps> = ({ placeId, orders = [], setOr
             {successMessage && (
                 <p className="alert alert-success mb-3">{successMessage}</p>
             )}
-            {orders.length > 0 ? (
-                <div>
-                    {orders.slice(0, visibleOrders)
-                        // .sort((a, b) => b.id - a.id)
-                        .map((order) => (
-                        <div
-                            key={order.id}
-                            className={`card ${expandedOrders[order.id] ? "expanded" : ""}`}
-                            onClick={() => toggleExpand(order.id)}
-                        >
-                            <div className="history-icon">
-                                <FontAwesomeIcon icon={faTruck} />
+
+            {loading || forceWait ? (
+                [...Array(3)].map((_, index) => (
+                    <div className="col-12 dashboard" key={index}>
+
+                            <div className="card">
+                                <div className="place-icon-skeleton"></div>
+                                <Skeleton
+                                    variant="rectangular"
+                                    width={140} height={20}
+                                    className=""
+                                    sx={{ borderRadius: "6px", marginTop: 0 }}
+                                />
+                                <Skeleton
+                                    variant="rectangular"
+                                    width={200} height={20}
+                                    className=""
+                                    sx={{ borderRadius: "6px", marginTop: 1 }}
+                                />
                             </div>
 
-                            <div className="receipt-icon">
-                                <FontAwesomeIcon
-                                    icon={faFileLines}
-                                    data-tooltip-id="receipt-tooltip"
-                                    style={{ cursor: "pointer" }}
-                                />
-                                <ReactTooltip
-                                    id="receipt-tooltip"
-                                    place="top"
-                                    content="Download dodaci list"
-                                    effect="solid"
-                                    className="custom-tooltip"
-                                />
-                            </div>
-                            <p>
-                                {order.canceled || (updatedOrder?.id === order.id) ? (
-                                    <>
-                                        <FontAwesomeIcon icon={faBan} style={{ color: "red", height: "18px" }}/>
-                                        <strong className="ms-2">Canceled</strong>
-                                    </>
-                                ) : (
-                                    <>
-                                        {cancelableOrders[order.id] && !order.canceled ? (
+                    </div>
+                ))
+            ) : (
+                <>
+
+                {orders.length > 0 ? (
+                    <div>
+                        {orders.slice(0, visibleOrders)
+                            // .sort((a, b) => b.id - a.id)
+                            .map((order) => (
+                                <div
+                                    key={order.id}
+                                    className={`card ${expandedOrders[order.id] ? "expanded" : ""}`}
+                                    onClick={() => toggleExpand(order.id)}
+                                >
+                                    <div className="history-icon">
+                                        <FontAwesomeIcon icon={faTruck} />
+                                    </div>
+
+                                    <div className="receipt-icon">
+                                        <FontAwesomeIcon
+                                            icon={faFileLines}
+                                            data-tooltip-id="receipt-tooltip"
+                                            style={{ cursor: "pointer" }}
+                                        />
+                                        <ReactTooltip
+                                            id="receipt-tooltip"
+                                            place="top"
+                                            content="Download dodaci list"
+                                            effect="solid"
+                                            className="custom-tooltip"
+                                        />
+                                    </div>
+                                    <p>
+                                        {order.canceled || (updatedOrder?.id === order.id) ? (
                                             <>
-                                                <FontAwesomeIcon icon={faCheckCircle} style={{ color: "#00aab7", height: "18px" }}/>
-                                                <strong className="ms-2">New</strong>
+                                                <FontAwesomeIcon icon={faBan} style={{ color: "red", height: "18px" }}/>
+                                                <strong className="ms-2">Canceled</strong>
                                             </>
                                         ) : (
                                             <>
-                                                <FontAwesomeIcon icon={faCheckCircle} style={{ color: "#00aab7", height: "18px" }}/>
-                                                <strong className="ms-2">Completed</strong>
+                                                {cancelableOrders[order.id] && !order.canceled ? (
+                                                    <>
+                                                        <FontAwesomeIcon icon={faCheckCircle} style={{ color: "#00aab7", height: "18px" }}/>
+                                                        <strong className="ms-2">New</strong>
+                                                    </>
+                                                ) : (
+                                                    <>
+                                                        <FontAwesomeIcon icon={faCheckCircle} style={{ color: "#00aab7", height: "18px" }}/>
+                                                        <strong className="ms-2">Completed</strong>
+                                                    </>
+                                                )}
+
                                             </>
                                         )}
-
-                                    </>
+                                    </p>
+                                    {/*<p>*/}
+                                    {/*    <strong>Pickup Date:</strong> {order.date_pickup}*/}
+                                    {/*</p>*/}
+                                    <p>
+                                        <strong>Number order:</strong> {order.id}
+                                    </p>
+                                    {/* Дополнительная информация показывается только если карточка развернута */}
+                                    {expandedOrders[order.id] && (
+                                        <div className="expanded-content">
+                                            <p><strong>Pickup Date:</strong> {order.system}</p>
+                                            <p><strong>Delivery Date:</strong> {order.type_ship}</p>
+                                        </div>
                                     )}
-                            </p>
-                            {/*<p>*/}
-                            {/*    <strong>Pickup Date:</strong> {order.date_pickup}*/}
-                            {/*</p>*/}
-                            <p>
-                                <strong>Number order:</strong> {order.id}
-                            </p>
-                            {/* Дополнительная информация показывается только если карточка развернута */}
-                            {expandedOrders[order.id] && (
-                                <div className="expanded-content">
-                                    <p><strong>Pickup Date:</strong> {order.system}</p>
-                                    <p><strong>Delivery Date:</strong> {order.type_ship}</p>
-                                </div>
-                            )}
-                            {/* Кнопка отмены заказа (только если заказ можно отменить) */}
-                            {cancelableOrders[order.id] && !order.canceled && (updatedOrder?.id !== order.id) && (
-                                <button
-                                    className="btn btn-link cancel-order"
-                                    onClick={(e) => {
-                                        e.stopPropagation(); // Чтобы не срабатывал toggleExpand
-                                        handleCancelOrder(order.id);
-                                    }}
-                                >
-                                    Cancel Order
-                                </button>
-                            )}
+                                    {/* Кнопка отмены заказа (только если заказ можно отменить) */}
+                                    {cancelableOrders[order.id] && !order.canceled && (updatedOrder?.id !== order.id) && (
+                                        <button
+                                            className="btn btn-link cancel-order"
+                                            onClick={(e) => {
+                                                e.stopPropagation(); // Чтобы не срабатывал toggleExpand
+                                                handleCancelOrder(order.id);
+                                            }}
+                                        >
+                                            Cancel Order
+                                        </button>
+                                    )}
 
-                        </div>
-                    ))}
-                    {hasMoreOrders && (
-                        <button onClick={loadMoreOrders} className="btn btn-history btn-link mt-3 mb-5">
-                            More
-                        </button>
-                    )}
-                </div>
-            ) : (
-                <p>No order history available.</p>
-            )}
+                                </div>
+                            ))}
+                        {hasMoreOrders && (
+                            <button onClick={loadMoreOrders} className="btn btn-history btn-link mt-3 mb-5">
+                                More
+                            </button>
+                        )}
+                    </div>
+                ) : (
+                    <p>No order history available.</p>
+                )}
+
+                </>)}
+
         </div>
     );
 };
