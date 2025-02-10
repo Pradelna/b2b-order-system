@@ -625,6 +625,7 @@ svg.loader{
   background: rgba(0, 0, 0, 0.7);
   display: flex;
   justify-content: center;
+  align-items: center;
   overflow: hidden;
   z-index: 9999;
 }
