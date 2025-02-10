@@ -38,6 +38,7 @@ const OrderForm: React.FC<OrderFormProps> = ({ placeId, onClose, onSuccess }) =>
 
   const [places, setPlaces] = useState<Place[]>([]);
   const [useCustomDays, setUseCustomDays] = useState(false);
+  const [useOnetimeOrder, setUseOnetimeOrder] = useState(false);
 
   useEffect(() => {
     // Automatically select the only available place
@@ -115,6 +116,7 @@ const OrderForm: React.FC<OrderFormProps> = ({ placeId, onClose, onSuccess }) =>
       date_start_day: availableDates[0] || prev.date_start_day,
     }));
     setUseCustomDays(value === "Own");
+    setUseOnetimeOrder(value === "One_time");
   };
 
   const handleInputChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
@@ -245,9 +247,6 @@ const OrderForm: React.FC<OrderFormProps> = ({ placeId, onClose, onSuccess }) =>
 
           {useCustomDays && (
               <div className="row mb-3">
-                {/*<div className="col-12 label-form">*/}
-                {/*  <label>Days of the Week</label>*/}
-                {/*</div>*/}
                 <div className="col-12">
                   {["monday", "tuesday", "wednesday", "thursday", "friday"].map((day) => (
                       <div className="form-check" key={day}>
@@ -268,7 +267,7 @@ const OrderForm: React.FC<OrderFormProps> = ({ placeId, onClose, onSuccess }) =>
           )}
 
           {/* Date Start Day with restricted options */}
-          {formData.system != "One_time" && (
+          {!useOnetimeOrder && (
 
               <div className="row mb-3">
                 <div className="col-12 label-form">
@@ -297,7 +296,7 @@ const OrderForm: React.FC<OrderFormProps> = ({ placeId, onClose, onSuccess }) =>
           )}
 
           {/* Date Pickup */ /* Date Delivery */}
-          {formData.system === "One_time" && (
+          {useOnetimeOrder && (
               <>
 
                 <div className="row mb-3">
@@ -354,6 +353,7 @@ const OrderForm: React.FC<OrderFormProps> = ({ placeId, onClose, onSuccess }) =>
           )}
 
           {/* Every Week */}
+          {!useOnetimeOrder && (
           <div className="row mb-3">
             <div className="col-1">
               <div className="checkbox-wrapper-19">
@@ -370,6 +370,7 @@ const OrderForm: React.FC<OrderFormProps> = ({ placeId, onClose, onSuccess }) =>
             </div>
             <div className="col-11">Every Week</div>
           </div>
+          )}
 
 
 

@@ -59,6 +59,7 @@ const PlaceForm: React.FC<PlaceFormProps> = ({ onClose, onSuccess }) => {
 
     return (
         <div className="modal-backdrop">
+            <div className="modal-wrapper">
             <div className="modal-content">
                 <h3>Add New Place</h3>
                 <form onSubmit={handleSubmit}>
@@ -94,6 +95,7 @@ const PlaceForm: React.FC<PlaceFormProps> = ({ onClose, onSuccess }) => {
                         </button>
                     </div>
                 </form>
+            </div>
             </div>
         </div>
     );

@@ -78,7 +78,7 @@ class Order(models.Model):
     rp_status = models.IntegerField("status", null=True, blank=True)
     end_order = models.BooleanField("End repeating order", default=False)
     canceled = models.BooleanField("Canceled mistaken order", default=False)
-    reported = models.BooleanField("Canceled mistaken order", default=False)
+    reported = models.BooleanField("Already added to report", default=False)
     created_at = models.DateTimeField(auto_now_add=True)
 
     def __str__(self):

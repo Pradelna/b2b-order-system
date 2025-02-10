@@ -57,7 +57,7 @@ const HeaderAccount: React.FC = ({customerId}) => {
                             </a>
                             <a href="/account" className="mail">
                                 <FontAwesomeIcon icon={faHouse} className="icon"/>
-                                <span>{menuData.header_dashboard || "Dashboard"}</span>
+                                <span>{menuData.header_dashboard || "Panel"}</span>
                             </a>
                             <Link to="/invoices">
                             <div className="mail">

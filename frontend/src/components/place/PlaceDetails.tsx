@@ -69,6 +69,7 @@ const PlaceDetails: React.FC = () => {
     const [visibleOrders, setVisibleOrders] = useState<number>(10);
     const [hasMoreOrders, setHasMoreOrders] = useState<boolean>(false);
     const [forceWait, setForceWait] = useState<boolean>(true);
+    const [stopedOrder, setStopedOrder] = useState<any>(null);
 
     useEffect(() => {
         const fetchPlace = async () => {
@@ -100,7 +101,7 @@ const PlaceDetails: React.FC = () => {
         const fetchOrders = async () => {
             try {
                 const response = await fetchWithAuth(
-                    `http://127.0.0.1:8000/api/order/${id}/orders-pl/`
+                    `http://127.0.0.1:8000/api/order/${id}/orders/`
                 );
                 if (response.ok) {
                     const orders: Order[] = await response.json();
@@ -127,6 +128,9 @@ const PlaceDetails: React.FC = () => {
 
     useEffect(() => {
         fetchOrders();
+        // Ensure skeleton is shown for at least 2 seconds
+        const timer = setTimeout(() => setForceWait(false), 1000);
+        return () => clearTimeout(timer); // Cleanup
     }, [id]);
 
     const handleDelete = async () => {
@@ -163,6 +167,7 @@ const PlaceDetails: React.FC = () => {
                 if (response.ok) {
                     const updatedOrder = await response.json();
                     setCurrentOrder(null); // del current order
+                    setStopedOrder(updatedOrder);
                     setOrderHistory((prevOrders) => {
                         // add ex current order
                         if (prevOrders.some((order) => order.id === updatedOrder.id)) {
@@ -181,6 +186,8 @@ const PlaceDetails: React.FC = () => {
         }
     };
 
+    console.log(loading);
+    console.log(forceWait);
     if (!place) return <p>Place not found.</p>;
 
     return (
@@ -192,7 +199,7 @@ const PlaceDetails: React.FC = () => {
                     <div className="col-1 back-button">
                         <NavButtons />
                     </div>
-                    <div className="col-lg-7 col-md-9 col-11">
+                    <div className="col-lg-6 col-md-9 col-11">
                         {successMessage && (
                             <p className="alert alert-success">{successMessage}</p>
                         )}
@@ -200,7 +207,7 @@ const PlaceDetails: React.FC = () => {
                 </div>
                 <div className="row other-card">
 
-                    <div className="col-lg-8 col-md-10 col-12">
+                    <div className="col-lg-7 col-md-10 col-12">
 
                         {loading || forceWait ? (
                             <div className="card place-details">
@@ -313,11 +320,14 @@ const PlaceDetails: React.FC = () => {
                         )}
 
                     </div>
+
+
                 </div>
 
+                {loading || forceWait ? (<></>) : (<>
                 {currentOrder && (
                     <div className="row current-order other-card">
-                        <div className="col-lg-8 col-md-10 col-12">
+                        <div className="col-lg-7 col-md-10 col-12">
                             <div className="card current-order">
 
                                 <h3>Current Order #{currentOrder.id}</h3>
@@ -370,14 +380,16 @@ const PlaceDetails: React.FC = () => {
                         </div>
                     </div>
                 )}
+                </>)}
 
                 <div className="row mt-4">
-                    <div className="col-lg-8 col-md-10 col-12">
+                    <div className="col-lg-7 col-md-10 col-12">
                         <OrderHistory
                             placeId={place.id}
                             hasMoreOrders={false}
                             orders={orderHistory}
                             setOrders={setOrderHistory}
+                            stopedOrder={stopedOrder}
                         />
                     </div>
                 </div>

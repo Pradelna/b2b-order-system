@@ -18,9 +18,10 @@ interface OrderHistoryProps {
     hasMoreOrders: boolean;
     orders?: Order[]; // Сделано необязательным для защиты
     setOrders?: (orders: Order[]) => void; // Передача функции для обновления списка заказов
+    stopedOrder?: Order;
 }
 
-const OrderHistory: React.FC<OrderHistoryProps> = ({ placeId, orders = [], setOrders}) => {
+const OrderHistory: React.FC<OrderHistoryProps> = ({ placeId, orders = [], setOrders, stopedOrder}) => {
     const [visibleOrders, setVisibleOrders] = useState<number>(10);
     const [hasMoreOrders, setHasMoreOrders] = useState<boolean>(false);
     const [loading, setLoading] = useState<boolean>(true);

@@ -498,6 +498,11 @@ p.text-history {
 
 .label-form {
   padding: 6px 12px;
+  cursor: default;
+}
+
+.row-form {
+  cursor: default;
 }
 
 .form-control {
@@ -526,6 +531,7 @@ p.text-history {
   position: relative;
   padding: 20px;
   margin-top: 20px;
+  cursor: default !important;
 }
 
 #upload-component .other-card .card {
@@ -685,6 +691,28 @@ svg.loader{
 
 .current-order {
   min-height: 410px !important;
+}
+
+@media (min-width: 991px) {
+  .current-order-991 {
+    display: none;
+  }
+}
+
+@media (max-width: 991px) {
+  .side-card {
+    display: none;
+  }
+}
+
+.side-card {
+  position: relative;
+}
+.side-card .card {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
 }
 
 .card h1, .card h2, .card h3, .order-history h3 {
