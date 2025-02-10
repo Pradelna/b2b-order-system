@@ -528,6 +528,14 @@ p.text-history {
   margin-top: 20px;
 }
 
+#upload-component .other-card .card {
+  min-height: 170px;
+}
+
+#document-block .other-card .card {
+  min-height: 226px;
+}
+
 .btn-upload {
   text-decoration: none;
   font-size: 14px;
@@ -828,6 +836,10 @@ svg.loader{
   height: 190px;
 }
 
+.place-detail-page .place-details {
+  min-height: 280px;
+}
+
 .message-block .card {
   height: 54px;
   width: auto;
@@ -1021,4 +1033,12 @@ p.back-link {
   position: absolute;
   top: 20px;
   left: 20px;
+}
+
+#card-history .place-icon-skeleton {
+  display: none;
+}
+
+#card-history .card {
+  border-radius: 16px
 }

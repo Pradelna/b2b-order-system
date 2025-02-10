@@ -96,14 +96,26 @@ const AllOrderHistory: React.FC = () => {
                             <h3 className="account-info">Order History</h3>
 
                             {loading || forceWait ? (
-                                [...Array(5)].map((_, index) => (
-                                    <Skeleton
-                                        variant="rectangular"
-                                        width="100%" height={80}
-                                        className="mb-3"
-                                        sx={{ borderRadius: "16px", marginBottom: 1 }}
-                                        key={index}
-                                    />
+                                [...Array(8)].map((_, index) => (
+                                    <div className="col-12 dashboard" key={index}>
+
+                                        <div className="card">
+                                            <div className="place-icon-skeleton"></div>
+                                            <Skeleton
+                                                variant="rectangular"
+                                                width={140} height={20}
+                                                className=""
+                                                sx={{ borderRadius: "6px", marginTop: 0 }}
+                                            />
+                                            <Skeleton
+                                                variant="rectangular"
+                                                width={200} height={20}
+                                                className=""
+                                                sx={{ borderRadius: "6px", marginTop: 1 }}
+                                            />
+                                        </div>
+
+                                    </div>
                                 ))
                             ) : (<>
 

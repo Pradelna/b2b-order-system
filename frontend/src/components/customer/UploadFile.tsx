@@ -1,8 +1,8 @@
-import { useRef, useState, useEffect, useContext } from 'react';
+import React, { useRef, useState, useEffect, useContext } from 'react';
 import { LanguageContext } from "../../context/LanguageContext.js";
 import { fetchWithAuth } from "../account/auth";
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faFilePdf } from "@fortawesome/free-solid-svg-icons";
+import {faFilePdf, faSpinner} from "@fortawesome/free-solid-svg-icons";
 
 interface FileData {
     id: number;
@@ -117,50 +117,52 @@ const UploadFile: React.FC<UploadFileProps> = ({ onUploadSuccess }) => {
     };
 
     return (
-        <div className="row other-card">
-            {error && <p className="alert alert-danger mt-3">{error}</p>}
-            {success && <p className="alert alert-success mt-3">{success}</p>}
+        <div id="upload-component">
+            <div className="row other-card">
+                {error && <p className="alert alert-danger mt-3">{error}</p>}
+                {success && <p className="alert alert-success mt-3">{success}</p>}
 
-            <div className="card">
-                <div className="row">
-                    <div className="col-3">
-                        <input
-                            type="file"
-                            ref={fileInputRef}
-                            style={{ display: 'none' }}
-                            onChange={handleFileChange}
-                        />
-                        <button className="btn-upload" onClick={handleButtonClick} disabled={isUploading}>
-                            {isUploading
-                                ? currentData?.buttons.uploading || 'Uploading...'
-                                : currentData?.buttons.upload || 'Upload'}
-                        </button>
-                    </div>
-                    <div className="col-4">
-                        {isUploading && (
-                            <div className="spinner" style={{ margin: '10px auto' }} />
-                        )}
-                    </div>
-                </div>
-
-                <h3 style={{ fontSize: '20px' }} className="mt-3">
-                    {currentData?.customer.uploaded_files || 'Uploaded Files'}
-                </h3>
-                <div style={{ margin: '0 1px' }} className="row">
-                    {files.map((file, index) => (
-                        <div className="col-12 form-control mb-2" style={{ display: 'flex' }} key={index}>
-                            <a href={`http://localhost:8000${file.file}`} target="_blank" rel="noopener noreferrer">
-                                <FontAwesomeIcon icon={faFilePdf} className="file-uploaded" />
-                                <span style={{ marginLeft: '5px' }}>{file.file.split('/').pop()}</span>
-                            </a>
-                            <button
-                                onClick={() => handleDeleteFile(file.id)}
-                                style={{ marginLeft: 'auto', fontSize: '10px', color: 'red' }}
-                            >
-                                ❌
+                <div className="card">
+                    <div className="row">
+                        <div className="col-3">
+                            <input
+                                type="file"
+                                ref={fileInputRef}
+                                style={{ display: 'none' }}
+                                onChange={handleFileChange}
+                            />
+                            <button className="btn-upload" onClick={handleButtonClick} disabled={isUploading}>
+                                {isUploading
+                                    ? currentData?.buttons.uploading || 'Uploading...'
+                                    : currentData?.buttons.upload || 'Upload'}
                             </button>
                         </div>
-                    ))}
+                        <div className="col-4">
+                            {isUploading && (
+                                <p><FontAwesomeIcon icon={faSpinner} spin /> Uploading...</p>
+                            )}
+                        </div>
+                    </div>
+
+                    <h3 style={{ fontSize: '20px' }} className="mt-3">
+                        {currentData?.customer.uploaded_files || 'Uploaded Files'}
+                    </h3>
+                    <div style={{ margin: '0 1px' }} className="row">
+                        {files.map((file, index) => (
+                            <div className="col-12 form-control mb-2" style={{ display: 'flex' }} key={index}>
+                                <a href={`http://localhost:8000${file.file}`} target="_blank" rel="noopener noreferrer">
+                                    <FontAwesomeIcon icon={faFilePdf} className="file-uploaded" />
+                                    <span style={{ marginLeft: '5px' }}>{file.file.split('/').pop()}</span>
+                                </a>
+                                <button
+                                    onClick={() => handleDeleteFile(file.id)}
+                                    style={{ marginLeft: 'auto', fontSize: '10px', color: 'red' }}
+                                >
+                                    ❌
+                                </button>
+                            </div>
+                        ))}
+                    </div>
                 </div>
             </div>
         </div>
