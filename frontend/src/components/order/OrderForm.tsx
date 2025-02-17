@@ -1,3 +1,4 @@
+const BASE_URL = import.meta.env.VITE_API_URL;
 import { useState, useEffect } from "react";
 import { fetchWithAuth } from "../account/auth";
 
@@ -50,7 +51,7 @@ const OrderForm: React.FC<OrderFormProps> = ({ placeId, onClose, onSuccess }) =>
   useEffect(() => {
     const fetchPlaces = async () => {
       try {
-        const response = await fetchWithAuth("http://127.0.0.1:8000/api/place/list/");
+        const response = await fetchWithAuth(`${BASE_URL}/place/list/`);
         if (response.ok) {
           const data: Place[] = await response.json();
           setPlaces(data);
@@ -148,7 +149,7 @@ const OrderForm: React.FC<OrderFormProps> = ({ placeId, onClose, onSuccess }) =>
     // console.log("🚀 Submitting Order Data:", formattedData); // Debug log
 
     try {
-      const response = await fetchWithAuth("http://127.0.0.1:8000/api/order/create/", {
+      const response = await fetchWithAuth(`${BASE_URL}/order/create/`, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",

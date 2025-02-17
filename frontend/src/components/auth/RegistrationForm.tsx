@@ -1,7 +1,8 @@
+const BASE_URL = import.meta.env.VITE_API_URL;
 import React, { useState, useRef, useContext, FormEvent } from "react";
 import { LanguageContext } from "../../context/LanguageContext.js";
 import ReCAPTCHA from "react-google-recaptcha";
-import { fetchWithAuth } from "../account/auth";
+import { fetchWithAuth } from "../account/auth.ts";
 import Header from "../Header.js";
 import Footer from "../Footer.tsx";
 
@@ -32,7 +33,7 @@ const RegistrationForm: React.FC = () => {
         recaptchaRef.current.reset();
 
         // Make a POST request to your backend
-        const response = await fetchWithAuth("http://127.0.0.1:8000/api/accounts/register/", {
+        const response = await fetchWithAuth(`${BASE_URL}/accounts/register/`, {
           method: "POST",
           headers: {
             "Content-Type": "application/json",

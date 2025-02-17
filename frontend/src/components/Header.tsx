@@ -6,6 +6,7 @@ import AccountMenuComponent from "./AccountMenuComponent";
 import LanguageSwitcher from "./LanguageSwitcher.js";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faHouse, faUser, faMobileScreen, faEnvelope } from "@fortawesome/free-solid-svg-icons";
+import Loader from "@/components/Loader";
 
 interface MenuData {
   header_home: string;
@@ -14,13 +15,15 @@ interface MenuData {
 
 const Header: React.FC = () => {
   const { language, handleLanguageChange, languageData } = useContext(LanguageContext);
+  const [loading, setLoading] = useState<boolean>(true);
   const navigate = useNavigate();
   const location = useLocation();
   const [isAuthenticated, setIsAuthenticated] = useState<boolean>(false);
 
   useEffect(() => {
     const token = localStorage.getItem("accessToken");
-    setIsAuthenticated(!!token); // Check if the user is authenticated
+    setIsAuthenticated(!!token);// Check if the user is authenticated
+    setLoading(false)
   }, []);
 
   if (!languageData) {
@@ -34,6 +37,7 @@ const Header: React.FC = () => {
     handleLanguageChange(lang); // Change the language
     const newPath = location.pathname.replace(/^\/[a-z]{2}/, ""); // Remove language prefix
     navigate(newPath || "/"); // Redirect without prefix
+    setLoading(false)
   };
 
   const handleAuthClick = () => {
@@ -43,6 +47,10 @@ const Header: React.FC = () => {
       navigate("/account/login");
     }
   };
+
+  if (loading || !languageData) {
+    return <Loader />;
+  }
 
   return (
       <header className="header">

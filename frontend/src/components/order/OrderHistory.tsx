@@ -1,7 +1,8 @@
+const BASE_URL = import.meta.env.VITE_API_URL;
 import React, { useState, useEffect } from "react";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faTruck, faFileLines, faCheckCircle, faBan } from "@fortawesome/free-solid-svg-icons";
-import { fetchWithAuth } from "../account/auth";
+import { fetchWithAuth } from "../account/auth.ts";
 import { Tooltip as ReactTooltip } from "react-tooltip";
 import {Form} from "react-router-dom";
 import {Skeleton} from "@mui/material";
@@ -35,7 +36,7 @@ const OrderHistory: React.FC<OrderHistoryProps> = ({ placeId, orders = [], setOr
     const fetchOrders = async () => {
         try {
             // console.log("Fetching orders for place ID", placeId);
-            const response = await fetchWithAuth(`http://127.0.0.1:8000/api/order/${placeId}/orders/`);
+            const response = await fetchWithAuth(`${BASE_URL}/order/${placeId}/orders/`);
             if (response.ok) {
                 const data: Order[] = await response.json();
                 if (setOrders) {
@@ -100,7 +101,7 @@ const OrderHistory: React.FC<OrderHistoryProps> = ({ placeId, orders = [], setOr
     const handleCancelOrder = async (orderId: number) => {
         if (window.confirm("Are you sure you want to cancel this order?")) {
             try {
-                const response = await fetchWithAuth(`http://127.0.0.1:8000/api/order/update/${orderId}/`, {
+                const response = await fetchWithAuth(`${BASE_URL}/order/update/${orderId}/`, {
                     method: "PUT",
                     headers: {
                         "Content-Type": "application/json",

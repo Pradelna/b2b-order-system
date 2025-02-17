@@ -1,6 +1,7 @@
+const BASE_URL = import.meta.env.VITE_API_URL;
 import { useRef, useState, useEffect, useContext } from 'react';
 import { LanguageContext } from "../../context/LanguageContext.js";
-import { fetchWithAuth } from "../account/auth";
+import { fetchWithAuth } from "../account/auth.ts";
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faFilePdf } from "@fortawesome/free-solid-svg-icons";
 
@@ -20,7 +21,7 @@ const DocumentsBlock: React.FC = () => {
     // Fetch the list of uploaded files
     const fetchUploadedFiles = async () => {
         try {
-            const response = await fetchWithAuth(`http://localhost:8000/api/customer/documents/for-customer/`);
+            const response = await fetchWithAuth(`${BASE_URL}/customer/documents/for-customer/`);
             if (!response.ok) throw new Error('Failed to fetch files');
             const data: FileData[] = await response.json();
             setFiles(data);

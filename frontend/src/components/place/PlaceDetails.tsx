@@ -1,3 +1,4 @@
+const BASE_URL = import.meta.env.VITE_API_URL;
 import React, { useState, useEffect, useContext } from "react";
 import { LanguageContext } from "../../context/LanguageContext";
 import { useParams, useNavigate, Link } from "react-router-dom";
@@ -16,7 +17,7 @@ import PlaceEdit from "./PlaceEdit";
 import OrderForm from "../order/OrderForm";
 import OrderHistory from "../order/OrderHistory";
 import OrderSuccess from "../order/OrderSuccess";
-import { fetchWithAuth } from "../account/auth";
+import { fetchWithAuth } from "../account/auth.ts";
 import {Tooltip as ReactTooltip} from "react-tooltip";
 import NavButtons from "@/components/account/NavButtons.js";
 import {Skeleton} from "@mui/material";
@@ -72,6 +73,7 @@ const PlaceDetails: React.FC = () => {
     const [stopedOrder, setStopedOrder] = useState<any>(null);
 
     useEffect(() => {
+        // info about place
         const fetchPlace = async () => {
             try {
                 const response = await fetchWithAuth(
@@ -100,8 +102,9 @@ const PlaceDetails: React.FC = () => {
 
         const fetchOrders = async () => {
             try {
+                // order of the place
                 const response = await fetchWithAuth(
-                    `http://127.0.0.1:8000/api/order/${id}/orders/`
+                    `${BASE_URL}/order/${id}/orders/`
                 );
                 if (response.ok) {
                     const orders: Order[] = await response.json();
@@ -134,10 +137,11 @@ const PlaceDetails: React.FC = () => {
     }, [id]);
 
     const handleDelete = async () => {
+        // deleting of the place
         if (window.confirm("Are you sure you want to delete this place?")) {
             try {
                 const response = await fetchWithAuth(
-                    `http://127.0.0.1:8000/api/place/delete/${id}/`,
+                    `${BASE_URL}/place/delete/${id}/`,
                     { method: "DELETE" }
                 );
                 if (response.ok) {
@@ -154,9 +158,10 @@ const PlaceDetails: React.FC = () => {
     };
 
     const handleStopOrder = async (orderId: number) => {
+        // stop repeat order
         if (window.confirm("Are you sure you want to stop this order?")) {
             try {
-                const response = await fetchWithAuth(`http://127.0.0.1:8000/api/order/update/${orderId}/`, {
+                const response = await fetchWithAuth(`${BASE_URL}/order/update/${orderId}/`, {
                     method: "PUT",
                     headers: {
                         "Content-Type": "application/json",

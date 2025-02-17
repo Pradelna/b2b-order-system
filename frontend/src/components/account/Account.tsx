@@ -1,3 +1,4 @@
+const BASE_URL = import.meta.env.VITE_API_URL;
 import React, { useState, useEffect, useContext } from "react";
 import { LanguageContext } from "../../context/LanguageContext";
 import {useNavigate, useLocation, Link} from "react-router-dom";
@@ -94,7 +95,7 @@ const Account: React.FC<AccountProps> = ({ customerData, setCustomerData }) => {
         setLoading(true);
         const fetchPlaces = async () => {
             try {
-                const response = await fetchWithAuth("http://127.0.0.1:8000/api/place/list/");
+                const response = await fetchWithAuth(`${BASE_URL}/place/list/`);
                 if (response.ok) {
                     const data = await response.json();
                     setPlaces(data);
@@ -142,7 +143,7 @@ const Account: React.FC<AccountProps> = ({ customerData, setCustomerData }) => {
     useEffect(() => {
         const fetchOrders = async () => {
             try {
-                const response = await fetchWithAuth("http://127.0.0.1:8000/api/order/list/");
+                const response = await fetchWithAuth(`${BASE_URL}/order/list/`);
                 if (response.ok) {
                     const data = await response.json();
                     setOrders(data);

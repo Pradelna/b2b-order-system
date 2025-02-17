@@ -1,3 +1,4 @@
+const BASE_URL = import.meta.env.VITE_API_URL;
 import { useState, useEffect } from "react";
 import {
   BrowserRouter,
@@ -39,7 +40,7 @@ const App: React.FC = () => {
     const fetchLanguageData = async () => {
       try {
         const response = await fetch(
-          `http://localhost:8000/api/landing/?lang=${language}`
+          `${BASE_URL}/landing/?lang=${language}`
         );
         const data: LanguageData = await response.json();
         setLanguageData(data);
@@ -64,9 +65,7 @@ const App: React.FC = () => {
     return <div>Error: {error}</div>;
   }
 
-  if (loading || !languageData) {
-    return <Loader />;
-  }
+
 
   return (
     <BrowserRouter>

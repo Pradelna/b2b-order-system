@@ -1,3 +1,4 @@
+const BASE_URL = import.meta.env.VITE_API_URL;
 import React, { useState, useEffect } from "react";
 import { Link } from "react-router-dom";
 import { fetchWithAuth } from "../account/auth";
@@ -30,7 +31,7 @@ const ReportList: React.FC = () => {
     useEffect(() => {
         const fetchReports = async () => {
             try {
-                const response = await fetchWithAuth("http://127.0.0.1:8000/api/order/reports/");
+                const response = await fetchWithAuth(`${BASE_URL}/order/reports/`);
                 if (response.ok) {
                     const data: Report[] = await response.json();
                     setReports(data);

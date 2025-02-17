@@ -1,3 +1,4 @@
+const BASE_URL = import.meta.env.VITE_API_URL;
 import React, { useState, useEffect } from "react";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import {
@@ -35,7 +36,7 @@ const AllOrderHistory: React.FC = () => {
     useEffect(() => {
         const fetchOrders = async () => {
             try {
-                const response = await fetchWithAuth("http://127.0.0.1:8000/api/order/all-orders/");
+                const response = await fetchWithAuth(`${BASE_URL}/order/all-orders/`);
                 if (response.ok) {
                     const data: Order[] = await response.json();
                     setOrders(data.sort((a, b) => b.id - a.id)); // ✅ Sort orders (newest first)

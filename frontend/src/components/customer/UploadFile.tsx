@@ -1,6 +1,7 @@
+const BASE_URL = import.meta.env.VITE_API_URL;
 import React, { useRef, useState, useEffect, useContext } from 'react';
 import { LanguageContext } from "../../context/LanguageContext.js";
-import { fetchWithAuth } from "../account/auth";
+import { fetchWithAuth } from "../account/auth.ts";
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import {faFilePdf, faSpinner} from "@fortawesome/free-solid-svg-icons";
 
@@ -28,7 +29,7 @@ const UploadFile: React.FC<UploadFileProps> = ({ onUploadSuccess }) => {
     // Fetch the list of uploaded files
     const fetchUploadedFiles = async () => {
         try {
-            const response = await fetchWithAuth('http://localhost:8000/api/customer/documents/');
+            const response = await fetchWithAuth(`${BASE_URL}/customer/documents/`);
             if (!response.ok) throw new Error('Failed to fetch files');
             const data: FileData[] = await response.json();
             setFiles(data);
@@ -60,7 +61,7 @@ const UploadFile: React.FC<UploadFileProps> = ({ onUploadSuccess }) => {
         formData.append('file', file);
 
         try {
-            const response = await fetchWithAuth('http://localhost:8000/api/customer/documents/upload/', {
+            const response = await fetchWithAuth(`${BASE_URL}/customer/documents/upload/`, {
                 method: 'POST',
                 body: formData,
             });
@@ -101,7 +102,7 @@ const UploadFile: React.FC<UploadFileProps> = ({ onUploadSuccess }) => {
         }
 
         try {
-            const response = await fetchWithAuth(`http://localhost:8000/api/customer/documents/${fileId}/delete/`, {
+            const response = await fetchWithAuth(`${BASE_URL}/customer/documents/${fileId}/delete/`, {
                 method: 'DELETE',
             });
             if (response.ok) {

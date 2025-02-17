@@ -1,9 +1,10 @@
+const BASE_URL = import.meta.env.VITE_API_URL;
 import { useState, useContext, FormEvent } from "react";
 import { LanguageContext } from "../../context/LanguageContext.js";
 import { useNavigate } from "react-router-dom";
 import Header from "../Header.js";
 import Footer from "../Footer.tsx";
-import { fetchWithAuth } from "../account/auth";
+import { fetchWithAuth } from "../account/auth.ts";
 
 const LoginForm: React.FC = () => {
     const [email, setEmail] = useState<string>("");
@@ -27,7 +28,7 @@ const LoginForm: React.FC = () => {
 
         try {
             // Send a POST request using fetchWithAuth
-            const response = await fetchWithAuth("http://127.0.0.1:8000/api/token/", {
+            const response = await fetchWithAuth(`${BASE_URL}/token/`, {
                 method: "POST",
                 headers: {
                     "Content-Type": "application/json",

@@ -1,3 +1,4 @@
+const BASE_URL = import.meta.env.VITE_API_URL;
 import React, { useState, useEffect, useContext } from "react";
 import { LanguageContext } from "../../context/LanguageContext";
 import { useParams } from "react-router-dom";
@@ -5,7 +6,7 @@ import CustomerEdit from "./CustomerEdit.js";
 import CompanyInfo from "./CompanyInfo";
 import HeaderAccount from "../HeaderAccount.js";
 import Footer from "../Footer.tsx";
-import { fetchWithAuth } from "../account/auth";
+import { fetchWithAuth } from "../account/auth.ts";
 import UploadFile from "./UploadFile.js";
 import DocumentsBlock from "./DocumentsBlock.js";
 import NavButtons from "@/components/account/NavButtons.js";
@@ -40,7 +41,7 @@ const CustomerDetailPage: React.FC = () => {
         }
 
         try {
-            const response = await fetchWithAuth(`http://127.0.0.1:8000/api/customer/data/`, {
+            const response = await fetchWithAuth(`${BASE_URL}/customer/data/`, {
                 method: "GET",
                 headers: {
                     Authorization: `Bearer ${token}`,

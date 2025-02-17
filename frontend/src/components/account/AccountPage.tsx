@@ -1,3 +1,4 @@
+const BASE_URL = import.meta.env.VITE_API_URL;
 import {useState, useEffect, JSX} from "react";
 import { fetchWithAuth } from "./auth";
 import HeaderAccount from "../HeaderAccount";
@@ -19,7 +20,7 @@ function AccountPage(): JSX.Element {
     useEffect(() => {
         const fetchCustomerData = async () => {
             try {
-                const response = await fetchWithAuth("http://127.0.0.1:8000/api/customer/data/", {
+                const response = await fetchWithAuth(`${BASE_URL}/customer/data/`, {
                     method: "GET",
                 });
 

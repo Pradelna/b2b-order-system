@@ -1,3 +1,4 @@
+const BASE_URL = import.meta.env.VITE_API_URL;
 import React, { useState, useEffect } from "react";
 import CustomerForm from "./CustomerForm";
 import { Link, useLocation } from "react-router-dom";
@@ -12,9 +13,8 @@ import {
     faGear,
     faPenToSquare,
 } from "@fortawesome/free-solid-svg-icons";
-import { fetchWithAuth } from "../account/auth";
+import { fetchWithAuth } from "../account/auth.ts";
 import { Tooltip as ReactTooltip } from "react-tooltip";
-import Loader from "../Loader";
 import {Skeleton} from "@mui/material";
 
 interface CustomerData {
@@ -50,7 +50,7 @@ const CompanyInfo: React.FC<CompanyInfoProps> = ({
     useEffect(() => {
         if (!customerData || !customerData.company_email) {
             setLoading(true);
-            fetchWithAuth("http://127.0.0.1:8000/api/customer/data/")
+            fetchWithAuth(`${BASE_URL}/customer/data/`)
                 .then((response) => {
                     if (!response.ok) {
                         if (response.status === 404) {
@@ -78,7 +78,7 @@ const CompanyInfo: React.FC<CompanyInfoProps> = ({
     }, [customerData, setCustomerData]);
 
     const handleFormSubmit = (formData: Partial<CustomerData>) => {
-        fetchWithAuth("http://localhost:8000/api/customer/data/", {
+        fetchWithAuth(`${BASE_URL}/customer/data/`, {
             method: "POST",
             headers: {
                 "Content-Type": "application/json",
