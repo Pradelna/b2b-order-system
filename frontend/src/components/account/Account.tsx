@@ -270,10 +270,16 @@ const Account: React.FC<AccountProps> = ({ customerData, setCustomerData }) => {
                     )}
 
                     <div className="row mt-4">
+
                         {places.length === 0 ? (
-                            <div className="col-4">
-                                <p>You don't have any place.<br />Please add one</p>
-                            </div>
+                            <>
+                                {customerData && !customerData.error && (
+                                    <div className="col-4">
+                                        <p>You don't have any place.<br />Please add one</p>
+                                    </div>
+                                )}
+                            </>
+
                         ) : (
                             <div className="col-3" style={{ paddingTop: "16px" }}>
                                 <h4>Your places</h4>
@@ -289,11 +295,15 @@ const Account: React.FC<AccountProps> = ({ customerData, setCustomerData }) => {
                                     sx={{ borderRadius: "26px", marginTop: 0 }}
                                 />
                             ) : (
+                                <>
+                                {customerData && !customerData.error && (
                             <button className="btn-link" onClick={handleCreatePlace}>
                                 <FontAwesomeIcon icon={faHouse} className="icon" />
                                 <span className="ms-2">{currentData.service.new_place || "New Place"}</span>
 
                             </button>
+                                )}
+                                </>
                                 )}
                         </div>
                     </div>
