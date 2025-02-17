@@ -1,11 +1,18 @@
+from django.contrib.auth.mixins import LoginRequiredMixin
+from django.db.models.expressions import result
 from rest_framework.decorators import api_view, permission_classes
 from rest_framework.permissions import IsAuthenticated
 from rest_framework.response import Response
-from rest_framework import status
+from rest_framework.pagination import LimitOffsetPagination
+from rest_framework import status, permissions, generics
 from place.models import Place
-from .models import Order
-from .serializers import OrderSerializer, GetOrderSerializer
+from rest_framework.views import APIView
+
+from .models import Order, OrderReport
+from .serializers import OrderSerializer, GetOrderSerializer, OrderReportSerializer
 from datetime import datetime
+
+# from customer.models import Customer
 
 
 def convert_date_to_unix(date_str):
@@ -14,6 +21,19 @@ def convert_date_to_unix(date_str):
         return int(date.timestamp())  # Преобразуем в Unix Timestamp
     except ValueError:
         return None
+
+
+# class OrderPagination(LimitOffsetPagination):
+#     default_limit = 20
+#     max_limit = 50  # Prevent large requests
+#
+#
+# class PlaceOrderListView(generics.ListAPIView, LoginRequiredMixin):
+#     serializer_class = GetOrderSerializer
+#     pagination_class = OrderPagination
+#
+#     def get_queryset(self):
+#         return Order.objects.filter(user=self.request.user).order_by("-id")
 
 
 @api_view(['POST'])
@@ -26,13 +46,13 @@ def create_order(request):
         place = Place.objects.get(id=data.get('place'), customer__user=request.user)
         # Добавляем валидацию для других полей через сериализатор
         serializer = OrderSerializer(data=data)
-        print(data)
         if serializer.is_valid():
             # n = 0
             # limit = 20
             # while n <= limit:
             #     n += 1
             #     order_n = Order(
+            #         user=request.user,
             #         place=place,
             #         type_ship='pickup_ship_one',
             #         system='every_day',
@@ -50,10 +70,14 @@ def create_order(request):
                 rp_place_zip=place.rp_zip,
                 rp_time_from=convert_date_to_unix(data['date_pickup']),
                 rp_time_to=convert_date_to_unix(data['date_delivery']),
-                # rp_contract_external_id=
+                rp_place_title=place.place_name,
+                place=place,
+                active=True,
+                user=request.user,
             )
+            order_data = OrderSerializer(order).data
             return Response(
-                {"message": "Order created successfully!", "order_id": order.id},
+                {"message": "Order created successfully!", "order": order_data},
                 status=status.HTTP_201_CREATED
             )
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
@@ -70,12 +94,38 @@ def create_order(request):
         )
 
 
+# class CustomLimitOffsetPagination(LimitOffsetPagination):
+#     default_limit = 20  # По умолчанию 20 заказов
+#     max_limit = 100  # Максимальный лимит 100
+
+
+# @api_view(['GET'])
+# @permission_classes([IsAuthenticated])
+# def get_place_orders(request, place_id):
+#     orders = Order.objects.filter(place_id=place_id).order_by('-id')  # Самые новые заказы первыми
+#     paginator = CustomLimitOffsetPagination()
+#
+#     # ✅ Важно! Передаём request в paginate_queryset()
+#     paginated_orders = paginator.paginate_queryset(orders, request, view=None)
+#
+#     # ✅ Проверяем, есть ли заказы
+#     if paginated_orders is not None:
+#         serializer = GetOrderSerializer(paginated_orders, many=True)
+#         print(len(serializer.data))
+#         return paginator.get_paginated_response(serializer.data)
+#
+#     # Если заказов нет, возвращаем обычный JSON
+#     serializer = GetOrderSerializer(orders, many=True)
+#     return Response(serializer.data)
+
+
+
 @api_view(['GET'])
 @permission_classes([IsAuthenticated])
 def get_place_orders(request, place_id):
     try:
         # Получаем заказы, связанные с данным местом
-        orders = Order.objects.filter(place_id=place_id)
+        orders = Order.objects.filter(place_id=place_id).order_by('-id')
 
         # Сериализуем заказы
         serializer = GetOrderSerializer(orders, many=True)
@@ -94,3 +144,80 @@ def get_orders(request):
         return Response(serializer.data, status=status.HTTP_200_OK)
     except Exception as e:
         return Response({"error": str(e)}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+
+
+@api_view(['GET'])
+@permission_classes([IsAuthenticated])
+def get_all_orders(request):
+    try:
+        user = request.user
+        orders = Order.objects.filter(user=user)
+        serializer = GetOrderSerializer(orders, many=True)
+        # print(serializer.data)
+        print("ok")
+        return Response(serializer.data, status=status.HTTP_200_OK)
+    except Exception as e:
+        return Response({"error": str(e)}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+
+
+@api_view(['PUT'])
+@permission_classes([IsAuthenticated])
+def update_order(request, order_id):
+    try:
+        order = Order.objects.get(id=order_id)
+    except Order.DoesNotExist:
+        return Response({"error": "Order not found"}, status=status.HTTP_404_NOT_FOUND)
+
+    data = request.data
+    serializer = OrderSerializer(order, data=data, partial=True)
+    if serializer.is_valid():
+        serializer.save()
+        return Response(serializer.data)
+    return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
+
+class UserReportListView(generics.ListAPIView, LoginRequiredMixin):
+    """ Returns a list of reports for the authenticated user. """
+    serializer_class = OrderReportSerializer
+    permission_classes = [permissions.IsAuthenticated]
+
+    def get_queryset(self):
+        return OrderReport.objects.filter(user=self.request.user.customer).order_by("-report_month")
+
+
+class UserReportDetailView(generics.RetrieveAPIView, LoginRequiredMixin):
+    """ Returns a specific report by ID. """
+    serializer_class = OrderReportSerializer
+    permission_classes = [permissions.IsAuthenticated]
+
+    def get_queryset(self):
+        return OrderReport.objects.filter(user=self.request.user)
+
+
+class GenerateMonthlyReport(APIView):
+    """
+    Endpoint to generate a monthly report for a user.
+    It checks for orders in the past month that haven't been included in a report.
+    """
+    permission_classes = [permissions.IsAuthenticated]
+
+    def post(self, request):
+        user = request.user
+        from datetime import datetime, timedelta
+        from order.models import Order
+
+        today = datetime.today()
+        first_day_of_month = today.replace(day=1)
+        last_month = first_day_of_month - timedelta(days=1)
+
+        # Get orders that are not yet in a report
+        existing_orders = OrderReport.objects.filter(user=user).values_list("orders", flat=True)
+        new_orders = Order.objects.filter(user=user, created_at__year=last_month.year, created_at__month=last_month.month).exclude(id__in=existing_orders)
+
+        if new_orders.exists():
+            report = OrderReport.objects.create(user=user, report_month=last_month)
+            report.orders.set(new_orders)
+            report.save()
+            return Response({"message": "Report generated successfully", "report_id": report.id}, status=201)
+
+        return Response({"message": "No new orders to report"}, status=200)

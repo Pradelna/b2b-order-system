@@ -1,38 +1,30 @@
-from datetime import datetime
-
+import os
+from datetime import datetime, timedelta
+from django.contrib.auth import get_user_model
 from django.db import models
 from customer.models import Customer
 from place.models import Place
 
 
-class WrongPlace(models.Model):
-    customer = models.ForeignKey(Customer, on_delete=models.CASCADE, related_name="order_customer_place")
-    place_name = models.CharField("Place name", max_length=250)
-    active = models.BooleanField("Active", default=True)
-    rp_client_external_id = models.CharField("ItineraryClient external id", max_length=250, null=True, blank=True)
-    rp_client_name = models.CharField("Customer name", max_length=250, null=True, blank=True)
-    rp_client_id = models.IntegerField("ItineraryClient id", null=True, blank=True)
-    rp_id = models.IntegerField("ItineraryPlace id", null=True, blank=True)
-    rp_external_id = models.CharField("ItineraryPlace external id", max_length=250, null=True, blank=True)
-    rp_title = models.CharField("ItineraryPlace title", max_length=250, null=True, blank=True)
-    rp_city = models.CharField("ItineraryPlace city", max_length=250)
-    rp_street = models.CharField("ItineraryPlace street", max_length=250)
-    rp_number = models.CharField("ItineraryPlace number", max_length=50)
-    rp_zip = models.IntegerField("ItineraryPlace zip")
-    rp_person = models.CharField("ItineraryPlace contact person", max_length=250, null=True, blank=True)
-    rp_phone = models.CharField("ItineraryPlace phone number", max_length=50, null=True, blank=True)
-    rp_email = models.CharField("ItineraryPlace email", max_length=250, null=True, blank=True)
+User = get_user_model()
 
-    def __str__(self):
-        return f"Place of {self.customer.company_name} - {self.place_name}"
+TOMMOROW = datetime.now() + timedelta(days=1)
 
-    class Meta:
-        verbose_name = 'Worng Place'
-        verbose_name_plural = 'Wrong Places'
+
+def report_file_path(instance, filename):
+    """
+    Формируем путь для загрузки файлов в формате:
+    invoices/{user_id}/YYYY-MM/{filename}
+    """
+    report_month_str = instance.report.report_month.strftime("%Y-%m")  # Пример: "2025-02"
+    user_id = instance.report.user.id  # Получаем ID пользователя
+
+    return os.path.join("invoices", str(user_id), report_month_str, filename)
 
 
 class Order(models.Model):
     place = models.ForeignKey(Place, on_delete=models.CASCADE, related_name="order_place")
+    user = models.ForeignKey(User, on_delete=models.CASCADE, related_name="orders", db_index=True, null=True, blank=True)
     choice_type_ship = [
         ('pickup_ship_one', 'clear for durty'),
         ('pickup_ship_dif', '1 day clear, 2 day durty')
@@ -42,9 +34,11 @@ class Order(models.Model):
         ('Mon_Wed_Fri', 'Monday Wednesday Friday'),
         ('Tue_Thu', 'Tuesday Thursday'),
         ('Every_day', 'Every day'),
-        ('Own', 'Own system')
+        ('Own', 'Own system'),
+        ('One_time', 'One time order')
     ]
     system = models.CharField("System days", max_length=100, null=True, blank=True, choices=choice_system)
+    date_start_day = models.DateField("Start day", default=TOMMOROW)
     monday = models.BooleanField("Monday", default=False)
     tuesday = models.BooleanField("tuesday", default=False)
     wednesday = models.BooleanField("wednesday", default=False)
@@ -81,7 +75,11 @@ class Order(models.Model):
     rp_salesman_email = models.IntegerField("salesman_email", null=True, blank=True)
     rp_assigned_user_id = models.IntegerField("assigned_user_id", null=True, blank=True)
     rp_branch_office_id = models.IntegerField("salesman_email", null=True, blank=True)
+    rp_status = models.IntegerField("status", null=True, blank=True)
     end_order = models.BooleanField("End repeating order", default=False)
+    canceled = models.BooleanField("Canceled mistaken order", default=False)
+    reported = models.BooleanField("Already added to report", default=False)
+    created_at = models.DateTimeField(auto_now_add=True)
 
     def __str__(self):
         return f"Order of {self.place.customer.company_name} - {self.place.place_name} - {self.id}"
@@ -89,3 +87,25 @@ class Order(models.Model):
     class Meta:
         verbose_name = 'Order'
         verbose_name_plural = 'Orders'
+        indexes = [
+            models.Index(fields=["reported"]),  # Ускоряет поиск невключенных заказов
+            models.Index(fields=["user", "created_at"])  # Оптимизация фильтрации по пользователю
+        ]
+
+
+class OrderReport(models.Model):
+    user = models.ForeignKey(Customer, on_delete=models.CASCADE, related_name="order_reports")
+    report_month = models.DateField()
+    orders = models.ManyToManyField("Order", related_name="reports")
+    created_at = models.DateTimeField(auto_now_add=True)
+
+    def __str__(self):
+        return f"Report for {self.user} - {self.report_month.strftime('%B %Y')}"
+
+class ReportFile(models.Model):
+    report = models.ForeignKey(OrderReport, on_delete=models.CASCADE, related_name="files")
+    file = models.FileField(upload_to=report_file_path)
+    uploaded_at = models.DateTimeField(auto_now_add=True)
+
+    def __str__(self):
+        return f"File {self.file.name} for Report {self.report.id}"

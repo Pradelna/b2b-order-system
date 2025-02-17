@@ -1,5 +1,7 @@
+const BASE_URL = import.meta.env.VITE_API_URL;
 import React, { useState, useEffect, ReactNode } from "react";
 import { LanguageContext } from "./LanguageContext.js";
+import { api } from "../api/axios";
 
 interface LanguageProviderProps {
     children: ReactNode;
@@ -15,7 +17,7 @@ export const LanguageProvider: React.FC<LanguageProviderProps> = ({ children }) 
         // Fetch language data based on the current language
         const fetchLanguageData = async () => {
             try {
-                const response = await fetch(`http://localhost:8000/api/landing/?lang=${language}`);
+                const response = await fetch(`${BASE_URL}/landing/?lang=${language}`);
                 const data = await response.json();
                 setLanguageData(data);
                 setLoading(false);

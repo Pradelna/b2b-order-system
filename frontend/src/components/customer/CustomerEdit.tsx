@@ -1,6 +1,7 @@
+const BASE_URL = import.meta.env.VITE_API_URL;
 import React, { useState, useContext, ChangeEvent, FormEvent } from "react";
 import { LanguageContext } from "@/context/LanguageContext";
-import { fetchWithAuth } from "../account/auth";
+import { fetchWithAuth } from "../account/auth.ts";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faSquareXmark } from "@fortawesome/free-solid-svg-icons";
 import { Tooltip as ReactTooltip } from "react-tooltip";
@@ -66,7 +67,7 @@ const CustomerEdit: React.FC<CustomerEditProps> = ({
         e.preventDefault();
 
         try {
-            const response = await fetchWithAuth("http://localhost:8000/api/customer/data/", {
+            const response = await fetchWithAuth(`${BASE_URL}/customer/data/`, {
                 method: "PUT",
                 headers: {
                     "Content-Type": "application/json",
@@ -81,7 +82,7 @@ const CustomerEdit: React.FC<CustomerEditProps> = ({
             const updatedData = await response.json();
             setCustomerData(updatedData);
             setSuccessMessage("Customer data updated successfully!");
-            setTimeout(() => setSuccessMessage(""), 5000);
+            setTimeout(() => setSuccessMessage(""), 10000);
             setIsEditing(false);
         } catch (error) {
             console.error("Error updating customer data:", error);

@@ -1,3 +1,4 @@
+const BASE_URL = import.meta.env.VITE_API_URL;
 import { useEffect, useState, useContext } from "react";
 import { LanguageContext } from "../../context/LanguageContext.js";
 import { useParams, Link } from "react-router-dom";
@@ -25,7 +26,7 @@ const ActivationPage: React.FC = () => {
   useEffect(() => {
     if (uid && token) {
       axios
-          .post("http://127.0.0.1:8000/api/accounts/activate/", {
+          .post(`${BASE_URL}/accounts/activate/`, {
             uidb64: uid,
             token: token,
           })

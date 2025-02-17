@@ -3,6 +3,7 @@
 ## Content
 
 - [Start](#start)
+- [Nuances](#nuances)
 
 ## <a id="start">Start</a>
 To run the application, download the project files.
@@ -66,3 +67,7 @@ Run react app server
 ```sh
 npm run dev
 ```
+
+## <a id="nuances">Nuances</a>
+
+dev branch is predrelis

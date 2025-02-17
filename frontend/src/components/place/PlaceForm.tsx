@@ -1,5 +1,6 @@
+const BASE_URL = import.meta.env.VITE_API_URL;
 import { useState, ChangeEvent, FormEvent } from "react";
-import { fetchWithAuth } from "../account/auth";
+import { fetchWithAuth } from "../account/auth.ts";
 
 interface PlaceFormProps {
     onClose: () => void;
@@ -37,7 +38,7 @@ const PlaceForm: React.FC<PlaceFormProps> = ({ onClose, onSuccess }) => {
     const handleSubmit = async (e: FormEvent) => {
         e.preventDefault(); // Prevent form submission from refreshing the page
         try {
-            const response = await fetchWithAuth("http://127.0.0.1:8000/api/place/create/", {
+            const response = await fetchWithAuth(`${BASE_URL}/place/create/`, {
                 method: "POST",
                 headers: {
                     "Content-Type": "application/json",
@@ -59,6 +60,7 @@ const PlaceForm: React.FC<PlaceFormProps> = ({ onClose, onSuccess }) => {
 
     return (
         <div className="modal-backdrop">
+            <div className="modal-wrapper">
             <div className="modal-content">
                 <h3>Add New Place</h3>
                 <form onSubmit={handleSubmit}>
@@ -94,6 +96,7 @@ const PlaceForm: React.FC<PlaceFormProps> = ({ onClose, onSuccess }) => {
                         </button>
                     </div>
                 </form>
+            </div>
             </div>
         </div>
     );
