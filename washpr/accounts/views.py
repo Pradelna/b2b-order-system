@@ -2,6 +2,7 @@ from rest_framework.permissions import IsAuthenticated
 from rest_framework.views import APIView
 from rest_framework.response import Response
 from rest_framework import status, permissions
+from smtplib import SMTPRecipientsRefused
 
 from django.conf import settings
 from rest_framework_simplejwt.authentication import JWTAuthentication
@@ -35,7 +36,10 @@ class RegisterView(APIView):
         if serializer.is_valid():
             user = serializer.save()
             # Отправляем активационное письмо
-            send_activation_email(user)
+            try:
+                send_activation_email(user)
+            except Exception as e:
+                return Response({"detail": str(e)}, status=status.HTTP_400_BAD_REQUEST)
             return Response({"message": "User created. Check your email for activation link."},
                             status=status.HTTP_201_CREATED)
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)

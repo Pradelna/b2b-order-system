@@ -1,5 +1,5 @@
 import { useState, ChangeEvent, FormEvent } from "react";
-import { fetchWithAuth } from "../account/auth";
+import { fetchWithAuth } from "../account/auth.ts";
 
 interface PlaceFormProps {
     onClose: () => void;
@@ -29,6 +29,8 @@ const PlaceForm: React.FC<PlaceFormProps> = ({ onClose, onSuccess }) => {
         rp_email: "",
     });
 
+    const BASE_URL = import.meta.env.VITE_API_URL;
+
     const handleChange = (e: ChangeEvent<HTMLInputElement>) => {
         const { name, value } = e.target;
         setFormData((prevData) => ({ ...prevData, [name]: value }));
@@ -37,7 +39,7 @@ const PlaceForm: React.FC<PlaceFormProps> = ({ onClose, onSuccess }) => {
     const handleSubmit = async (e: FormEvent) => {
         e.preventDefault(); // Prevent form submission from refreshing the page
         try {
-            const response = await fetchWithAuth("http://127.0.0.1:8000/api/place/create/", {
+            const response = await fetchWithAuth(`${BASE_URL}/place/create/`, {
                 method: "POST",
                 headers: {
                     "Content-Type": "application/json",
@@ -59,41 +61,43 @@ const PlaceForm: React.FC<PlaceFormProps> = ({ onClose, onSuccess }) => {
 
     return (
         <div className="modal-backdrop">
-            <div className="modal-content">
-                <h3>Add New Place</h3>
-                <form onSubmit={handleSubmit}>
-                    {Object.entries(formData).map(([key, value]) => (
-                        <div className="row mb-3" key={key}>
-                            <div className="col-3 label-form">
-                                <label htmlFor={key}>
-                                    {key.replace("rp_", "").replace("_", " ").toUpperCase()}
-                                </label>
+            <div className="modal-wrapper">
+                <div className="modal-content">
+                    <h3>Add New Place</h3>
+                    <form onSubmit={handleSubmit}>
+                        {Object.entries(formData).map(([key, value]) => (
+                            <div className="row mb-3" key={key}>
+                                <div className="col-3 label-form">
+                                    <label htmlFor={key}>
+                                        {key.replace("rp_", "").replace("_", " ").toUpperCase()}
+                                    </label>
+                                </div>
+                                <div className="col-9">
+                                    <input
+                                        className="form-control"
+                                        type="text"
+                                        name={key}
+                                        value={value}
+                                        onChange={handleChange}
+                                        required={
+                                            key !== "rp_person" && key !== "rp_phone" && key !== "rp_email"
+                                        }
+                                    />
+                                </div>
                             </div>
-                            <div className="col-9">
-                                <input
-                                    className="form-control"
-                                    type="text"
-                                    name={key}
-                                    value={value}
-                                    onChange={handleChange}
-                                    required={
-                                        key !== "rp_person" && key !== "rp_phone" && key !== "rp_email"
-                                    }
-                                />
-                            </div>
-                        </div>
-                    ))}
+                        ))}
 
-                    {/* Submit and Close Buttons */}
-                    <div className="row mt-3">
-                        <button className="btn-submit me-2" type="submit">
-                            Submit
-                        </button>
-                        <button className="btn-link" type="button" onClick={onClose}>
-                            Cancel
-                        </button>
-                    </div>
-                </form>
+                        {/* Submit and Close Buttons */}
+                        <div className="row mt-3">
+                            <button className="btn-submit me-2" type="submit">
+                                Submit
+                            </button>
+                            <button className="btn-link" type="button" onClick={onClose}>
+                                Cancel
+                            </button>
+                        </div>
+                    </form>
+                </div>
             </div>
         </div>
     );

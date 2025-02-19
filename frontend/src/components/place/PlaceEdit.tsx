@@ -1,5 +1,5 @@
 import React, { useState, ChangeEvent, FormEvent } from "react";
-import { fetchWithAuth } from "../account/auth";
+import { fetchWithAuth } from "../account/auth.ts";
 
 interface PlaceEditProps {
   place: Place;
@@ -48,6 +48,8 @@ const PlaceEdit: React.FC<PlaceEditProps> = ({
     rp_email: "Email",
   };
 
+  const BASE_URL = import.meta.env.VITE_API_URL;
+
   const handleChange = (e: ChangeEvent<HTMLInputElement>) => {
     const { name, value } = e.target;
     setFormData((prevData) => ({ ...prevData, [name]: value }));
@@ -57,7 +59,7 @@ const PlaceEdit: React.FC<PlaceEditProps> = ({
     e.preventDefault();
     try {
       const response = await fetchWithAuth(
-          `http://127.0.0.1:8000/api/place/edit/${place.id}/`,
+          `${BASE_URL}/place/edit/${place.id}/`,
           {
             method: "PUT",
             headers: {

@@ -1,6 +1,5 @@
-import React from "react";
-import { useContext } from "react";
-import { LanguageContext } from "../../context/LanguageContext.js";
+import React, { useContext } from "react";
+import { LanguageContext } from "../../context/LanguageContext";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faBuilding, faCartPlus } from "@fortawesome/free-solid-svg-icons";
 
@@ -14,7 +13,7 @@ const ButtonsOrder: React.FC<ButtonsOrderProps> = ({ onCreatePlace, onCreateOrde
 
     // If no data is available, render nothing
     if (!currentData || !currentData.service) {
-        return null;
+        return <div>Loading...</div>;
     }
 
     return (

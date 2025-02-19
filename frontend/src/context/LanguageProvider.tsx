@@ -1,5 +1,6 @@
 import React, { useState, useEffect, ReactNode } from "react";
 import { LanguageContext } from "./LanguageContext.js";
+import { api } from "../api/axios";
 
 interface LanguageProviderProps {
     children: ReactNode;
@@ -10,12 +11,13 @@ export const LanguageProvider: React.FC<LanguageProviderProps> = ({ children }) 
     const [languageData, setLanguageData] = useState<any[] | null>(null); // Replace `any[]` with your specific type
     const [error, setError] = useState<string | null>(null);
     const [loading, setLoading] = useState<boolean>(true);
+    const BASE_URL = import.meta.env.VITE_API_URL;
 
     useEffect(() => {
         // Fetch language data based on the current language
         const fetchLanguageData = async () => {
             try {
-                const response = await fetch(`http://localhost:8000/api/landing/?lang=${language}`);
+                const response = await fetch(`${BASE_URL}/landing/?lang=${language}`);
                 const data = await response.json();
                 setLanguageData(data);
                 setLoading(false);

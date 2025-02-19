@@ -26,7 +26,7 @@ SECRET_KEY = 'django-insecure-t)su=n@*^knlz_u8v&psm^muyyu+0%yo5%a%3s$quovs6++(1k
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = ['*']
+ALLOWED_HOSTS = ['*', 'localhost', '127.0.0.1', 'django.raketaweb.eu']
 
 
 # Application definition
@@ -49,6 +49,7 @@ INSTALLED_APPS = [
 ]
 
 MIDDLEWARE = [
+    'corsheaders.middleware.CorsMiddleware',
     'django.middleware.security.SecurityMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
     'django.middleware.common.CommonMiddleware',
@@ -57,7 +58,6 @@ MIDDLEWARE = [
     'django.contrib.messages.middleware.MessageMiddleware',
     'accounts.middleware.RefreshTokenMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
-    'corsheaders.middleware.CorsMiddleware',
 ]
 
 REST_FRAMEWORK = {
@@ -151,7 +151,7 @@ STATIC_URL = '/static/'
 MEDIA_URL = '/media/'
 
 STATIC_ROOT = os.path.join(BASE_DIR, 'static/')
-MEDIA_ROOT = os.path.join(BASE_DIR, 'static/media/')
+MEDIA_ROOT = os.path.join(BASE_DIR, 'media/')
 
 # Default primary key field type
 # https://docs.djangoproject.com/en/5.0/ref/settings/#default-auto-field
@@ -163,6 +163,14 @@ AUTH_USER_MODEL = 'accounts.CustomUser'
 RECAPTCHA_SECRET_KEY = "6LdWEqkqAAAAAGLHgv9xIAygZZovfqdmGR2wBxQ4"
 
 EMAIL_BACKEND = 'django.core.mail.backends.console.EmailBackend'
+
+# EMAIL_BACKEND = 'accounts.utils.UnverifiedSMTPEmailBackend'
+# EMAIL_HOST = 'mail.vzt-klima.sk'
+# EMAIL_PORT = 465
+# EMAIL_USE_SSL = True
+# EMAIL_HOST_USER = 'noreply@vzt-klima.sk'
+# EMAIL_HOST_PASSWORD = 'qQ4tH1uS2a'
+# DEFAULT_FROM_EMAIL = 'noreply@vzt-klima.sk'
 
 SIMPLE_JWT = {
     'ACCESS_TOKEN_LIFETIME': timedelta(minutes=360),  # Токен будет действовать 360 минут

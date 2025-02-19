@@ -1,5 +1,5 @@
 import React, { useContext } from "react";
-import { LanguageContext } from "../context/LanguageContext.js";
+import { LanguageContext } from "../context/LanguageContext";
 
 interface MenuData {
   technology: string;
@@ -14,7 +14,6 @@ const Footer: React.FC = () => {
   if (!currentData || !currentData.menu) {
     return null; // If data is not available, the component does not render
   }
-
   const menu: MenuData = currentData.menu;
 
   if (!menu) {

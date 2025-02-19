@@ -50,7 +50,7 @@ const CustomerForm: React.FC<CustomerFormProps> = ({ onSubmit }) => {
 
   // Prevent rendering if language context data is unavailable
   if (!currentData) {
-    return null;
+    return <div>language data not faunded</div>;
   }
 
   return (
@@ -159,7 +159,7 @@ const CustomerForm: React.FC<CustomerFormProps> = ({ onSubmit }) => {
           </div>
 
           {/* VOP Checkbox */}
-          <div className="row">
+          <div className="row row-form">
             <div className="col-12 col-4 col-md-5 label-form">
               <div className="form-check">
                 <input
@@ -184,7 +184,7 @@ const CustomerForm: React.FC<CustomerFormProps> = ({ onSubmit }) => {
           </div>
 
           {/* Terms of Use Checkbox */}
-          <div className="row">
+          <div className="row row-form">
             <div className="col-12 col-4 col-md-5 label-form">
               <div className="form-check">
                 <input
@@ -209,7 +209,7 @@ const CustomerForm: React.FC<CustomerFormProps> = ({ onSubmit }) => {
           </div>
 
           {/* GDPR Checkbox */}
-          <div className="row">
+          <div className="row row-form">
             <div className="col-12 col-4 col-md-5 label-form">
               <div className="form-check">
                 <input
@@ -232,10 +232,11 @@ const CustomerForm: React.FC<CustomerFormProps> = ({ onSubmit }) => {
               </div>
             </div>
           </div>
-
-          <button style={{ width: "200px" }} className="btn-submit mt-3" type="submit">
-            {currentData.buttons.submit}
-          </button>
+          <div className="row row-form">
+            <button style={{ width: "200px" }} className="btn-submit mt-3" type="submit">
+              {currentData.buttons.submit}
+            </button>
+          </div>
         </form>
       </div>
   );

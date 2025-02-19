@@ -1,3 +1,5 @@
+const BASE_URL = import.meta.env.VITE_API_URL;
+
 // Utility function to refresh the token
 export const refreshToken = async (): Promise<string | null> => {
     const refresh = localStorage.getItem("refreshToken");
@@ -7,7 +9,7 @@ export const refreshToken = async (): Promise<string | null> => {
     }
 
     try {
-        const response = await fetch("http://127.0.0.1:8000/api/token/refresh/", {
+        const response = await fetch(`${BASE_URL}/token/refresh/`, {
             method: "POST",
             headers: {
                 "Content-Type": "application/json",

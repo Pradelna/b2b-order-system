@@ -1,7 +1,7 @@
 import React, { useState, useRef, useContext, FormEvent } from "react";
 import { LanguageContext } from "../../context/LanguageContext.js";
 import ReCAPTCHA from "react-google-recaptcha";
-import { fetchWithAuth } from "../account/auth";
+import { fetchWithAuth } from "../account/auth.ts";
 import Header from "../Header.js";
 import Footer from "../Footer.tsx";
 
@@ -9,18 +9,19 @@ const RegistrationForm: React.FC = () => {
   const [email, setEmail] = useState<string>("");
   const [password, setPassword] = useState<string>("");
   const [message, setMessage] = useState<string | JSX.Element>("");
-
+  // Ref for the reCAPTCHA component
+  const recaptchaRef = useRef<ReCAPTCHA>(null);
   const { currentData } = useContext(LanguageContext);
   if (!currentData) {
-    return null; // Return nothing if language data is not available
+    return <div>Loading...</div>; // Return nothing if language data is not available
   }
   const messageData = currentData.auth;
+  const BASE_URL = import.meta.env.VITE_API_URL;
 
   // Insert your reCAPTCHA site key here
   const RECAPTCHA_SITE_KEY = "6LdWEqkqAAAAAF0sgXktyNzI4PphPZByrrMpzBm_";
 
-  // Ref for the reCAPTCHA component
-  const recaptchaRef = useRef<ReCAPTCHA>(null);
+//   const recaptchaTest = false;
 
   const handleSubmit = async (event: FormEvent) => {
     event.preventDefault();
@@ -31,8 +32,9 @@ const RegistrationForm: React.FC = () => {
         const token = await recaptchaRef.current.executeAsync();
         recaptchaRef.current.reset();
 
+
         // Make a POST request to your backend
-        const response = await fetchWithAuth("http://127.0.0.1:8000/api/accounts/register/", {
+        const response = await fetchWithAuth(`${BASE_URL}/accounts/register/`, {
           method: "POST",
           headers: {
             "Content-Type": "application/json",
@@ -44,6 +46,9 @@ const RegistrationForm: React.FC = () => {
           }),
         });
 
+        const responseClone = response.clone();
+        const text = await responseClone.text();
+        console.log("Response text:", text);
         const data = await response.json();
         if (response.ok) {
           setMessage(messageData.check_email);
@@ -59,6 +64,7 @@ const RegistrationForm: React.FC = () => {
         }
       }
     } catch (error: any) {
+      console.log(error);
       setMessage(`Error request: ${error.message || error}`);
     }
   };
@@ -82,11 +88,13 @@ const RegistrationForm: React.FC = () => {
             <div className="card card-login">
               <div className="card-body">
                 <div className="text-center">
-                  <img
-                      src="/wp-content/themes/praska/assets/img/logo.png"
-                      alt="Logo"
-                      style={{ maxWidth: "100%", height: "auto" }}
-                  />
+                  <a href="/">
+                    <img
+                        src="/wp-content/themes/praska/assets/img/logo.png"
+                        alt="Logo"
+                        style={{ maxWidth: "100%", height: "auto" }}
+                    />
+                  </a>
                 </div>
                 <form onSubmit={handleSubmit}>
                   <div className="form-group">
