@@ -1,9 +1,9 @@
-import {useState, useEffect, useContext} from "react";
+import { useState, useEffect, useContext } from "react";
 import { LanguageContext } from "../../context/LanguageContext";
 import { fetchWithAuth } from "../account/auth";
 
 interface OrderFormProps {
-  placeId?: string; // Optional because it may not always be provided
+  placeId?: string; // Может быть не передан
   onClose: () => void;
   onSuccess: (message: string) => void;
 }
@@ -15,11 +15,14 @@ interface Place {
 
 const OrderForm: React.FC<OrderFormProps> = ({ placeId, onClose, onSuccess }) => {
   const tomorrow = new Date();
-  tomorrow.setDate(tomorrow.getDate() + 1); // Get tomorrow's date
-  const formattedTomorrow = tomorrow.toISOString().split("T")[0]; // Convert to YYYY-MM-DD
+  tomorrow.setDate(tomorrow.getDate() + 1);
+  const formattedTomorrow = tomorrow.toISOString().split("T")[0];
+
   const [successMessage, setSuccessMessage] = useState<string | null>(null);
   const [showError, setShowError] = useState(false);
   const [showDaySystem, setShowDaySystem] = useState(true);
+  const [useCustomDays, setUseCustomDays] = useState(false);
+  const [useOnetimeOrder, setUseOnetimeOrder] = useState(false);
   const BASE_URL = import.meta.env.VITE_API_URL;
   const { currentData } = useContext(LanguageContext);
 
@@ -27,233 +30,244 @@ const OrderForm: React.FC<OrderFormProps> = ({ placeId, onClose, onSuccess }) =>
     place: placeId || "",
     type_ship: "",
     system: "",
-    date_start_day:  formattedTomorrow,
+    date_start_day: formattedTomorrow,
     monday: false,
     tuesday: false,
     wednesday: false,
     thursday: false,
     friday: false,
-    date_pickup:  formattedTomorrow,
-    date_delivery:  formattedTomorrow,
+    date_pickup: getAvailablePickupDates()[0],
+    date_delivery: "",
     every_week: false,
     rp_customer_note: "",
     terms: false,
   });
 
   const [places, setPlaces] = useState<Place[]>([]);
-  const [useCustomDays, setUseCustomDays] = useState(false);
-  const [useOnetimeOrder, setUseOnetimeOrder] = useState(false);
 
-
-
-  // Generate available dates based on the system
-  const getAvailableDates = () => {
+  // Функции для вычисления доступных дат
+  function getAvailableStartDays() {
     const availableDates: string[] = [];
-    const today = new Date();
-    today.setDate(today.getDate() + 1); // Start from tomorrow
+    const startDate = new Date();
+    startDate.setDate(startDate.getDate() + 1); // начинаем с завтрашнего дня
 
-    // Define selected days for "Own" system
-    const selectedDays = {
-      monday: formData.monday,
-      tuesday: formData.tuesday,
-      wednesday: formData.wednesday,
-      thursday: formData.thursday,
-      friday: formData.friday,
-    };
+    // Если выбрана система Own, собираем список выбранных дней
+    let selectedDays: number[] = [];
+    if (formData.system === "Own") {
+      if (formData.monday) selectedDays.push(1);
+      if (formData.tuesday) selectedDays.push(2);
+      if (formData.wednesday) selectedDays.push(3);
+      if (formData.thursday) selectedDays.push(4);
+      if (formData.friday) selectedDays.push(5);
+    }
 
     for (let i = 0; i < 30; i++) {
-      const date = new Date(today);
-      date.setDate(today.getDate() + i);
-      const dayOfWeek = date.getDay(); // 0 = Sunday, 1 = Monday, ..., 6 = Saturday
+      const date = new Date(startDate);
+      date.setDate(startDate.getDate() + i);
+      const dayOfWeek = date.getDay();
 
-      if (formData.system === "Tue_Thu" && (dayOfWeek === 2 || dayOfWeek === 4)) {
-        availableDates.push(date.toISOString().split("T")[0]); // Add Tuesday & Thursday
-      } else if (formData.system === "Mon_Wed_Fri" && (dayOfWeek === 1 || dayOfWeek === 3 || dayOfWeek === 5)) {
-        availableDates.push(date.toISOString().split("T")[0]); // Add Monday, Wednesday & Friday
-      } else if (formData.system === "Every_day" || formData.system === "One_time" && (
-          dayOfWeek === 1 || dayOfWeek === 2 || dayOfWeek === 3 || dayOfWeek === 4 || dayOfWeek === 5
-      )) {
-        availableDates.push(date.toISOString().split("T")[0]); // Add weekdays
-      }
-      // ✅ NEW: "Own" system uses only selected weekdays
-      else if (formData.system === "Own") {
-        const dayNames = ["sunday", "monday", "tuesday", "wednesday", "thursday", "friday", "saturday"];
-        const selectedDayName = dayNames[dayOfWeek];
-
-        if (selectedDays[selectedDayName]) {
+      if (formData.system === "Own") {
+        if (selectedDays.includes(dayOfWeek)) {
           availableDates.push(date.toISOString().split("T")[0]);
         }
+      } else if (formData.system === "Tue_Thu" && (dayOfWeek === 2 || dayOfWeek === 4)) {
+        availableDates.push(date.toISOString().split("T")[0]);
+      } else if (formData.system === "Mon_Wed_Fri" && (dayOfWeek === 1 || dayOfWeek === 3 || dayOfWeek === 5)) {
+        availableDates.push(date.toISOString().split("T")[0]);
+      } else if (formData.system === "Every_day" && (dayOfWeek >= 1 && dayOfWeek <= 5)) {
+        availableDates.push(date.toISOString().split("T")[0]);
       }
     }
     return availableDates;
+  }
+
+  function getAvailablePickupDates() {
+    const availableDates: string[] = [];
+    const startDate = new Date();
+    startDate.setDate(startDate.getDate() + 1);
+    for (let i = 0; i < 30; i++) {
+      const date = new Date(startDate);
+      date.setDate(startDate.getDate() + i);
+      const dayOfWeek = date.getDay();
+      if (dayOfWeek >= 1 && dayOfWeek <= 5) {
+        availableDates.push(date.toISOString().split("T")[0]);
+      }
+    }
+    return availableDates;
+  }
+
+  function getAvailableDeliveryDates() {
+    const availableDates: string[] = [];
+    const pickupDate = new Date(formData.date_pickup);
+    const minDeliveryDate = new Date(pickupDate);
+    minDeliveryDate.setDate(pickupDate.getDate() + 2); // как минимум на 1 день позже
+    for (let i = 0; i < 30; i++) {
+      const date = new Date(minDeliveryDate);
+      date.setDate(minDeliveryDate.getDate() + i);
+      const dayOfWeek = date.getDay();
+      if (dayOfWeek >= 1 && dayOfWeek <= 5) {
+        availableDates.push(date.toISOString().split("T")[0]);
+      }
+    }
+    return availableDates;
+  }
+
+  // Обработчики событий
+  const handleStartDayChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
+    setFormData((prev) => ({ ...prev, date_start_day: e.target.value }));
   };
 
-  // Handle input changes
+  const handlePickupChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
+    setFormData((prev) => ({
+      ...prev,
+      date_pickup: e.target.value,
+    }));
+  };
+
+  const handleDeliveryChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
+    const selectedDeliveryDate = new Date(e.target.value);
+    const pickupDate = new Date(formData.date_pickup);
+    const minDeliveryDate = new Date(pickupDate);
+    minDeliveryDate.setDate(pickupDate.getDate() + 1);
+    if (selectedDeliveryDate < minDeliveryDate) {
+      alert("Delivery date must be at least 1 day after the pickup date.");
+      return;
+    }
+    setFormData((prev) => ({ ...prev, date_delivery: e.target.value }));
+  };
+
   const handleCheckboxChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { name, checked } = e.target;
-
     setFormData((prev) => {
       const updatedFormData = { ...prev, [name]: checked };
-
-      // Apply restriction logic only for pickup_ship_dif
       if (prev.type_ship === "pickup_ship_dif") {
         const days = ["monday", "tuesday", "wednesday", "thursday", "friday"];
         const index = days.indexOf(name);
-
         if (checked) {
-          // Disable adjacent days when a new day is selected
           if (index > 0) updatedFormData[days[index - 1]] = false;
           if (index < days.length - 1) updatedFormData[days[index + 1]] = false;
         }
       }
-
       return updatedFormData;
     });
   };
 
-  const handleDateChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
+  // Универсальный обработчик для input, textarea и select
+  const handleInputChange = (
+      e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>
+  ) => {
     const { name, value } = e.target;
-    const formattedDate = new Date(value).toISOString().split("T")[0];
-
     setFormData((prev) => {
-      if (name === "date_delivery") {
-        const pickupDate = new Date(prev.date_pickup);
-        const selectedDeliveryDate = new Date(value);
-        const minDeliveryDate = new Date(pickupDate);
-        minDeliveryDate.setDate(pickupDate.getDate() + 1);
+      const updatedData = { ...prev, [name]: value };
 
-        if (selectedDeliveryDate < minDeliveryDate) {
-          alert("Delivery date must be at least 1 day after the pickup date.");
-          return prev; // Prevent updating
-        }
-      }
-
-      return { ...prev, [name]: formattedDate };
-    });
-  };
-
-  const handleSystemChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
-    const { name, value } = e.target;
-    const availableDates = getAvailableDates();
-    setFormData((prev) => ({
-      ...prev,
-      [name]: value,
-      date_start_day: availableDates[0] || prev.date_start_day,
-    }));
-    setUseCustomDays(value === "Own");
-    setUseOnetimeOrder(value === "One_time");
-  };
-
-  const handleInputChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
-    const { name, value } = e.target;
-
-    setFormData((prev) => {
-      const updatedData = { ...prev, [name]: value, };
-
-      // If "pickup_ship_dif" is selected, set system to "Own" and hide it
-      if (name === "type_ship" && value === "pickup_ship_dif") {
-        updatedData.system = "Own";
-        setUseCustomDays(true); // Hide system select field
-      }
-      // if "pickup_ship_dif" clear days checkbox
-      if (prev.type_ship === "pickup_ship_dif") {
-        setShowDaySystem(true);
-        updatedData.monday = false;
-        updatedData.tuesday = false;
-        updatedData.wednesday = false;
-        updatedData.thursday = false;
-        updatedData.friday = false;
-        console.log("show true");
-      }
-      // if "pickup_ship_one" clear days checkbox
-      if (prev.type_ship === "pickup_ship_one") {
-        setShowDaySystem(false);
-        updatedData.monday = false;
-        updatedData.tuesday = false;
-        updatedData.wednesday = false;
-        updatedData.thursday = false;
-        updatedData.friday = false;
-        console.log("show false");
-      }
-      // If another type is selected, show system select field again
-      else if (name === "type_ship") {
-        setShowDaySystem(true);
-        console.log("show true");
+      if (name === "type_ship") {
         if (value === "pickup_ship_dif") {
+          updatedData.system = "Own";
           setUseCustomDays(true);
-          updatedData.system = "Own"; // Force Own system
-        } else if (value === "pickup_ship_one" || value === "") {
+          setShowDaySystem(false);
+          updatedData.monday = false;
+          updatedData.tuesday = false;
+          updatedData.wednesday = false;
+          updatedData.thursday = false;
+          updatedData.friday = false;
+          setUseOnetimeOrder(false);
+        } else if (value === "pickup_ship_one") {
+          setShowDaySystem(true);
+          setUseOnetimeOrder(false);
           setUseCustomDays(false);
           updatedData.system = "";
+          updatedData.monday = false;
+          updatedData.tuesday = false;
+          updatedData.wednesday = false;
+          updatedData.thursday = false;
+          updatedData.friday = false;
+        } else if (value === "one_time") {
+          setShowDaySystem(true);
+          setUseOnetimeOrder(true);
+          setUseCustomDays(true);
+          updatedData.system = "Own";
+          updatedData.date_pickup = formattedTomorrow;
+          updatedData.date_delivery = formattedTomorrow;
+          updatedData.monday = false;
+          updatedData.tuesday = false;
+          updatedData.wednesday = false;
+          updatedData.thursday = false;
+          updatedData.friday = false;
+        } else {
+          // Для других значений сбрасываем флаги
+          setShowDaySystem(true);
+          setUseOnetimeOrder(false);
+          setUseCustomDays(false);
+          updatedData.system = "";
+          updatedData.monday = false;
+          updatedData.tuesday = false;
+          updatedData.wednesday = false;
+          updatedData.thursday = false;
+          updatedData.friday = false;
         }
       }
       return updatedData;
     });
   };
 
+  const handleSystemChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
+    const { name, value } = e.target;
+    const availableDates = getAvailableStartDays();
+    setFormData((prev) => ({
+      ...prev,
+      [name]: value,
+      date_start_day: availableDates[0] || prev.date_start_day,
+    }));
+    setUseCustomDays(value === "Own");
+  };
+
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-
-    // Ensure dates are properly formatted as YYYY-MM-DD
-    const formatDate = (date: string) => {
-      if (!date) return "";
-      return date.split("T")[0]; // Extract YYYY-MM-DD
-    };
-
+    const formatDate = (date: string) => (date ? date.split("T")[0] : "");
     const formattedData = {
       ...formData,
-      system: formData.system,
       place: placeId || formData.place,
       date_pickup: formatDate(formData.date_pickup),
       date_delivery: formatDate(formData.date_delivery),
       date_start_day: formatDate(formData.date_start_day),
     };
 
-    // console.log("🚀 Submitting Order Data:", formattedData); // Debug log
-
     try {
       const response = await fetchWithAuth(`${BASE_URL}/order/create/`, {
         method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
+        headers: { "Content-Type": "application/json" },
         body: JSON.stringify(formattedData),
       });
 
       const responseData = await response.json();
 
       if (response.ok) {
-        // console.log("✅ Order Created:", responseData);
         onSuccess(responseData);
         setSuccessMessage(`Order created successfully: ${responseData}`);
       } else {
-        console.error("❌ Failed Response:", responseData);
         alert("Failed to create order: " + JSON.stringify(responseData));
       }
     } catch (error) {
-      console.error("🔥 Error submitting form:", error);
+      console.error("Error submitting form:", error);
     }
   };
 
+  // Обновляем дату доставки при изменении даты самовывоза
   useEffect(() => {
-    setFormData((prev) => {
-      const minDeliveryDate = new Date(prev.date_pickup);
-      minDeliveryDate.setDate(minDeliveryDate.getDate() + 1); // Ensure it's at least 1 day after
+    setFormData((prev) => ({
+      ...prev,
+      date_delivery: getAvailableDeliveryDates()[0] || prev.date_delivery,
+    }));
+  }, [formData.date_pickup]);
 
-      return {
-        ...prev,
-        date_delivery: minDeliveryDate.toISOString().split("T")[0], // Update `date_delivery`
-      };
-    });
-  }, [formData.date_pickup]); // Runs when `date_pickup` changes
-
+  // Авто-выбор места, если доступно только одно
   useEffect(() => {
-    // Automatically select the only available place
     if (!placeId && places.length === 1) {
       setFormData((prev) => ({ ...prev, place: places[0].id }));
     }
   }, [places, placeId]);
 
+  // Загрузка списка мест
   useEffect(() => {
     const fetchPlaces = async () => {
       try {
@@ -270,14 +284,14 @@ const OrderForm: React.FC<OrderFormProps> = ({ placeId, onClose, onSuccess }) =>
     };
 
     fetchPlaces();
-  }, []);
+  }, [BASE_URL]);
 
   return (
       <div className="modal-backdrop">
         <div className="modal-wrapper">
           <div className="modal-content">
             <h3>Create New Order</h3>
-            <form key={JSON.stringify(formData)} onSubmit={handleSubmit}>
+            <form onSubmit={handleSubmit}>
               {/* Place Dropdown */}
               <div className="row mb-3">
                 <div className="col-12 label-form">
@@ -316,65 +330,63 @@ const OrderForm: React.FC<OrderFormProps> = ({ placeId, onClose, onSuccess }) =>
                       required
                   >
                     <option value="">Select Type</option>
-                    <option value="pickup_ship_one">{currentData.order.type_sipping_clear_for_dirty}</option>
-
-                    <option value="pickup_ship_dif">{currentData.order.type_sipping_1_in_3}</option>
+                    <option value="pickup_ship_one">
+                      {currentData.order.type_sipping_clear_for_dirty}
+                    </option>
+                    <option value="pickup_ship_dif">
+                      {currentData.order.type_sipping_1_in_3}
+                    </option>
+                    <option value="one_time">One-time order</option>
                   </select>
                 </div>
               </div>
 
               {/* System or Days of the Week */}
-              <div className="row mb-3">
-                <div className={`col-12 days ${showDaySystem ? "display-none" : ""}`}>
-                  <p>Choose days</p>
-                </div>
-                <div className={`day-system-hide ${showDaySystem ? "opacity-1" : "opacity-0 height-1 z-index-1"}`}>
-                  <div className="col-12 label-form">
-                    <label htmlFor="system">System*</label>
+              {!useOnetimeOrder && (
+                  <div className="row mb-3">
+                    <div className={`col-12 days ${showDaySystem ? "display-none" : ""}`}>
+                      <p>Choose days</p>
+                    </div>
+                    <div className={`day-system-hide ${showDaySystem ? "opacity-1" : "opacity-0 height-1 z-index-1"}`}>
+                      <div className="col-12 label-form">
+                        <label htmlFor="system">System*</label>
+                      </div>
+                      <div className="col-12">
+                        <select
+                            className="form-control"
+                            name="system"
+                            value={formData.system}
+                            onChange={handleSystemChange}
+                            required={!useCustomDays}
+                        >
+                          <option value="">Select System</option>
+                          <option value="Mon_Wed_Fri">Monday Wednesday Friday</option>
+                          <option value="Tue_Thu">Tuesday Thursday</option>
+                          <option value="Every_day">Every Day</option>
+                          <option value="Own">Own Systems</option>
+                        </select>
+                      </div>
+                    </div>
                   </div>
-                  <div className="col-12">
-                    <select
-                        className="form-control"
-                        name="system"
-                        value={formData.system}
-                        onChange={handleSystemChange}
-                        required={!useCustomDays}
-                    >
-                      <option value="">Select System</option>
-                      <option value="Mon_Wed_Fri">Monday Wednesday Friday</option>
-                      <option value="Tue_Thu">Tuesday Thursday</option>
-                      <option value="Every_day">Every Day</option>
-                      <option value="Own">Own Systems</option>
-                      <option value="One_time">One time order</option>
-                    </select>
-                  </div>
-                </div>
-              </div>
+              )}
 
-
-              {useCustomDays && (
+              {useCustomDays && !useOnetimeOrder && (
                   <div className="row mb-3">
                     <div className="col-12">
                       {["monday", "tuesday", "wednesday", "thursday", "friday"].map((day, index, days) => {
-                        const isPickupDif = formData.type_ship === "pickup_ship_dif";
-                        const isOwnSystem = formData.system === "Own";
-                        const isPickupOne = formData.type_ship === "pickup_ship_one";
-
-                        // Check if the current day has adjacent selected days
-                        const hasPrevSelected = index > 0 && formData[days[index - 1]];
-                        const hasNextSelected = index < days.length - 1 && formData[days[index + 1]];
-
+                        const hasPrevSelected = index > 0 && formData[days[index - 1] as keyof typeof formData];
+                        const hasNextSelected = index < days.length - 1 && formData[days[index + 1] as keyof typeof formData];
                         return (
                             <div className="form-check" key={day}>
                               <input
                                   className="form-check-input"
                                   type="checkbox"
                                   name={day}
-                                  checked={formData[day]}
+                                  checked={formData[day as keyof typeof formData] as boolean}
                                   onChange={handleCheckboxChange}
                                   disabled={
-                                      isPickupDif && // Disable adjacent selection only if "pickup_ship_dif" is selected
-                                      !formData[day] && // Only prevent new selection, not previously selected ones
+                                      formData.type_ship === "pickup_ship_dif" &&
+                                      !formData[day as keyof typeof formData] &&
                                       (hasPrevSelected || hasNextSelected)
                                   }
                               />
@@ -388,9 +400,7 @@ const OrderForm: React.FC<OrderFormProps> = ({ placeId, onClose, onSuccess }) =>
                   </div>
               )}
 
-              {/* Date Start Day with restricted options */}
               {!useOnetimeOrder && (
-
                   <div className="row mb-3">
                     <div className="col-12 label-form">
                       <label htmlFor="date_start_day">Start Day*</label>
@@ -400,15 +410,15 @@ const OrderForm: React.FC<OrderFormProps> = ({ placeId, onClose, onSuccess }) =>
                           className="form-control"
                           name="date_start_day"
                           value={formData.date_start_day}
-                          onChange={handleDateChange}
+                          onChange={handleStartDayChange}
                           required
                       >
-                        {getAvailableDates().map((date) => (
+                        {getAvailableStartDays().map((date) => (
                             <option key={date} value={date}>
                               {new Date(date).toLocaleDateString("en-US", {
                                 weekday: "long",
                                 month: "short",
-                                day: "numeric"
+                                day: "numeric",
                               })}
                             </option>
                         ))}
@@ -417,10 +427,8 @@ const OrderForm: React.FC<OrderFormProps> = ({ placeId, onClose, onSuccess }) =>
                   </div>
               )}
 
-              {/* Date Pickup */ /* Date Delivery */}
               {useOnetimeOrder && (
                   <>
-
                     <div className="row mb-3">
                       <div className="col-12 label-form">
                         <label htmlFor="date_pickup">Pick-up Date*</label>
@@ -430,22 +438,21 @@ const OrderForm: React.FC<OrderFormProps> = ({ placeId, onClose, onSuccess }) =>
                             className="form-control"
                             name="date_pickup"
                             value={formData.date_pickup}
-                            onChange={handleDateChange}
+                            onChange={handlePickupChange}
                             required
                         >
-                          {getAvailableDates().map((date) => (
+                          {getAvailablePickupDates().map((date) => (
                               <option key={date} value={date}>
                                 {new Date(date).toLocaleDateString("en-US", {
                                   weekday: "long",
                                   month: "short",
-                                  day: "numeric"
+                                  day: "numeric",
                                 })}
                               </option>
                           ))}
                         </select>
                       </div>
                     </div>
-
 
                     <div className="row mb-3">
                       <div className="col-12 label-form">
@@ -456,27 +463,24 @@ const OrderForm: React.FC<OrderFormProps> = ({ placeId, onClose, onSuccess }) =>
                             className="form-control"
                             name="date_delivery"
                             value={formData.date_delivery}
-                            onChange={handleDateChange}
+                            onChange={handleDeliveryChange}
                             required
                         >
-                          {getAvailableDates()
-                              .filter(date => new Date(date) > new Date(formData.date_pickup).setDate(new Date(formData.date_pickup).getDate() + 0))
-                              .map((date) => (
-                                  <option key={date} value={date}>
-                                    {new Date(date).toLocaleDateString("en-US", {
-                                      weekday: "long",
-                                      month: "short",
-                                      day: "numeric"
-                                    })}
-                                  </option>
-                              ))}
+                          {getAvailableDeliveryDates().map((date) => (
+                              <option key={date} value={date}>
+                                {new Date(date).toLocaleDateString("en-US", {
+                                  weekday: "long",
+                                  month: "short",
+                                  day: "numeric",
+                                })}
+                              </option>
+                          ))}
                         </select>
                       </div>
                     </div>
                   </>
               )}
 
-              {/* Every Week */}
               {!useOnetimeOrder && (
                   <div className="row mb-3">
                     <div className="col-1">
@@ -496,27 +500,22 @@ const OrderForm: React.FC<OrderFormProps> = ({ placeId, onClose, onSuccess }) =>
                   </div>
               )}
 
-
-
-              {/* Note */}
               <div className="row mb-3">
                 <div className="col-12 label-form">
                   <label>Note</label>
                 </div>
                 <div className="col-12">
-              <textarea
-                  className="form-control"
-                  name="rp_customer_note"
-                  value={formData.rp_customer_note}
-                  onChange={handleInputChange}
-                  rows={2} // Allows multiple lines
-                  placeholder="Enter your notes here..."
-              />
+                <textarea
+                    className="form-control"
+                    name="rp_customer_note"
+                    value={formData.rp_customer_note}
+                    onChange={handleInputChange}
+                    rows={2}
+                    placeholder="Enter your notes here..."
+                />
                 </div>
               </div>
 
-
-              {/* Terms */}
               <div className="row mb-3">
                 <div className="col-1">
                   <div className="checkbox-wrapper-19">
@@ -530,17 +529,17 @@ const OrderForm: React.FC<OrderFormProps> = ({ placeId, onClose, onSuccess }) =>
                         required
                         style={{ opacity: 0 }}
                     />
-
                     <label htmlFor="terms" className="check-box" />
                   </div>
                 </div>
                 <div className="col-11">
                   Terms of Use
-                  {showError && !formData.terms && (<p className="text-danger mt-1">You must accept the Terms of Use</p>)}
+                  {showError && !formData.terms && (
+                      <p className="text-danger mt-1">You must accept the Terms of Use</p>
+                  )}
                 </div>
               </div>
 
-              {/* Submit and Close Buttons */}
               <div className="row mt-3">
                 <button className="btn-submit me-2" type="submit">
                   Submit
@@ -552,7 +551,6 @@ const OrderForm: React.FC<OrderFormProps> = ({ placeId, onClose, onSuccess }) =>
             </form>
           </div>
         </div>
-
       </div>
   );
 };
