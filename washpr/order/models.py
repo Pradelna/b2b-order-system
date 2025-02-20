@@ -27,15 +27,15 @@ class Order(models.Model):
     user = models.ForeignKey(User, on_delete=models.CASCADE, related_name="orders", db_index=True, null=True, blank=True)
     choice_type_ship = [
         ('pickup_ship_one', 'clear for durty'),
-        ('pickup_ship_dif', '1 day clear, 3th day durty')
+        ('pickup_ship_dif', '1 day clear, 3th day durty'),
+        ('One_time', 'One time order')
     ]
     type_ship = models.CharField("Type of shipping", max_length=250, null=True, blank=True, choices=choice_type_ship)
     choice_system = [
         ('Mon_Wed_Fri', 'Monday Wednesday Friday'),
         ('Tue_Thu', 'Tuesday Thursday'),
         ('Every_day', 'Every day'),
-        ('Own', 'Own system'),
-        ('One_time', 'One time order')
+        ('Own', 'Own system')
     ]
     system = models.CharField("System days", max_length=100, null=True, blank=True, choices=choice_system)
     date_start_day = models.DateField("Start day", default=TOMMOROW)

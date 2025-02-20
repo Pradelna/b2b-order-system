@@ -129,7 +129,7 @@ const OrderHistory: React.FC<OrderHistoryProps> = ({ placeId, orders = [], setOr
 
 
     return (
-        <div className="order-history">
+        <div className="order-history mb-5">
             <h3 className="account-info">Order History</h3>
             <h3 className="detail-info">{orders.length > 0 ? orders[0].place_name : ""}</h3>
             {successMessage && (
