@@ -1071,3 +1071,21 @@ p.back-link {
 #card-history .card {
   border-radius: 16px
 }
+
+.display-none{
+  display: none;
+}
+
+.height-1{
+  height: 1px;
+}
+
+.days p {
+  margin: 0;
+}
+
+.z-index-1 {
+  position: absolute;
+  z-index: 1;
+  left: 2000px;
+}

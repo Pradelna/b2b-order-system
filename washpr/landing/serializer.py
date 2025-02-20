@@ -16,12 +16,13 @@ class LandingPageSerializer(serializers.ModelSerializer):
     customer = serializers.SerializerMethodField()
     buttons = serializers.SerializerMethodField()
     messages = serializers.SerializerMethodField()
+    order = serializers.SerializerMethodField()
 
     class Meta:
         model = LandingPage
         fields = [
             'lang', 'prefix', 'menu', 'start_banner', 'about_us', 'service', 'messages',
-            'technologies', 'price', 'contacts', 'footer', 'auth', 'customer', 'buttons',
+            'technologies', 'price', 'contacts', 'footer', 'auth', 'customer', 'buttons', 'order'
         ]
 
     def get_menu(self, obj):
@@ -179,4 +180,10 @@ class LandingPageSerializer(serializers.ModelSerializer):
             'file_failed_delete': obj.message_file_failed_delete,
             'file_failed_while_deleting': obj.message_file_failed_while_deleting,
             'file_size': obj.message_file_size,
+        }
+
+    def get_order(self, obj):
+        return {
+            'type_sipping_clear_for_dirty': obj.order_type_sipping_clear_for_dirty,
+            'type_sipping_1_in_3': obj.order_type_sipping_1_in_3,
         }

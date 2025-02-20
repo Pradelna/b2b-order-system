@@ -479,7 +479,7 @@ class Migration(migrations.Migration):
                 ('customer_vop_check', models.CharField(max_length=200, verbose_name='VOP read', blank=True, null=True)),
                 ('customer_terms_use_check', models.CharField(max_length=200, verbose_name='Terms of use read', blank=True, null=True)),
                 ('customer_gdpr_check', models.CharField(max_length=200, verbose_name='GDPR read', blank=True, null=True)),
-                ('customer_uploaded_files', models.TextField(max_length=200, verbose_name='Uploaded files', blank=True, null=True)),
+                ('customer_uploaded_files', models.CharField(max_length=200, verbose_name='Uploaded files', blank=True, null=True)),
                 ('customer_important_files', models.CharField(max_length=200, verbose_name="Important files", blank=True, null=True)),
                 ('customer_send_to_check', models.CharField(max_length=200, verbose_name="Send to check", blank=True, null=True)),
                 ('customer_wait_for_active', models.CharField(max_length=200, verbose_name="Wait for activation", blank=True, null=True)),
@@ -494,6 +494,8 @@ class Migration(migrations.Migration):
                 ('message_file_deleted', models.CharField(max_length=100, verbose_name='File deleted successfully!', blank=True, null=True)),
                 ('message_file_failed_delete', models.CharField(max_length=100, verbose_name='Failed to delete the file', blank=True, null=True)),
                 ('message_file_failed_while_deleting', models.CharField(max_length=100, verbose_name='An error occurred while deleting the file', blank=True, null=True)),
+                ('order_type_sipping_clear_for_dirty', models.CharField(max_length=100, verbose_name="Order type sipping clear for dirty", blank=True, null=True)),
+                ('order_type_sipping_1_in_3', models.CharField(max_length=100, verbose_name="Order type sipping 1 in 3", blank=True, null=True))
             ],
             options={
                 'verbose_name': 'Landing page content. Language',

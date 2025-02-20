@@ -13,7 +13,7 @@ TOMMOROW = datetime.now() + timedelta(days=1)
 
 def report_file_path(instance, filename):
     """
-    Формируем путь для загрузки файлов в формате:
+    path for upload files:
     invoices/{user_id}/YYYY-MM/{filename}
     """
     report_month_str = instance.report.report_month.strftime("%Y-%m")  # Пример: "2025-02"
@@ -27,7 +27,7 @@ class Order(models.Model):
     user = models.ForeignKey(User, on_delete=models.CASCADE, related_name="orders", db_index=True, null=True, blank=True)
     choice_type_ship = [
         ('pickup_ship_one', 'clear for durty'),
-        ('pickup_ship_dif', '1 day clear, 2 day durty')
+        ('pickup_ship_dif', '1 day clear, 3th day durty')
     ]
     type_ship = models.CharField("Type of shipping", max_length=250, null=True, blank=True, choices=choice_type_ship)
     choice_system = [
