@@ -1,4 +1,5 @@
 from django.contrib.auth.mixins import LoginRequiredMixin
+from django.db.models import Q
 from django.db.models.expressions import result
 from rest_framework.decorators import api_view, permission_classes
 from rest_framework.permissions import IsAuthenticated
@@ -9,7 +10,7 @@ from place.models import Place
 from rest_framework.views import APIView
 
 from .models import Order, OrderReport
-from .serializers import OrderSerializer, GetOrderSerializer, OrderReportSerializer
+from .serializers import OrderSerializer, GetOrderSerializer, OrderReportSerializer, CurrentOrderSerializer
 from datetime import datetime
 
 
@@ -59,6 +60,7 @@ def create_order(request):
                 place=place,
                 active=True,
                 user=request.user,
+                rp_status=0,
             )
             order_data = OrderSerializer(order).data
             return Response(
@@ -100,6 +102,18 @@ def get_orders(request):
         user = request.user
         orders = Order.objects.filter(place__customer__user=user)
         serializer = GetOrderSerializer(orders, many=True)
+        return Response(serializer.data, status=status.HTTP_200_OK)
+    except Exception as e:
+        return Response({"error": str(e)}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+
+
+@api_view(['GET'])
+@permission_classes([IsAuthenticated])
+def get_current_order(request):
+    try:
+        user = request.user
+        orders = Order.objects.filter(Q(place__customer__user=user) & Q(every_week=True) & Q(active=True) &Q(end_order=False))
+        serializer = CurrentOrderSerializer(orders, many=True)
         return Response(serializer.data, status=status.HTTP_200_OK)
     except Exception as e:
         return Response({"error": str(e)}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)

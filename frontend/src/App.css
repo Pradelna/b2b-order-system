@@ -690,7 +690,7 @@ svg.loader{
 }
 
 .current-order {
-  min-height: 410px !important;
+  /*min-height: 410px !important;*/
 }
 
 @media (min-width: 991px) {

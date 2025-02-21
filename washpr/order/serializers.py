@@ -39,9 +39,10 @@ class GetOrderSerializer(serializers.ModelSerializer):
     class Meta:
         model = Order
         fields = [
-            'id', 'place', 'user', 'place_name', 'type_ship', 'system', 'monday', 'tuesday',
-            'wednesday', 'thursday', 'friday', 'date_pickup', 'date_delivery', 'created_at',
-            'every_week', 'terms', 'end_order', 'rp_problem_description', 'date_start_day', 'canceled'
+            'id', 'place', 'user', 'place_name', 'type_ship', 'system', 'monday', 'tuesday', 'date_start_day',
+            'wednesday', 'thursday', 'friday', 'date_pickup', 'date_delivery', 'created_at', 'rp_status',
+            'every_week', 'terms', 'end_order', 'rp_customer_note', 'rp_problem_description', 'date_start_day',
+            'canceled', 'rp_time_from', 'rp_time_to'
         ]
         read_only_fields = ['id', 'user', 'place', 'created_at']
 
@@ -62,3 +63,10 @@ class OrderReportSerializer(serializers.ModelSerializer):
 
     def get_orders_count(self, obj):
         return obj.orders.count()
+
+
+class CurrentOrderSerializer(serializers.ModelSerializer):
+
+    class Meta:
+        model = Order
+        fields = ["id"]

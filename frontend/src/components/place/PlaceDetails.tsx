@@ -36,7 +36,7 @@ interface Place {
 
 interface Order {
     id: number;
-    rp_status: string;
+    rp_status: number;
     type_ship: string;
     system: string | null;
     monday: boolean;
@@ -155,6 +155,15 @@ const PlaceDetails: React.FC = () => {
                 console.error("Error stopping order:", error);
             }
         }
+    };
+
+    const formatDate = (timestampInSeconds: number): string => {
+        const date = new Date(timestampInSeconds * 1000); // Convert to milliseconds
+        const day = date.getDate().toString().padStart(2, "0"); // Ensure 2-digit format
+        const month = (date.getMonth() + 1).toString().padStart(2, "0"); // Months are 0-based
+        const year = date.getFullYear();
+
+        return `${day}.${month}.${year}`;
     };
 
     useEffect(() => {
@@ -337,14 +346,33 @@ const PlaceDetails: React.FC = () => {
                                     <div className="order-details">
 
                                         <div className="form-control mb-2">
-                                            <strong>Status:</strong> {currentOrder.rp_status}
+                                            <strong>Day of next visit:</strong>
+                                            { formatDate(currentOrder.rp_time_from)  || " from None "}
+                                             or
+                                            { formatDate(currentOrder.rp_time_to)  || " to None"}
                                         </div>
                                         <div className="form-control mb-2">
-                                            <strong>Type of Shipping:</strong> {currentOrder.type_ship}
+                                            <strong>Status:</strong>
+                                            {currentOrder.rp_status === 0 && (" New order 0")}
+                                            {currentOrder.rp_status === 1 && (" In progress 1")}
+                                            {currentOrder.rp_status === 2 && (" In progress 2")}
+                                            {currentOrder.rp_status === 3 && (" In progress 3")}
                                         </div>
                                         <div className="form-control mb-2">
-                                            <strong>System:</strong> {currentOrder.system || "Custom Days"}
+                                            <strong>Type of Shipping:</strong>
+                                            {currentOrder.type_ship === "pickup_ship_dif" && (" zber špinavého a dodanie čistého na tretí deň")}
+                                            {currentOrder.type_ship === "pickup_ship_one" && (" čisté prádlo za špinavé")}
+                                            {currentOrder.type_ship === "one_time" && (" One time order")}
                                         </div>
+                                        {currentOrder.type_ship != "pickup_ship_dif" && (
+                                            <div className="form-control mb-2">
+                                                <strong>System:</strong>
+                                                {currentOrder.system === "Mon_Wed_Fri" && (" Monday Wendsdey Friday")}
+                                                {currentOrder.system === "Tue_Thu" && (" Tuesday Thusday")}
+                                                {currentOrder.system === "Every_day" && (" Every day")}
+                                                {currentOrder.system === "Own" && (" Own")}
+                                            </div>
+                                        )}
 
                                         {currentOrder.system === "Own" && (
                                             <div className="form-control mb-2">
@@ -358,16 +386,30 @@ const PlaceDetails: React.FC = () => {
 
                                             </div>
                                         )}
+                                        {currentOrder.type_ship === "one_time" ? (
+                                            <>
+                                                <div className="form-control mb-2">
+                                                    <strong>Pickup Date:</strong> {currentOrder.date_pickup}
+                                                </div>
+                                                <div className="form-control mb-2">
+                                                    <strong>Delivery Date:</strong> {currentOrder.date_delivery}
+                                                </div>
+                                            </>
+                                        ) : (
+                                            <div className="form-control mb-2">
+                                                <strong>Start day:</strong> {currentOrder.date_start_day}
+                                            </div>
+                                        )}
 
                                         <div className="form-control mb-2">
-                                            <strong>Pickup Date:</strong> {currentOrder.date_pickup}
+                                            <strong>Customer note:</strong> {currentOrder.rp_customer_note || "None"}
                                         </div>
-                                        <div className="form-control mb-2">
-                                            <strong>Delivery Date:</strong> {currentOrder.date_delivery}
-                                        </div>
-                                        <div className="form-control mb-2">
-                                            <strong>Note:</strong> {currentOrder.rp_problem_description || "None"}
-                                        </div>
+
+                                        {currentOrder.rp_problem_description && (
+                                            <div className="form-control mb-2">
+                                                <strong>Customer note:</strong> {currentOrder.rp_problem_description || "None"}
+                                            </div>
+                                        )}
 
                                     </div>
 

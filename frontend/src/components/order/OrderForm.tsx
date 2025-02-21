@@ -25,6 +25,8 @@ const OrderForm: React.FC<OrderFormProps> = ({ placeId, onClose, onSuccess }) =>
   const [useOnetimeOrder, setUseOnetimeOrder] = useState(false);
   const BASE_URL = import.meta.env.VITE_API_URL;
   const { currentData } = useContext(LanguageContext);
+  const [alredyCurrentOrder, setAlredyCurrentOrder] = useState(false);
+  const [firstStartForm, setFirstStartForm] = useState(true);
 
   const [formData, setFormData] = useState({
     place: placeId || "",
@@ -45,13 +47,13 @@ const OrderForm: React.FC<OrderFormProps> = ({ placeId, onClose, onSuccess }) =>
 
   const [places, setPlaces] = useState<Place[]>([]);
 
-  // Функции для вычисления доступных дат
+  // Functions for calculating available dates
   function getAvailableStartDays() {
     const availableDates: string[] = [];
     const startDate = new Date();
     startDate.setDate(startDate.getDate() + 1); // начинаем с завтрашнего дня
 
-    // Если выбрана система Own, собираем список выбранных дней
+    // if the system is Own, collect list of all days
     let selectedDays: number[] = [];
     if (formData.system === "Own") {
       if (formData.monday) selectedDays.push(1);
@@ -81,6 +83,18 @@ const OrderForm: React.FC<OrderFormProps> = ({ placeId, onClose, onSuccess }) =>
     return availableDates;
   }
 
+  function addWorkingDays(date: Date, days: number): Date {
+    const result = new Date(date);
+    while (days > 0) {
+      result.setDate(result.getDate() + 1);
+      // if is not suterday (6) and not sunday (0) – incrise counter
+      if (result.getDay() !== 0 && result.getDay() !== 6) {
+        days--;
+      }
+    }
+    return result;
+  }
+  // avaliable pickup days
   function getAvailablePickupDates() {
     const availableDates: string[] = [];
     const startDate = new Date();
@@ -95,19 +109,33 @@ const OrderForm: React.FC<OrderFormProps> = ({ placeId, onClose, onSuccess }) =>
     }
     return availableDates;
   }
-
+  // availble delivery days
   function getAvailableDeliveryDates() {
     const availableDates: string[] = [];
     const pickupDate = new Date(formData.date_pickup);
-    const minDeliveryDate = new Date(pickupDate);
-    minDeliveryDate.setDate(pickupDate.getDate() + 2); // как минимум на 1 день позже
-    for (let i = 0; i < 30; i++) {
-      const date = new Date(minDeliveryDate);
-      date.setDate(minDeliveryDate.getDate() + i);
-      const dayOfWeek = date.getDay();
-      if (dayOfWeek >= 1 && dayOfWeek <= 5) {
-        availableDates.push(date.toISOString().split("T")[0]);
+    let minDeliveryDate: Date;
+
+    if (formData.type_ship === "quick_order") {
+      if (firstStartForm) { // if from open first time
+        minDeliveryDate = addWorkingDays(pickupDate, 2);
+      } else {
+        minDeliveryDate = addWorkingDays(pickupDate, 1);
       }
+    } else if (formData.type_ship === "one_time") {
+      if (firstStartForm) {
+        minDeliveryDate = addWorkingDays(pickupDate, 3);
+      } else {
+        minDeliveryDate = addWorkingDays(pickupDate, 2);
+      }
+    } else {
+      // Для повторяющихся заказов — допустим, минимум через 1 рабочий день
+      minDeliveryDate = addWorkingDays(pickupDate, 1);
+    }
+
+    // Генерируем 30 доступных вариантов, прибавляя рабочие дни от минимальной даты
+    for (let i = 0; i < 30; i++) {
+      const optionDate = addWorkingDays(minDeliveryDate, i);
+      availableDates.push(optionDate.toISOString().split("T")[0]);
     }
     return availableDates;
   }
@@ -122,6 +150,8 @@ const OrderForm: React.FC<OrderFormProps> = ({ placeId, onClose, onSuccess }) =>
       ...prev,
       date_pickup: e.target.value,
     }));
+    setFirstStartForm(false);
+    console.log("handlePickupChange", firstStartForm);
   };
 
   const handleDeliveryChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
@@ -181,20 +211,30 @@ const OrderForm: React.FC<OrderFormProps> = ({ placeId, onClose, onSuccess }) =>
           updatedData.wednesday = false;
           updatedData.thursday = false;
           updatedData.friday = false;
-        } else if (value === "one_time") {
+        } else if (value === "one_time" || value === "quick_order") {
           setShowDaySystem(true);
           setUseOnetimeOrder(true);
           setUseCustomDays(true);
+          setFirstStartForm(true);
           updatedData.system = "Own";
+          // Устанавливаем date_pickup равной завтрашнему дню
           updatedData.date_pickup = formattedTomorrow;
-          updatedData.date_delivery = formattedTomorrow;
+          const pickupDate = new Date(formattedTomorrow);
+          let deliveryDate: Date;
+          if (value === "quick_order") {
+            deliveryDate = addWorkingDays(pickupDate, 1);
+          } else if (value === "one_time") {
+            deliveryDate = addWorkingDays(pickupDate, 2);
+          }
+          updatedData.date_delivery = deliveryDate.toISOString().split("T")[0];
+          console.log(updatedData.date_delivery);
           updatedData.monday = false;
           updatedData.tuesday = false;
           updatedData.wednesday = false;
           updatedData.thursday = false;
           updatedData.friday = false;
         } else {
-          // Для других значений сбрасываем флаги
+          // Сброс для других значений
           setShowDaySystem(true);
           setUseOnetimeOrder(false);
           setUseCustomDays(false);
@@ -254,10 +294,12 @@ const OrderForm: React.FC<OrderFormProps> = ({ placeId, onClose, onSuccess }) =>
 
   // Обновляем дату доставки при изменении даты самовывоза
   useEffect(() => {
-    setFormData((prev) => ({
-      ...prev,
-      date_delivery: getAvailableDeliveryDates()[0] || prev.date_delivery,
-    }));
+    if (formData.type_ship !== "one_time" && formData.type_ship !== "quick_order") {
+      setFormData((prev) => ({
+        ...prev,
+        date_delivery: getAvailableDeliveryDates()[0] || prev.date_delivery,
+      }));
+    }
   }, [formData.date_pickup]);
 
   // Авто-выбор места, если доступно только одно
@@ -280,6 +322,27 @@ const OrderForm: React.FC<OrderFormProps> = ({ placeId, onClose, onSuccess }) =>
         }
       } catch (error) {
         console.error("Error fetching places:", error);
+      }
+    };
+
+    fetchPlaces();
+  }, [BASE_URL]);
+
+  // Check if exist an active current order
+  useEffect(() => {
+    const fetchPlaces = async () => {
+      try {
+        const response = await fetchWithAuth(`${BASE_URL}/order/check-current-order/`);
+        if (response.ok) {
+          const currentOrderData = await response.json();
+          if (currentOrderData.length != 0) {
+            setAlredyCurrentOrder(true)
+          }
+        } else {
+          console.error("Failed to fetch current order");
+        }
+      } catch (error) {
+        console.error("Error fetching current order:", error);
       }
     };
 
@@ -336,7 +399,8 @@ const OrderForm: React.FC<OrderFormProps> = ({ placeId, onClose, onSuccess }) =>
                     <option value="pickup_ship_dif">
                       {currentData.order.type_sipping_1_in_3}
                     </option>
-                    <option value="one_time">One-time order</option>
+                    <option value="one_time">{currentData.order.one_time}</option>
+                    <option value="quick_order">{currentData.order.quick}</option>
                   </select>
                 </div>
               </div>
@@ -483,20 +547,28 @@ const OrderForm: React.FC<OrderFormProps> = ({ placeId, onClose, onSuccess }) =>
 
               {!useOnetimeOrder && (
                   <div className="row mb-3">
-                    <div className="col-1">
-                      <div className="checkbox-wrapper-19">
-                        <input
-                            id="every_week"
-                            className="form-check-input"
-                            type="checkbox"
-                            name="every_week"
-                            checked={formData.every_week}
-                            onChange={handleCheckboxChange}
-                        />
-                        <label htmlFor="every_week" className="check-box" />
-                      </div>
-                    </div>
-                    <div className="col-11">Every Week</div>
+                    { alredyCurrentOrder ? (
+                        <div className="col-12 mt-2">
+                          <p>You already have repeating order. If you would like to create a new repeating order you have to stop the current order.</p>
+                        </div>
+                    ) : (
+                        <>
+                          <div className="col-1">
+                            <div className="checkbox-wrapper-19">
+                              <input
+                                  id="every_week"
+                                  className="form-check-input"
+                                  type="checkbox"
+                                  name="every_week"
+                                  checked={formData.every_week}
+                                  onChange={handleCheckboxChange}
+                              />
+                              <label htmlFor="every_week" className="check-box" />
+                            </div>
+                          </div>
+                          <div className="col-11">Every Week</div>
+                        </>
+                    ) }
                   </div>
               )}
 
