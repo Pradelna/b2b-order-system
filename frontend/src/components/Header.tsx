@@ -6,6 +6,7 @@ import AccountMenuComponent from "./AccountMenuComponent";
 import LanguageSwitcher from "./LanguageSwitcher.js";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faHouse, faUser, faMobileScreen, faEnvelope } from "@fortawesome/free-solid-svg-icons";
+import Loader from "@/components/Loader";
 
 interface MenuData {
   header_home: string;
@@ -14,26 +15,33 @@ interface MenuData {
 
 const Header: React.FC = () => {
   const { language, handleLanguageChange, languageData } = useContext(LanguageContext);
+  const [loading, setLoading] = useState<boolean>(true);
   const navigate = useNavigate();
   const location = useLocation();
   const [isAuthenticated, setIsAuthenticated] = useState<boolean>(false);
 
   useEffect(() => {
     const token = localStorage.getItem("accessToken");
-    setIsAuthenticated(!!token); // Check if the user is authenticated
+    setIsAuthenticated(!!token);
+    setLoading(false);
   }, []);
 
-  if (!languageData) {
-    return null; // Return empty component if no language data is available
+  // Если данные ещё загружаются, отображаем Loader
+  if (loading) {
+    return <Loader />;
   }
 
+  // Если languageData не доступен, показываем сообщение
+  if (!languageData || !languageData.length) {
+    return <div>No language data available.</div>;
+  }
   const currentData = languageData.find((item) => item.lang === language);
   const menuData: MenuData = currentData?.menu || { header_home: "", header_account: "" };
 
   const handleLanguageChangeWithPrefixRemoval = (lang: string) => {
-    handleLanguageChange(lang); // Change the language
-    const newPath = location.pathname.replace(/^\/[a-z]{2}/, ""); // Remove language prefix
-    navigate(newPath || "/"); // Redirect without prefix
+    handleLanguageChange(lang);
+    const newPath = location.pathname.replace(/^\/[a-z]{2}/, "");
+    navigate(newPath || "/");
   };
 
   const handleAuthClick = () => {
@@ -59,10 +67,6 @@ const Header: React.FC = () => {
 
               {/* Contact Information */}
               <div className="contact">
-                <a href="/" className="mail">
-                  <FontAwesomeIcon icon={faHouse} className="icon" />
-                  <span>{menuData.header_home}</span>
-                </a>
                 <a href="tel:+420734246834" className="tel">
                   <FontAwesomeIcon icon={faMobileScreen} className="icon" />
                   <span>+420 734 246 834</span>

@@ -1,3 +1,4 @@
+const BASE_URL = import.meta.env.VITE_API_URL;
 import { useState, useEffect } from "react";
 import {
   BrowserRouter,
@@ -18,6 +19,8 @@ import LoaderTestPage from "./components/LoaderTestPage";
 import PlaceDetails from "./components/place/PlaceDetails";
 
 import "./App.css";
+import ReportList from "./components/order/ReportList";
+import AllOrderHistory from "./components/order/AllOrderHistory";
 
 // Define the shape of the language data
 interface LanguageData {
@@ -26,7 +29,7 @@ interface LanguageData {
 
 const App: React.FC = () => {
   const [language, setLanguage] = useState<string>(
-    localStorage.getItem("language") || "cz"
+      localStorage.getItem("language") || "cz"
   );
   const [languageData, setLanguageData] = useState<LanguageData | null>(null);
   const [error, setError] = useState<string | null>(null);
@@ -37,7 +40,7 @@ const App: React.FC = () => {
     const fetchLanguageData = async () => {
       try {
         const response = await fetch(
-          `http://localhost:8000/api/landing/?lang=${language}`
+            `${BASE_URL}/landing/?lang=${language}`
         );
         const data: LanguageData = await response.json();
         setLanguageData(data);
@@ -62,75 +65,89 @@ const App: React.FC = () => {
     return <div>Error: {error}</div>;
   }
 
-  if (loading || !languageData) {
-    return <Loader />;
-  }
+
 
   return (
-    <BrowserRouter>
-      <div className="App">
-        <Routes>
-          {/* Main page without prefix */}
-          <Route path="/" element={<MainPage />} />
+      <BrowserRouter>
+        <div className="App">
+          <Routes>
+            {/* Main page without prefix */}
+            <Route path="/" element={<MainPage />} />
 
-          {/* Main page with prefix */}
-          <Route path="/:lang" element={<MainPageWithPrefix />} />
+            {/* Main page with prefix */}
+            <Route path="/:lang" element={<MainPageWithPrefix />} />
 
-          {/* Account page with private access */}
-          <Route
-            path="/account/*"
-            element={
-              <PrivateRoute>
-                <AccountPage />
-              </PrivateRoute>
-            }
-          />
+            {/* Account page with private access */}
+            <Route
+                path="/account/*"
+                element={
+                  <PrivateRoute>
+                    <AccountPage />
+                  </PrivateRoute>
+                }
+            />
 
-          {/* Registration page */}
-          <Route path="/account/auth" element={<RegistrationForm />} />
+            {/* Registration page */}
+            <Route path="/account/auth" element={<RegistrationForm />} />
 
-          {/* Activation page */}
-          <Route path="/activate/:uid/:token" element={<ActivationPage />} />
+            {/* Activation page */}
+            <Route path="/activate/:uid/:token" element={<ActivationPage />} />
 
-          {/* Login page */}
-          <Route path="/account/login" element={<LoginForm />} />
+            {/* Login page */}
+            <Route path="/account/login" element={<LoginForm />} />
 
-          {/* Loader test page */}
-          <Route path="/loader-test" element={<LoaderTestPage />} />
+            {/* Loader test page */}
+            <Route path="/loader-test" element={<LoaderTestPage />} />
 
-          {/* Customer detail page */}
-          <Route
-            path="/customer/:customerId"
-            element={
-              <PrivateRoute>
-                <CustomerDetailPage
-                  language={language}
-                  languageData={languageData}
-                  handleLanguageChange={handleLanguageChange}
-                />
-              </PrivateRoute>
-            }
-          />
+            {/* Customer detail page */}
+            <Route
+                path="/customer/:customerId"
+                element={
+                  <PrivateRoute>
+                    <CustomerDetailPage
+                        language={language}
+                        languageData={languageData}
+                        handleLanguageChange={handleLanguageChange}
+                    />
+                  </PrivateRoute>
+                }
+            />
 
-          {/* Place details page */}
-          <Route
-            path="/place/:id"
-            element={
-              <PrivateRoute>
-                <PlaceDetails
-                  language={language}
-                  languageData={languageData}
-                  handleLanguageChange={handleLanguageChange}
-                />
-              </PrivateRoute>
-            }
-          />
+            {/* Place details page */}
+            <Route
+                path="/place/:id"
+                element={
+                  <PrivateRoute>
+                    <PlaceDetails />
+                  </PrivateRoute>
+                }
+            />
 
-          {/* Fallback for unknown routes */}
-          <Route path="*" element={<Navigate to="/" />} />
-        </Routes>
-      </div>
-    </BrowserRouter>
+            {/* Invoices page */}
+            <Route
+                path="/invoices"
+                element={
+                  <PrivateRoute>
+                    <ReportList />
+                  </PrivateRoute>
+                }
+            />
+
+            {/* All order history page */}
+            <Route
+                path="/all-orders"
+                element={
+                  <PrivateRoute>
+                    <AllOrderHistory />
+                  </PrivateRoute>
+                }
+            />
+
+            {/* Fallback for unknown routes */}
+            <Route path="*" element={<Navigate to="/" />} />
+          </Routes>
+        </div>
+      </BrowserRouter>
   );
 };
 

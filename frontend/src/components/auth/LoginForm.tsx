@@ -3,22 +3,20 @@ import { LanguageContext } from "../../context/LanguageContext.js";
 import { useNavigate } from "react-router-dom";
 import Header from "../Header.js";
 import Footer from "../Footer.tsx";
-import { fetchWithAuth } from "../account/auth";
+import { fetchWithAuth } from "../account/auth.ts";
 
 const LoginForm: React.FC = () => {
     const [email, setEmail] = useState<string>("");
     const [password, setPassword] = useState<string>("");
     const [errorMessage, setErrorMessage] = useState<string>("");
-
+    const BASE_URL = import.meta.env.VITE_API_URL;
     const { currentData } = useContext(LanguageContext);
-
+    const navigate = useNavigate();
     // Return null if the language data is not available
     if (!currentData || !currentData.auth) {
-        return null;
+        return <div>Loading...</div>;
     }
-
     const messageData = currentData.auth;
-    const navigate = useNavigate();
 
     // Handle login form submission
     const handleLogin = async (e: FormEvent<HTMLFormElement>) => {
@@ -27,7 +25,7 @@ const LoginForm: React.FC = () => {
 
         try {
             // Send a POST request using fetchWithAuth
-            const response = await fetchWithAuth("http://127.0.0.1:8000/api/token/", {
+            const response = await fetchWithAuth(`${BASE_URL}/token/`, {
                 method: "POST",
                 headers: {
                     "Content-Type": "application/json",
@@ -58,6 +56,8 @@ const LoginForm: React.FC = () => {
         }
     };
 
+
+
     return (
         <>
             <Header />
@@ -71,10 +71,13 @@ const LoginForm: React.FC = () => {
                     <div className="card card-login">
                         <div className="card-body">
                             <div className="text-center">
-                                <img
-                                    src="/wp-content/themes/praska/assets/img/logo.png"
-                                    alt="logo"
-                                />
+                                <a href="/">
+                                    <img
+                                        src="/wp-content/themes/praska/assets/img/logo.png"
+                                        alt="Logo"
+                                        style={{ maxWidth: "100%", height: "auto" }}
+                                    />
+                                </a>
                             </div>
 
                             <form onSubmit={handleLogin}>

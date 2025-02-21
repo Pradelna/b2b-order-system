@@ -170,6 +170,7 @@ washpr/landing/migrations
 !washpr/landing/migrations/0001_initial.py
 washpr/landing/static
 washpr/static
+washpr/media
 
 frontend/build
 frontend/node_modules

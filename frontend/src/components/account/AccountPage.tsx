@@ -1,8 +1,10 @@
 import {useState, useEffect, JSX} from "react";
 import { fetchWithAuth } from "./auth";
 import HeaderAccount from "../HeaderAccount";
+import Header from "../Header";
 import Account from "./Account";
 import Footer from "../Footer";
+import {useParams} from "react-router-dom";
 
 // Define the shape of the customer data
 interface CustomerData {
@@ -12,12 +14,14 @@ interface CustomerData {
 
 function AccountPage(): JSX.Element {
     const [customerData, setCustomerData] = useState<CustomerData | null>(null);
+    const [ customerId, setCustomerId ] = useState<{ customerId: any }>();
     const [loading, setLoading] = useState<boolean>(true);
+    const BASE_URL = import.meta.env.VITE_API_URL;
 
     useEffect(() => {
         const fetchCustomerData = async () => {
             try {
-                const response = await fetchWithAuth("http://127.0.0.1:8000/api/customer/data/", {
+                const response = await fetchWithAuth(`${BASE_URL}/customer/data/`, {
                     method: "GET",
                 });
 
@@ -35,6 +39,7 @@ function AccountPage(): JSX.Element {
                 }
 
                 setCustomerData(data);
+                setCustomerId(data.user_id);
             } catch (error) {
                 console.error("Error fetching customer data:", error);
             } finally {
@@ -45,13 +50,19 @@ function AccountPage(): JSX.Element {
         fetchCustomerData();
     }, []);
 
+
     if (loading) {
         return <div>Loading...</div>;
     }
 
     return (
         <>
-            <HeaderAccount />
+            { customerId ? (
+                <HeaderAccount customerId={customerId} />
+            ) : (
+                <Header />
+            )}
+
             <Account
                 customerData={customerData}
                 setCustomerData={setCustomerData}

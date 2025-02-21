@@ -12,9 +12,9 @@ import {
     faGear,
     faPenToSquare,
 } from "@fortawesome/free-solid-svg-icons";
-import { fetchWithAuth } from "../account/auth";
+import { fetchWithAuth } from "../account/auth.ts";
 import { Tooltip as ReactTooltip } from "react-tooltip";
-import Loader from "../Loader";
+import {Skeleton} from "@mui/material";
 
 interface CustomerData {
     company_name: string;
@@ -42,14 +42,35 @@ const CompanyInfo: React.FC<CompanyInfoProps> = ({
                                                      setIsEditing,
                                                  }) => {
     const [loading, setLoading] = useState<boolean>(true);
+    const BASE_URL = import.meta.env.VITE_API_URL;
     const [userId, setUserId] = useState<string | null>(null);
     const location = useLocation();
     const isDetailPage = location.pathname.includes("/customer/");
+    const customerId = customerData?.user_id || userId;
+
+    const handleFormSubmit = (formData: Partial<CustomerData>) => {
+        fetchWithAuth(`${BASE_URL}/customer/data/`, {
+            method: "POST",
+            headers: {
+                "Content-Type": "application/json",
+            },
+            body: JSON.stringify(formData),
+        })
+            .then((response) => response.json())
+            .then((data: CustomerData) => {
+                setCustomerData(data);
+                setSuccessMessage("Customer data successfully added!");
+                setTimeout(() => setSuccessMessage(""), 5000);
+            })
+            .catch((error) => {
+                console.error("Error submitting customer data:", error);
+            });
+    };
 
     useEffect(() => {
         if (!customerData || !customerData.company_email) {
             setLoading(true);
-            fetchWithAuth("http://127.0.0.1:8000/api/customer/data/")
+            fetchWithAuth(`${BASE_URL}/customer/data/`)
                 .then((response) => {
                     if (!response.ok) {
                         if (response.status === 404) {
@@ -76,31 +97,16 @@ const CompanyInfo: React.FC<CompanyInfoProps> = ({
         }
     }, [customerData, setCustomerData]);
 
-    const handleFormSubmit = (formData: Partial<CustomerData>) => {
-        fetchWithAuth("http://localhost:8000/api/customer/data/", {
-            method: "POST",
-            headers: {
-                "Content-Type": "application/json",
-            },
-            body: JSON.stringify(formData),
-        })
-            .then((response) => response.json())
-            .then((data: CustomerData) => {
-                setCustomerData(data);
-                setSuccessMessage("Customer data successfully added!");
-                setTimeout(() => setSuccessMessage(""), 5000);
-            })
-            .catch((error) => {
-                console.error("Error submitting customer data:", error);
-            });
-    };
-
-    const customerId = customerData?.user_id || userId;
-
     if (loading) {
         return (
             <div>
-                <Loader />
+                <Skeleton
+                    variant="rectangular"
+                    width="100%" height={120}
+                    className="mb-3"
+                    sx={{ borderRadius: "16px", marginBottom: 1 }}
+
+                />
             </div>
         );
     }
@@ -155,36 +161,44 @@ const CompanyInfo: React.FC<CompanyInfoProps> = ({
             />
 
             {/* Customer data display */}
-            <h5 className="company-name">
-                <FontAwesomeIcon icon={faBuilding} className="icon" />{" "}
-                <span className="ms-1">{customerData?.company_name || "empty"}</span>
-            </h5>
-            <p className="company-info">
-                <FontAwesomeIcon icon={faLocationDot} className="icon" />{" "}
-                <span className="ms-2">{customerData?.company_address || "empty"}</span>
-            </p>
-            <p className="company-info">
-                <FontAwesomeIcon icon={faIdCard} className="icon" />{" "}
-                <span className="ms-1">IČO {customerData?.company_ico || "empty"}</span>
-            </p>
-            <p className="company-info">
-                <FontAwesomeIcon icon={faIdCard} className="icon" />{" "}
-                <span className="ms-1">DIČ {customerData?.company_dic || "empty"}</span>
-            </p>
-            <p className="company-info">
-                <FontAwesomeIcon icon={faPhone} className="icon" />{" "}
-                <span className="ms-1">{customerData?.company_phone || "empty"}</span>
-            </p>
-            <p className="company-info">
-                <FontAwesomeIcon icon={faEnvelope} className="icon" />{" "}
-                <span className="ms-1">
-          {customerData?.company_email || "empty"}
-        </span>
-            </p>
-            <p className="company-info">
-                <FontAwesomeIcon icon={faUserTie} className="icon" />{" "}
-                <span className="ms-1">{customerData?.company_person || "empty"}</span>
-            </p>
+            {!isDetailPage ? (
+                <div className="card-body">
+                    <FontAwesomeIcon icon={faBuilding} className="icon" />{" "}
+                    <p className="text-history front-name">{customerData?.company_name || "empty"}</p>
+                </div>) : (
+
+                <div className="dop-info">
+                    <h5 className="company-name">
+                        <FontAwesomeIcon icon={faBuilding} className="icon" />{" "}
+                        <span className="ms-1">{customerData?.company_name || "empty"}</span>
+                    </h5>
+                    <p className="company-info">
+                        <FontAwesomeIcon icon={faLocationDot} className="icon" />{" "}
+                        <span className="ms-2">{customerData?.company_address || "empty"}</span>
+                    </p>
+                    <p className="company-info">
+                        <FontAwesomeIcon icon={faIdCard} className="icon" />{" "}
+                        <span className="ms-1">IČO {customerData?.company_ico || "empty"}</span>
+                    </p>
+                    <p className="company-info">
+                        <FontAwesomeIcon icon={faIdCard} className="icon" />{" "}
+                        <span className="ms-1">DIČ {customerData?.company_dic || "empty"}</span>
+                    </p>
+                    <p className="company-info">
+                        <FontAwesomeIcon icon={faPhone} className="icon" />{" "}
+                        <span className="ms-1">{customerData?.company_phone || "empty"}</span>
+                    </p>
+                    <p className="company-info">
+                        <FontAwesomeIcon icon={faEnvelope} className="icon" />{" "}
+                        <span className="ms-1">
+                  {customerData?.company_email || "empty"}
+                </span>
+                    </p>
+                    <p className="company-info">
+                        <FontAwesomeIcon icon={faUserTie} className="icon" />{" "}
+                        <span className="ms-1">{customerData?.company_person || "empty"}</span>
+                    </p>
+                </div>)}
         </div>
     );
 };

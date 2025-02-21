@@ -1,4 +1,5 @@
 import requests
+from smtplib import SMTPRecipientsRefused
 from django.conf import settings
 from django.contrib.auth.tokens import default_token_generator
 from django.core.mail import send_mail
@@ -6,6 +7,9 @@ from django.utils.encoding import force_bytes
 from django.utils.http import urlsafe_base64_encode
 from django.contrib.auth import get_user_model
 from rest_framework.views import exception_handler
+from rest_framework.response import Response
+import ssl
+from django.core.mail.backends.smtp import EmailBackend
 
 
 def verify_recaptcha(token: str) -> bool:
@@ -38,7 +42,8 @@ def send_activation_email(user):
     # Формируем ссылку активации.
     # Для примера укажем адрес фронтенда или Django-вью.
     # Например, если активация происходит через фронтенд по адресу /activate/uid/token:
-    activation_link = f"http://127.0.0.1:5173/activate/{uid}/{token}"
+    # activation_link = f"http://127.0.0.1:5173/activate/{uid}/{token}"
+    activation_link = f"https://laundry.raketaweb.eu/activate/{uid}/{token}"
 
     subject = "Activate your account"
     message = (
@@ -48,13 +53,18 @@ def send_activation_email(user):
     )
 
     # Отправка письма
-    send_mail(
-        subject,
-        message,
-        settings.DEFAULT_FROM_EMAIL,  # Или любой email-отправитель
-        [user.email],
-        fail_silently=False,
-    )
+    try:
+        send_mail(
+            subject,
+            message,
+            settings.DEFAULT_FROM_EMAIL,
+            [user.email],
+            fail_silently=False,
+        )
+    except SMTPRecipientsRefused as e:
+        # Логирование или обработка ошибки. Можно вернуть специальное значение или выбросить исключение.
+        # Например, выбросим исключение, которое потом перехватит представление и вернёт JSON:
+        raise Exception(f"SMTP error: {e}")
 
 
 
@@ -62,6 +72,48 @@ def custom_exception_handler(exc, context):
     response = exception_handler(exc, context)
 
     if response is not None:
-        response.data['status_code'] = response.status_code
+        return Response(
+            {'detail': str(exc)},
+            status=response.status_code
+        )
 
     return response
+
+
+class UnverifiedSMTPEmailBackend(EmailBackend):
+    def open(self):
+        """
+        Открывает соединение с сервером, используя контекст, который не проверяет сертификаты.
+        """
+        if self.connection:
+            return False
+        try:
+            # Создаем SSL контекст, который не проверяет сертификаты
+            context = ssl._create_unverified_context()
+
+            if self.use_ssl:
+                # Для SSL (обычно порт 465)
+                self.connection = self.connection_class(
+                    self.host,
+                    self.port,
+                    timeout=self.timeout,
+                    context=context
+                )
+            else:
+                # Для STARTTLS (например, порт 587) или незащищенного соединения
+                self.connection = self.connection_class(
+                    self.host,
+                    self.port,
+                    timeout=self.timeout
+                )
+                self.connection.ehlo_or_helo_if_needed()
+                if self.use_tls:
+                    self.connection.starttls(context=context)
+                    self.connection.ehlo()
+            if self.username and self.password:
+                self.connection.login(self.username, self.password)
+            return True
+        except Exception:
+            if not self.fail_silently:
+                raise
+            return False

@@ -1,5 +1,5 @@
 import { useState, useContext } from "react";
-import { LanguageContext } from "../context/LanguageContext.js";
+import { LanguageContext } from "../context/LanguageContext";
 
 interface Language {
   lang: string;
