@@ -25,6 +25,7 @@ const OrderForm: React.FC<OrderFormProps> = ({ placeId, onClose, onSuccess }) =>
   const [useOnetimeOrder, setUseOnetimeOrder] = useState(false);
   const BASE_URL = import.meta.env.VITE_API_URL;
   const { currentData } = useContext(LanguageContext);
+  const [alredyCurrentOrder, setAlredyCurrentOrder] = useState(false);
 
   const [formData, setFormData] = useState({
     place: placeId || "",
@@ -286,6 +287,28 @@ const OrderForm: React.FC<OrderFormProps> = ({ placeId, onClose, onSuccess }) =>
     fetchPlaces();
   }, [BASE_URL]);
 
+  // Загрузка списка мест
+  useEffect(() => {
+    const fetchPlaces = async () => {
+      try {
+        const response = await fetchWithAuth(`${BASE_URL}/order/check-current-order/`);
+        if (response.ok) {
+          const currentOrderData = await response.json();
+          console.log(currentOrderData);
+          if (currentOrderData.length != 0) {
+            setAlredyCurrentOrder(true)
+          }
+        } else {
+          console.error("Failed to fetch current order");
+        }
+      } catch (error) {
+        console.error("Error fetching current order:", error);
+      }
+    };
+
+    fetchPlaces();
+  }, [BASE_URL]);
+
   return (
       <div className="modal-backdrop">
         <div className="modal-wrapper">
@@ -483,20 +506,28 @@ const OrderForm: React.FC<OrderFormProps> = ({ placeId, onClose, onSuccess }) =>
 
               {!useOnetimeOrder && (
                   <div className="row mb-3">
-                    <div className="col-1">
-                      <div className="checkbox-wrapper-19">
-                        <input
-                            id="every_week"
-                            className="form-check-input"
-                            type="checkbox"
-                            name="every_week"
-                            checked={formData.every_week}
-                            onChange={handleCheckboxChange}
-                        />
-                        <label htmlFor="every_week" className="check-box" />
-                      </div>
-                    </div>
-                    <div className="col-11">Every Week</div>
+                    { alredyCurrentOrder ? (
+                        <div className="col-12 mt-2">
+                          <p>You already have repeating order. If you would like to create a new repeating order you have to stop the current order.</p>
+                        </div>
+                    ) : (
+                        <>
+                          <div className="col-1">
+                            <div className="checkbox-wrapper-19">
+                              <input
+                                  id="every_week"
+                                  className="form-check-input"
+                                  type="checkbox"
+                                  name="every_week"
+                                  checked={formData.every_week}
+                                  onChange={handleCheckboxChange}
+                              />
+                              <label htmlFor="every_week" className="check-box" />
+                            </div>
+                          </div>
+                          <div className="col-11">Every Week</div>
+                        </>
+                    ) }
                   </div>
               )}
 
