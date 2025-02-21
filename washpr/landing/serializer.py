@@ -186,4 +186,6 @@ class LandingPageSerializer(serializers.ModelSerializer):
         return {
             'type_sipping_clear_for_dirty': obj.order_type_sipping_clear_for_dirty,
             'type_sipping_1_in_3': obj.order_type_sipping_1_in_3,
+            'one_time': obj.order_one_time,
+            'quick': obj.order_quick,
         }

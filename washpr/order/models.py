@@ -28,7 +28,8 @@ class Order(models.Model):
     choice_type_ship = [
         ('pickup_ship_one', 'clear for durty'),
         ('pickup_ship_dif', '1 day clear, 3th day durty'),
-        ('One_time', 'One time order')
+        ('One_time', 'One time order'),
+        ('quick_order', 'Quick order')
     ]
     type_ship = models.CharField("Type of shipping", max_length=250, null=True, blank=True, choices=choice_type_ship)
     choice_system = [

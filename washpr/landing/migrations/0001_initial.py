@@ -119,7 +119,12 @@ def create_default_landing_pages(apps, schema_editor):  # ADDED
             "message_file_try_again": "Při nahrávání souboru došlo k chybě. Zkuste to prosím znovu",
             "message_file_deleted": "Soubor byl úspěšně smazán!",
             "message_file_failed_delete": "Nepodařilo se smazat soubor",
-            "message_file_failed_while_deleting": "Došlo k chybě při mazání souboru"
+            "message_file_failed_while_deleting": "Došlo k chybě při mazání souboru",
+
+            "order_type_sipping_clear_for_dirty": "čisté prádlo za špinavé",
+            "order_type_sipping_1_in_3": "zber špinavého a dodanie čistého na tretí deň",
+            "order_one_time": "jednorázová objednávka",
+            "order_quick": "rychlá objednávka"
         },
         {
             "lang": "en",
@@ -495,7 +500,9 @@ class Migration(migrations.Migration):
                 ('message_file_failed_delete', models.CharField(max_length=100, verbose_name='Failed to delete the file', blank=True, null=True)),
                 ('message_file_failed_while_deleting', models.CharField(max_length=100, verbose_name='An error occurred while deleting the file', blank=True, null=True)),
                 ('order_type_sipping_clear_for_dirty', models.CharField(max_length=100, verbose_name="Order type sipping clear for dirty", blank=True, null=True)),
-                ('order_type_sipping_1_in_3', models.CharField(max_length=100, verbose_name="Order type sipping 1 in 3", blank=True, null=True))
+                ('order_type_sipping_1_in_3', models.CharField(max_length=100, verbose_name="Order type sipping 1 in 3", blank=True, null=True)),
+                ('order_one_time', models.CharField(max_length=100, verbose_name="One time order", blank=True, null=True)),
+                ('order_quick', models.CharField(max_length=100, verbose_name="Quick order", blank=True, null=True))
             ],
             options={
                 'verbose_name': 'Landing page content. Language',

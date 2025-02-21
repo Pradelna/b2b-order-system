@@ -135,6 +135,8 @@ class LandingPage(models.Model):
     order_type_sipping_clear_for_dirty = models.CharField("Order type sipping clear for dirty", max_length=100,
                                                           blank=True, null=True)
     order_type_sipping_1_in_3 = models.CharField("Order type sipping 1 in 3", max_length=100, blank=True, null=True)
+    order_one_time = models.CharField("One time order", max_length=100, blank=True, null=True)
+    order_quick = models.CharField("Quick order", max_length=100, blank=True, null=True)
 
     def __str__(self):
         return self.lang
