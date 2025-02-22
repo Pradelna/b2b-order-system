@@ -1,10 +1,12 @@
-import React, { useState, useEffect } from "react";
+import React, {useState, useEffect, useContext} from "react";
+import { LanguageContext } from "../../context/LanguageContext";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faTruck, faFileLines, faCheckCircle, faBan } from "@fortawesome/free-solid-svg-icons";
 import { fetchWithAuth } from "../account/auth.ts";
 import { Tooltip as ReactTooltip } from "react-tooltip";
 import {Form} from "react-router-dom";
 import {Skeleton} from "@mui/material";
+import { formatDate } from "../utils/formatDate";
 
 interface Order {
     id: number;
@@ -31,6 +33,7 @@ const OrderHistory: React.FC<OrderHistoryProps> = ({ placeId, orders = [], setOr
     const [updatedOrder, setUpdatedOrder] = useState<any>(null);
     const [forceWait, setForceWait] = useState<boolean>(true);
     const BASE_URL = import.meta.env.VITE_API_URL;
+    const { currentData } = useContext(LanguageContext);
 
     // Fetch orders from the API
     const fetchOrders = async () => {
@@ -54,8 +57,6 @@ const OrderHistory: React.FC<OrderHistoryProps> = ({ placeId, orders = [], setOr
     };
 
 
-
-
     // Load more orders when the user clicks "More"
     const loadMoreOrders = () => {
         setVisibleOrders((prev) => {
@@ -71,7 +72,6 @@ const OrderHistory: React.FC<OrderHistoryProps> = ({ placeId, orders = [], setOr
             [orderId]: !prev[orderId]
         }));
     };
-
 
 
     const handleCancelOrder = async (orderId: number) => {
@@ -212,17 +212,48 @@ const OrderHistory: React.FC<OrderHistoryProps> = ({ placeId, orders = [], setOr
                                                 </>
                                             )}
                                         </p>
-                                        {/*<p>*/}
-                                        {/*    <strong>Pickup Date:</strong> {order.date_pickup}*/}
-                                        {/*</p>*/}
+                                        {order.rp_time_realization && (
+                                            <p>
+                                                <strong>Realization Date:</strong> {order.rp_time_realization || " No information"}
+                                            </p>
+                                        )}
+
                                         <p>
                                             <strong>Number order:</strong> {order.id}
                                         </p>
                                         {/* Дополнительная информация показывается только если карточка развернута */}
                                         {expandedOrders[order.id] && (
                                             <div className="expanded-content">
-                                                <p><strong>Pickup Date:</strong> {order.system}</p>
-                                                <p><strong>Delivery Date:</strong> {order.type_ship}</p>
+                                                {/* if order is repeating */}
+                                                {order.every_week ? (
+                                                    <>
+                                                        <p><strong>Regular repeating order</strong></p>
+                                                        {/* Type of Shipping */}
+                                                        <p><strong>Type of Shipping: </strong>
+                                                            {order.type_ship === "quick_order" && (<>
+                                                                {currentData.order?.quick}
+                                                            </>)}
+                                                            {order.type_ship === "pickup_ship_one" && (<>
+                                                                {currentData.order?.type_sipping_clear_for_dirty}
+                                                            </>)}
+                                                            {order.type_ship === "pickup_ship_dif" && (<>
+                                                                {currentData.order?.type_sipping_1_in_3}
+                                                            </>)}</p>
+                                                    </>
+                                                ) : (
+                                                    <>
+                                                        {/* if order is one time */}
+                                                        {order.type_ship === "quick_order" ? (<>
+                                                            {currentData.order?.quick}
+                                                        </>) : (
+                                                            <>
+                                                                {currentData.order?.one_time || "one time order"}
+                                                            </>
+                                                        )}
+                                                    </>
+                                                )}
+                                                <p><strong>Pickup Date:</strong> {formatDate(order.rp_time_from)}</p>
+                                                <p><strong>Delivery Date:</strong> {formatDate(order.rp_time_to)}</p>
                                             </div>
                                         )}
                                         {/* Кнопка отмены заказа (только если заказ можно отменить) */}
