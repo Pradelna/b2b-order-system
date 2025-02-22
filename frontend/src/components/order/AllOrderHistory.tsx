@@ -1,4 +1,5 @@
-import React, { useState, useEffect } from "react";
+import React, {useState, useEffect, useContext} from "react";
+import { LanguageContext } from "../../context/LanguageContext";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import {
     faTruck,
@@ -11,6 +12,7 @@ import HeaderAccount from "../HeaderAccount";
 import NavButtons from "../account/NavButtons";
 import Footer from "../Footer";
 import {Skeleton} from "@mui/material";
+import { formatDate } from "../utils/formatDate";
 
 interface Order {
     id: number;
@@ -31,13 +33,14 @@ const AllOrderHistory: React.FC = () => {
     const [customerId, setCustomerId] = useState<number | null>(null); // ✅ Fix type
     const [forceWait, setForceWait] = useState<boolean>(true);
     const BASE_URL = import.meta.env.VITE_API_URL;
+    const { currentData } = useContext(LanguageContext);
 
-    // ✅ Load More Orders
+    //  Load More Orders
     const loadMoreOrders = () => {
         setVisibleOrders((prev) => prev + 10);
     };
 
-    // ✅ Toggle Expanded Order
+    //  Toggle Expanded Order
     const toggleExpand = (orderId: number) => {
         setExpandedOrders((prev) => ({
             ...prev,
@@ -45,7 +48,7 @@ const AllOrderHistory: React.FC = () => {
         }));
     };
 
-    // ✅ Fetch Orders on Mount
+    //  Fetch Orders on Mount
     useEffect(() => {
         const fetchOrders = async () => {
             try {
@@ -68,15 +71,14 @@ const AllOrderHistory: React.FC = () => {
         // Ensure skeleton is shown for at least 2 seconds
         const timer = setTimeout(() => setForceWait(false), 1000);
         return () => clearTimeout(timer); // Cleanup
-    }, []); // ✅ Run only once on mount
+    }, []); //  Run only once on mount
 
-    // ✅ Set customerId AFTER orders are fetched
+    //  Set customerId AFTER orders are fetched
     useEffect(() => {
         if (orders.length > 0) {
-            setCustomerId(orders[0].user); // ✅ Now it's safe to access orders[0]
+            setCustomerId(orders[0].user); //  it's safe to access orders[0]
         }
-    }, [orders]); // ✅ Run when `orders` is updated
-
+    }, [orders]); //  Run when `orders` is updated
 
     return (
         <>
@@ -160,10 +162,36 @@ const AllOrderHistory: React.FC = () => {
 
                                                 {expandedOrders[order.id] && (
                                                     <div className="expanded-content">
-                                                        <p><strong>System:</strong> {order.system}</p>
-                                                        <p><strong>Type of Shipping:</strong> {order.type_ship}</p>
-                                                        <p><strong>Pickup Date:</strong> {order.date_pickup}</p>
-                                                        <p><strong>Delivery Date:</strong> {order.date_delivery}</p>
+                                                        {/* if order is repeating */}
+                                                        {order.every_week ? (
+                                                            <>
+                                                                <p><strong>Regular repeating order</strong></p>
+                                                                {/* Type of Shipping */}
+                                                                <p><strong>Type of Shipping: </strong>
+                                                                {order.type_ship === "quick_order" && (<>
+                                                                    {currentData.order?.quick}
+                                                                </>)}
+                                                                {order.type_ship === "pickup_ship_one" && (<>
+                                                                    {currentData.order?.type_sipping_clear_for_dirty}
+                                                                </>)}
+                                                                {order.type_ship === "pickup_ship_dif" && (<>
+                                                                    {currentData.order?.type_sipping_1_in_3}
+                                                                </>)}</p>
+                                                            </>
+                                                            ) : (
+                                                            <>
+                                                                {/* if order is one time */}
+                                                                {order.type_ship === "quick_order" ? (<>
+                                                                    {currentData.order?.quick}
+                                                                </>) : (
+                                                                    <>
+                                                                    {currentData.order?.one_time || "one time order"}
+                                                                    </>
+                                                                )}
+                                                            </>
+                                                        )}
+                                                        <p><strong>Pickup Date:</strong> {formatDate(order.rp_time_from)}</p>
+                                                        <p><strong>Delivery Date:</strong> {formatDate(order.rp_time_to)}</p>
                                                     </div>
                                                 )}
                                             </div>
