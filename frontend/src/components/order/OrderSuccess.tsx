@@ -85,7 +85,7 @@ const OrderSuccess: React.FC<OrderSuccessProps> = ({ newOrder, onClose }) => {
                                     this order
                                 </Link>
                             )}
-                            and create a new one.
+                            <span> and create a new one.</span>
                         </p>
 
                         <FontAwesomeIcon icon={faStopwatch} style={{ height: "30px" }} />
