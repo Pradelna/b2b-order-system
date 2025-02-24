@@ -20,6 +20,7 @@ import { fetchWithAuth } from "../account/auth.ts";
 import {Tooltip as ReactTooltip} from "react-tooltip";
 import NavButtons from "@/components/account/NavButtons.js";
 import {Skeleton} from "@mui/material";
+import { formatDate } from "@/components/utils/FormatDate";
 
 
 interface Place {
@@ -155,15 +156,6 @@ const PlaceDetails: React.FC = () => {
                 console.error("Error stopping order:", error);
             }
         }
-    };
-
-    const formatDate = (timestampInSeconds: number): string => {
-        const date = new Date(timestampInSeconds * 1000); // Convert to milliseconds
-        const day = date.getDate().toString().padStart(2, "0"); // Ensure 2-digit format
-        const month = (date.getMonth() + 1).toString().padStart(2, "0"); // Months are 0-based
-        const year = date.getFullYear();
-
-        return `${day}.${month}.${year}`;
     };
 
     useEffect(() => {

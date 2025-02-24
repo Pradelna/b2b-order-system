@@ -49,7 +49,7 @@ const HeaderAccount: React.FC = ({customerId}) => {
               <div className="contact">
                 <a href="/" className="mail">
                   <FontAwesomeIcon icon={faEarthAmerica} className="icon"/>
-                  <span>website</span>
+                  <span>Website</span>
                 </a>
                 <a href="/account" className="mail">
                   <FontAwesomeIcon icon={faHouse} className="icon"/>
