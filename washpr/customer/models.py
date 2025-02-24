@@ -4,13 +4,15 @@ from django.core.validators import RegexValidator
 from django.core.exceptions import ValidationError
 import os
 
+from .tasks import send_customer_registration_data
+
 
 User = get_user_model()
 
 
 def user_directory_path(instance, filename):
     # file will be uploaded to MEDIA_ROOT / user_<id>/<filename>
-    return 'user_{0}/{1}'.format(instance.author.username, filename)
+    return 'user_{0}/{1}'.format(instance.author.email, filename)
 
 
 class Customer(models.Model):
@@ -21,7 +23,7 @@ class Customer(models.Model):
     company_dic = models.CharField("Company DIC", max_length=20, null=True, blank=True)
     phone_regex = RegexValidator(
         regex=r'^\+?(\d){6,18}$',
-        message="Phone number must be entered in the format: '+431234567890' or 01234567890"
+        message="Phone number must be entered in the format: '+420234567890' or 01234567890"
     )
     company_phone = models.CharField("Company phone", null=True, blank=True, validators=[phone_regex], max_length=17)
     company_email = models.CharField("Company email", max_length=100, null=True, blank=True)
@@ -32,6 +34,21 @@ class Customer(models.Model):
     active = models.BooleanField("Active", default=False)
     rp_client_id = models.IntegerField("ItineraryClient id", null=True, blank=True)
     rp_client_external_id = models.CharField("ItineraryClient external id", max_length=250, null=True, blank=True)
+    data_sent = models.BooleanField("Data sent", default=False)
+
+    def save(self, *args, **kwargs):
+        # Если объект уже существует, получаем его прежнее состояние
+        if self.pk:
+            previous = Customer.objects.get(pk=self.pk)
+            # Если до сохранения пользователь не был подтверждён, а теперь подтверждён
+            # if not previous.active and self.active and not self.data_sent:
+            if self.active and not self.data_sent:
+                # Запускаем задачу асинхронно
+                send_customer_registration_data.delay(self.pk)
+                self.data_sent = True  # Обновляем флаг, чтобы данные не отправлялись повторно
+                super().save(*args, **kwargs)
+                return
+        super().save(*args, **kwargs)
 
     def __str__(self):
         return self.company_name
@@ -76,7 +93,7 @@ class CustomerDocuments(models.Model):
     uploaded_at = models.DateTimeField(auto_now_add=True)
 
     def __str__(self):
-        return f"Document for {self.customer.user.username} - {self.file.name}"
+        return f"Document for {self.customer.user.email} - {self.file.name}"
 
 
 class DocumentsForCustomer(models.Model):
@@ -89,4 +106,4 @@ class DocumentsForCustomer(models.Model):
     uploaded_at = models.DateTimeField(auto_now_add=True)
 
     def __str__(self):
-        return f"Document for {self.customer.user.username} - {self.file.name}"
+        return f"Document for {self.customer.user.email} - {self.file.name}"
