@@ -20,7 +20,7 @@ import { fetchWithAuth } from "../account/auth.ts";
 import {Tooltip as ReactTooltip} from "react-tooltip";
 import NavButtons from "@/components/account/NavButtons.js";
 import {Skeleton} from "@mui/material";
-import { formatDate } from "../utils/formatDate";
+import { formatDate } from "@/components/utils/FormatDate";
 
 
 interface Place {

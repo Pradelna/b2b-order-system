@@ -6,7 +6,7 @@ import { fetchWithAuth } from "../account/auth.ts";
 import { Tooltip as ReactTooltip } from "react-tooltip";
 import {Form} from "react-router-dom";
 import {Skeleton} from "@mui/material";
-import { formatDate } from "../utils/formatDate";
+import { formatDate } from "@/components/utils/FormatDate";
 
 interface Order {
     id: number;

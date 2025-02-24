@@ -12,7 +12,7 @@ import HeaderAccount from "../HeaderAccount";
 import NavButtons from "../account/NavButtons";
 import Footer from "../Footer";
 import {Skeleton} from "@mui/material";
-import { formatDate } from "../utils/formatDate";
+import { formatDate } from "@/components/utils/FormatDate";
 
 interface Order {
     id: number;
