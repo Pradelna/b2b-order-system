@@ -4,7 +4,7 @@ from django.core.validators import RegexValidator
 from django.core.exceptions import ValidationError
 import os
 
-from .tasks import send_customer_registration_data
+from customer.tasks import create_client_task
 
 
 User = get_user_model()
@@ -37,16 +37,15 @@ class Customer(models.Model):
     data_sent = models.BooleanField("Data sent", default=False)
 
     def save(self, *args, **kwargs):
-        # Если объект уже существует, получаем его прежнее состояние
         if self.pk:
+            self.rp_client_external_id = "test" + str(self.pk)
             previous = Customer.objects.get(pk=self.pk)
-            # Если до сохранения пользователь не был подтверждён, а теперь подтверждён
             # if not previous.active and self.active and not self.data_sent:
             if self.active and not self.data_sent:
-                # Запускаем задачу асинхронно
-                send_customer_registration_data.delay(self.pk)
-                self.data_sent = True  # Обновляем флаг, чтобы данные не отправлялись повторно
                 super().save(*args, **kwargs)
+                create_client_task.delay(self.pk)
+                self.data_sent = True
+                super().save(update_fields=['data_sent'])
                 return
         super().save(*args, **kwargs)
 
