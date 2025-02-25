@@ -4,7 +4,7 @@ from django.core.validators import RegexValidator
 from django.core.exceptions import ValidationError
 import os
 
-from customer.tasks import create_client_task
+from integration.tasks import create_client_task
 
 
 User = get_user_model()
@@ -37,16 +37,26 @@ class Customer(models.Model):
     data_sent = models.BooleanField("Data sent", default=False)
 
     def save(self, *args, **kwargs):
-        if self.pk:
-            self.rp_client_external_id = "test" + str(self.pk)
-            previous = Customer.objects.get(pk=self.pk)
-            # if not previous.active and self.active and not self.data_sent:
-            if self.active and not self.data_sent:
-                super().save(*args, **kwargs)
-                create_client_task.delay(self.pk)
-                self.data_sent = True
-                super().save(update_fields=['data_sent'])
-                return
+        if not self.pk:
+            # Если объект новый, сначала сохраняем его, чтобы получить pk
+            super().save(*args, **kwargs)
+            # Если поле rp_client_external_id ещё не заполнено, формируем его, используя pk
+            if not self.rp_client_external_id:
+                self.rp_client_external_id = "test" + str(self.pk)
+            # Обновляем запись с новым значением rp_client_external_id
+            super().save(update_fields=['rp_client_external_id'])
+            return
+        else:
+            # Если объект уже существует, но rp_client_external_id не заполнено, устанавливаем его
+            if not self.rp_client_external_id:
+                self.rp_client_external_id = "test" + str(self.pk)
+
+        # Если клиент активен и данные ещё не отправлены, запускаем задачу
+        if self.active and not self.data_sent:
+            super().save(*args, **kwargs)
+            create_client_task.delay(self.pk)
+            return
+
         super().save(*args, **kwargs)
 
     def __str__(self):

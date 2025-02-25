@@ -6,6 +6,7 @@ from django.conf import settings
 from django.db import close_old_connections
 from django.core.mail import send_mail
 
+
 # Класс для работы с внешним API
 class RestApiClient:
     def __init__(self, api_key):
@@ -60,7 +61,7 @@ def create_client_task(customer_id):
     Она отправляет данные во внешнюю систему, получает ответ, и если клиент успешно создан,
     сохраняет внешний id в поле rp_client_id и отправляет подтверждающее письмо.
     """
-    from .models import Customer
+    from customer.models import Customer
     close_old_connections()
     try:
         customer = Customer.objects.get(pk=customer_id)
