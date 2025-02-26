@@ -1,10 +1,14 @@
 import time
+from datetime import timedelta
+
 import requests
 from celery import shared_task
 from celery.exceptions import MaxRetriesExceededError
 from django.conf import settings
 from django.db import close_old_connections
 from django.core.mail import send_mail
+from django.utils import timezone
+
 
 # Класс для работы с внешним API
 class RestApiClient:
@@ -142,10 +146,10 @@ def create_place_task(place_id):
     api_client = RestApiClient(api_key)
 
     client_external_id = customer.rp_client_external_id
-    place_external_id = f"place_{place.pk}"
+    # place_external_id = place.place_external_id or f"place_{place.pk}"
     response = api_client.create_client_place(
         client_external_id=client_external_id,
-        place_external_id=place_external_id,
+        place_external_id=place.rp_external_id,
         place_title=place.place_name,
         place_country="",
         place_city=place.rp_city,
@@ -166,3 +170,59 @@ def create_place_task(place_id):
         return f"Place {place_id} created with remote id {response['id']}."
     else:
         return f"Failed to create place {place_id}."
+
+
+@shared_task
+def send_orders_task():
+    """
+    Задача запускается каждый час и выбирает заказы, которые:
+      - Ещё не были отправлены (reported=False)
+      - Созданы более 35 минут назад
+    Для каждого заказа отправляется запрос на https://online.auto-gps.eu/cnt/apiItinerary/contractAdd.
+    При успешном ответе (наличие поля "id" в ответе) заказ помечается как отправленный (reported=True).
+    """
+    close_old_connections()
+    from order.models import Order  # Импортируем модель заказа из приложения order
+
+    # Выбираем заказы, не отправленные ранее и созданные более 35 минут назад
+    time_threshold = timezone.now() - timedelta(minutes=2)
+    orders = Order.objects.filter(active=False, created_at__lte=time_threshold)
+
+    api_key = settings.EXTERNAL_API_KEY
+    api_client = RestApiClient(api_key)
+    results = []
+
+    for order in orders:
+        # Формируем payload для заказа. Приводим поля к нужному типу,
+        # заполняем отсутствующие поля пустыми строками или значениями по умолчанию.
+        payload = {
+            "contract_external_id": order.rp_contract_external_id if order.rp_contract_external_id else f"order_{order.pk}",
+            "place_external_id": order.rp_place_external_id or order.place.rp_external_id,
+            "contract_title": order.rp_contract_title or f"spinave_pradlo_{self.pk}",
+            "time_from": order.rp_time_from or None,
+            "time_to": order.rp_time_to or None,
+            "time_start": order.rp_time_start or None,
+            "time_realization": order.rp_time_realization or None,
+            "customer_note": order.rp_customer_note or None,
+            "client_external_id": order.rp_client_external_id or None,
+            "place_title": order.rp_place_title or None,
+            "place_city": order.rp_place_city or None,
+            "place_street": order.rp_place_street or None,
+            "place_number": order.rp_place_number or None,
+            "place_zip": order.rp_place_zip or None,
+            "place_country": "CZ",
+            "lat": 48.5639756,
+            "lng": 19.8449609,
+        }
+        # URL для отправки заказа
+        url = "https://online.auto-gps.eu/cnt/apiItinerary/serviceOrder"
+        print(f"Sending order {order.pk} with payload: {payload}")
+        response = api_client.call_api(url, http_method="POST", params=payload)
+        if response and "id" in response:
+            order.active = True
+            order.rp_id = response["id"]
+            order.save(update_fields=["active", "rp_id"])
+            results.append(f"Order {order.pk} sent successfully with external id {response['id']}.")
+        else:
+            results.append(f"Failed to send order {order.pk}.")
+    return results

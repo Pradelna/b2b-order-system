@@ -29,7 +29,15 @@ class Place(models.Model):
             if not self.rp_client_external_id:
                 self.rp_client_external_id = self.customer.rp_client_external_id
                 self.rp_client_name = self.customer.company_name
-            super().save(update_fields=['rp_client_external_id', 'rp_client_name'])
+                self.rp_client_id = self.customer.rp_client_id
+                self.rp_title = self.place_name
+                self.rp_external_id = f"place_{self.pk}"
+            super().save(update_fields=[
+                'rp_client_external_id',
+                'rp_client_name', 'rp_title',
+                'rp_external_id',
+                'rp_client_id'
+            ])
             # Если объект новый, его active уже False (не отправлено)
             # Можно выйти, чтобы избежать повторного сохранения сразу после создания
             return

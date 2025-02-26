@@ -1,5 +1,5 @@
 import os
-from datetime import datetime, timedelta
+from datetime import datetime, time, timedelta
 from django.contrib.auth import get_user_model
 from django.db import models
 from customer.models import Customer
@@ -50,7 +50,8 @@ class Order(models.Model):
     every_week = models.BooleanField("Every week", default=False)
     terms = models.BooleanField("Terms of use", default=False)
     rp_contract_external_id = models.CharField("contract_external_id", max_length=250, null=True, blank=True)
-    active = models.BooleanField("Active", default=True)
+    active = models.BooleanField("Active", default=False)
+    rp_id = models.IntegerField("rp id", null=True, blank=True)
     rp_client_external_id = models.CharField("ItineraryClient external id", max_length=250, null=True, blank=True)
     rp_place_external_id = models.CharField("place_external_id", max_length=250, null=True, blank=True)
     rp_place_title = models.CharField("place_title", max_length=250, null=True, blank=True)
@@ -81,6 +82,62 @@ class Order(models.Model):
     canceled = models.BooleanField("Canceled mistaken order", default=False)
     reported = models.BooleanField("Already added to report", default=False)
     created_at = models.DateTimeField(auto_now_add=True)
+
+    def save(self, *args, **kwargs):
+        is_new = not self.pk
+        if is_new:
+            # Сохраняем новый объект с active=False (по умолчанию не отправлено)
+            super().save(*args, **kwargs)
+            if not self.rp_client_external_id:
+                self.rp_client_external_id = self.place.customer.rp_client_external_id
+                self.rp_place_external_id = self.place.rp_external_id
+                self.rp_place_title = self.place.place_name
+                self.rp_place_city = self.place.rp_city
+                self.rp_place_street = self.place.rp_street
+                self.rp_place_number = self.place.rp_number
+                self.rp_place_zip = self.place.rp_zip
+                self.rp_place_email = self.place.rp_email
+                self.rp_place_person = self.place.rp_person
+                self.rp_place_phone = self.place.rp_phone
+                self.rp_contract_title = f"spinave_pradlo_{self.pk}"
+                self.rp_contract_external_id = f"order_{self.pk}"
+                if self.type_ship == 'pickup_ship_one' or self.type_ship == 'pickup_ship_dif':
+                    order_date = int(datetime.combine(self.date_start_day, time()).timestamp())
+                    self.rp_time_start = order_date
+                    self.rp_time_from = order_date
+                    self.rp_time_to = order_date
+                    self.rp_time_realization = order_date
+            super().save(update_fields=[
+                'rp_client_external_id',
+                'rp_place_external_id',
+                'rp_place_title',
+                'rp_place_city',
+                'rp_place_street',
+                'rp_place_number',
+                'rp_place_zip',
+                'rp_place_email',
+                'rp_place_person',
+                'rp_place_phone',
+                'rp_contract_title',
+                'rp_contract_external_id',
+                'rp_time_start',
+                'rp_time_from',
+                'rp_time_to',
+                'rp_time_realization'
+            ])
+            # Если объект новый, его active уже False (не отправлено)
+            # Можно выйти, чтобы избежать повторного сохранения сразу после создания
+            return
+
+        # Если объект существует, но еще не отправлен (active == False)
+        # и при этом клиент активен, запускаем задачу отправки
+        # if self.place.active and not self.active:
+        #     super().save(*args, **kwargs)
+        #     # self.active = True
+        #     super().save(update_fields=['active'])
+        #     return
+
+        super().save(*args, **kwargs)
 
     def __str__(self):
         return f"Order of {self.place.customer.company_name} - {self.place.place_name} - {self.id}"

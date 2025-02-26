@@ -212,11 +212,7 @@ const OrderHistory: React.FC<OrderHistoryProps> = ({ placeId, orders = [], setOr
                                                 </>
                                             )}
                                         </p>
-                                        {order.rp_time_realization && (
-                                            <p>
-                                                <strong>Realization Date:</strong> {order.rp_time_realization || " No information"}
-                                            </p>
-                                        )}
+
 
                                         <p>
                                             <strong>Number order:</strong> {order.id}
@@ -254,6 +250,11 @@ const OrderHistory: React.FC<OrderHistoryProps> = ({ placeId, orders = [], setOr
                                                 )}
                                                 <p><strong>Pickup Date:</strong> {formatDate(order.rp_time_from)}</p>
                                                 <p><strong>Delivery Date:</strong> {formatDate(order.rp_time_to)}</p>
+                                                {order.rp_time_realization && (
+                                                    <p>
+                                                        <strong>Realization Date:</strong> {formatDate(order.rp_time_realization) || " No information"}
+                                                    </p>
+                                                )}
                                             </div>
                                         )}
                                         {/* Кнопка отмены заказа (только если заказ можно отменить) */}
