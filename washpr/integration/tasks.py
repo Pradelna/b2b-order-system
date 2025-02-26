@@ -6,7 +6,6 @@ from django.conf import settings
 from django.db import close_old_connections
 from django.core.mail import send_mail
 
-
 # Класс для работы с внешним API
 class RestApiClient:
     def __init__(self, api_key):
@@ -44,7 +43,7 @@ class RestApiClient:
             "client_external_id": client_external_id,
             "client_name": client_name
         }
-        print(params)
+        print("Client params:", params)
         response = self.call_api(url, http_method="POST", params=params)
         if response:
             print("Client created successfully:", response)
@@ -53,13 +52,40 @@ class RestApiClient:
             print("Failed to create client.")
             return None
 
+    def create_client_place(self, client_external_id, place_external_id, place_title,
+                            place_country, place_city, place_street, place_number,
+                            place_zip, contact_person_name, contact_person_phone,
+                            contact_person_email, lat, lng):
+        url = "https://online.auto-gps.eu/cnt/apiItinerary/clientPlace"
+        params = {
+            "client_external_id": client_external_id,
+            "place_external_id": place_external_id,
+            "place_title": place_title,
+            "place_country": place_country,
+            "place_city": place_city,
+            "place_street": place_street,
+            "place_number": place_number,
+            "place_zip": place_zip,
+            "contact_person_name": contact_person_name,
+            "contact_person_phone": contact_person_phone,
+            "contact_person_email": contact_person_email,
+            "lat": lat,
+            "lng": lng,
+        }
+        print("Place params:", params)
+        response = self.call_api(url, http_method="POST", params=params)
+        if response:
+            print("Place created successfully:", response)
+            return response
+        else:
+            print("Failed to create place.")
+            return None
 
 @shared_task
 def create_client_task(customer_id):
     """
-    Задача, которая вызывается при активации клиента.
-    Она отправляет данные во внешнюю систему, получает ответ, и если клиент успешно создан,
-    сохраняет внешний id в поле rp_client_id и отправляет подтверждающее письмо.
+    Задача создания клиента во внешней системе.
+    Если ответ содержит "id", сохраняется rp_client_id и отправляется подтверждающее письмо.
     """
     from customer.models import Customer
     close_old_connections()
@@ -68,7 +94,7 @@ def create_client_task(customer_id):
     except Customer.DoesNotExist:
         return f"Customer with id {customer_id} not found."
 
-    api_key = settings.EXTERNAL_API_KEY  # API-ключ должен быть задан в settings.py
+    api_key = settings.EXTERNAL_API_KEY
     api_client = RestApiClient(api_key)
 
     client_external_id = customer.rp_client_external_id or f"customer_{customer.pk}"
@@ -79,12 +105,10 @@ def create_client_task(customer_id):
 
     if response and "id" in response:
         client_id = response["id"]
-        # Сохраняем внешний id в модели
         customer.rp_client_id = client_id
         customer.data_sent = True
         customer.save(update_fields=["rp_client_id", "data_sent"])
 
-        # Отправляем письмо с подтверждением
         subject = "Ваш аккаунт активирован"
         message = (
             f"Здравствуйте, {customer.company_person or customer.company_name}!\n\n"
@@ -98,3 +122,47 @@ def create_client_task(customer_id):
         return f"Client created and email sent for customer {customer_id} with external client id {client_id}."
     else:
         return f"Failed to create client for customer {customer_id}."
+
+@shared_task
+def create_place_task(place_id):
+    """
+    Задача отправки данных места во внешнюю систему.
+    После успешного ответа (наличие поля "id") обновляет модель Place, сохраняя remote_id.
+    """
+    close_old_connections()
+    from place.models import Place  # Предполагается, что модель Place в приложении place
+    try:
+        place = Place.objects.get(pk=place_id)
+    except Place.DoesNotExist:
+        return f"Place with id {place_id} not found."
+
+    # Предполагается, что у модели Place есть внешний ключ customer
+    customer = place.customer
+    api_key = settings.EXTERNAL_API_KEY
+    api_client = RestApiClient(api_key)
+
+    client_external_id = customer.rp_client_external_id
+    place_external_id = f"place_{place.pk}"
+    response = api_client.create_client_place(
+        client_external_id=client_external_id,
+        place_external_id=place_external_id,
+        place_title=place.place_name,
+        place_country="",
+        place_city=place.rp_city,
+        place_street=place.rp_street,
+        place_number=place.rp_number,
+        place_zip=place.rp_zip,
+        contact_person_name=place.rp_person,
+        contact_person_phone=place.rp_phone,
+        contact_person_email=place.rp_email,
+        lat=48.5639756,
+        lng=19.8449609,
+    )
+    print(f"Create place response: {response}")
+    if response and "id" in response:
+        place.rp_id = response["id"]
+        place.active = True
+        place.save(update_fields=["rp_id", "active"])
+        return f"Place {place_id} created with remote id {response['id']}."
+    else:
+        return f"Failed to create place {place_id}."
