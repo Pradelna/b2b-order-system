@@ -87,7 +87,7 @@ class Order(models.Model):
     pickup = models.BooleanField("Pickup", default=False)
     delivery = models.BooleanField("Delivery", default=False)
     processed = models.BooleanField("Processed", default=False)
-    created_at = models.DateTimeField(auto_now_add=True)
+    created_at = models.DateTimeField("Created at", auto_now_add=True)
 
     def save(self, *args, **kwargs):
         is_new = not self.pk
@@ -107,6 +107,7 @@ class Order(models.Model):
                 self.rp_place_person = self.place.rp_person
                 self.rp_place_phone = self.place.rp_phone
                 self.rp_contract_title = self.place.customer.company_name
+                self.rp_branch_office_id = 2263168
                 print("before terms")
                 if self.terms:
                     print("terms")

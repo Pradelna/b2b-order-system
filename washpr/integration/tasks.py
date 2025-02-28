@@ -208,6 +208,7 @@ def send_orders_task():
             "place_number": order.rp_place_number or None,
             "place_zip": order.rp_place_zip or None,
             "place_country": "CZ",
+            "branch_office_id": order.rp_branch_office_id or None,
         }
         # URL для отправки заказа
         url = "https://online.auto-gps.eu/cnt/apiItinerary/serviceOrder"
@@ -282,7 +283,6 @@ def create_orders_task():
                             'rp_customer_note': "delivery",
                             'date_pickup': order.date_start_day,  # дата предыдущего заказа
                             'date_delivery': date,             # текущая дата
-                            'rp_branch_office_id': 567832,
                             'delivery': True,
                             'pickup': False,
                             'group_pair_id': group_id,
@@ -295,7 +295,6 @@ def create_orders_task():
                             'date_start_day': date,  # для нового заказа
                             'rp_customer_note': "pickup",
                             'date_pickup': date,  # текущая дата
-                            'rp_branch_office_id': 2263018,
                             'pickup': True,
                             'delivery': False,
                             'group_pair_id': group_id,
