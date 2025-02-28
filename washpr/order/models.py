@@ -25,10 +25,12 @@ def report_file_path(instance, filename):
 class Order(models.Model):
     place = models.ForeignKey(Place, on_delete=models.CASCADE, related_name="order_place")
     user = models.ForeignKey(User, on_delete=models.CASCADE, related_name="orders", db_index=True, null=True, blank=True)
+    group_month_id = models.IntegerField("Group monthly order ID", db_index=True, null=True, blank=True)
+    group_pair_id = models.IntegerField("Group pair order ID", db_index=True, null=True, blank=True)
     choice_type_ship = [
         ('pickup_ship_one', 'clear for durty'),
         ('pickup_ship_dif', '1 day clear, 3th day durty'),
-        ('One_time', 'One time order'),
+        ('one_time', 'One time order'),
         ('quick_order', 'Quick order')
     ]
     type_ship = models.CharField("Type of shipping", max_length=250, null=True, blank=True, choices=choice_type_ship)
@@ -39,7 +41,7 @@ class Order(models.Model):
         ('Own', 'Own system')
     ]
     system = models.CharField("System days", max_length=100, null=True, blank=True, choices=choice_system)
-    date_start_day = models.DateField("Start day", default=TOMMOROW)
+    date_start_day = models.DateField("Start day", null=True, blank=True)
     monday = models.BooleanField("Monday", default=False)
     tuesday = models.BooleanField("tuesday", default=False)
     wednesday = models.BooleanField("wednesday", default=False)
@@ -67,26 +69,31 @@ class Order(models.Model):
     rp_customer_note = models.CharField("customer_note", max_length=250, null=True, blank=True)
     rp_dispatcher_note = models.CharField("dispatcher_note", max_length=250, null=True, blank=True)
     rp_technician_note = models.CharField("technician_note", max_length=250, null=True, blank=True)
-    rp_status = models.IntegerField("technician_note", null=True, blank=True)
     rp_time_from = models.IntegerField("time_from", null=True, blank=True)
     rp_time_to = models.IntegerField("time_to", null=True, blank=True)
     rp_time_start = models.IntegerField("time_start", null=True, blank=True)
     rp_time_realization = models.IntegerField("time_realization", null=True, blank=True)
+    rp_time_planned = models.IntegerField("Planned time_realization", null=True, blank=True)
     rp_salesman_id = models.IntegerField("salesman_id", null=True, blank=True)
     rp_salesman_code = models.IntegerField("salesman_code", null=True, blank=True)
     rp_salesman_email = models.IntegerField("salesman_email", null=True, blank=True)
     rp_assigned_user_id = models.IntegerField("assigned_user_id", null=True, blank=True)
-    rp_branch_office_id = models.IntegerField("salesman_email", null=True, blank=True)
+    rp_branch_office_id = models.IntegerField("Branch office id", null=True, blank=True)
     rp_status = models.IntegerField("status", null=True, blank=True)
     end_order = models.BooleanField("End repeating order", default=False)
     canceled = models.BooleanField("Canceled mistaken order", default=False)
     reported = models.BooleanField("Already added to report", default=False)
+    main_order = models.BooleanField("Main order", default=False)
+    pickup = models.BooleanField("Pickup", default=False)
+    delivery = models.BooleanField("Delivery", default=False)
+    processed = models.BooleanField("Processed", default=False)
     created_at = models.DateTimeField(auto_now_add=True)
 
     def save(self, *args, **kwargs):
         is_new = not self.pk
         if is_new:
             # Сохраняем новый объект с active=False (по умолчанию не отправлено)
+            # в views.py тоже есть заполняемые поля
             super().save(*args, **kwargs)
             if not self.rp_client_external_id:
                 self.rp_client_external_id = self.place.customer.rp_client_external_id
@@ -99,14 +106,26 @@ class Order(models.Model):
                 self.rp_place_email = self.place.rp_email
                 self.rp_place_person = self.place.rp_person
                 self.rp_place_phone = self.place.rp_phone
-                self.rp_contract_title = f"spinave_pradlo_{self.pk}"
-                self.rp_contract_external_id = f"order_{self.pk}"
+                self.rp_contract_title = self.place.customer.company_name
+                print("before terms")
+                if self.terms:
+                    print("terms")
+                    self.main_order = True
+                    self.group_month_id = self.pk
+                    self.group_pair_id = self.pk
+                    self.pickup = True
+                if not self.group_pair_id:
+                    self.group_pair_id = self.pk
                 if self.type_ship == 'pickup_ship_one' or self.type_ship == 'pickup_ship_dif':
                     order_date = int(datetime.combine(self.date_start_day, time()).timestamp())
+                    print(f"date_start_day: {self.date_start_day}")
+                    print(f"order_date: {order_date}")
                     self.rp_time_start = order_date
-                    self.rp_time_from = order_date
-                    self.rp_time_to = order_date
-                    self.rp_time_realization = order_date
+                    self.rp_time_planned = order_date
+                elif self.type_ship == 'One_time' or self.type_ship == 'quick_order':
+                    order_date = int(datetime.combine(self.date_pickup, time()).timestamp())
+                    self.rp_time_start = order_date
+                    self.rp_time_planned = order_date
             super().save(update_fields=[
                 'rp_client_external_id',
                 'rp_place_external_id',
@@ -119,11 +138,12 @@ class Order(models.Model):
                 'rp_place_person',
                 'rp_place_phone',
                 'rp_contract_title',
-                'rp_contract_external_id',
                 'rp_time_start',
-                'rp_time_from',
-                'rp_time_to',
-                'rp_time_realization'
+                'rp_time_planned',
+                'main_order',
+                'pickup',
+                'group_month_id',
+                'group_pair_id',
             ])
             # Если объект новый, его active уже False (не отправлено)
             # Можно выйти, чтобы избежать повторного сохранения сразу после создания

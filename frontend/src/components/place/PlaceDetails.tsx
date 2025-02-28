@@ -192,6 +192,7 @@ const PlaceDetails: React.FC = () => {
         return () => clearTimeout(timer); // Cleanup
     }, [id]);
 
+
     if (!place) return <p>Place not found.</p>;
 
     return (
@@ -338,10 +339,8 @@ const PlaceDetails: React.FC = () => {
                                     <div className="order-details">
 
                                         <div className="form-control mb-2">
-                                            <strong>Day of next visit:</strong>
-                                            { formatDate(currentOrder.rp_time_from)  || " from None "}
-                                             or
-                                            { formatDate(currentOrder.rp_time_to)  || " to None"}
+                                            <strong>Day of next visit: </strong>
+                                            { formatDate(currentOrder.rp_time_planned)  || " None "}
                                         </div>
                                         <div className="form-control mb-2">
                                             <strong>Status:</strong>

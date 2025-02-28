@@ -54,11 +54,8 @@ def create_order(request):
                 rp_place_street=place.rp_street,
                 rp_place_number=place.rp_number,
                 rp_place_zip=place.rp_zip,
-                rp_time_from=convert_date_to_unix(data['date_pickup']),
-                rp_time_to=convert_date_to_unix(data['date_delivery']),
                 rp_place_title=place.place_name,
                 place=place,
-                active=True,
                 user=request.user,
                 rp_status=0,
             )

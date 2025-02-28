@@ -1,5 +1,6 @@
 import time
-from datetime import timedelta
+from datetime import datetime, time, timedelta
+from .utils import get_dates_by_weekdays
 
 import requests
 from celery import shared_task
@@ -85,6 +86,7 @@ class RestApiClient:
             print("Failed to create place.")
             return None
 
+
 @shared_task
 def create_client_task(customer_id):
     """
@@ -159,8 +161,6 @@ def create_place_task(place_id):
         contact_person_name=place.rp_person,
         contact_person_phone=place.rp_phone,
         contact_person_email=place.rp_email,
-        lat=48.5639756,
-        lng=19.8449609,
     )
     print(f"Create place response: {response}")
     if response and "id" in response:
@@ -198,11 +198,8 @@ def send_orders_task():
         payload = {
             "contract_external_id": order.rp_contract_external_id if order.rp_contract_external_id else f"order_{order.pk}",
             "place_external_id": order.rp_place_external_id or order.place.rp_external_id,
-            "contract_title": order.rp_contract_title or f"spinave_pradlo_{self.pk}",
-            "time_from": order.rp_time_from or None,
-            "time_to": order.rp_time_to or None,
-            "time_start": order.rp_time_start or None,
-            "time_realization": order.rp_time_realization or None,
+            "contract_title": order.rp_contract_title or None,
+            "time_planned": order.rp_time_planned or None,
             "customer_note": order.rp_customer_note or None,
             "client_external_id": order.rp_client_external_id or None,
             "place_title": order.rp_place_title or None,
@@ -211,8 +208,6 @@ def send_orders_task():
             "place_number": order.rp_place_number or None,
             "place_zip": order.rp_place_zip or None,
             "place_country": "CZ",
-            "lat": 48.5639756,
-            "lng": 19.8449609,
         }
         # URL для отправки заказа
         url = "https://online.auto-gps.eu/cnt/apiItinerary/serviceOrder"
@@ -226,3 +221,90 @@ def send_orders_task():
         else:
             results.append(f"Failed to send order {order.pk}.")
     return results
+
+
+@shared_task
+def create_orders_task():
+    """
+    Задача запускается каждый час и выбирает заказы, которые:
+      - Ещё не были отправлены (reported=False)
+      - Созданы более 35 минут назад
+    """
+    close_old_connections()
+    from order.models import Order  # Импортируем модель заказа из приложения order
+
+    # Выбираем заказы, не отправленные ранее и созданные более 35 минут назад
+    time_threshold = timezone.now() - timedelta(minutes=2)
+    orders = Order.objects.filter(processed=False, main_order=True, created_at__lte=time_threshold)
+    print(len(orders), orders)
+
+    results = []
+
+    for order in orders:
+        # заполняем отсутствующие поля пустыми строками или значениями по умолчанию.
+        if order.type_ship == 'pickup_ship_one':
+            print("pickup_ship_one")
+            order_date = int(datetime.combine(order.date_start_day, time()).timestamp())
+            order.rp_time_realization = order_date # date when curier to come
+            if order.system == 'Tue_Thu':
+                print("tuesday thusday")
+                base_order_data = {
+                    'place': order.place,
+                    'user': order.user,
+                    'group_month_id': order.group_month_id,
+                    'type_ship': order.type_ship,
+                    'system': order.system,
+                    'rp_client_external_id': order.rp_client_external_id,
+                    'rp_place_external_id': order.rp_place_external_id,
+                    'rp_place_title': order.rp_place_title,
+                    'rp_place_city': order.rp_place_city,
+                    'rp_place_street': order.rp_place_street,
+                    'rp_place_number': order.rp_place_number,
+                    'rp_place_zip': order.rp_place_zip,
+                    'rp_place_email': order.rp_place_email,
+                    'rp_place_person': order.rp_place_person,
+                    'rp_place_phone': order.rp_place_phone,
+                    'rp_contract_title': order.rp_contract_title,
+                    'rp_status': 0,
+                    'every_week': True,
+                    'processed': True,
+                }
+                new_order_dates = get_dates_by_weekdays(order.date_start_day, [1,3])
+                group_id = order.group_pair_id
+                print(len(new_order_dates), new_order_dates)
+                for idx, date in enumerate(new_order_dates):
+                    print(f"{idx}: {date} order {order.pk}")
+                    if idx % 2 == 0: # even = delivery, odd = pickup
+                        print("even")
+                        base_order_data.update({
+                            'rp_time_planned': int(datetime.combine(date, time()).timestamp()),  # заменим позже, если нужно
+                            'date_start_day': date,  # для нового заказа
+                            'rp_customer_note': "delivery",
+                            'date_pickup': order.date_start_day,  # дата предыдущего заказа
+                            'date_delivery': date,             # текущая дата
+                            'rp_branch_office_id': 567832,
+                            'delivery': True,
+                            'pickup': False,
+                            'group_pair_id': group_id,
+                        })
+                        group_id += 2
+                    else:
+                        print("odd")
+                        base_order_data.update({
+                            'rp_time_planned': int(datetime.combine(date, time()).timestamp()),  # заменим позже, если нужно
+                            'date_start_day': date,  # для нового заказа
+                            'rp_customer_note': "pickup",
+                            'date_pickup': date,  # текущая дата
+                            'rp_branch_office_id': 2263018,
+                            'pickup': True,
+                            'delivery': False,
+                            'group_pair_id': group_id,
+                        })
+                    new_order = Order(**base_order_data)
+                    new_order.save()
+                    print("success")
+                    results.append(new_order.pk)
+            order.processed = True
+            order.save(update_fields=["processed"])
+    return results
+

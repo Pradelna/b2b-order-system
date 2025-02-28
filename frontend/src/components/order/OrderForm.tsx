@@ -349,6 +349,19 @@ const OrderForm: React.FC<OrderFormProps> = ({ placeId, onClose, onSuccess }) =>
     fetchPlaces();
   }, [BASE_URL]);
 
+  useEffect(() => {
+    if (firstStartForm) {
+      const availableStartDays = getAvailableStartDays(); // Call function without passing state
+      if (availableStartDays.length > 0) {
+        setFormData((prev) => ({
+          ...prev,
+          date_start_day: availableStartDays[0], // Set first available date
+          date_pickup: availableStartDays[0], // Set first available date
+        }));
+      }
+    }
+  }, [firstStartForm, formData.system, formData.monday, formData.tuesday, formData.wednesday, formData.thursday, formData.friday]);
+
   return (
       <div className="modal-backdrop">
         <div className="modal-wrapper">
