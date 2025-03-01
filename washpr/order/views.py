@@ -16,7 +16,7 @@ from datetime import datetime
 
 def convert_date_to_unix(date_str):
     try:
-        date = datetime.strptime(date_str, "%Y-%m-%d")  # Преобразуем строку в объект datetime
+        date = datetime.strptime(date_str, "%d-%m-%Y")  # Преобразуем строку в объект datetime
         return int(date.timestamp())  # Преобразуем в Unix Timestamp
     except ValueError:
         return None

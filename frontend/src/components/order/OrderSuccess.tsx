@@ -39,40 +39,46 @@ const OrderSuccess: React.FC<OrderSuccessProps> = ({ newOrder, onClose }) => {
                         <p>Order created successfully.</p>
                         <p>Place: {order.rp_place_title}</p>
 
-                        {/* Отображение системы */}
-                        {order.system && (
-                            <p>
-                                System:{" "}
-                                {{
-                                    "Tue_Thu": "Tuesday Thursday",
-                                    "Mon_Wed_Fri": "Monday Wednesday Friday",
-                                    "Every_day": "Every day",
-                                    "Own": "Own system",
-                                    "One_time": "One-time order"
-                                }[order.system] || order.system}
-                            </p>
-                        )}
-
-                        {/* Дни недели, если система "Own" */}
-                        {order.system === "Own" && (
-                            <>
-                                {order.monday && <p>Monday</p>}
-                                {order.tuesday && <p>Tuesday</p>}
-                                {order.wednesday && <p>Wednesday</p>}
-                                {order.thursday && <p>Thursday</p>}
-                                {order.friday && <p>Friday</p>}
-                            </>
-                        )}
-
                         {/* Даты */}
-                        {order.system === "One_time" ? (
+                        {order.type_ship === "one_time" || order.type_ship === "quick_order" ? (
                             <>
                                 <p>Pick-up: {order.date_pickup}</p>
                                 <p>Delivery: {order.date_delivery}</p>
                             </>
                         ) : (
+                            <>
                             <p>Start: {order.date_start_day}</p>
+
+                                {/* Отображение системы */}
+                                {order.system && (
+                                    <p>
+                                        System:{" "}
+                                        {{
+                                            "Tue_Thu": "Tuesday Thursday",
+                                            "Mon_Wed_Fri": "Monday Wednesday Friday",
+                                            "Every_day": "Every day",
+                                            "Own": "Own system",
+                                            "One_time": "One-time order"
+                                        }[order.system] || order.system}
+                                    </p>
+                                )}
+
+                                {/* Дни недели, если система "Own" */}
+                                {order.system === "Own" && (
+                                    <>
+                                        {order.monday && <p>Monday</p>}
+                                        {order.tuesday && <p>Tuesday</p>}
+                                        {order.wednesday && <p>Wednesday</p>}
+                                        {order.thursday && <p>Thursday</p>}
+                                        {order.friday && <p>Friday</p>}
+                                    </>
+                                )}
+                            </>
                         )}
+
+
+
+
 
                         <p>If you made a mistake, you can cancel
                             {isPlaceDetailPage ? (

@@ -24,7 +24,7 @@ interface OrderHistoryProps {
 }
 
 const OrderHistory: React.FC<OrderHistoryProps> = ({ placeId, orders = [], setOrders, stopedOrder}) => {
-    const [visibleOrders, setVisibleOrders] = useState<number>(10);
+    const [visibleOrders, setVisibleOrders] = useState<number>(30);
     const [hasMoreOrders, setHasMoreOrders] = useState<boolean>(false);
     const [loading, setLoading] = useState<boolean>(true);
     const [expandedOrders, setExpandedOrders] = useState<{ [key: number]: boolean }>({});
@@ -45,7 +45,7 @@ const OrderHistory: React.FC<OrderHistoryProps> = ({ placeId, orders = [], setOr
                 if (setOrders) {
                     setOrders(data);
                 }
-                setHasMoreOrders(data.length > 10);
+                setHasMoreOrders(data.length > 20);
             } else {
                 console.error("Failed to fetch orders");
             }
@@ -60,7 +60,7 @@ const OrderHistory: React.FC<OrderHistoryProps> = ({ placeId, orders = [], setOr
     // Load more orders when the user clicks "More"
     const loadMoreOrders = () => {
         setVisibleOrders((prev) => {
-            const newVisibleCount = prev + 10;
+            const newVisibleCount = prev + 20;
             setHasMoreOrders(newVisibleCount < orders.length);
             return newVisibleCount;
         });
@@ -82,7 +82,7 @@ const OrderHistory: React.FC<OrderHistoryProps> = ({ placeId, orders = [], setOr
                     headers: {
                         "Content-Type": "application/json",
                     },
-                    body: JSON.stringify({ canceled: true }),
+                    body: JSON.stringify({ canceled: true, rp_status: 10, rp_customer_note: "storno chybna objednavka" }),
                 });
 
                 if (response.ok) {
@@ -170,6 +170,7 @@ const OrderHistory: React.FC<OrderHistoryProps> = ({ placeId, orders = [], setOr
                                         key={order.id}
                                         className={`card ${expandedOrders[order.id] ? "expanded" : ""}`}
                                         onClick={() => toggleExpand(order.id)}
+                                        style={{ display: order.rp_status === 0 && order.every_week ? "none" : "block" }}
                                     >
                                         <div className="history-icon">
                                             <FontAwesomeIcon icon={faTruck} />
@@ -205,7 +206,13 @@ const OrderHistory: React.FC<OrderHistoryProps> = ({ placeId, orders = [], setOr
                                                     ) : (
                                                         <>
                                                             <FontAwesomeIcon icon={faCheckCircle} style={{ color: "#00aab7", height: "18px" }}/>
-                                                            <strong className="ms-2">Completed</strong>
+                                                            <strong className="ms-2">
+                                                                {order.rp_status === 0 && (" New order 0")}
+                                                                {order.rp_status === 1 && (" In progress 1")}
+                                                                {order.rp_status === 2 && (" In progress 2")}
+                                                                {order.rp_status === 3 && (" In progress 3")}
+                                                                {order.rp_status === 4 && (" Complited 4")}
+                                                            </strong>
                                                         </>
                                                     )}
 
@@ -248,11 +255,11 @@ const OrderHistory: React.FC<OrderHistoryProps> = ({ placeId, orders = [], setOr
                                                         )}
                                                     </>
                                                 )}
-                                                <p><strong>Pickup Date:</strong> {formatDate(order.rp_time_from)}</p>
-                                                <p><strong>Delivery Date:</strong> {formatDate(order.rp_time_to)}</p>
-                                                {order.rp_time_realization && (
+                                                <p><strong>Pickup Date:</strong> {order.date_pickup}</p>
+                                                <p><strong>Delivery Date:</strong> {order.date_delivery}</p>
+                                                {order.rp_time_planned && (
                                                     <p>
-                                                        <strong>Realization Date:</strong> {formatDate(order.rp_time_realization) || " No information"}
+                                                        <strong>Realization Date:</strong> {formatDate(order.rp_time_planned) || " No information"}
                                                     </p>
                                                 )}
                                             </div>

@@ -242,68 +242,102 @@ def create_orders_task():
     results = []
 
     for order in orders:
+        base_order_data = {
+            'place': order.place,
+            'user': order.user,
+            'group_month_id': order.group_month_id,
+            'type_ship': order.type_ship,
+            'system': order.system,
+            'rp_client_external_id': order.rp_client_external_id,
+            'rp_place_external_id': order.rp_place_external_id,
+            'rp_place_title': order.rp_place_title,
+            'rp_place_city': order.rp_place_city,
+            'rp_place_street': order.rp_place_street,
+            'rp_place_number': order.rp_place_number,
+            'rp_place_zip': order.rp_place_zip,
+            'rp_place_email': order.rp_place_email,
+            'rp_place_person': order.rp_place_person,
+            'rp_place_phone': order.rp_place_phone,
+            'rp_contract_title': order.rp_contract_title,
+            'rp_status': 0,
+            'every_week': order.every_week,
+            'processed': True,
+        }
         # заполняем отсутствующие поля пустыми строками или значениями по умолчанию.
-        if order.type_ship == 'pickup_ship_one':
+        if order.type_ship == 'pickup_ship_one' or order.type_ship == 'pickup_ship_dif':
             print("pickup_ship_one")
             order_date = int(datetime.combine(order.date_start_day, time()).timestamp())
-            order.rp_time_realization = order_date # date when curier to come
-            if order.system == 'Tue_Thu':
+            order.rp_time_realization = order_date # date when courier to come
+            days_list = [] # days when courier has to come
+            if order.system == 'Own':
+                print("Own")
+                if order.monday:
+                    days_list.append(0)
+                if order.tuesday:
+                    days_list.append(1)
+                if order.wednesday:
+                    days_list.append(2)
+                if order.thursday:
+                    days_list.append(3)
+                if order.friday:
+                    days_list.append(4)
+            elif order.system == 'Mon_Wed_Fri':
+                days_list = [0,2,4]
+            elif order.system == 'Tue_Thu':
                 print("tuesday thusday")
-                base_order_data = {
-                    'place': order.place,
-                    'user': order.user,
-                    'group_month_id': order.group_month_id,
-                    'type_ship': order.type_ship,
-                    'system': order.system,
-                    'rp_client_external_id': order.rp_client_external_id,
-                    'rp_place_external_id': order.rp_place_external_id,
-                    'rp_place_title': order.rp_place_title,
-                    'rp_place_city': order.rp_place_city,
-                    'rp_place_street': order.rp_place_street,
-                    'rp_place_number': order.rp_place_number,
-                    'rp_place_zip': order.rp_place_zip,
-                    'rp_place_email': order.rp_place_email,
-                    'rp_place_person': order.rp_place_person,
-                    'rp_place_phone': order.rp_place_phone,
-                    'rp_contract_title': order.rp_contract_title,
-                    'rp_status': 0,
-                    'every_week': True,
-                    'processed': True,
-                }
-                new_order_dates = get_dates_by_weekdays(order.date_start_day, [1,3])
-                group_id = order.group_pair_id
-                print(len(new_order_dates), new_order_dates)
-                for idx, date in enumerate(new_order_dates):
-                    print(f"{idx}: {date} order {order.pk}")
-                    if idx % 2 == 0: # even = delivery, odd = pickup
-                        print("even")
-                        base_order_data.update({
-                            'rp_time_planned': int(datetime.combine(date, time()).timestamp()),  # заменим позже, если нужно
-                            'date_start_day': date,  # для нового заказа
-                            'rp_customer_note': "delivery",
-                            'date_pickup': order.date_start_day,  # дата предыдущего заказа
-                            'date_delivery': date,             # текущая дата
-                            'delivery': True,
-                            'pickup': False,
-                            'group_pair_id': group_id,
-                        })
-                        group_id += 2
-                    else:
-                        print("odd")
-                        base_order_data.update({
-                            'rp_time_planned': int(datetime.combine(date, time()).timestamp()),  # заменим позже, если нужно
-                            'date_start_day': date,  # для нового заказа
-                            'rp_customer_note': "pickup",
-                            'date_pickup': date,  # текущая дата
-                            'pickup': True,
-                            'delivery': False,
-                            'group_pair_id': group_id,
-                        })
-                    new_order = Order(**base_order_data)
-                    new_order.save()
-                    print("success")
-                    results.append(new_order.pk)
-            order.processed = True
-            order.save(update_fields=["processed"])
+                days_list = [1,3]
+            elif order.system == 'Every_day':
+                print("Every_day")
+                days_list = [0,1,2,3,4]
+            new_order_dates = get_dates_by_weekdays(order.date_start_day, days_list)
+            group_id = order.group_pair_id
+            print(len(new_order_dates), new_order_dates)
+            for idx, date in enumerate(new_order_dates):
+                print(f"{idx}: {date} order {order.pk}")
+                if idx % 2 == 0: # even = delivery, odd = pickup
+                    print("even")
+                    base_order_data.update({
+                        'rp_time_planned': int(datetime.combine(date, time()).timestamp()),  # заменим позже, если нужно
+                        'date_start_day': date,  # для нового заказа
+                        'rp_customer_note': "delivery",
+                        'date_pickup': order.date_start_day,  # дата предыдущего заказа
+                        'date_delivery': date,             # текущая дата
+                        'delivery': True,
+                        'pickup': False,
+                        'group_pair_id': group_id,
+                    })
+                    group_id += 2
+                else:
+                    print("odd")
+                    base_order_data.update({
+                        'rp_time_planned': int(datetime.combine(date, time()).timestamp()),
+                        'date_start_day': date,  # для нового заказа
+                        'rp_customer_note': "pickup",
+                        'date_pickup': date,  # текущая дата
+                        'pickup': True,
+                        'delivery': False,
+                        'group_pair_id': group_id,
+                    })
+                new_order = Order(**base_order_data)
+                new_order.save()
+                print("success")
+                results.append(new_order.pk)
+
+        elif order.type_ship == 'one_time' or order.type_ship == 'quick_order':
+            date = order.date_delivery
+            base_order_data.update({
+                'rp_time_planned': int(datetime.combine(date, time()).timestamp()),
+                'date_start_day': order.date_pickup,  # дата предыдущего заказа
+                'date_pickup': order.date_pickup,  # дата предыдущего заказа
+                'date_delivery': date,             # текущая дата
+                'delivery': True,
+                'pickup': False,
+                'group_pair_id': order.group_pair_id,
+            })
+            new_order = Order(**base_order_data)
+            new_order.save()
+            print("success")
+        order.processed = True
+        order.save(update_fields=["processed"])
     return results
 

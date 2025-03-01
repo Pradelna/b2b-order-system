@@ -108,9 +108,7 @@ class Order(models.Model):
                 self.rp_place_phone = self.place.rp_phone
                 self.rp_contract_title = self.place.customer.company_name
                 self.rp_branch_office_id = 2263168
-                print("before terms")
                 if self.terms:
-                    print("terms")
                     self.main_order = True
                     self.group_month_id = self.pk
                     self.group_pair_id = self.pk
@@ -118,15 +116,13 @@ class Order(models.Model):
                 if not self.group_pair_id:
                     self.group_pair_id = self.pk
                 if self.type_ship == 'pickup_ship_one' or self.type_ship == 'pickup_ship_dif':
-                    order_date = int(datetime.combine(self.date_start_day, time()).timestamp())
-                    print(f"date_start_day: {self.date_start_day}")
-                    print(f"order_date: {order_date}")
-                    self.rp_time_start = order_date
-                    self.rp_time_planned = order_date
-                elif self.type_ship == 'One_time' or self.type_ship == 'quick_order':
-                    order_date = int(datetime.combine(self.date_pickup, time()).timestamp())
-                    self.rp_time_start = order_date
-                    self.rp_time_planned = order_date
+                    self.rp_time_planned = int(datetime.combine(self.date_start_day, time()).timestamp())
+                if self.type_ship == 'one_time' or self.type_ship == 'quick_order':
+                    self.rp_time_planned = int(datetime.combine(self.date_pickup, time()).timestamp())
+                    if self.type_ship == 'one_time':
+                        self.group_month_id = 1
+                    if self.type_ship == 'quick_order':
+                        self.group_month_id = 2
             super().save(update_fields=[
                 'rp_client_external_id',
                 'rp_place_external_id',
@@ -139,15 +135,13 @@ class Order(models.Model):
                 'rp_place_person',
                 'rp_place_phone',
                 'rp_contract_title',
-                'rp_time_start',
                 'rp_time_planned',
                 'main_order',
                 'pickup',
                 'group_month_id',
                 'group_pair_id',
+                'rp_branch_office_id',
             ])
-            # Если объект новый, его active уже False (не отправлено)
-            # Можно выйти, чтобы избежать повторного сохранения сразу после создания
             return
 
         # Если объект существует, но еще не отправлен (active == False)
