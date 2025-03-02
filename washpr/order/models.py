@@ -95,6 +95,14 @@ class Order(models.Model):
             # Сохраняем новый объект с active=False (по умолчанию не отправлено)
             # в views.py тоже есть заполняемые поля
             super().save(*args, **kwargs)
+            if self.type_ship == 'pickup_ship_one' or self.type_ship == 'pickup_ship_dif':
+                self.rp_time_planned = int(datetime.combine(self.date_start_day, time()).timestamp())
+            if self.type_ship == 'one_time' or self.type_ship == 'quick_order':
+                self.rp_time_planned = int(datetime.combine(self.date_pickup, time()).timestamp())
+                if self.type_ship == 'one_time':
+                    self.group_month_id = 1
+                if self.type_ship == 'quick_order':
+                    self.group_month_id = 2
             if not self.rp_client_external_id:
                 self.rp_client_external_id = self.place.customer.rp_client_external_id
                 self.rp_place_external_id = self.place.rp_external_id
@@ -108,21 +116,17 @@ class Order(models.Model):
                 self.rp_place_phone = self.place.rp_phone
                 self.rp_contract_title = self.place.customer.company_name
                 self.rp_branch_office_id = 2263168
-                if self.terms:
-                    self.main_order = True
-                    self.group_month_id = self.pk
+            if self.terms:
+                self.main_order = True
+                self.group_month_id = self.pk
+                self.group_pair_id = self.pk
+                self.pickup = True
+            else:
+                if self.pickup == True and self.delivery == False:
                     self.group_pair_id = self.pk
-                    self.pickup = True
-                if not self.group_pair_id:
-                    self.group_pair_id = self.pk
-                if self.type_ship == 'pickup_ship_one' or self.type_ship == 'pickup_ship_dif':
-                    self.rp_time_planned = int(datetime.combine(self.date_start_day, time()).timestamp())
-                if self.type_ship == 'one_time' or self.type_ship == 'quick_order':
-                    self.rp_time_planned = int(datetime.combine(self.date_pickup, time()).timestamp())
-                    if self.type_ship == 'one_time':
-                        self.group_month_id = 1
-                    if self.type_ship == 'quick_order':
-                        self.group_month_id = 2
+            # if not self.group_pair_id:
+            #     self.group_pair_id = self.pk
+
             super().save(update_fields=[
                 'rp_client_external_id',
                 'rp_place_external_id',

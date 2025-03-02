@@ -248,17 +248,17 @@ def create_orders_task():
             'group_month_id': order.group_month_id,
             'type_ship': order.type_ship,
             'system': order.system,
-            'rp_client_external_id': order.rp_client_external_id,
-            'rp_place_external_id': order.rp_place_external_id,
-            'rp_place_title': order.rp_place_title,
-            'rp_place_city': order.rp_place_city,
-            'rp_place_street': order.rp_place_street,
-            'rp_place_number': order.rp_place_number,
-            'rp_place_zip': order.rp_place_zip,
-            'rp_place_email': order.rp_place_email,
-            'rp_place_person': order.rp_place_person,
-            'rp_place_phone': order.rp_place_phone,
-            'rp_contract_title': order.rp_contract_title,
+            # 'rp_client_external_id': order.rp_client_external_id,
+            # 'rp_place_external_id': order.rp_place_external_id,
+            # 'rp_place_title': order.rp_place_title,
+            # 'rp_place_city': order.rp_place_city,
+            # 'rp_place_street': order.rp_place_street,
+            # 'rp_place_number': order.rp_place_number,
+            # 'rp_place_zip': order.rp_place_zip,
+            # 'rp_place_email': order.rp_place_email,
+            # 'rp_place_person': order.rp_place_person,
+            # 'rp_place_phone': order.rp_place_phone,
+            # 'rp_contract_title': order.rp_contract_title,
             'rp_status': 0,
             'every_week': order.every_week,
             'processed': True,
@@ -290,10 +290,15 @@ def create_orders_task():
                 print("Every_day")
                 days_list = [0,1,2,3,4]
             new_order_dates = get_dates_by_weekdays(order.date_start_day, days_list)
-            group_id = order.group_pair_id
             print(len(new_order_dates), new_order_dates)
+            group_pair_id = None
+            new_order_pk = 0
             for idx, date in enumerate(new_order_dates):
                 print(f"{idx}: {date} order {order.pk}")
+                if idx == 0:
+                    group_pair_id = order.group_pair_id # id of main order
+                else:
+                    group_pair_id = new_order_pk # id of previous order
                 if idx % 2 == 0: # even = delivery, odd = pickup
                     print("even")
                     base_order_data.update({
@@ -304,9 +309,8 @@ def create_orders_task():
                         'date_delivery': date,             # текущая дата
                         'delivery': True,
                         'pickup': False,
-                        'group_pair_id': group_id,
+                        'group_pair_id': group_pair_id,
                     })
-                    group_id += 2
                 else:
                     print("odd")
                     base_order_data.update({
@@ -316,11 +320,11 @@ def create_orders_task():
                         'date_pickup': date,  # текущая дата
                         'pickup': True,
                         'delivery': False,
-                        'group_pair_id': group_id,
                     })
                 new_order = Order(**base_order_data)
                 new_order.save()
                 print("success")
+                new_order_pk = new_order.pk
                 results.append(new_order.pk)
 
         elif order.type_ship == 'one_time' or order.type_ship == 'quick_order':
