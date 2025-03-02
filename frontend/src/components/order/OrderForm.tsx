@@ -55,7 +55,7 @@ const OrderForm: React.FC<OrderFormProps> = ({ placeId, onClose, onSuccess }) =>
     const startDate = new Date();
 
     // if repeated order already exist start from next month
-    if (setAlredyCurrentOrder) {
+    if (alredyCurrentOrder) {
       // Переключаем на первый день следующего месяца
       startDate.setMonth(startDate.getMonth() + 1); // начинаем с нового месяца
       startDate.setDate(1);
