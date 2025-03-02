@@ -865,6 +865,10 @@ svg.loader{
   height: 190px;
 }
 
+.place-detail-page .dates .expanded {
+  height: auto;
+}
+
 .place-detail-page .place-details {
   min-height: 280px;
 }

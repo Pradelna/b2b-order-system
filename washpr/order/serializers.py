@@ -41,7 +41,7 @@ class GetOrderSerializer(serializers.ModelSerializer):
         fields = [
             'id', 'place', 'user', 'place_name', 'type_ship', 'system', 'monday', 'tuesday', 'date_start_day',
             'wednesday', 'thursday', 'friday', 'date_pickup', 'date_delivery', 'created_at', 'rp_status',
-            'every_week', 'terms', 'end_order', 'rp_customer_note', 'rp_problem_description',
+            'every_week', 'terms', 'end_order', 'rp_customer_note', 'rp_problem_description', 'group_pair_id',
             'canceled', 'rp_time_from', 'rp_time_to', 'rp_time_realization', 'rp_time_planned'
         ]
         read_only_fields = ['id', 'user', 'place', 'created_at']

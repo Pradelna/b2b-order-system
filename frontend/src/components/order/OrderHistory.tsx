@@ -7,6 +7,7 @@ import { Tooltip as ReactTooltip } from "react-tooltip";
 import {Form} from "react-router-dom";
 import {Skeleton} from "@mui/material";
 import { formatDate } from "../utils/formatDate";
+import {formatViceDate} from "@/components/utils/FormatViceDate.js";
 
 interface Order {
     id: number;
@@ -24,7 +25,7 @@ interface OrderHistoryProps {
 }
 
 const OrderHistory: React.FC<OrderHistoryProps> = ({ placeId, orders = [], setOrders, stopedOrder}) => {
-    const [visibleOrders, setVisibleOrders] = useState<number>(30);
+    const [visibleOrders, setVisibleOrders] = useState<number>(60);
     const [hasMoreOrders, setHasMoreOrders] = useState<boolean>(false);
     const [loading, setLoading] = useState<boolean>(true);
     const [expandedOrders, setExpandedOrders] = useState<{ [key: number]: boolean }>({});
@@ -45,7 +46,7 @@ const OrderHistory: React.FC<OrderHistoryProps> = ({ placeId, orders = [], setOr
                 if (setOrders) {
                     setOrders(data);
                 }
-                setHasMoreOrders(data.length > 20);
+                setHasMoreOrders(data.length > 40);
             } else {
                 console.error("Failed to fetch orders");
             }
@@ -60,7 +61,7 @@ const OrderHistory: React.FC<OrderHistoryProps> = ({ placeId, orders = [], setOr
     // Load more orders when the user clicks "More"
     const loadMoreOrders = () => {
         setVisibleOrders((prev) => {
-            const newVisibleCount = prev + 20;
+            const newVisibleCount = prev + 40;
             setHasMoreOrders(newVisibleCount < orders.length);
             return newVisibleCount;
         });
@@ -170,7 +171,7 @@ const OrderHistory: React.FC<OrderHistoryProps> = ({ placeId, orders = [], setOr
                                         key={order.id}
                                         className={`card ${expandedOrders[order.id] ? "expanded" : ""}`}
                                         onClick={() => toggleExpand(order.id)}
-                                        style={{ display: order.rp_status === 0 && order.every_week ? "none" : "block" }}
+                                        style={{ display: (order.rp_status === 0 && order.every_week) || (order.id === order.group_pair_id) ? "none" : "block" }}
                                     >
                                         <div className="history-icon">
                                             <FontAwesomeIcon icon={faTruck} />
@@ -255,9 +256,9 @@ const OrderHistory: React.FC<OrderHistoryProps> = ({ placeId, orders = [], setOr
                                                         )}
                                                     </>
                                                 )}
-                                                <p><strong>Pickup Date:</strong> {order.date_pickup}</p>
-                                                <p><strong>Delivery Date:</strong> {order.date_delivery}</p>
-                                                {order.rp_time_planned && (
+                                                <p><strong>Pickup Date:</strong> {formatViceDate(order.date_pickup)}</p>
+                                                <p><strong>Delivery Date:</strong> {formatViceDate(order.date_delivery)}</p>
+                                                {!order.rp_time_planned && (
                                                     <p>
                                                         <strong>Realization Date:</strong> {formatDate(order.rp_time_planned) || " No information"}
                                                     </p>

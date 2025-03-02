@@ -14,11 +14,11 @@ def debug_task(self):
 
 
 app.conf.beat_schedule = {
-    # 'send-orders-every-hour': {
-    #     'task': 'integration.tasks.send_orders_task',
-    #     # 'schedule': crontab(minute=0, hour='4-23'),
-    #     'schedule': crontab(minute='*/2'),
-    # },
+    'send-orders-every-hour': {
+        'task': 'integration.tasks.send_orders_task',
+        # 'schedule': crontab(minute=0, hour='4-23'),
+        'schedule': crontab(minute='59'),
+    },
     'create-orders-every-hour': {
         'task': 'integration.tasks.create_orders_task',
         # 'schedule': crontab(minute=0, hour='4-23'),

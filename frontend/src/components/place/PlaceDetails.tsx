@@ -76,6 +76,7 @@ const PlaceDetails: React.FC = () => {
     const [startDates, setStartDates] = useState<any>(null);
     const [expandedDates, setExpandedDates] = useState(false);
 
+    // get all orders
     const fetchOrders = async () => {
         try {
             // order of the place
@@ -353,7 +354,7 @@ const PlaceDetails: React.FC = () => {
                                             <strong>Day of next visit: </strong>
                                             { formatDate(currentOrder.rp_time_planned)  || " None "}
                                         </div>
-                                        <div className="form-control mb-2">
+                                        <div className="form-control dates mb-2">
                                             <div onClick={toggleExpand} style={{ cursor: "pointer" }}>
                                                 <strong>{expandedDates ? "Close upcoming Start Dates" : "Show upcoming Start Dates"}</strong>
                                             </div>

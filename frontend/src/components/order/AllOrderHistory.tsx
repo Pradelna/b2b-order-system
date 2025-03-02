@@ -13,6 +13,7 @@ import NavButtons from "../account/NavButtons";
 import Footer from "../Footer";
 import {Skeleton} from "@mui/material";
 import { formatDate } from "../utils/formatDate";
+import {formatViceDate} from "../utils/FormatViceDate";
 
 interface Order {
     id: number;
@@ -26,7 +27,7 @@ interface Order {
 
 const AllOrderHistory: React.FC = () => {
     const [orders, setOrders] = useState<Order[]>([]);
-    const [visibleOrders, setVisibleOrders] = useState<number>(10);
+    const [visibleOrders, setVisibleOrders] = useState<number>(60);
     const [hasMoreOrders, setHasMoreOrders] = useState<boolean>(false);
     const [loading, setLoading] = useState<boolean>(true);
     const [expandedOrders, setExpandedOrders] = useState<{ [key: number]: boolean }>({});
@@ -37,7 +38,7 @@ const AllOrderHistory: React.FC = () => {
 
     //  Load More Orders
     const loadMoreOrders = () => {
-        setVisibleOrders((prev) => prev + 10);
+        setVisibleOrders((prev) => prev + 40);
     };
 
     //  Toggle Expanded Order
@@ -131,6 +132,7 @@ const AllOrderHistory: React.FC = () => {
                                                 key={order.id}
                                                 className={`card ${expandedOrders[order.id] ? "expanded" : ""}`}
                                                 onClick={() => toggleExpand(order.id)}
+                                                style={{ display: (order.rp_status === 0 && order.every_week) || (order.id === order.group_pair_id) ? "none" : "block" }}
                                             >
                                                 <div className="history-icon">
                                                     <FontAwesomeIcon icon={faTruck} />
@@ -190,8 +192,8 @@ const AllOrderHistory: React.FC = () => {
                                                                 )}
                                                             </>
                                                         )}
-                                                        <p><strong>Pickup Date:</strong> {formatDate(order.rp_time_from)}</p>
-                                                        <p><strong>Delivery Date:</strong> {formatDate(order.rp_time_to)}</p>
+                                                        <p><strong>Pickup Date:</strong> {formatViceDate(order.date_pickup)}</p>
+                                                        <p><strong>Delivery Date:</strong> {formatViceDate(order.date_delivery)}</p>
                                                     </div>
                                                 )}
                                             </div>
