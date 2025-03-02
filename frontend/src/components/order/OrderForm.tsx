@@ -49,11 +49,19 @@ const OrderForm: React.FC<OrderFormProps> = ({ placeId, onClose, onSuccess }) =>
 
   const [places, setPlaces] = useState<Place[]>([]);
 
-  // Functions for calculating available dates
+  // Functions for calculating available start dates
   function getAvailableStartDays() {
     const availableDates: string[] = [];
     const startDate = new Date();
-    startDate.setDate(startDate.getDate() + 1); // начинаем с завтрашнего дня
+
+    // if repeated order already exist start from next month
+    if (setAlredyCurrentOrder) {
+      // Переключаем на первый день следующего месяца
+      startDate.setMonth(startDate.getMonth() + 1); // начинаем с нового месяца
+      startDate.setDate(1);
+    } else {
+      startDate.setDate(startDate.getDate() + 1); // начинаем с завтрашнего дня
+    }
 
     // if the system is Own, collect list of all days
     let selectedDays: number[] = [];
@@ -90,6 +98,7 @@ const OrderForm: React.FC<OrderFormProps> = ({ placeId, onClose, onSuccess }) =>
     return availableDates;
   }
 
+  // only working days for a week
   function addWorkingDays(date: Date, days: number): Date {
     const result = new Date(date);
     while (days > 0) {
@@ -101,6 +110,7 @@ const OrderForm: React.FC<OrderFormProps> = ({ placeId, onClose, onSuccess }) =>
     }
     return result;
   }
+
   // avaliable pickup days
   function getAvailablePickupDates() {
     const availableDates: string[] = [];
@@ -116,6 +126,7 @@ const OrderForm: React.FC<OrderFormProps> = ({ placeId, onClose, onSuccess }) =>
     }
     return availableDates;
   }
+
   // availble delivery days
   function getAvailableDeliveryDates() {
     const availableDates: string[] = [];
@@ -147,11 +158,12 @@ const OrderForm: React.FC<OrderFormProps> = ({ placeId, onClose, onSuccess }) =>
     return availableDates;
   }
 
-  // Обработчики событий
+  // Обработчики событий this maybe no needs
   const handleStartDayChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
     setFormData((prev) => ({ ...prev, date_start_day: e.target.value }));
   };
 
+  // this maybe no needs
   const handlePickupChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
     setFormData((prev) => ({
       ...prev,
@@ -161,6 +173,7 @@ const OrderForm: React.FC<OrderFormProps> = ({ placeId, onClose, onSuccess }) =>
     console.log("handlePickupChange", firstStartForm);
   };
 
+  // this maybe no needs
   const handleDeliveryChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
     const selectedDeliveryDate = new Date(e.target.value);
     const pickupDate = new Date(formData.date_pickup);
@@ -173,6 +186,7 @@ const OrderForm: React.FC<OrderFormProps> = ({ placeId, onClose, onSuccess }) =>
     setFormData((prev) => ({ ...prev, date_delivery: e.target.value }));
   };
 
+  // week day checkboxes. If user choose delivery 3th day he cant choose two days in a row
   const handleCheckboxChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { name, checked } = e.target;
     setFormData((prev) => {
@@ -268,6 +282,7 @@ const OrderForm: React.FC<OrderFormProps> = ({ placeId, onClose, onSuccess }) =>
     });
   };
 
+  // renew date_start_day field for new date
   const handleSystemChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
     const { name, value } = e.target;
     const availableDates = getAvailableStartDays();
@@ -279,6 +294,7 @@ const OrderForm: React.FC<OrderFormProps> = ({ placeId, onClose, onSuccess }) =>
     setUseCustomDays(value === "Own");
   };
 
+  // send form to database
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
 
@@ -364,8 +380,15 @@ const OrderForm: React.FC<OrderFormProps> = ({ placeId, onClose, onSuccess }) =>
         const response = await fetchWithAuth(`${BASE_URL}/order/check-current-order/`);
         if (response.ok) {
           const currentOrderData = await response.json();
+          // if active order exists for this place
           if (currentOrderData.length != 0) {
-            setAlredyCurrentOrder(true)
+            const exists = currentOrderData.some(order => order.place === placeId);
+            if (exists) {
+              setAlredyCurrentOrder(true); // this change avaibles start dates and show message in the order form
+              console.log("Order with this placeId exists");
+            } else {
+              console.log("No matching order found");
+            };
           }
         } else {
           console.error("Failed to fetch current order");
@@ -572,6 +595,17 @@ const OrderForm: React.FC<OrderFormProps> = ({ placeId, onClose, onSuccess }) =>
                       </div>
                     </div>
                   </>
+              )}
+
+              {alredyCurrentOrder && (
+                  <div className="row">
+                    <div className="col-12">
+                      <div className="alert alert-warning">
+                        You already have orders for this month.<br />
+                        You can create a new for a next month.
+                    </div>
+                    </div>
+                  </div>
               )}
 
               {!useOnetimeOrder && everyWeek && (
