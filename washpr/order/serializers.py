@@ -8,7 +8,7 @@ class OrderSerializer(serializers.ModelSerializer):
         fields = [
             'place', 'rp_place_title', 'type_ship', 'system', 'monday', 'tuesday', 'wednesday', 'thursday',
             'friday', 'date_pickup', 'date_delivery', 'every_week', 'rp_customer_note', 'terms', 'active',
-            'end_order', 'rp_status', 'date_start_day', 'created_at', 'canceled', 'id'
+            'end_order', 'rp_status', 'date_start_day', 'created_at', 'canceled', 'id', 'rp_problem_description'
         ]
         extra_kwargs = {
             'terms': {'required': True},
@@ -42,7 +42,7 @@ class GetOrderSerializer(serializers.ModelSerializer):
             'id', 'place', 'user', 'place_name', 'type_ship', 'system', 'monday', 'tuesday', 'date_start_day',
             'wednesday', 'thursday', 'friday', 'date_pickup', 'date_delivery', 'created_at', 'rp_status',
             'every_week', 'terms', 'end_order', 'rp_customer_note', 'rp_problem_description', 'group_pair_id',
-            'canceled', 'rp_time_from', 'rp_time_to', 'rp_time_realization', 'rp_time_planned'
+            'canceled', 'rp_time_from', 'rp_time_to', 'rp_time_realization', 'rp_time_planned', 'rp_problem_description'
         ]
         read_only_fields = ['id', 'user', 'place', 'created_at']
 

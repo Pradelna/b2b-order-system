@@ -75,6 +75,21 @@ const PlaceDetails: React.FC = () => {
     const [stopedOrder, setStopedOrder] = useState<any>(null);
     const [startDates, setStartDates] = useState<any>(null);
     const [expandedDates, setExpandedDates] = useState(false);
+    const [cancelableOrders, setCancelableOrders] = useState(false); // to check if order longer 30 min
+
+
+    // Функция для проверки, можно ли отменять заказ
+    const checkTimeElapsed = (order: Order) => {
+        const now = new Date().getTime(); // Текущее время
+        const orderTime = new Date(order.created_at).getTime(); // Время заказа
+        console.log("orderTime", orderTime);
+
+        const timeDifference = now - orderTime; // Разница во времени (в миллисекундах)
+        console.log("Time Difference:", timeDifference);
+        const thirtyMinutes = 30 * 60 * 1000; // 30 минут в миллисекундах
+
+        return timeDifference >= thirtyMinutes; // Возвращает true, если прошло 30 минут
+    };
 
     // get all orders
     const fetchOrders = async () => {
@@ -100,6 +115,10 @@ const PlaceDetails: React.FC = () => {
                 setCurrentOrder(current || null);
                 setOrderHistory(history);
                 setHasMoreOrders(history.length > 10);
+                // Проверяем сразу, можно ли отменить заказ
+                if (current && checkTimeElapsed(current)) {
+                    setCancelableOrders(true);
+                }
             } else {
                 console.error("Failed to fetch orders");
             }
@@ -203,6 +222,23 @@ const PlaceDetails: React.FC = () => {
         const timer = setTimeout(() => setForceWait(false), 1000);
         return () => clearTimeout(timer); // Cleanup
     }, [id]);
+
+    // check if order is old then 30 minut
+    useEffect(() => {
+        if (!currentOrder) return; // Если заказа нет, не запускаем таймер
+
+        console.log("Start checking order time...");
+        const timer = setInterval(() => {
+            if (checkTimeElapsed(currentOrder)) {
+                setCancelableOrders(true);
+                clearInterval(timer); // Останавливаем таймер после установки true
+            }
+        }, 60000); // Проверяем каждую минуту
+
+        return () => clearInterval(timer); // Очищаем таймер при размонтировании компонента
+    }, [currentOrder]); // Зависимость — currentOrder
+
+    console.log(cancelableOrders)
 
 
     if (!place) return <p>Place not found.</p>;
@@ -420,9 +456,9 @@ const PlaceDetails: React.FC = () => {
                                             </>
                                         )}
 
-                                        <div className="form-control mb-2">
-                                            <strong>Customer note:</strong> {currentOrder.rp_customer_note || "None"}
-                                        </div>
+                                        {/*<div className="form-control mb-2">*/}
+                                        {/*    <strong>Customer note:</strong> {currentOrder.rp_customer_note || "None"}*/}
+                                        {/*</div>*/}
 
                                         {currentOrder.rp_problem_description && (
                                             <div className="form-control mb-2">
@@ -432,13 +468,16 @@ const PlaceDetails: React.FC = () => {
 
                                     </div>
 
-                                    <button
-                                        className="btn-link mt-2"
-                                        onClick={() => handleStopOrder(currentOrder!.id)}
-                                    >
-                                        <FontAwesomeIcon icon={faPowerOff} className="icon" />
-                                        <span className="ms-2">cancel this order</span>
-                                    </button>
+                                    {!cancelableOrders && (
+                                        <button
+                                            className="btn-link mt-2"
+                                            onClick={() => handleStopOrder(currentOrder!.id)}
+                                        >
+                                            <FontAwesomeIcon icon={faPowerOff} className="icon" />
+                                            <span className="ms-2">cancel this order</span>
+                                        </button>
+                                    )}
+
 
                                 </div>
                             </div>

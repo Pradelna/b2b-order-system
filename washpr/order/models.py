@@ -52,6 +52,7 @@ class Order(models.Model):
     every_week = models.BooleanField("Every week", default=False)
     terms = models.BooleanField("Terms of use", default=False)
     rp_contract_external_id = models.CharField("contract_external_id", max_length=250, null=True, blank=True)
+    contract_external_id_for_admin = models.CharField("contract_external_id to show in admin", max_length=250, null=True, blank=True)
     active = models.BooleanField("Active", default=False)
     rp_id = models.IntegerField("rp id", null=True, blank=True)
     rp_client_external_id = models.CharField("ItineraryClient external id", max_length=250, null=True, blank=True)
@@ -116,6 +117,8 @@ class Order(models.Model):
                 self.rp_place_phone = self.place.rp_phone
                 self.rp_contract_title = self.place.customer.company_name
                 self.rp_branch_office_id = 2263168
+                self.rp_problem_description = self.rp_customer_note
+                self.contract_external_id_for_admin = self.pk
             if self.terms:
                 self.main_order = True
                 self.group_month_id = self.pk
@@ -124,8 +127,6 @@ class Order(models.Model):
             else:
                 if self.pickup == True and self.delivery == False:
                     self.group_pair_id = self.pk
-            # if not self.group_pair_id:
-            #     self.group_pair_id = self.pk
 
             super().save(update_fields=[
                 'rp_client_external_id',
@@ -145,6 +146,7 @@ class Order(models.Model):
                 'group_month_id',
                 'group_pair_id',
                 'rp_branch_office_id',
+                'rp_problem_description',
             ])
             return
 
@@ -159,7 +161,7 @@ class Order(models.Model):
         super().save(*args, **kwargs)
 
     def __str__(self):
-        return f"Order of {self.place.customer.company_name} - {self.place.place_name} - {self.id}"
+        return f"Order of {self.place.customer.company_name} - {self.place.place_name} - {self.contract_external_id_for_admin}"
 
     class Meta:
         verbose_name = 'Order'

@@ -1,6 +1,9 @@
 import json
 from collections import defaultdict
 from datetime import datetime, time, timedelta
+
+from django.contrib.messages import success
+
 from .utils import get_dates_by_weekdays
 
 import requests
@@ -162,6 +165,8 @@ def create_place_task(place_id):
         contact_person_name=place.rp_person,
         contact_person_phone=place.rp_phone,
         contact_person_email=place.rp_email,
+        lat=None,
+        lng=None,
     )
     print(f"Create place response: {response}")
     if response and "id" in response:
@@ -186,23 +191,27 @@ def send_orders_task():
     api_key = settings.EXTERNAL_API_KEY
     api_client = RestApiClient(api_key)
     # get order from route plane
-    max_external_number_by_day = defaultdict(int)
     # dictionary for order external_id for each date
-    orders_data_from_rp = {}
+    orders_data_from_rp = []
+    success_get = False
+
+    import requests
+
+    url = "https://online.auto-gps.eu/cnt/apiItinerary/contractList"
+    params = {
+        "show_closed": 0,
+        "last_status_change": 86400,
+        "limit": 300,
+        "offset": 0,
+    }
+
     try:
-        url = "https://online.auto-gps.eu/cnt/apiItinerary/contractList"
-        response = api_client.call_api(url, http_method="GET")
-
-        if response.status_code == 200:
-            data = response.json()  # Если ответ JSON
-            # orders_data_from_rp = data.get("data")
-            orders_data_from_rp = data
-            print("Response:", data)
-        else:
-            print(f"Error {response.status_code}: {response.text}")
-
-    except Exception as e:
-        print("API request failed:", e)
+        response = api_client.call_api(url, http_method="GET", params=params)
+        # print("API Response:", response)
+        orders_data_from_rp = response
+        success_get = True
+    except requests.exceptions.RequestException as e:
+        print("API Request failed:", e)
 
     close_old_connections()
     from order.models import Order  # Импортируем модель заказа из приложения order
@@ -211,70 +220,58 @@ def send_orders_task():
     time_threshold = timezone.now() - timedelta(minutes=2)
     orders = Order.objects.filter(active=False, created_at__lte=time_threshold)
 
+    # print(f"Orders after {time_threshold}: {orders}")
     # find out oldest order
     min_order = min(orders, key=lambda order: order.rp_time_planned) if orders else None
     # min time for time slice
     min_time = min_order.rp_time_planned if min_order else 0
 
+    # print(f"220 min_time: {min_time}")
     # dictionary for max external_id {'01-03-2025': 7}
-    max_external_number_by_day = {}
+    max_external_number_by_day = defaultdict(int)
     if orders_data_from_rp:
         for item in orders_data_from_rp:
             time_planned = item["time_planned"]
+            # print(f"time_planned 225: {time_planned}")
             # use only date from min_time until now
             if time_planned >= min_time:
                 external_id = item["external_id"]
+                # print(f"229 {time_planned} >= {min_time}. External ID: {external_id}")
 
                 # Преобразуем timestamp в формат DD-MM-YYYY
                 date_str = datetime.utcfromtimestamp(time_planned).strftime('%d%m%y')
+                # print(f"233 Date: {date_str}")
 
                 # Извлекаем число после "/"
                 try:
                     external_number = int(external_id.split("/")[-1])
+                    # print(f"238 External number: {external_number}")
                 except ValueError:
                     external_number = 0  # Если не удалось извлечь число
 
                 # Обновляем максимум для конкретного дня
                 max_external_number_by_day[date_str] = max(max_external_number_by_day[date_str], external_number)
 
-        print(max_external_number_by_day)
-
+        # print(f"245 max_externel: {max_external_number_by_day}")
 
     results = []
 
-    # 🏷 sort order for each days
-    orders_by_day = defaultdict(list)
-
-    for order in orders:
-        order_date = datetime.utcfromtimestamp(order.rp_time_planned).strftime('%d%m%y')
-        orders_by_day[order_date].append(order)
-
-    # 🔽 Сортируем заказы в каждом дне по id
-    sorted_orders_by_day = {
-        date: sorted(orders, key=lambda x: x.id)
-        for date, orders in sorted(orders_by_day.items())
-    }
-
-    for date, orders in sorted_orders_by_day.items():
-        print(f"📅 Дата: {date}")
-
-        for order in sorted(orders, key=lambda x: x.id):  # Сортируем заказы по id
-            print(f"  🆔 Заказ ID: {order.id}, Время: {order.rp_time_planned}")
-
-            print("-" * 30)  # Разделитель
-
-    # for order in orders:
+    if success_get:
+        for order in orders:
             time_planned = datetime.utcfromtimestamp(order.rp_time_planned).strftime('%d%m%y')
             # check if other orders for this date
             if time_planned in max_external_number_by_day:
+                print(f"{time_planned} / {max_external_number_by_day[time_planned]} already exist")
                 # number for order
                 next_number_order = max_external_number_by_day[time_planned] + 1
                 # name of contract_external_id
                 contract_external_id = time_planned + f"/{next_number_order}"
-                print(contract_external_id)
+                print(f"new number -> {contract_external_id}")
             else:
+                print(f"{time_planned} -> free")
                 next_number_order = 1
                 contract_external_id = time_planned + f"/{next_number_order}"
+                print(f"new number -> {contract_external_id}")
             # add new number to dictionary to check next order
             max_external_number_by_day[time_planned] = next_number_order
             # Формируем payload для заказа. Приводим поля к нужному типу,
@@ -299,13 +296,19 @@ def send_orders_task():
             url = "https://online.auto-gps.eu/cnt/apiItinerary/serviceOrder"
             print(f"Sending order {order.pk} with payload: {payload}")
             response = api_client.call_api(url, http_method="POST", params=payload)
+            print(response)
             if response and "id" in response:
                 order.active = True
                 order.rp_id = response["id"]
-                order.save(update_fields=["active", "rp_id"])
+                order.rp_contract_external_id = contract_external_id
+                order.contract_external_id_for_admin = contract_external_id
+                order.save(update_fields=["active", "rp_id", "rp_contract_external_id", "contract_external_id_for_admin"])
                 results.append(f"Order {order.pk} sent successfully with external id {response['id']}.")
             else:
                 results.append(f"Failed to send order {order.pk}.")
+    else:
+        print(f"Failed to get orders fro route plane")
+    print(f"created {len(results)} orders. Orders: {results}")
     return results
 
 
@@ -320,7 +323,7 @@ def create_orders_task():
     from order.models import Order  # Импортируем модель заказа из приложения order
 
     # Выбираем заказы, не отправленные ранее и созданные более 35 минут назад
-    time_threshold = timezone.now() - timedelta(minutes=2)
+    time_threshold = timezone.now() - timedelta(minutes=1)
     orders = Order.objects.filter(processed=False, main_order=True, created_at__lte=time_threshold)
     print(len(orders), orders)
 
@@ -356,12 +359,10 @@ def create_orders_task():
         }
         # заполняем отсутствующие поля пустыми строками или значениями по умолчанию.
         if order.type_ship == 'pickup_ship_one' or order.type_ship == 'pickup_ship_dif':
-            print("pickup_ship_one")
             order_date = int(datetime.combine(order.date_start_day, time()).timestamp())
             order.rp_time_realization = order_date # date when courier to come
             days_list = [] # days when courier has to come
             if order.system == 'Own':
-                print("Own")
                 if order.monday:
                     days_list.append(0)
                 if order.tuesday:
@@ -375,23 +376,17 @@ def create_orders_task():
             elif order.system == 'Mon_Wed_Fri':
                 days_list = [0,2,4]
             elif order.system == 'Tue_Thu':
-                print("tuesday thusday")
                 days_list = [1,3]
             elif order.system == 'Every_day':
-                print("Every_day")
                 days_list = [0,1,2,3,4]
             new_order_dates = get_dates_by_weekdays(order.date_start_day, days_list)
-            print(len(new_order_dates), new_order_dates)
-            group_pair_id = None
             new_order_pk = 0
             for idx, date in enumerate(new_order_dates):
-                print(f"{idx}: {date} order {order.pk}")
                 if idx == 0:
                     group_pair_id = order.group_pair_id # id of main order
                 else:
                     group_pair_id = new_order_pk # id of previous order
                 if idx % 2 == 0: # even = delivery, odd = pickup
-                    print("even")
                     base_order_data.update({
                         'rp_time_planned': int(datetime.combine(date, time()).timestamp()),  # заменим позже, если нужно
                         'date_start_day': date,  # для нового заказа
@@ -403,7 +398,6 @@ def create_orders_task():
                         'group_pair_id': group_pair_id,
                     })
                 else:
-                    print("odd")
                     base_order_data.update({
                         'rp_time_planned': int(datetime.combine(date, time()).timestamp()),
                         'date_start_day': date,  # для нового заказа

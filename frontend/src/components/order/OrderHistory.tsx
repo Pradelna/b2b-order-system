@@ -100,6 +100,7 @@ const OrderHistory: React.FC<OrderHistoryProps> = ({ placeId, orders = [], setOr
         }
     };
 
+    // check if order is old then 30 minut
     useEffect(() => {
         const checkCancelableOrders = () => {
             const now = new Date().getTime();
