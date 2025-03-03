@@ -171,6 +171,8 @@ washpr/landing/migrations
 washpr/landing/static
 washpr/static
 washpr/media
+washpr/washpr/settings_local.py
+washpr/washpr/settings.py
 
 frontend/build
 frontend/node_modules

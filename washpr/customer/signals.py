@@ -14,6 +14,5 @@ def create_customer_for_user(sender, instance, created, **kwargs):
             company_address="",
             company_ico="",
             company_phone="",
-            company_email=instance.email,  # Можно взять email из User
-            # company_person=instance.username,  # Можно взять username из User
+            company_email=instance.email,
         )

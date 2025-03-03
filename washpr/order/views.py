@@ -16,7 +16,7 @@ from datetime import datetime
 
 def convert_date_to_unix(date_str):
     try:
-        date = datetime.strptime(date_str, "%Y-%m-%d")  # Преобразуем строку в объект datetime
+        date = datetime.strptime(date_str, "%d-%m-%Y")  # Преобразуем строку в объект datetime
         return int(date.timestamp())  # Преобразуем в Unix Timestamp
     except ValueError:
         return None
@@ -54,11 +54,8 @@ def create_order(request):
                 rp_place_street=place.rp_street,
                 rp_place_number=place.rp_number,
                 rp_place_zip=place.rp_zip,
-                rp_time_from=convert_date_to_unix(data['date_pickup']),
-                rp_time_to=convert_date_to_unix(data['date_delivery']),
                 rp_place_title=place.place_name,
                 place=place,
-                active=True,
                 user=request.user,
                 rp_status=0,
             )
@@ -112,7 +109,7 @@ def get_orders(request):
 def get_current_order(request):
     try:
         user = request.user
-        orders = Order.objects.filter(Q(place__customer__user=user) & Q(every_week=True) & Q(active=True) &Q(end_order=False))
+        orders = Order.objects.filter(place__customer__user=user, every_week=True, active=True, end_order=False)
         serializer = CurrentOrderSerializer(orders, many=True)
         return Response(serializer.data, status=status.HTTP_200_OK)
     except Exception as e:

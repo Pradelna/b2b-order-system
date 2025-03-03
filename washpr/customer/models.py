@@ -4,13 +4,15 @@ from django.core.validators import RegexValidator
 from django.core.exceptions import ValidationError
 import os
 
+from integration.tasks import create_client_task
+
 
 User = get_user_model()
 
 
 def user_directory_path(instance, filename):
     # file will be uploaded to MEDIA_ROOT / user_<id>/<filename>
-    return 'user_{0}/{1}'.format(instance.author.username, filename)
+    return 'user_{0}/{1}'.format(instance.author.email, filename)
 
 
 class Customer(models.Model):
@@ -21,7 +23,7 @@ class Customer(models.Model):
     company_dic = models.CharField("Company DIC", max_length=20, null=True, blank=True)
     phone_regex = RegexValidator(
         regex=r'^\+?(\d){6,18}$',
-        message="Phone number must be entered in the format: '+431234567890' or 01234567890"
+        message="Phone number must be entered in the format: '+420234567890' or 01234567890"
     )
     company_phone = models.CharField("Company phone", null=True, blank=True, validators=[phone_regex], max_length=17)
     company_email = models.CharField("Company email", max_length=100, null=True, blank=True)
@@ -32,6 +34,30 @@ class Customer(models.Model):
     active = models.BooleanField("Active", default=False)
     rp_client_id = models.IntegerField("ItineraryClient id", null=True, blank=True)
     rp_client_external_id = models.CharField("ItineraryClient external id", max_length=250, null=True, blank=True)
+    data_sent = models.BooleanField("Data sent", default=False)
+
+    def save(self, *args, **kwargs):
+        if not self.pk:
+            # Если объект новый, сначала сохраняем его, чтобы получить pk
+            super().save(*args, **kwargs)
+            # Если поле rp_client_external_id ещё не заполнено, формируем его, используя pk
+            if not self.rp_client_external_id:
+                self.rp_client_external_id = "test" + str(self.pk)
+            # Обновляем запись с новым значением rp_client_external_id
+            super().save(update_fields=['rp_client_external_id'])
+            return
+        else:
+            # Если объект уже существует, но rp_client_external_id не заполнено, устанавливаем его
+            if not self.rp_client_external_id:
+                self.rp_client_external_id = "test" + str(self.pk)
+
+        # Если клиент активен и данные ещё не отправлены, запускаем задачу
+        if self.active and not self.data_sent:
+            super().save(*args, **kwargs)
+            create_client_task.delay(self.pk)
+            return
+
+        super().save(*args, **kwargs)
 
     def __str__(self):
         return self.company_name
@@ -76,7 +102,7 @@ class CustomerDocuments(models.Model):
     uploaded_at = models.DateTimeField(auto_now_add=True)
 
     def __str__(self):
-        return f"Document for {self.customer.user.username} - {self.file.name}"
+        return f"Document for {self.customer.user.email} - {self.file.name}"
 
 
 class DocumentsForCustomer(models.Model):
@@ -89,4 +115,4 @@ class DocumentsForCustomer(models.Model):
     uploaded_at = models.DateTimeField(auto_now_add=True)
 
     def __str__(self):
-        return f"Document for {self.customer.user.username} - {self.file.name}"
+        return f"Document for {self.customer.user.email} - {self.file.name}"

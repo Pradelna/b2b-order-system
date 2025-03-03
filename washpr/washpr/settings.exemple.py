@@ -21,7 +21,7 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 # See https://docs.djangoproject.com/en/5.0/howto/deployment/checklist/
 
 # SECURITY WARNING: keep the secret key used in production secret!
-SECRET_KEY = 'django-insecure-t)su=n@*^knlz_u8v&psm^muyyu+0%yo5%a%3s$quovs6++(1k'
+SECRET_KEY = 'key'
 
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
@@ -166,7 +166,7 @@ DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
 AUTH_USER_MODEL = 'accounts.CustomUser'
 
-RECAPTCHA_SECRET_KEY = "6LdWEqkqAAAAAGLHgv9xIAygZZovfqdmGR2wBxQ4"
+RECAPTCHA_SECRET_KEY = "key"
 
 EMAIL_BACKEND = 'django.core.mail.backends.console.EmailBackend'
 
@@ -174,11 +174,11 @@ EMAIL_BACKEND = 'django.core.mail.backends.console.EmailBackend'
 # EMAIL_HOST = 'mail.vzt-klima.sk'
 # EMAIL_PORT = 465
 # EMAIL_USE_SSL = True
-# EMAIL_HOST_USER = 'noreply@vzt-klima.sk'
-# EMAIL_HOST_PASSWORD = 'qQ4tH1uS2a'
-# DEFAULT_FROM_EMAIL = 'noreply@vzt-klima.sk'
+# EMAIL_HOST_USER = 'email'
+# EMAIL_HOST_PASSWORD = 'pass'
+# DEFAULT_FROM_EMAIL = 'email'
 
-EXTERNAL_API_KEY = "839943;31d86128e4b4f2c379ce9a1a4aaed7a81d61ae9407412c0043ea1f12092cf585"
+EXTERNAL_API_KEY = "key"
 
 SIMPLE_JWT = {
     'ACCESS_TOKEN_LIFETIME': timedelta(minutes=360),  # Токен будет действовать 360 минут

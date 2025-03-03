@@ -21,6 +21,7 @@ import {Tooltip as ReactTooltip} from "react-tooltip";
 import NavButtons from "@/components/account/NavButtons.js";
 import {Skeleton} from "@mui/material";
 import { formatDate } from "../utils/formatDate";
+import { formatViceDate } from "../utils/formatViceDate";
 
 
 interface Place {
@@ -72,7 +73,10 @@ const PlaceDetails: React.FC = () => {
     const [hasMoreOrders, setHasMoreOrders] = useState<boolean>(false);
     const [forceWait, setForceWait] = useState<boolean>(true);
     const [stopedOrder, setStopedOrder] = useState<any>(null);
+    const [startDates, setStartDates] = useState<any>(null);
+    const [expandedDates, setExpandedDates] = useState(false);
 
+    // get all orders
     const fetchOrders = async () => {
         try {
             // order of the place
@@ -81,10 +85,14 @@ const PlaceDetails: React.FC = () => {
             );
             if (response.ok) {
                 const orders: Order[] = await response.json();
-
-                const current = orders.find(
-                    (order) => order.every_week && !order.end_order
-                );
+                // get all repeated orders with end_order = flase
+                const repeatOrders = orders.filter((order) => order.every_week && !order.end_order);
+                // get least order id
+                const current = repeatOrders.sort((a, b) => a.id - b.id)
+                    .find((order) => order.every_week && !order.end_order);
+                // Извлекаем даты в массив
+                const startDatesList = repeatOrders.map(order => order.date_start_day);
+                setStartDates(startDatesList);
                 const history = orders.filter(
                     (order) => !(order.every_week && !order.end_order)
                 );
@@ -126,14 +134,14 @@ const PlaceDetails: React.FC = () => {
 
     const handleStopOrder = async (orderId: number) => {
         // stop repeat order
-        if (window.confirm("Are you sure you want to stop this order?")) {
+        if (window.confirm("Are you sure you want to cancel this order?")) {
             try {
                 const response = await fetchWithAuth(`${BASE_URL}/order/update/${orderId}/`, {
                     method: "PUT",
                     headers: {
                         "Content-Type": "application/json",
                     },
-                    body: JSON.stringify({ end_order: true }),
+                    body: JSON.stringify({ end_order: true, rp_status: 10, rp_customer_note: "storno" }),
                 });
 
                 if (response.ok) {
@@ -156,6 +164,10 @@ const PlaceDetails: React.FC = () => {
                 console.error("Error stopping order:", error);
             }
         }
+    };
+
+    const toggleExpand = () => {
+        setExpandedDates(!expandedDates);
     };
 
     useEffect(() => {
@@ -191,6 +203,7 @@ const PlaceDetails: React.FC = () => {
         const timer = setTimeout(() => setForceWait(false), 1000);
         return () => clearTimeout(timer); // Cleanup
     }, [id]);
+
 
     if (!place) return <p>Place not found.</p>;
 
@@ -338,10 +351,28 @@ const PlaceDetails: React.FC = () => {
                                     <div className="order-details">
 
                                         <div className="form-control mb-2">
-                                            <strong>Day of next visit:</strong>
-                                            { formatDate(currentOrder.rp_time_from)  || " from None "}
-                                             or
-                                            { formatDate(currentOrder.rp_time_to)  || " to None"}
+                                            <strong>Day of next visit: </strong>
+                                            { formatDate(currentOrder.rp_time_planned)  || " None "}
+                                        </div>
+                                        <div className="form-control dates mb-2">
+                                            <div onClick={toggleExpand} style={{ cursor: "pointer" }}>
+                                                <strong>{expandedDates ? "Close upcoming Start Dates" : "Show upcoming Start Dates"}</strong>
+                                            </div>
+
+                                            <div
+                                                className={`collapsible ${expandedDates ? "expanded" : ""}`}
+                                                style={{
+                                                    maxHeight: expandedDates ? "500px" : "0",
+                                                    overflow: "hidden",
+                                                    transition: "max-height 0.3s ease-in-out",
+                                                }}
+                                            >
+                                                <ul>
+                                                    {startDates.map((date, index) => (
+                                                        <li key={index}>{formatViceDate(date)}</li>
+                                                    ))}
+                                                </ul>
+                                            </div>
                                         </div>
                                         <div className="form-control mb-2">
                                             <strong>Status:</strong>
@@ -378,7 +409,7 @@ const PlaceDetails: React.FC = () => {
 
                                             </div>
                                         )}
-                                        {currentOrder.type_ship === "one_time" ? (
+                                        {currentOrder.type_ship === "one_time" && (
                                             <>
                                                 <div className="form-control mb-2">
                                                     <strong>Pickup Date:</strong> {currentOrder.date_pickup}
@@ -387,10 +418,6 @@ const PlaceDetails: React.FC = () => {
                                                     <strong>Delivery Date:</strong> {currentOrder.date_delivery}
                                                 </div>
                                             </>
-                                        ) : (
-                                            <div className="form-control mb-2">
-                                                <strong>Start day:</strong> {currentOrder.date_start_day}
-                                            </div>
                                         )}
 
                                         <div className="form-control mb-2">
@@ -410,7 +437,7 @@ const PlaceDetails: React.FC = () => {
                                         onClick={() => handleStopOrder(currentOrder!.id)}
                                     >
                                         <FontAwesomeIcon icon={faPowerOff} className="icon" />
-                                        <span className="ms-2">stop order</span>
+                                        <span className="ms-2">cancel this order</span>
                                     </button>
 
                                 </div>
