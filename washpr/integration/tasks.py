@@ -226,7 +226,7 @@ def send_orders_task():
                 external_id = item["external_id"]
 
                 # Преобразуем timestamp в формат DD-MM-YYYY
-                date_str = datetime.utcfromtimestamp(time_planned).strftime('%d%m%Y')
+                date_str = datetime.utcfromtimestamp(time_planned).strftime('%d%m%y')
 
                 # Извлекаем число после "/"
                 try:
@@ -246,7 +246,7 @@ def send_orders_task():
     orders_by_day = defaultdict(list)
 
     for order in orders:
-        order_date = datetime.utcfromtimestamp(order.rp_time_planned).strftime('%d%m%Y')
+        order_date = datetime.utcfromtimestamp(order.rp_time_planned).strftime('%d%m%y')
         orders_by_day[order_date].append(order)
 
     # 🔽 Сортируем заказы в каждом дне по id
@@ -264,7 +264,7 @@ def send_orders_task():
             print("-" * 30)  # Разделитель
 
     # for order in orders:
-            time_planned = datetime.utcfromtimestamp(order.rp_time_planned).strftime('%d%m%Y')
+            time_planned = datetime.utcfromtimestamp(order.rp_time_planned).strftime('%d%m%y')
             # check if other orders for this date
             if time_planned in max_external_number_by_day:
                 # number for order
