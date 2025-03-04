@@ -76,18 +76,15 @@ const PlaceDetails: React.FC = () => {
     const [startDates, setStartDates] = useState<any>(null);
     const [expandedDates, setExpandedDates] = useState(false);
     const [cancelableOrders, setCancelableOrders] = useState(false); // to check if order longer 30 min
+    const [notActivePlace, setNotActivePlace] = useState(false);
 
 
     // Функция для проверки, можно ли отменять заказ
     const checkTimeElapsed = (order: Order) => {
         const now = new Date().getTime(); // Текущее время
         const orderTime = new Date(order.created_at).getTime(); // Время заказа
-        console.log("orderTime", orderTime);
-
         const timeDifference = now - orderTime; // Разница во времени (в миллисекундах)
-        console.log("Time Difference:", timeDifference);
         const thirtyMinutes = 30 * 60 * 1000; // 30 минут в миллисекундах
-
         return timeDifference >= thirtyMinutes; // Возвращает true, если прошло 30 минут
     };
 
@@ -199,6 +196,13 @@ const PlaceDetails: React.FC = () => {
                 if (response.ok) {
                     const data = await response.json();
                     setPlace(data);
+                    if (data.data_sent === false) {
+                        console.log(data.data_sent);
+                        setNotActivePlace(true);
+                        console.log('notActivePlace', notActivePlace);
+                    } else {
+                        setNotActivePlace(false)
+                    };
                     setCustomerId(data.customer);
                 } else {
                     console.error("Failed to fetch place details.");
@@ -227,7 +231,6 @@ const PlaceDetails: React.FC = () => {
     useEffect(() => {
         if (!currentOrder) return; // Если заказа нет, не запускаем таймер
 
-        console.log("Start checking order time...");
         const timer = setInterval(() => {
             if (checkTimeElapsed(currentOrder)) {
                 setCancelableOrders(true);
@@ -237,8 +240,6 @@ const PlaceDetails: React.FC = () => {
 
         return () => clearInterval(timer); // Очищаем таймер при размонтировании компонента
     }, [currentOrder]); // Зависимость — currentOrder
-
-    console.log(cancelableOrders)
 
 
     if (!place) return <p>Place not found.</p>;
@@ -353,9 +354,11 @@ const PlaceDetails: React.FC = () => {
                                                 </div>
                                             </div>
                                         </div>
+
                                         <button
                                             className="btn-submit mt-3"
                                             onClick={() => setShowOrderForm(true)}
+                                            disabled={notActivePlace}
                                         >
                                             <FontAwesomeIcon icon={faCartPlus} className="icon" />
                                             <span className="ms-3">New Order</span>

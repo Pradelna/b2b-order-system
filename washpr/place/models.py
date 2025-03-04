@@ -6,7 +6,8 @@ from integration.tasks import create_place_task
 class Place(models.Model):
     customer = models.ForeignKey(Customer, on_delete=models.CASCADE, related_name="customer_place")
     place_name = models.CharField("Place name", max_length=250)
-    active = models.BooleanField("Active", default=True)
+    active = models.BooleanField("Active", default=False)
+    data_sent = models.BooleanField("Data sent", default=False)
     rp_client_external_id = models.CharField("ItineraryClient external id", max_length=250, null=True, blank=True)
     rp_client_name = models.CharField("Customer name", max_length=250, null=True, blank=True)
     rp_client_id = models.IntegerField("ItineraryClient id", null=True, blank=True)

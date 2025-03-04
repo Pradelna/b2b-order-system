@@ -422,7 +422,9 @@ const OrderForm: React.FC<OrderFormProps> = ({ placeId, onClose, onSuccess }) =>
                       disabled={!!placeId}
                   >
                     <option value="">Select Place</option>
-                    {places.map((place) => (
+                    {places
+                        .filter((place) => place.data_sent)
+                        .map((place) => (
                         <option key={place.id} value={place.id}>
                           {place.place_name}
                         </option>
