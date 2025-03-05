@@ -47,7 +47,7 @@ const OrderSuccess: React.FC<OrderSuccessProps> = ({ newOrder, onClose }) => {
                             </>
                         ) : (
                             <>
-                            <p>Start: {order.date_start_day}</p>
+                                <p>Start: {order.date_start_day}</p>
 
                                 {/* Отображение системы */}
                                 {order.system && (

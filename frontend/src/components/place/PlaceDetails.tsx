@@ -18,10 +18,11 @@ import OrderHistory from "../order/OrderHistory";
 import OrderSuccess from "../order/OrderSuccess";
 import { fetchWithAuth } from "../account/auth.ts";
 import {Tooltip as ReactTooltip} from "react-tooltip";
-import NavButtons from "@/components/account/NavButtons.js";
+import NavButtons from "@/components/account/NavButtons";
 import {Skeleton} from "@mui/material";
-import { formatDate } from "../utils/formatDate";
-import { formatViceDate } from "../utils/formatViceDate";
+import { formatDate } from "@/components/utils/FormatDate";
+import { formatViceDate } from "@/components/utils/FormatViceDate";
+
 
 
 interface Place {
@@ -196,14 +197,12 @@ const PlaceDetails: React.FC = () => {
                 if (response.ok) {
                     const data = await response.json();
                     setPlace(data);
+                    setCustomerId(data.customer);
                     if (data.data_sent === false) {
-                        console.log(data.data_sent);
-                        setNotActivePlace(true);
-                        console.log('notActivePlace', notActivePlace);
+                        setNotActivePlace(true)
                     } else {
                         setNotActivePlace(false)
                     };
-                    setCustomerId(data.customer);
                 } else {
                     console.error("Failed to fetch place details.");
                 }
@@ -240,7 +239,6 @@ const PlaceDetails: React.FC = () => {
 
         return () => clearInterval(timer); // Очищаем таймер при размонтировании компонента
     }, [currentOrder]); // Зависимость — currentOrder
-
 
     if (!place) return <p>Place not found.</p>;
 
@@ -354,7 +352,6 @@ const PlaceDetails: React.FC = () => {
                                                 </div>
                                             </div>
                                         </div>
-
                                         <button
                                             className="btn-submit mt-3"
                                             onClick={() => setShowOrderForm(true)}

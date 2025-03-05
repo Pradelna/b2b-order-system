@@ -110,8 +110,8 @@ class UnverifiedSMTPEmailBackend(EmailBackend):
                 if self.use_tls:
                     self.connection.starttls(context=context)
                     self.connection.ehlo()
-            if self.email and self.password:
-                self.connection.login(self.email, self.password)
+            if self.username and self.password:
+                self.connection.login(self.username, self.password)
             return True
         except Exception:
             if not self.fail_silently:

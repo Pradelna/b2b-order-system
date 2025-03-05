@@ -1,7 +1,7 @@
 import { useState, useEffect, useContext } from "react";
 import { LanguageContext } from "../../context/LanguageContext";
 import { fetchWithAuth } from "../account/auth";
-import { formatViceDate} from "../utils/FormatViceDate";
+import { formatViceDate} from "@/components/utils/FormatViceDate";
 
 interface OrderFormProps {
   placeId?: string; // Может быть не передан
@@ -425,10 +425,10 @@ const OrderForm: React.FC<OrderFormProps> = ({ placeId, onClose, onSuccess }) =>
                     {places
                         .filter((place) => place.data_sent)
                         .map((place) => (
-                        <option key={place.id} value={place.id}>
-                          {place.place_name}
-                        </option>
-                    ))}
+                            <option key={place.id} value={place.id}>
+                              {place.place_name}
+                            </option>
+                        ))}
                   </select>
                 </div>
               </div>
@@ -605,7 +605,7 @@ const OrderForm: React.FC<OrderFormProps> = ({ placeId, onClose, onSuccess }) =>
                       <div className="alert alert-warning">
                         You already have orders for this month.<br />
                         You can create a new for a next month.
-                    </div>
+                      </div>
                     </div>
                   </div>
               )}

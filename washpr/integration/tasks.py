@@ -119,11 +119,13 @@ def create_client_task(customer_id):
         customer.data_sent = True
         customer.save(update_fields=["rp_client_id", "data_sent"])
 
-        subject = "Ваш аккаунт активирован"
+        create_all_place_task.delay(customer_id)
+
+        subject = "Váš účet byl aktivován"
         message = (
-            f"Здравствуйте, {customer.company_person or customer.company_name}!\n\n"
-            f"Ваш аккаунт активен и успешно создан во внешней системе.\n"
-            f"Внешний ID: {client_id}"
+            f"Dobrý den, {customer.company_person or customer.company_name}!\n\n"
+            f"Váš účet je aktivní a úspěšně vytvořen ve.\n"
+            f"Vaš ID: {client_id}"
         )
         from_email = settings.DEFAULT_FROM_EMAIL
         recipient_list = [customer.user.email]
@@ -148,34 +150,89 @@ def create_place_task(place_id):
 
     # Предполагается, что у модели Place есть внешний ключ customer
     customer = place.customer
+    if customer.active and customer.data_sent:
+        api_key = settings.EXTERNAL_API_KEY
+        api_client = RestApiClient(api_key)
+
+        client_external_id = customer.rp_client_external_id
+        # place_external_id = place.place_external_id or f"place_{place.pk}"
+        response = api_client.create_client_place(
+            client_external_id=client_external_id,
+            place_external_id=place.rp_external_id,
+            place_title=place.place_name,
+            place_country="",
+            place_city=place.rp_city,
+            place_street=place.rp_street,
+            place_number=place.rp_number,
+            place_zip=place.rp_zip,
+            contact_person_name=place.rp_person,
+            contact_person_phone=place.rp_phone,
+            contact_person_email=place.rp_email,
+            lat=None,
+            lng=None,
+        )
+        print(f"Create place response: {response}")
+        if response and "id" in response:
+            place.rp_id = response["id"]
+            place.data_sent = True
+            place.save(update_fields=["rp_id", "data_sent"])
+            return f"Place {place_id} created with remote id {response['id']}."
+        else:
+            return f"Failed to create place {place_id}."
+
+    else:
+        return f"Customer is not active yet"
+
+
+@shared_task
+def create_all_place_task(customer_id):
+    """
+    Задача отправки данных всех мест во внешнюю систему.
+    После успешного ответа обновляет модель Place, сохраняя remote_id.
+    """
+    close_old_connections()
+    from place.models import Place  # Предполагается, что модель Place в приложении place
+    try:
+        places = Place.objects.filter(customer__id=customer_id, data_sent=False)
+    except Place.DoesNotExist:
+        return f"Place with active=Flase not found."
+
     api_key = settings.EXTERNAL_API_KEY
     api_client = RestApiClient(api_key)
 
-    client_external_id = customer.rp_client_external_id
-    # place_external_id = place.place_external_id or f"place_{place.pk}"
-    response = api_client.create_client_place(
-        client_external_id=client_external_id,
-        place_external_id=place.rp_external_id,
-        place_title=place.place_name,
-        place_country="",
-        place_city=place.rp_city,
-        place_street=place.rp_street,
-        place_number=place.rp_number,
-        place_zip=place.rp_zip,
-        contact_person_name=place.rp_person,
-        contact_person_phone=place.rp_phone,
-        contact_person_email=place.rp_email,
-        lat=None,
-        lng=None,
-    )
-    print(f"Create place response: {response}")
-    if response and "id" in response:
-        place.rp_id = response["id"]
-        place.active = True
-        place.save(update_fields=["rp_id", "active"])
-        return f"Place {place_id} created with remote id {response['id']}."
-    else:
-        return f"Failed to create place {place_id}."
+    result = []
+
+
+    if len(places) != 0:
+        for place in places:
+            customer = place.customer
+            client_external_id = customer.rp_client_external_id
+            response = api_client.create_client_place(
+                client_external_id=place.customer.rp_client_external_id,
+                place_external_id=place.rp_external_id,
+                place_title=place.place_name,
+                place_country="",
+                place_city=place.rp_city,
+                place_street=place.rp_street,
+                place_number=place.rp_number,
+                place_zip=place.rp_zip,
+                contact_person_name=place.rp_person,
+                contact_person_phone=place.rp_phone,
+                contact_person_email=place.rp_email,
+                lat=None,
+                lng=None,
+            )
+            print(f"Create place response: {response}")
+            if response and "id" in response:
+                place.rp_id = response["id"]
+                place.data_sent = True
+                place.save(update_fields=["rp_id", "data_sent"])
+                result.append(f"✅ Place {place.place_name} created with remote id {response['id']}.")
+            else:
+                result.append(f"❌ Failed to create place {place.place_name}.")
+
+    return result
+
 
 
 @shared_task

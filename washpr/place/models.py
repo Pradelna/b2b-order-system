@@ -6,7 +6,7 @@ from integration.tasks import create_place_task
 class Place(models.Model):
     customer = models.ForeignKey(Customer, on_delete=models.CASCADE, related_name="customer_place")
     place_name = models.CharField("Place name", max_length=250)
-    active = models.BooleanField("Active", default=False)
+    active = models.BooleanField("Active", default=True)
     data_sent = models.BooleanField("Data sent", default=False)
     rp_client_external_id = models.CharField("ItineraryClient external id", max_length=250, null=True, blank=True)
     rp_client_name = models.CharField("Customer name", max_length=250, null=True, blank=True)
@@ -43,9 +43,9 @@ class Place(models.Model):
             # Можно выйти, чтобы избежать повторного сохранения сразу после создания
             return
 
-        # Если объект существует, но еще не отправлен (active == False)
+        # Если объект существует, но еще не отправлен (data_sent == False)
         # и при этом клиент активен, запускаем задачу отправки
-        if self.customer.active and not self.active:
+        if self.customer.active and not self.data_sent:
             super().save(*args, **kwargs)  # Сохраняем изменения
             # from integration.tasks import create_place_task
             create_place_task.delay(self.pk)

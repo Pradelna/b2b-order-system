@@ -12,8 +12,8 @@ import HeaderAccount from "../HeaderAccount";
 import NavButtons from "../account/NavButtons";
 import Footer from "../Footer";
 import {Skeleton} from "@mui/material";
-import { formatDate } from "../utils/formatDate";
-import {formatViceDate} from "../utils/FormatViceDate";
+import { formatDate } from "@/components/utils/FormatDate";
+import { formatViceDate } from "@/components/utils/FormatViceDate";
 
 interface Order {
     id: number;
@@ -170,24 +170,24 @@ const AllOrderHistory: React.FC = () => {
                                                                 <p><strong>Regular repeating order</strong></p>
                                                                 {/* Type of Shipping */}
                                                                 <p><strong>Type of Shipping: </strong>
-                                                                {order.type_ship === "quick_order" && (<>
-                                                                    {currentData.order?.quick}
-                                                                </>)}
-                                                                {order.type_ship === "pickup_ship_one" && (<>
-                                                                    {currentData.order?.type_sipping_clear_for_dirty}
-                                                                </>)}
-                                                                {order.type_ship === "pickup_ship_dif" && (<>
-                                                                    {currentData.order?.type_sipping_1_in_3}
-                                                                </>)}</p>
+                                                                    {order.type_ship === "quick_order" && (<>
+                                                                        {currentData.order?.quick}
+                                                                    </>)}
+                                                                    {order.type_ship === "pickup_ship_one" && (<>
+                                                                        {currentData.order?.type_sipping_clear_for_dirty}
+                                                                    </>)}
+                                                                    {order.type_ship === "pickup_ship_dif" && (<>
+                                                                        {currentData.order?.type_sipping_1_in_3}
+                                                                    </>)}</p>
                                                             </>
-                                                            ) : (
+                                                        ) : (
                                                             <>
                                                                 {/* if order is one time */}
                                                                 {order.type_ship === "quick_order" ? (<>
                                                                     {currentData.order?.quick}
                                                                 </>) : (
                                                                     <>
-                                                                    {currentData.order?.one_time || "one time order"}
+                                                                        {currentData.order?.one_time || "one time order"}
                                                                     </>
                                                                 )}
                                                             </>
