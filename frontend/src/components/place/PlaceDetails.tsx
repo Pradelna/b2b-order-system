@@ -412,10 +412,20 @@ const PlaceDetails: React.FC = () => {
                                         </div>
                                         <div className="form-control mb-2">
                                             <strong>Status:</strong>
-                                            {currentOrder.rp_status === 0 && (" New order 0")}
-                                            {currentOrder.rp_status === 1 && (" In progress 1")}
-                                            {currentOrder.rp_status === 2 && (" In progress 2")}
-                                            {currentOrder.rp_status === 3 && (" In progress 3")}
+                                            {order.rp_status === 0 && (" Nová")}
+                                            {order.rp_status === 1 && (" In progress 1")}
+                                            {order.rp_status === 2 && (" Přiřazeno")}
+                                            {order.rp_status === 3 && (" V procesu")}
+                                            {order.rp_status === 4 && (" Dokončeno")}
+                                            {order.rp_status === 5 && (" Complited 5")}
+                                            {order.rp_status === 6 && (" Ověřeno")}
+                                            {order.rp_status === 7 && (" Odmítnuto")}
+                                            {order.rp_status === 8 && (" Neznámý status")}
+                                            {order.rp_status === 9 && (" Odloženo")}
+                                            {order.rp_status === 10 && (" Storno")}
+                                            {order.rp_status === 11 && (" K fakturaci")}
+                                            {order.rp_status === 12 && (" Čeká na díl")}
+                                            {order.rp_status === 13 && (" Marný výjezd")}
                                         </div>
                                         <div className="form-control mb-2">
                                             <strong>Type of Shipping:</strong>

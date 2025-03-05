@@ -170,7 +170,6 @@ const OrderForm: React.FC<OrderFormProps> = ({ placeId, onClose, onSuccess }) =>
       date_pickup: e.target.value,
     }));
     setFirstStartForm(false);
-    console.log("handlePickupChange", firstStartForm);
   };
 
   // this maybe no needs
@@ -255,7 +254,6 @@ const OrderForm: React.FC<OrderFormProps> = ({ placeId, onClose, onSuccess }) =>
             deliveryDate = addWorkingDays(pickupDate, 2);
           }
           updatedData.date_delivery = deliveryDate.toISOString().split("T")[0];
-          console.log(updatedData.date_delivery);
           updatedData.monday = false;
           updatedData.tuesday = false;
           updatedData.wednesday = false;

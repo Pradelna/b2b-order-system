@@ -479,6 +479,7 @@ def create_orders_task():
                 'delivery': True,
                 'pickup': False,
                 'group_pair_id': order.group_pair_id,
+                'rp_problem_description': "delivery",
             })
             new_order = Order(**base_order_data)
             new_order.save()
@@ -487,3 +488,52 @@ def create_orders_task():
         order.save(update_fields=["processed"])
     return results
 
+
+@shared_task
+def update_orders_task():
+    """
+    Update status order
+    """
+    api_key = settings.EXTERNAL_API_KEY
+    api_client = RestApiClient(api_key)
+    url = "https://online.auto-gps.eu/cnt/apiItinerary/contractList"
+    params = {
+        "show_closed": 0,
+        "last_status_change": 86400,
+        "limit": 300,
+        "offset": 0,
+    }
+    orders_data_from_rp = [] # list for data from route plane
+    success_get = False # for ensure if request is success
+    try:
+        response = api_client.call_api(url, http_method="GET", params=params)
+        # print("API Response:", response)
+        orders_data_from_rp = response
+        success_get = True
+    except requests.exceptions.RequestException as e:
+        print("API Request failed:", e)
+
+    if success_get: # request is success
+        if orders_data_from_rp: # list with data is not empty
+            close_old_connections()
+            from order.models import Order
+            for item in orders_data_from_rp:
+                external_id = item["external_id"]
+                try:
+                    order = Order.objects.get(rp_contract_external_id=external_id)
+                    print(f"order: {order.rp_contract_external_id}")
+                    print(item["problem_description"])
+                    order.rp_problem_description = item["problem_description"]
+                    order.rp_time_realization = item["time_realization"]
+                    print(f"order: {order.rp_problem_description }")
+                    order.rp_status = item["status"]
+                    print(f"order status: {order.rp_status }")
+                    order.save(update_fields=["rp_problem_description", "rp_status", "rp_time_realization"])
+                    print(f"DONE order: {order.id }")
+                except:
+                    print(f"Order {external_id} not found.")
+
+        else:
+            return "order_data_from_rp is empty"
+    else:
+        return "Request doesn't work"

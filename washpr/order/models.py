@@ -150,14 +150,6 @@ class Order(models.Model):
             ])
             return
 
-        # Если объект существует, но еще не отправлен (active == False)
-        # и при этом клиент активен, запускаем задачу отправки
-        # if self.place.active and not self.active:
-        #     super().save(*args, **kwargs)
-        #     # self.active = True
-        #     super().save(update_fields=['active'])
-        #     return
-
         super().save(*args, **kwargs)
 
     def __str__(self):

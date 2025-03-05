@@ -17,10 +17,15 @@ app.conf.beat_schedule = {
     'send-orders-every-hour': {
         'task': 'integration.tasks.send_orders_task',
         # 'schedule': crontab(minute=0, hour='4-23'),
-        'schedule': crontab(minute='*/2'),
+        'schedule': crontab(minute='*/30'),
     },
     'create-orders-every-hour': {
         'task': 'integration.tasks.create_orders_task',
+        # 'schedule': crontab(minute=0, hour='4-23'),
+        'schedule': crontab(minute='*/30'),
+    },
+    'update-orders-every-hour': {
+        'task': 'integration.tasks.update_orders_task',
         # 'schedule': crontab(minute=0, hour='4-23'),
         'schedule': crontab(minute='*/1'),
     },

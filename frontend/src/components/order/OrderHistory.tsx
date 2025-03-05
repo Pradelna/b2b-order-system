@@ -209,11 +209,20 @@ const OrderHistory: React.FC<OrderHistoryProps> = ({ placeId, orders = [], setOr
                                                         <>
                                                             <FontAwesomeIcon icon={faCheckCircle} style={{ color: "#00aab7", height: "18px" }}/>
                                                             <strong className="ms-2">
-                                                                {order.rp_status === 0 && (" New order 0")}
+                                                                {order.rp_status === 0 && (" Nová")}
                                                                 {order.rp_status === 1 && (" In progress 1")}
-                                                                {order.rp_status === 2 && (" In progress 2")}
-                                                                {order.rp_status === 3 && (" In progress 3")}
-                                                                {order.rp_status === 4 && (" Complited 4")}
+                                                                {order.rp_status === 2 && (" Přiřazeno")}
+                                                                {order.rp_status === 3 && (" V procesu")}
+                                                                {order.rp_status === 4 && (" Dokončeno")}
+                                                                {order.rp_status === 5 && (" Complited 5")}
+                                                                {order.rp_status === 6 && (" Ověřeno")}
+                                                                {order.rp_status === 7 && (" Odmítnuto")}
+                                                                {order.rp_status === 8 && (" Neznámý status")}
+                                                                {order.rp_status === 9 && (" Odloženo")}
+                                                                {order.rp_status === 10 && (" Storno")}
+                                                                {order.rp_status === 11 && (" K fakturaci")}
+                                                                {order.rp_status === 12 && (" Čeká na díl")}
+                                                                {order.rp_status === 13 && (" Marný výjezd")}
                                                             </strong>
                                                         </>
                                                     )}
@@ -259,9 +268,14 @@ const OrderHistory: React.FC<OrderHistoryProps> = ({ placeId, orders = [], setOr
                                                 )}
                                                 <p><strong>Pickup Date:</strong> {formatViceDate(order.date_pickup)}</p>
                                                 <p><strong>Delivery Date:</strong> {formatViceDate(order.date_delivery)}</p>
-                                                {!order.rp_time_planned && (
+                                                {order.rp_time_planned && (
                                                     <p>
-                                                        <strong>Realization Date:</strong> {formatDate(order.rp_time_planned) || " No information"}
+                                                        <strong>Planned date:</strong> {formatDate(order.rp_time_planned) || " No information"}
+                                                    </p>
+                                                )}
+                                                {order.rp_time_realization && (
+                                                    <p>
+                                                        <strong>Realization date:</strong> {formatDate(order.rp_time_realization) || " No information"}
                                                     </p>
                                                 )}
                                             </div>
