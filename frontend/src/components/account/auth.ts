@@ -43,6 +43,8 @@ export const fetchWithAuth = async (url: string, options: FetchOptions = {}): Pr
     // Check if the request body is FormData
     const isFormData = options.body instanceof FormData;
 
+    // Определяем метод (по умолчанию GET)
+    const method = (options.method || "GET").toUpperCase();
     // Prepare headers
     const headers: HeadersInit = {
         ...options.headers,
@@ -50,7 +52,7 @@ export const fetchWithAuth = async (url: string, options: FetchOptions = {}): Pr
     };
 
     // Add Content-Type header if the body is not FormData
-    if (!isFormData) {
+    if (!isFormData && !headers["Content-Type"] && !["GET", "HEAD"].includes(method)) {
         headers["Content-Type"] = "application/json";
     }
 
@@ -58,6 +60,7 @@ export const fetchWithAuth = async (url: string, options: FetchOptions = {}): Pr
         // Perform the initial request
         let response = await fetch(url, {
             ...options,
+            method,
             headers,
         });
 
@@ -73,12 +76,13 @@ export const fetchWithAuth = async (url: string, options: FetchOptions = {}): Pr
                     Authorization: `Bearer ${newToken}`,
                 };
 
-                if (!isFormData) {
-                    retryHeaders["Content-Type"] = "application/json";
+                if (!isFormData && !headers["Content-Type"] && !["GET", "HEAD"].includes(method)) {
+                    headers["Content-Type"] = "application/json";
                 }
 
                 response = await fetch(url, {
                     ...options,
+                    method,
                     headers: retryHeaders,
                 });
             }

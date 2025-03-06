@@ -1,7 +1,7 @@
 import React, {useState, useEffect, useContext} from "react";
 import { LanguageContext } from "../../context/LanguageContext";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { faTruck, faFileLines, faCheckCircle, faBan } from "@fortawesome/free-solid-svg-icons";
+import { faTruck, faFileLines, faCheckCircle, faBan, faFileImage } from "@fortawesome/free-solid-svg-icons";
 import { fetchWithAuth } from "../account/auth.ts";
 import { Tooltip as ReactTooltip } from "react-tooltip";
 import {Form} from "react-router-dom";
@@ -35,6 +35,7 @@ const OrderHistory: React.FC<OrderHistoryProps> = ({ placeId, orders = [], setOr
     const [forceWait, setForceWait] = useState<boolean>(true);
     const BASE_URL = import.meta.env.VITE_API_URL;
     const { currentData } = useContext(LanguageContext);
+    const [orderPhotos, setOrderPhotos] = useState<OrderPhoto[]>([]);
 
     // Fetch orders from the API
     const fetchOrders = async () => {
@@ -57,6 +58,25 @@ const OrderHistory: React.FC<OrderHistoryProps> = ({ placeId, orders = [], setOr
         }
     };
 
+    // get photo for orders
+    const fetchOrderPhotos = async () => {
+        try {
+            // console.log("Fetching orders for place ID", placeId);
+            const response = await fetchWithAuth(`${BASE_URL}/order/photos/`);
+
+            if (response.ok) {
+                const data = await response.json();
+                setOrderPhotos(data);
+            } else {
+                console.error("Failed to fetch photos");
+            }
+        } catch (error) {
+            console.error("Error fetching photos:", error);
+        } finally {
+            setLoading(false);
+        }
+    };
+
 
     // Load more orders when the user clicks "More"
     const loadMoreOrders = () => {
@@ -74,7 +94,7 @@ const OrderHistory: React.FC<OrderHistoryProps> = ({ placeId, orders = [], setOr
         }));
     };
 
-
+    // cancel order
     const handleCancelOrder = async (orderId: number) => {
         if (window.confirm("Are you sure you want to cancel this order?")) {
             try {
@@ -100,6 +120,42 @@ const OrderHistory: React.FC<OrderHistoryProps> = ({ placeId, orders = [], setOr
         }
     };
 
+    // downloading report images
+    const downloadFile = async (fileId: string) => {
+        try {
+            const response = await fetchWithAuth(`${BASE_URL}/order/photos/download/${fileId}/`);
+
+            if (!response.ok) {
+                throw new Error("Ошибка при скачивании файла");
+            }
+
+            // Получаем Blob из ответа
+            const blob = await response.blob();
+
+            // Извлекаем имя файла из заголовка Content-Disposition
+            let fileName = `${fileId}.bin`; // значение по умолчанию
+            const contentDisposition = response.headers.get("Content-Disposition");
+            if (contentDisposition && contentDisposition.indexOf("filename=") !== -1) {
+                const fileNameMatch = contentDisposition.match(/filename="?([^"]+)"?/);
+                if (fileNameMatch && fileNameMatch[1]) {
+                    fileName = fileNameMatch[1];
+                }
+            }
+
+            // Создаем временный URL для Blob и инициируем скачивание
+            const url = window.URL.createObjectURL(blob);
+            const a = document.createElement("a");
+            a.href = url;
+            a.download = fileName;
+            document.body.appendChild(a);
+            a.click();
+            document.body.removeChild(a);
+            window.URL.revokeObjectURL(url);
+        } catch (error) {
+            console.error("Error of downloading file:", error);
+        }
+    };
+
     // check if order is old then 30 minut
     useEffect(() => {
         const checkCancelableOrders = () => {
@@ -117,6 +173,14 @@ const OrderHistory: React.FC<OrderHistoryProps> = ({ placeId, orders = [], setOr
         const interval = setInterval(checkCancelableOrders, 60000); // Проверять каждую минуту
         return () => clearInterval(interval);
     }, [orders]);
+
+    useEffect(() => {
+        fetchOrderPhotos();
+    }, []);
+
+    useEffect(() => {
+        // console.log("Re-render triggered, ordersPhotos:", orderPhotos);
+    }, [orderPhotos]);
 
     useEffect(() => {
         if (!placeId) {
@@ -278,6 +342,7 @@ const OrderHistory: React.FC<OrderHistoryProps> = ({ placeId, orders = [], setOr
                                                         <strong>Realization date:</strong> {formatDate(order.rp_time_realization) || " No information"}
                                                     </p>
                                                 )}
+
                                             </div>
                                         )}
                                         {/* Кнопка отмены заказа (только если заказ можно отменить) */}
@@ -292,6 +357,43 @@ const OrderHistory: React.FC<OrderHistoryProps> = ({ placeId, orders = [], setOr
                                                 Cancel Order
                                             </button>
                                         )}
+
+                                        <div className="image-icon-container">
+                                            <div className="image-icon-position">
+                                        {orderPhotos.map((photo, index) => {
+                                            const order = orders.find((order) => order.id === photo.order_id);
+                                            return (
+                                                <div key={photo.id}>
+                                                    {order && (
+                                                        <>
+                                                            <div
+                                                                className="image-icon"
+                                                                style={{ right: `${68 * index}px` }}
+                                                            >
+                                                                <FontAwesomeIcon
+                                                                    icon={faFileImage}
+                                                                    data-tooltip-id={`image-tooltip-${photo.id}`}
+                                                                    style={{ cursor: "pointer" }}
+                                                                    onClick={() => downloadFile(photo.file_id)}
+                                                                />
+                                                                <ReactTooltip
+                                                                    id={`image-tooltip-${photo.id}`}
+                                                                    place="top"
+                                                                    content="Download report photo"
+                                                                    effect="solid"
+                                                                    className="custom-tooltip"
+                                                                />
+                                                            </div>
+                                                            {/*<p>Order ID: {order.id}</p>*/}
+                                                            {/*<p>Photo ID: {photo.id}</p>*/}
+                                                            {/*<p>{photo.file_id} </p>*/}
+                                                        </>
+                                                    )}
+                                                </div>
+                                            );
+                                        })}
+                                            </div>
+                                        </div>
 
                                     </div>
                                 ))}

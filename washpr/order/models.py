@@ -180,3 +180,14 @@ class ReportFile(models.Model):
 
     def __str__(self):
         return f"File {self.file.name} for Report {self.report.id}"
+
+
+class PhotoReport(models.Model):
+    order = models.ForeignKey(Order, on_delete=models.CASCADE, related_name="photo_reports")
+    file_id = models.IntegerField("File ID")
+    name = models.CharField("File name", max_length=250, blank=True, null=True)
+    mime = models.CharField("File mime", max_length=250, blank=True, null=True)
+    uploaded_at = models.DateTimeField(auto_now_add=True)
+
+    def __str__(self):
+        return f"File {self.file_id} for order {self.order.rp_contract_external_id}"

@@ -1,6 +1,9 @@
+import os
+
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.db.models import Q
 from django.db.models.expressions import result
+from django.http import HttpResponse, Http404
 from rest_framework.decorators import api_view, permission_classes
 from rest_framework.permissions import IsAuthenticated
 from rest_framework.response import Response
@@ -9,9 +12,13 @@ from rest_framework import status, permissions, generics
 from place.models import Place
 from rest_framework.views import APIView
 
-from .models import Order, OrderReport
-from .serializers import OrderSerializer, GetOrderSerializer, OrderReportSerializer, CurrentOrderSerializer
+from .models import Order, OrderReport, PhotoReport
+from .serializers import OrderSerializer, GetOrderSerializer, OrderReportSerializer, CurrentOrderSerializer, \
+    PhotoReportSerializer
 from datetime import datetime
+
+from integration.tasks import RestApiClient
+from washpr import settings
 
 
 def convert_date_to_unix(date_str):
@@ -144,6 +151,59 @@ def update_order(request, order_id):
         serializer.save()
         return Response(serializer.data)
     return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
+
+@api_view(['GET'])
+@permission_classes([IsAuthenticated])
+def get_photo_reports_orders(request):
+    try:
+        user = request.user
+        photos = PhotoReport.objects.filter(order__user=user)
+        serializer = PhotoReportSerializer(photos, many=True)
+        return Response(serializer.data, status=status.HTTP_200_OK)
+    except Exception as e:
+        return Response({"error": str(e)}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+
+
+
+@api_view(['GET'])
+@permission_classes([IsAuthenticated])
+def download_file_view(request, file_id: int):
+    # Получаем объект PhotoReport по file_id
+    try:
+        photo = PhotoReport.objects.get(file_id=file_id)
+    except PhotoReport.DoesNotExist:
+        raise Http404("PhotoReport с таким file_id не найден.")
+
+    # Извлекаем расширение из исходного имени файла
+    original_name = photo.name  # например, "020325/7.jpg"
+    _, extension = os.path.splitext(original_name)
+    extension = extension.lstrip('.') or "bin"  # если расширения нет, подставляем дефолтное
+
+    # Формируем новое имя файла, используя file_id и извлечённое расширение
+    new_file_name = f"{file_id}.{extension}"
+
+    # Запрашиваем файл из внешнего API
+    url = "https://online.auto-gps.eu/cnt/apiItinerary/document"
+    api_key = settings.EXTERNAL_API_KEY
+    api_client = RestApiClient(api_key)
+    params = {"id": file_id}
+
+    try:
+        response = api_client.call_api(url, http_method="GET", params=params, raw=True)
+        response.raise_for_status()
+    except Exception as exc:
+        raise Http404(f"Не удалось получить файл из внешнего API: {str(exc)}")
+
+    # Определяем MIME-тип: берем его из ответа или из photo.mime, если не пришёл
+    content_type = response.headers.get("Content-Type", photo.mime or "application/octet-stream")
+
+    # Формируем HTTP-ответ с заголовком Content-Disposition для скачивания файла
+    django_response = HttpResponse(response.content, content_type=content_type)
+    django_response["Content-Disposition"] = f'attachment; filename="{new_file_name}"'
+    django_response["Access-Control-Expose-Headers"] = "Content-Disposition"
+
+    return django_response
 
 
 class UserReportListView(generics.ListAPIView, LoginRequiredMixin):

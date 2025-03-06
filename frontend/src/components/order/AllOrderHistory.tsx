@@ -4,10 +4,10 @@ import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import {
     faTruck,
     faFileLines,
-    faBan, faCheckCircle
+    faBan, faCheckCircle, faFileImage
 } from "@fortawesome/free-solid-svg-icons";
 import { fetchWithAuth } from "../account/auth";
-import { Tooltip } from "react-tooltip";
+import {Tooltip as ReactTooltip, Tooltip} from "react-tooltip";
 import HeaderAccount from "../HeaderAccount";
 import NavButtons from "../account/NavButtons";
 import Footer from "../Footer";
@@ -35,6 +35,62 @@ const AllOrderHistory: React.FC = () => {
     const [forceWait, setForceWait] = useState<boolean>(true);
     const BASE_URL = import.meta.env.VITE_API_URL;
     const { currentData } = useContext(LanguageContext);
+    const [orderPhotos, setOrderPhotos] = useState<OrderPhoto[]>([]);
+
+    // get photo for orders
+    const fetchOrderPhotos = async () => {
+        try {
+            // console.log("Fetching orders for place ID", placeId);
+            const response = await fetchWithAuth(`${BASE_URL}/order/photos/`);
+
+            if (response.ok) {
+                const data = await response.json();
+                setOrderPhotos(data);
+            } else {
+                console.error("Failed to fetch photos");
+            }
+        } catch (error) {
+            console.error("Error fetching photos:", error);
+        } finally {
+            setLoading(false);
+        }
+    };
+
+    // downloading report images
+    const downloadFile = async (fileId: string) => {
+        try {
+            const response = await fetchWithAuth(`${BASE_URL}/order/photos/download/${fileId}/`);
+
+            if (!response.ok) {
+                throw new Error("Ошибка при скачивании файла");
+            }
+
+            // Получаем Blob из ответа
+            const blob = await response.blob();
+
+            // Извлекаем имя файла из заголовка Content-Disposition
+            let fileName = `${fileId}.bin`; // значение по умолчанию
+            const contentDisposition = response.headers.get("Content-Disposition");
+            if (contentDisposition && contentDisposition.indexOf("filename=") !== -1) {
+                const fileNameMatch = contentDisposition.match(/filename="?([^"]+)"?/);
+                if (fileNameMatch && fileNameMatch[1]) {
+                    fileName = fileNameMatch[1];
+                }
+            }
+
+            // Создаем временный URL для Blob и инициируем скачивание
+            const url = window.URL.createObjectURL(blob);
+            const a = document.createElement("a");
+            a.href = url;
+            a.download = fileName;
+            document.body.appendChild(a);
+            a.click();
+            document.body.removeChild(a);
+            window.URL.revokeObjectURL(url);
+        } catch (error) {
+            console.error("Error of downloading file:", error);
+        }
+    };
 
     //  Load More Orders
     const loadMoreOrders = () => {
@@ -73,6 +129,14 @@ const AllOrderHistory: React.FC = () => {
         const timer = setTimeout(() => setForceWait(false), 1000);
         return () => clearTimeout(timer); // Cleanup
     }, []); //  Run only once on mount
+
+    useEffect(() => {
+        fetchOrderPhotos();
+    }, []);
+
+    useEffect(() => {
+        // console.log("Re-render triggered, ordersPhotos:", orderPhotos);
+    }, [orderPhotos]);
 
     //  Set customerId AFTER orders are fetched
     useEffect(() => {
@@ -221,6 +285,44 @@ const AllOrderHistory: React.FC = () => {
                                                         )}
                                                     </div>
                                                 )}
+
+                                                <div className="image-icon-container">
+                                                    <div className="image-icon-position">
+                                                        {orderPhotos.map((photo, index) => {
+                                                            const order = orders.find((order) => order.id === photo.order_id);
+                                                            return (
+                                                                <div key={photo.id}>
+                                                                    {order && (
+                                                                        <>
+                                                                            <div
+                                                                                className="image-icon"
+                                                                                style={{ right: `${68 * index}px` }}
+                                                                            >
+                                                                                <FontAwesomeIcon
+                                                                                    icon={faFileImage}
+                                                                                    data-tooltip-id={`image-tooltip-${photo.id}`}
+                                                                                    style={{ cursor: "pointer" }}
+                                                                                    onClick={() => downloadFile(photo.file_id)}
+                                                                                />
+                                                                                <ReactTooltip
+                                                                                    id={`image-tooltip-${photo.id}`}
+                                                                                    place="top"
+                                                                                    content="Download report photo"
+                                                                                    effect="solid"
+                                                                                    className="custom-tooltip"
+                                                                                />
+                                                                            </div>
+                                                                            {/*<p>Order ID: {order.id}</p>*/}
+                                                                            {/*<p>Photo ID: {photo.id}</p>*/}
+                                                                            {/*<p>{photo.file_id} </p>*/}
+                                                                        </>
+                                                                    )}
+                                                                </div>
+                                                            );
+                                                        })}
+                                                    </div>
+                                                </div>
+
                                             </div>
                                         ))}
 

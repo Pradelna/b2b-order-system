@@ -1,6 +1,7 @@
 import json
 from collections import defaultdict
 from datetime import datetime, time, timedelta
+from django.core.files.base import ContentFile
 
 from django.contrib.messages import success
 
@@ -21,21 +22,24 @@ class RestApiClient:
         self.api_key = api_key
         self.retry_after = None
 
-    def call_api(self, url, http_method="GET", params=None):
+    def call_api(self, url, http_method="GET", params=None, raw=False):
         if self.retry_after and time.time() < self.retry_after:
             print("Rate limit exceeded. Please wait.")
             return None
 
         headers = {
             "X-API-KEY": self.api_key,
-            "accept": "application/json"
+            "accept": "*/*" if raw else "application/json"
         }
 
         try:
             response = requests.request(http_method, url, headers=headers, params=params)
             self.handle_headers(response)
             response.raise_for_status()
-            return response.json()
+            if raw:
+                return response
+            else:
+                return response.json()
         except requests.exceptions.RequestException as e:
             print(f"Request error: {e}")
             return None
@@ -507,7 +511,6 @@ def update_orders_task():
     success_get = False # for ensure if request is success
     try:
         response = api_client.call_api(url, http_method="GET", params=params)
-        # print("API Response:", response)
         orders_data_from_rp = response
         success_get = True
     except requests.exceptions.RequestException as e:
@@ -517,23 +520,118 @@ def update_orders_task():
         if orders_data_from_rp: # list with data is not empty
             close_old_connections()
             from order.models import Order
+            result = []
             for item in orders_data_from_rp:
                 external_id = item["external_id"]
                 try:
                     order = Order.objects.get(rp_contract_external_id=external_id)
-                    print(f"order: {order.rp_contract_external_id}")
-                    print(item["problem_description"])
                     order.rp_problem_description = item["problem_description"]
                     order.rp_time_realization = item["time_realization"]
-                    print(f"order: {order.rp_problem_description }")
                     order.rp_status = item["status"]
-                    print(f"order status: {order.rp_status }")
                     order.save(update_fields=["rp_problem_description", "rp_status", "rp_time_realization"])
-                    print(f"DONE order: {order.id }")
+
                 except:
                     print(f"Order {external_id} not found.")
+                    return f"Order {external_id} not found."
+
+            return result
 
         else:
             return "order_data_from_rp is empty"
     else:
         return "Request doesn't work"
+
+
+@shared_task
+def check_file_in_orders_task():
+    """
+    Check if file exists in order
+    """
+    now = datetime.now()
+    # 30 дней назад
+    past_period = now - timedelta(days=30)
+    # Два дня вперед
+    two_days_ahead = now + timedelta(days=2)
+    # Перевод в Unix timestamp (целое число секунд с 1 января 1970 года)
+    timestamp_past_period = int(past_period.timestamp())
+    timestamp_two_days_ahead = int(two_days_ahead.timestamp())
+
+    api_key = settings.EXTERNAL_API_KEY
+    api_client = RestApiClient(api_key)
+    url = "https://online.auto-gps.eu/cnt/apiItinerary/documentList"
+    params = {
+        "dateTimeFrom": timestamp_past_period,
+        "dateTimeTo": timestamp_two_days_ahead,
+    }
+    data_from_rp = [] # list for data from route plane
+    try:
+        response = api_client.call_api(url, http_method="GET", params=params)
+        data_from_rp = response
+    except requests.exceptions.RequestException as e:
+        print("API Request failed:", e)
+
+    # Если данных нет, возвращаем соответствующее сообщение
+    if not data_from_rp:
+        return "order_data_from_rp is empty"
+
+    close_old_connections()
+    from order.models import Order, PhotoReport
+    result = []
+    for item in data_from_rp[0]:
+        external_id = item.get("contractId")
+        item_id = item.get("id")
+        # Допустим, ещё есть поля name, mime и т.д.
+        name = item.get("name")
+        mime = item.get("mime")
+
+        if not external_id or not item_id:
+            # Если у нас нет contractId или id, то пропускаем
+            continue
+
+        try:
+            order = Order.objects.get(rp_contract_external_id=external_id)
+        except Order.DoesNotExist:
+            print(f"Order с rp_contract_external_id={external_id} не найден.")
+            continue
+
+        # Проверяем, есть ли уже такой file_id
+        if not PhotoReport.objects.filter(file_id=item_id).exists():
+            # Если не существует, то создаём
+            PhotoReport.objects.create(
+                order=order,
+                file_id=item_id,
+                name=name,
+                mime=mime,
+            )
+            print(f"PhotoReport создан: file_id={item_id}")
+            result.append(item_id)
+        else:
+            print(f"PhotoReport уже существует: file_id={item_id}")
+
+    return result
+
+
+@shared_task
+def download_file_from_external_api(file_id):
+    """
+    Запрашивает файл с внешнего API и сохраняет его в базе данных.
+    """
+    url = "https://online.auto-gps.eu/cnt/apiItinerary/document"
+    api_key = settings.EXTERNAL_API_KEY
+    api_client = RestApiClient(api_key)
+    params = {
+        "id": file_id,
+    }
+    try:
+        from order.models import PhotoReport
+        response = api_client.call_api(url, http_method="GET", params=params)
+        response.raise_for_status()
+
+        # Создание объекта PhotoReport
+        photo_report = PhotoReport.objects.create(file_id=file_id)
+        photo_report.file.save(f"{file_id}.jpg", ContentFile(response.content), save=True)
+
+        return f"File {file_id} downloaded successfully."
+
+    except requests.exceptions.RequestException as e:
+        return f"Failed to download file {file_id}: {str(e)}"
