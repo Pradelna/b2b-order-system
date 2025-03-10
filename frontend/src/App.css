@@ -778,7 +778,8 @@ svg.loader{
 .image-icon-container {
   position: absolute;
   top: 20px;
-  right: 86px;
+  /*right: 86px;*/
+  right: 20px;
 }
 
 .image-icon-position {
@@ -794,8 +795,6 @@ svg.loader{
   top: 0;
   right: 100px;
 }
-
-
 
 .download-invoice {
   position: absolute;
@@ -884,7 +883,9 @@ svg.loader{
 }
 
 .place-detail-page .expanded {
-  height: 220px;
+  /*height: 220px;*/
+  height: var(--card-height, 220px);
+  transition: height 0.3s ease;
 }
 
 .place-detail-page .dates .expanded {

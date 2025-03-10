@@ -1,6 +1,7 @@
 import json
 from collections import defaultdict
 from datetime import datetime, time, timedelta
+import time as ptime
 from django.core.files.base import ContentFile
 
 from django.contrib.messages import success
@@ -23,7 +24,7 @@ class RestApiClient:
         self.retry_after = None
 
     def call_api(self, url, http_method="GET", params=None, raw=False):
-        if self.retry_after and time.time() < self.retry_after:
+        if self.retry_after and ptime.time() < self.retry_after:
             print("Rate limit exceeded. Please wait.")
             return None
 
@@ -47,7 +48,7 @@ class RestApiClient:
     def handle_headers(self, response):
         if response.status_code == 429:
             retry_after = int(response.headers.get('Retry-After', 0))
-            self.retry_after = time.time() + retry_after
+            self.retry_after = ptime.time() + retry_after
             print(f"Rate limited. Retry after {retry_after} seconds.")
 
     def create_client(self, client_external_id, client_name):

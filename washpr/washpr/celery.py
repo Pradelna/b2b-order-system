@@ -17,17 +17,17 @@ app.conf.beat_schedule = {
     'send-orders-every-hour': {
         'task': 'integration.tasks.send_orders_task',
         # 'schedule': crontab(minute=0, hour='4-23'),
-        'schedule': crontab(minute='*/30'),
+        'schedule': crontab(minute='*/2'),
     },
     'create-orders-every-hour': {
         'task': 'integration.tasks.create_orders_task',
         # 'schedule': crontab(minute=0, hour='4-23'),
-        'schedule': crontab(minute='*/30'),
+        'schedule': crontab(minute='*/2'),
     },
     'update-orders-every-hour': {
         'task': 'integration.tasks.update_orders_task',
         # 'schedule': crontab(minute=0, hour='4-23'),
-        'schedule': crontab(minute='*/30'),
+        'schedule': crontab(minute='*/2'),
     },
     'update-photos-every-hour': {
         'task': 'integration.tasks.check_file_in_orders_task',

@@ -52,7 +52,7 @@ class PhotoReportSerializer(serializers.ModelSerializer):
     group_pair_id = serializers.IntegerField(source='order.group_pair_id', read_only=True)
     class Meta:
         model = PhotoReport
-        fields = ["id", "order_id", "file_id", "group_pair_id", "uploaded_at"]
+        fields = ["id", "order_id", "file_id", "group_pair_id", "mime", "uploaded_at"]
 
 
 class DownloadPhotoReportSerializer(serializers.ModelSerializer):

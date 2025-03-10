@@ -1,6 +1,7 @@
 import os
 
 from django.contrib.auth.mixins import LoginRequiredMixin
+from django.core.exceptions import PermissionDenied
 from django.db.models import Q
 from django.db.models.expressions import result
 from django.http import HttpResponse, Http404
@@ -174,6 +175,9 @@ def download_file_view(request, file_id: int):
         photo = PhotoReport.objects.get(file_id=file_id)
     except PhotoReport.DoesNotExist:
         raise Http404("PhotoReport с таким file_id не найден.")
+
+    if photo.order.user != request.user:
+        raise PermissionDenied("User doesn't have permission to download photos.")
 
     # Извлекаем расширение из исходного имени файла
     original_name = photo.name  # например, "020325/7.jpg"
