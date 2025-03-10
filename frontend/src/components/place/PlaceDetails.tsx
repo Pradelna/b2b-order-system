@@ -133,8 +133,14 @@ const PlaceDetails: React.FC = () => {
         if (window.confirm("Are you sure you want to delete this place?")) {
             try {
                 const response = await fetchWithAuth(
-                    `${BASE_URL}/place/delete/${id}/`,
-                    { method: "DELETE" }
+                    `${BASE_URL}/place/edit/${place.id}/`,
+                    {
+                        method: "PUT",
+                        headers: {
+                            "Content-Type": "application/json",
+                        },
+                        body: JSON.stringify({ "deleted": true }),
+                    }
                 );
                 if (response.ok) {
                     navigate("/account", {

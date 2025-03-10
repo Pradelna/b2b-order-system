@@ -47,6 +47,7 @@ def edit_place(request, place_id):
     data['id'] = place.id
     serializer = PlaceSerializer(instance=place, data=data, partial=True)
     if serializer.is_valid():
+        # print(serializer.validated_data)
         serializer.save()
         return Response(serializer.data, status=status.HTTP_201_CREATED)
     return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
@@ -58,7 +59,7 @@ def get_list_place(request):
     try:
         # Получаем текущего пользователя
         customer = Customer.objects.get(user=request.user)
-        places = Place.objects.filter(Q(customer=customer) & Q(active=True))
+        places = Place.objects.filter(customer=customer, active=True, deleted=False)
         serializer = PlaceSerializer(places, many=True)
         return Response(serializer.data)
     except Place.DoesNotExist:
