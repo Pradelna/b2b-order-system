@@ -1,7 +1,9 @@
 import json
 from collections import defaultdict
-from datetime import datetime, time, timedelta
+from datetime import datetime, time, timedelta, date
 import time as ptime
+
+from dateutil.relativedelta import relativedelta
 from django.core.files.base import ContentFile
 
 from django.contrib.messages import success
@@ -323,17 +325,17 @@ def send_orders_task():
             time_planned = datetime.utcfromtimestamp(order.rp_time_planned).strftime('%d%m%y')
             # check if other orders for this date
             if time_planned in max_external_number_by_day:
-                print(f"{time_planned} / {max_external_number_by_day[time_planned]} already exist")
+                # print(f"{time_planned} / {max_external_number_by_day[time_planned]} already exist")
                 # number for order
                 next_number_order = max_external_number_by_day[time_planned] + 1
                 # name of contract_external_id
                 contract_external_id = time_planned + f"/{next_number_order}"
-                print(f"new number -> {contract_external_id}")
+                # print(f"new number -> {contract_external_id}")
             else:
-                print(f"{time_planned} -> free")
+                # print(f"{time_planned} -> free")
                 next_number_order = 1
                 contract_external_id = time_planned + f"/{next_number_order}"
-                print(f"new number -> {contract_external_id}")
+                # print(f"new number -> {contract_external_id}")
             # add new number to dictionary to check next order
             max_external_number_by_day[time_planned] = next_number_order
             # Формируем payload для заказа. Приводим поля к нужному типу,
@@ -356,9 +358,9 @@ def send_orders_task():
             }
             # URL для отправки заказа
             url = "https://online.auto-gps.eu/cnt/apiItinerary/serviceOrder"
-            print(f"Sending order {order.pk} with payload: {payload}")
+            # print(f"Sending order {order.pk} with payload: {payload}")
             response = api_client.call_api(url, http_method="POST", params=payload)
-            print(response)
+            # print(response)
             if response and "id" in response:
                 order.active = True
                 order.rp_id = response["id"]
@@ -386,7 +388,7 @@ def create_orders_task():
     # Выбираем заказы, не отправленные ранее и созданные более 35 минут назад
     time_threshold = timezone.now() - timedelta(minutes=10)
     orders = Order.objects.filter(processed=False, canceled=False, main_order=True, created_at__lte=time_threshold)
-    print(len(orders), orders)
+    # print(len(orders), orders)
 
     results = []
 
@@ -532,7 +534,7 @@ def update_orders_task():
                     order.save(update_fields=["rp_problem_description", "rp_status", "rp_time_realization"])
 
                 except:
-                    print(f"Order {external_id} not found.")
+                    # print(f"Order {external_id} not found.")
                     return f"Order {external_id} not found."
 
             return result
@@ -592,7 +594,7 @@ def check_file_in_orders_task():
         try:
             order = Order.objects.get(rp_contract_external_id=external_id)
         except Order.DoesNotExist:
-            print(f"Order с rp_contract_external_id={external_id} не найден.")
+            # print(f"Order с rp_contract_external_id={external_id} не найден.")
             continue
 
         # Проверяем, есть ли уже такой file_id
@@ -604,10 +606,11 @@ def check_file_in_orders_task():
                 name=name,
                 mime=mime,
             )
-            print(f"PhotoReport создан: file_id={item_id}")
+            # print(f"PhotoReport создан: file_id={item_id}")
             result.append(item_id)
         else:
-            print(f"PhotoReport уже существует: file_id={item_id}")
+            # print(f"PhotoReport уже существует: file_id={item_id}")
+            pass
 
     return result
 
@@ -636,3 +639,80 @@ def download_file_from_external_api(file_id):
 
     except requests.exceptions.RequestException as e:
         return f"Failed to download file {file_id}: {str(e)}"
+
+
+@shared_task
+def generate_order_report(user, year, month):
+    """
+    Создаёт (или обновляет) запись OrderReport за переданный год/месяц для указанного пользователя.
+    Возвращает созданный (или обновлённый) OrderReport.
+    """
+    # Начало месяца (первое число в нужном часовом поясе)
+    start_of_month_dt = datetime(year, month, 1, tzinfo=timezone.get_current_timezone())
+    # Конец месяца (последняя секунда)
+    end_of_month_dt = (start_of_month_dt + relativedelta(months=1)) - timezone.timedelta(seconds=1)
+
+    print("start_of_month_dt:", start_of_month_dt)
+    print("end_of_month_dt:", end_of_month_dt )
+    start_of_month = int(start_of_month_dt.timestamp())
+    end_of_month = int(end_of_month_dt.timestamp())
+
+    from order.models import Order, OrderReport
+
+    # Заказы пользователя за период
+    user_orders_in_month = Order.objects.filter(
+        user=user.user,
+        rp_time_planned__range=(start_of_month, end_of_month)
+    )
+    print(f"User: {user.user}")
+    print(f"user_orders_in_month={user_orders_in_month}")
+    orders = Order.objects.filter(user=user.user)
+    for order in orders:
+        print(f"Time: {order.rp_time_planned}. Start of: {start_of_month}. End of: {end_of_month}")
+
+    # report_month условимся хранить как первое число соответствующего месяца
+    report_date = date(year, month, 1)
+
+    # Создаём или получаем
+    report, created = OrderReport.objects.get_or_create(
+        customer=user,
+        report_month=report_date,
+    )
+    # Заполняем связи
+    if user_orders_in_month.exists():
+        # Заменяем все заказы на актуальный набор
+        report.orders.set(user_orders_in_month)
+    else:
+        # Если заказов не было, при желании можно очистить или ничего не делать
+        report.orders.clear()
+    return report
+
+
+@shared_task
+def generate_monthly_reports_task():
+    """
+    Создаётся раз в месяц.
+    Формирует OrderReport для каждого активного пользователя
+    за предыдущий календарный месяц.
+    """
+    # Допустим, вызываем задачу 1-го числа каждого месяца.
+    # Тогда "предыдущий месяц" - это (текущий месяц - 1).
+    now = timezone.now()
+    previous_month_date = now - relativedelta(months=1)
+
+    year = previous_month_date.year
+    month = previous_month_date.month
+
+    # year = now.year
+    # next_month_date = now + relativedelta(months=1)
+    # month = next_month_date.month
+
+    # Выбираем всех активных пользователей (стандартное Django-поле is_active)
+    from customer.models import Customer
+    active_users= Customer.objects.filter(data_sent=True, active=True)
+
+    for user in active_users:
+        print(f"Start for user {user}")
+        generate_order_report(user, year, month)
+
+    return f"Monthly reports created for {active_users.count()} active users for {year}-{month}."

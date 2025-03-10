@@ -72,8 +72,8 @@ class OrderReportSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = OrderReport
-        fields = ["id", "report_month", "created_at", "orders", "orders_count", "files", "user"]
-        read_only_fields = ['user']
+        fields = ["id", "report_month", "created_at", "orders", "orders_count", "files", "customer"]
+        read_only_fields = ['customer']
 
     def get_orders_count(self, obj):
         return obj.orders.count()
