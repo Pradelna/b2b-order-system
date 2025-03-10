@@ -186,6 +186,7 @@ const AllOrderHistory: React.FC = () => {
                                                     style={{ display: (order.rp_status === 0 && order.every_week) || (order.id === order.group_pair_id) ? "none" : "block",
                                                         '--card-height': dynamicHeight,} as React.CSSProperties}
                                                 >
+                                                    {(order.id !== order.group_pair_id) && (<>
                                                 <div className="history-icon">
                                                     <FontAwesomeIcon icon={faTruck} />
                                                 </div>
@@ -314,7 +315,7 @@ const AllOrderHistory: React.FC = () => {
                                                                 x{photos.length}
                                                             </span>
                                                                     </div>
-
+                                                                    {expandedOrders[order.id] && (
                                                                     <div style={{ display: 'flex', flexDirection: 'column' }}>
                                                                         {photos.map((photo, index) => {
                                                                             const order = orders.find((order) => order.id === photo.order_id);
@@ -332,6 +333,7 @@ const AllOrderHistory: React.FC = () => {
                                                                             );
                                                                         })}
                                                                     </div>
+                                                                    )}
 
                                                                 </div>
 
@@ -339,7 +341,7 @@ const AllOrderHistory: React.FC = () => {
 
                                                         </div>
                                                     )}
-
+                                                </>)}
                                             </div>
                                         )})}
 

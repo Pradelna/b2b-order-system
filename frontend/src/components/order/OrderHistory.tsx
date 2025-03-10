@@ -227,6 +227,7 @@ const OrderHistory: React.FC<OrderHistoryProps> = ({ placeId, orders = [], setOr
                                         style={{ display: (order.rp_status === 0 && order.every_week) || (order.id === order.group_pair_id) ? "none" : "block",
                                             '--card-height': dynamicHeight,} as React.CSSProperties}
                                     >
+                                        {(order.id !== order.group_pair_id) && (<>
                                         <div className="history-icon">
                                             <FontAwesomeIcon icon={faTruck} />
                                         </div>
@@ -388,7 +389,7 @@ const OrderHistory: React.FC<OrderHistoryProps> = ({ placeId, orders = [], setOr
                                                                 x{photos.length}
                                                             </span>
                                                         </div>
-
+                                                        {expandedOrders[order.id] && (
                                                         <div style={{ display: 'flex', flexDirection: 'column' }}>
                                                             {photos.map((photo, index) => {
                                                                 const order = orders.find((order) => order.id === photo.order_id);
@@ -406,6 +407,7 @@ const OrderHistory: React.FC<OrderHistoryProps> = ({ placeId, orders = [], setOr
                                                                 );
                                                             })}
                                                         </div>
+                                                        )}
 
                                                     </div>
 
@@ -413,16 +415,16 @@ const OrderHistory: React.FC<OrderHistoryProps> = ({ placeId, orders = [], setOr
 
                                             </div>
                                             )}
-
+                                        </>)}
                                     </div>
                                 ) // end return
-                                    }
-                                )}
-                            {hasMoreOrders && (
-                                <button onClick={loadMoreOrders} className="btn btn-history btn-link mt-3 mb-5">
-                                    More
-                                </button>
-                            )}
+                            }
+                        )}
+                                    {hasMoreOrders && (
+                                        <button onClick={loadMoreOrders} className="btn btn-history btn-link mt-3 mb-5">
+                                            More
+                                        </button>
+                                    )}
                         </div>
                     ) : (
                         <p>No order history available.</p>

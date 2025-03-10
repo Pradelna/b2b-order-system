@@ -38,7 +38,6 @@ const FileDownloadIcon: React.FC<PhotoDownloadIconProps> = ({ photo, styleData }
             const contentDisposition = response.headers.get("Content-Disposition");
             if (contentDisposition && contentDisposition.indexOf("filename=") !== -1) {
                 const fileNameMatch = contentDisposition.match(/filename="?([^"]+)"?/);
-                console.log(fileNameMatch);
                 if (fileNameMatch && fileNameMatch[1]) {
                     fileName = fileNameMatch[1];
                 }
