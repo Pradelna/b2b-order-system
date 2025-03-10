@@ -65,7 +65,7 @@ def create_order(request):
                 rp_place_title=place.place_name,
                 place=place,
                 user=request.user,
-                rp_status=0,
+                rp_status=20,
             )
             order_data = OrderSerializer(order).data
             return Response(
@@ -117,7 +117,7 @@ def get_orders(request):
 def get_current_order(request):
     try:
         user = request.user
-        orders = Order.objects.filter(place__customer__user=user, every_week=True, active=True, end_order=False)
+        orders = Order.objects.filter(place__customer__user=user, every_week=True, active=True, end_order=False, canceled=False)
         serializer = CurrentOrderSerializer(orders, many=True)
         return Response(serializer.data, status=status.HTTP_200_OK)
     except Exception as e:

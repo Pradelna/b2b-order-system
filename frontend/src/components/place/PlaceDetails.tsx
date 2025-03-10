@@ -99,7 +99,7 @@ const PlaceDetails: React.FC = () => {
             if (response.ok) {
                 const orders: Order[] = await response.json();
                 // get all repeated orders with end_order = flase
-                const repeatOrders = orders.filter((order) => order.every_week && !order.end_order);
+                const repeatOrders = orders.filter((order) => order.every_week && !order.end_order && !order.canceled);
                 // get least order id
                 const current = repeatOrders.sort((a, b) => a.id - b.id)
                     .find((order) => order.every_week && !order.end_order);
@@ -111,6 +111,7 @@ const PlaceDetails: React.FC = () => {
                 );
 
                 setCurrentOrder(current || null);
+                console.log(currentOrder);
                 setOrderHistory(history);
                 setHasMoreOrders(history.length > 10);
                 // Проверяем сразу, можно ли отменить заказ
@@ -126,6 +127,8 @@ const PlaceDetails: React.FC = () => {
             setLoading(false);
         }
     };
+
+    console.log(currentOrder);
 
 
     const handleDelete = async () => {
@@ -155,6 +158,8 @@ const PlaceDetails: React.FC = () => {
         }
     };
 
+    console.log(currentOrder);
+
     const handleStopOrder = async (orderId: number) => {
         // stop repeat order
         if (window.confirm("Are you sure you want to cancel this order?")) {
@@ -164,7 +169,7 @@ const PlaceDetails: React.FC = () => {
                     headers: {
                         "Content-Type": "application/json",
                     },
-                    body: JSON.stringify({ end_order: true, rp_status: 10, rp_customer_note: "storno" }),
+                    body: JSON.stringify({ canceled: true, rp_status: 10, rp_customer_note: "storno" }),
                 });
 
                 if (response.ok) {
@@ -397,41 +402,45 @@ const PlaceDetails: React.FC = () => {
                                             { formatDate(currentOrder.rp_time_planned)  || " None "}
                                         </div>
                                         <div className="form-control dates mb-2">
-                                            <div onClick={toggleExpand} style={{ cursor: "pointer" }}>
-                                                <strong>{expandedDates ? "Close upcoming Start Dates" : "Show upcoming Start Dates"}</strong>
-                                            </div>
+                                            {currentOrder.rp_status === 20 ? (<strong>Information is waiting for update</strong>) : (<>
+                                                <div onClick={toggleExpand} style={{ cursor: "pointer" }}>
+                                                    <strong>{expandedDates ? "Close upcoming Start Dates" : "Show upcoming Start Dates"}</strong>
+                                                </div>
 
-                                            <div
-                                                className={`collapsible ${expandedDates ? "expanded" : ""}`}
-                                                style={{
-                                                    maxHeight: expandedDates ? "500px" : "0",
-                                                    overflow: "hidden",
-                                                    transition: "max-height 0.3s ease-in-out",
-                                                }}
-                                            >
-                                                <ul>
-                                                    {startDates.map((date, index) => (
-                                                        <li key={index}>{formatViceDate(date)}</li>
-                                                    ))}
-                                                </ul>
-                                            </div>
+                                                <div
+                                                    className={`collapsible ${expandedDates ? "expanded" : ""}`}
+                                                    style={{
+                                                        maxHeight: expandedDates ? "500px" : "0",
+                                                        overflow: "hidden",
+                                                        transition: "max-height 0.3s ease-in-out",
+                                                    }}
+                                                >
+                                                    <ul>
+                                                        {startDates.map((date, index) => (
+                                                            <li key={index}>{formatViceDate(date)}</li>
+                                                        ))}
+                                                    </ul>
+                                                </div>
+                                            </>)}
+
                                         </div>
                                         <div className="form-control mb-2">
                                             <strong>Status:</strong>
-                                            {order.rp_status === 0 && (" Nová")}
-                                            {order.rp_status === 1 && (" In progress 1")}
-                                            {order.rp_status === 2 && (" Přiřazeno")}
-                                            {order.rp_status === 3 && (" V procesu")}
-                                            {order.rp_status === 4 && (" Dokončeno")}
-                                            {order.rp_status === 5 && (" Complited 5")}
-                                            {order.rp_status === 6 && (" Ověřeno")}
-                                            {order.rp_status === 7 && (" Odmítnuto")}
-                                            {order.rp_status === 8 && (" Neznámý status")}
-                                            {order.rp_status === 9 && (" Odloženo")}
-                                            {order.rp_status === 10 && (" Storno")}
-                                            {order.rp_status === 11 && (" K fakturaci")}
-                                            {order.rp_status === 12 && (" Čeká na díl")}
-                                            {order.rp_status === 13 && (" Marný výjezd")}
+                                            {currentOrder.rp_status === 20 && (" Nová")}
+                                            {currentOrder.rp_status === 0 && (" Nová")}
+                                            {currentOrder.rp_status === 1 && (" In progress 1")}
+                                            {currentOrder.rp_status === 2 && (" Přiřazeno")}
+                                            {currentOrder.rp_status === 3 && (" V procesu")}
+                                            {currentOrder.rp_status === 4 && (" Dokončeno")}
+                                            {currentOrder.rp_status === 5 && (" Complited 5")}
+                                            {currentOrder.rp_status === 6 && (" Ověřeno")}
+                                            {currentOrder.rp_status === 7 && (" Odmítnuto")}
+                                            {currentOrder.rp_status === 8 && (" Neznámý status")}
+                                            {currentOrder.rp_status === 9 && (" Odloženo")}
+                                            {currentOrder.rp_status === 10 && (" Storno")}
+                                            {currentOrder.rp_status === 11 && (" K fakturaci")}
+                                            {currentOrder.rp_status === 12 && (" Čeká na díl")}
+                                            {currentOrder.rp_status === 13 && (" Marný výjezd")}
                                         </div>
                                         <div className="form-control mb-2">
                                             <strong>Type of Shipping:</strong>

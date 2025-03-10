@@ -153,7 +153,7 @@ class Order(models.Model):
         super().save(*args, **kwargs)
 
     def __str__(self):
-        return f"Order of {self.place.customer.company_name} - {self.place.place_name} - {self.contract_external_id_for_admin}"
+        return f"Order of {self.place.customer.company_name} - {self.place.place_name} - #{self.id} - {self.contract_external_id_for_admin}"
 
     class Meta:
         verbose_name = 'Order'

@@ -377,16 +377,15 @@ def send_orders_task():
 @shared_task
 def create_orders_task():
     """
-    Задача запускается каждый час и выбирает заказы, которые:
-      - Ещё не были отправлены (reported=False)
+    Задача запускается каждый час и создает автоматически заказы на месяц или второй для одноразовых:
       - Созданы более 35 минут назад
     """
     close_old_connections()
     from order.models import Order  # Импортируем модель заказа из приложения order
 
     # Выбираем заказы, не отправленные ранее и созданные более 35 минут назад
-    time_threshold = timezone.now() - timedelta(minutes=1)
-    orders = Order.objects.filter(processed=False, main_order=True, created_at__lte=time_threshold)
+    time_threshold = timezone.now() - timedelta(minutes=10)
+    orders = Order.objects.filter(processed=False, canceled=False, main_order=True, created_at__lte=time_threshold)
     print(len(orders), orders)
 
     results = []
@@ -490,7 +489,8 @@ def create_orders_task():
             new_order.save()
             print("success")
         order.processed = True
-        order.save(update_fields=["processed"])
+        order.rp_status = 0
+        order.save(update_fields=["processed", "rp_status"])
     return results
 
 

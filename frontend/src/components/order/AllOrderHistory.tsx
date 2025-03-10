@@ -183,23 +183,31 @@ const AllOrderHistory: React.FC = () => {
                                                     key={order.id}
                                                     className={`card ${expandedOrders[order.id] ? "expanded" : ""}`}
                                                     onClick={() => toggleExpand(order.id)}
-                                                    style={{ display: (order.rp_status === 0 && order.every_week) || (order.id === order.group_pair_id) ? "none" : "block",
+                                                    style={{ display: (order.rp_status === 0 && order.every_week) || (
+                                                            order.id === order.group_pair_id &&
+                                                            order.rp_status !== 20 &&
+                                                            order.rp_status !== 10) ? "none" : "block",
                                                         '--card-height': dynamicHeight,} as React.CSSProperties}
                                                 >
-                                                    {(order.id !== order.group_pair_id) && (<>
+                                                    {(order.id !== order.group_pair_id || (order.rp_status === 20 || order.rp_status === 10)) && (<>
                                                 <div className="history-icon">
                                                     <FontAwesomeIcon icon={faTruck} />
                                                 </div>
 
                                                 <p>
-                                                    <FontAwesomeIcon icon={faCheckCircle} style={{ color: "#00aab7", height: "18px" }} />
+                                                    {(order.rp_status === 10 || order.rp_status === 7) ? (
+                                                        <FontAwesomeIcon icon={faBan} style={{ color: "red", height: "18px" }}/>
+                                                    ) : (
+                                                        <FontAwesomeIcon icon={faCheckCircle} style={{ color: "#00aab7", height: "18px" }} />
+                                                    )}
+
                                                     <strong className="ms-2">
                                                         {order.rp_status === 0 && (" Nová")}
                                                         {order.rp_status === 1 && (" In progress 1")}
                                                         {order.rp_status === 2 && (" Přiřazeno")}
                                                         {order.rp_status === 3 && (" V procesu")}
                                                         {order.rp_status === 4 && (" Dokončeno")}
-                                                        {order.rp_status === 5 && (" Complited 5")}
+                                                        {order.rp_status === 5 && (" Complited")}
                                                         {order.rp_status === 6 && (" Ověřeno")}
                                                         {order.rp_status === 7 && (" Odmítnuto")}
                                                         {order.rp_status === 8 && (" Neznámý status")}
