@@ -8,6 +8,7 @@ class Place(models.Model):
     place_name = models.CharField("Place name", max_length=250)
     active = models.BooleanField("Active", default=True)
     data_sent = models.BooleanField("Data sent", default=False)
+    deleted = models.BooleanField("Deleted", default=False)
     rp_client_external_id = models.CharField("ItineraryClient external id", max_length=250, null=True, blank=True)
     rp_client_name = models.CharField("Customer name", max_length=250, null=True, blank=True)
     rp_client_id = models.IntegerField("ItineraryClient id", null=True, blank=True)
