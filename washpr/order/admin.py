@@ -5,3 +5,4 @@ from .models import *
 admin.site.register(Order)
 admin.site.register(OrderReport)
 admin.site.register(ReportFile)
+admin.site.register(PhotoReport)

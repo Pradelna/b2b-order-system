@@ -730,11 +730,13 @@ svg.loader{
   height: 18px;
 }
 
+.image-icon svg,
 .place-icon svg,
 .receipt-icon svg {
   height: 20px;
 }
 
+.image-icon svg,
 .invoice-icon svg {
   height: 20px;
   width: 15px;
@@ -773,7 +775,30 @@ svg.loader{
   left: 20px;
 }
 
+.image-icon-container {
+  position: absolute;
+  top: 20px;
+  /*right: 86px;*/
+  right: 20px;
+}
 
+#card-history .image-icon-container {
+  display: none;
+}
+
+.image-icon-position {
+  position: relative;
+}
+.image-icon {
+  height: 50px;
+  width: 50px;
+  background: #e1f6f8;
+  border-radius: 10px;
+  padding: 15px 18px;
+  position: absolute;
+  top: 0;
+  right: 100px;
+}
 
 .download-invoice {
   position: absolute;
@@ -862,7 +887,9 @@ svg.loader{
 }
 
 .place-detail-page .expanded {
-  height: 220px;
+  /*height: 220px;*/
+  height: var(--card-height, 220px);
+  transition: height 0.3s ease;
 }
 
 .place-detail-page .dates .expanded {

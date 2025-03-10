@@ -1,13 +1,15 @@
 import React, {useState, useEffect, useContext} from "react";
 import { LanguageContext } from "../../context/LanguageContext";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { faTruck, faFileLines, faCheckCircle, faBan } from "@fortawesome/free-solid-svg-icons";
+import { faTruck, faFileLines, faCheckCircle, faBan, faFileImage, faFileArrowDown, faFilePdf } from "@fortawesome/free-solid-svg-icons";
 import { fetchWithAuth } from "../account/auth.ts";
-import { Tooltip as ReactTooltip } from "react-tooltip";
+import { styled } from '@mui/material/styles';
+import Tooltip, { TooltipProps, tooltipClasses } from '@mui/material/Tooltip';
 import {Form} from "react-router-dom";
 import {Skeleton} from "@mui/material";
 import { formatDate } from "@/components/utils/FormatDate";
 import {formatViceDate} from "@/components/utils/FormatViceDate";
+import FileDownloadIcon from "@/components/order/FileDownloadIcon";
 
 interface Order {
     id: number;
@@ -35,6 +37,8 @@ const OrderHistory: React.FC<OrderHistoryProps> = ({ placeId, orders = [], setOr
     const [forceWait, setForceWait] = useState<boolean>(true);
     const BASE_URL = import.meta.env.VITE_API_URL;
     const { currentData } = useContext(LanguageContext);
+    const [orderPhotos, setOrderPhotos] = useState<OrderPhoto[]>([]);
+    const [expandedPhoto, setExpandedPhoto] = useState(false); // for expend photo if theya are many
 
     // Fetch orders from the API
     const fetchOrders = async () => {
@@ -57,6 +61,25 @@ const OrderHistory: React.FC<OrderHistoryProps> = ({ placeId, orders = [], setOr
         }
     };
 
+    // get photo for orders
+    const fetchOrderPhotos = async () => {
+        try {
+            // console.log("Fetching orders for place ID", placeId);
+            const response = await fetchWithAuth(`${BASE_URL}/order/photos/`);
+
+            if (response.ok) {
+                const data = await response.json();
+                setOrderPhotos(data);
+            } else {
+                console.error("Failed to fetch photos");
+            }
+        } catch (error) {
+            console.error("Error fetching photos:", error);
+        } finally {
+            setLoading(false);
+        }
+    };
+
 
     // Load more orders when the user clicks "More"
     const loadMoreOrders = () => {
@@ -74,7 +97,7 @@ const OrderHistory: React.FC<OrderHistoryProps> = ({ placeId, orders = [], setOr
         }));
     };
 
-
+    // cancel order
     const handleCancelOrder = async (orderId: number) => {
         if (window.confirm("Are you sure you want to cancel this order?")) {
             try {
@@ -100,6 +123,19 @@ const OrderHistory: React.FC<OrderHistoryProps> = ({ placeId, orders = [], setOr
         }
     };
 
+
+    // Tooltip
+    const DarkTooltip = styled(({ className, ...props }: TooltipProps) => (
+        <Tooltip {...props} classes={{ popper: className }} />
+    ))(({ theme }) => ({
+        [`& .${tooltipClasses.tooltip}`]: {
+            backgroundColor: theme.palette.common.black,
+            color: '#fff',
+            boxShadow: theme.shadows[2],
+            fontSize: 15,
+        },
+    }));
+
     // check if order is old then 30 minut
     useEffect(() => {
         const checkCancelableOrders = () => {
@@ -117,6 +153,14 @@ const OrderHistory: React.FC<OrderHistoryProps> = ({ placeId, orders = [], setOr
         const interval = setInterval(checkCancelableOrders, 60000); // Проверять каждую минуту
         return () => clearInterval(interval);
     }, [orders]);
+
+    useEffect(() => {
+        fetchOrderPhotos();
+    }, []);
+
+    useEffect(() => {
+        // console.log("Re-render triggered, ordersPhotos:", orderPhotos);
+    }, [orderPhotos]);
 
     useEffect(() => {
         if (!placeId) {
@@ -166,32 +210,28 @@ const OrderHistory: React.FC<OrderHistoryProps> = ({ placeId, orders = [], setOr
                     {orders.length > 0 ? (
                         <div>
                             {orders.slice(0, visibleOrders)
-                                // .sort((a, b) => b.id - a.id)
-                                .map((order) => (
+                                .map((order) => {
+                                    // Получаем фотографии для данного заказа
+                                    const photos = orderPhotos.filter((photo) => photo.group_pair_id === order.group_pair_id);
+                                    // Если фотографий больше двух – вычисляем высоту контейнера с иконками,
+                                    // иначе высота задаётся классом "expanded" (из CSS)
+
+                                    const dynamicHeight = photos.length > 3
+                                        ? `${photos.length * 72 + 90}px` : '220px';
+
+                                return (
                                     <div
                                         key={order.id}
                                         className={`card ${expandedOrders[order.id] ? "expanded" : ""}`}
                                         onClick={() => toggleExpand(order.id)}
-                                        style={{ display: (order.rp_status === 0 && order.every_week) || (order.id === order.group_pair_id) ? "none" : "block" }}
+                                        style={{ display: (order.rp_status === 0 && order.every_week) || (order.id === order.group_pair_id) ? "none" : "block",
+                                            '--card-height': dynamicHeight,} as React.CSSProperties}
                                     >
+                                        {(order.id !== order.group_pair_id) && (<>
                                         <div className="history-icon">
                                             <FontAwesomeIcon icon={faTruck} />
                                         </div>
 
-                                        <div className="receipt-icon">
-                                            <FontAwesomeIcon
-                                                icon={faFileLines}
-                                                data-tooltip-id="receipt-tooltip"
-                                                style={{ cursor: "pointer" }}
-                                            />
-                                            <ReactTooltip
-                                                id="receipt-tooltip"
-                                                place="top"
-                                                content="Download dodaci list"
-                                                effect="solid"
-                                                className="custom-tooltip"
-                                            />
-                                        </div>
                                         <p>
                                             {order.canceled || (updatedOrder?.id === order.id) ? (
                                                 <>
@@ -278,6 +318,7 @@ const OrderHistory: React.FC<OrderHistoryProps> = ({ placeId, orders = [], setOr
                                                         <strong>Realization date:</strong> {formatDate(order.rp_time_realization) || " No information"}
                                                     </p>
                                                 )}
+
                                             </div>
                                         )}
                                         {/* Кнопка отмены заказа (только если заказ можно отменить) */}
@@ -293,13 +334,97 @@ const OrderHistory: React.FC<OrderHistoryProps> = ({ placeId, orders = [], setOr
                                             </button>
                                         )}
 
+                                        {photos.length <= 3 ? (
+                                        <div className="image-icon-container">
+
+                                            <div className="image-icon-position">
+                                                {photos.map((photo, index) => {
+                                                    const order = orders.find((order) => order.id === photo.order_id);
+                                                    const styleData = { right: `${68 * index}px` };
+                                                    return (
+                                                        <div key={photo.id}>
+                                                            {order && (
+                                                                <FileDownloadIcon
+                                                                    key={photo.id}
+                                                                    photo={photo}
+                                                                    styleData={styleData}
+                                                                />
+                                                            )}
+                                                        </div>
+                                                    );
+                                                })}
+                                            </div>
+
+                                        </div>
+                                        ) : (
+                                            <div className="image-icon-container">
+
+                                                <div className="image-icon-position">
+
+                                                    <div>
+
+                                                        <div
+                                                            className="image-icon"
+                                                            style={{ right: "0" }}
+                                                        >
+                                                            <DarkTooltip title="Open files" placement="top" arrow>
+                                                                <FontAwesomeIcon
+                                                                    icon={faFileArrowDown}
+                                                                    style={{ cursor: "pointer" }}
+
+                                                                />
+                                                            </DarkTooltip>
+                                                            <span
+                                                                style={{
+                                                                    position: 'absolute',
+                                                                    top: '-8px',
+                                                                    right: '-13px',
+                                                                    background: '#28aab7',
+                                                                    color: 'white',
+                                                                    borderRadius: '50%',
+                                                                    padding: '2px 6px',
+                                                                    fontSize: '12px'
+                                                                }}
+                                                            >
+                                                                x{photos.length}
+                                                            </span>
+                                                        </div>
+                                                        {expandedOrders[order.id] && (
+                                                        <div style={{ display: 'flex', flexDirection: 'column' }}>
+                                                            {photos.map((photo, index) => {
+                                                                const order = orders.find((order) => order.id === photo.order_id);
+                                                                const styleData = { right: "0", top: `${72 * (index + 1)}px` };
+                                                                return (
+                                                                    <div key={photo.id}>
+                                                                        {order && (
+                                                                            <FileDownloadIcon
+                                                                                key={photo.id}
+                                                                                photo={photo}
+                                                                                styleData={styleData}
+                                                                            />
+                                                                        )}
+                                                                    </div>
+                                                                );
+                                                            })}
+                                                        </div>
+                                                        )}
+
+                                                    </div>
+
+                                                </div>
+
+                                            </div>
+                                            )}
+                                        </>)}
                                     </div>
-                                ))}
-                            {hasMoreOrders && (
-                                <button onClick={loadMoreOrders} className="btn btn-history btn-link mt-3 mb-5">
-                                    More
-                                </button>
-                            )}
+                                ) // end return
+                            }
+                        )}
+                                    {hasMoreOrders && (
+                                        <button onClick={loadMoreOrders} className="btn btn-history btn-link mt-3 mb-5">
+                                            More
+                                        </button>
+                                    )}
                         </div>
                     ) : (
                         <p>No order history available.</p>

@@ -1,5 +1,5 @@
 from rest_framework import serializers
-from .models import Order, ReportFile, OrderReport
+from .models import Order, ReportFile, OrderReport, PhotoReport
 
 
 class OrderSerializer(serializers.ModelSerializer):
@@ -45,6 +45,20 @@ class GetOrderSerializer(serializers.ModelSerializer):
             'canceled', 'rp_time_from', 'rp_time_to', 'rp_time_realization', 'rp_time_planned', 'rp_problem_description'
         ]
         read_only_fields = ['id', 'user', 'place', 'created_at']
+
+
+class PhotoReportSerializer(serializers.ModelSerializer):
+    order_id = serializers.IntegerField(source='order.id', read_only=True)
+    group_pair_id = serializers.IntegerField(source='order.group_pair_id', read_only=True)
+    class Meta:
+        model = PhotoReport
+        fields = ["id", "order_id", "file_id", "group_pair_id", "mime", "uploaded_at"]
+
+
+class DownloadPhotoReportSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = PhotoReport
+        fields = ["file_id", "name", "mime"]
 
 
 class ReportFileSerializer(serializers.ModelSerializer):
