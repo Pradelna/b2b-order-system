@@ -703,9 +703,9 @@ def generate_monthly_reports_task():
     year = previous_month_date.year
     month = previous_month_date.month
 
-    year = now.year
-    next_month_date = now + relativedelta(months=1)
-    month = next_month_date.month
+    # year = now.year
+    # next_month_date = now + relativedelta(months=1)
+    # month = next_month_date.month
 
     # Выбираем всех активных пользователей (стандартное Django-поле is_active)
     from customer.models import Customer
