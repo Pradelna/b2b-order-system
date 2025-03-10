@@ -34,10 +34,11 @@ const ReportList: React.FC = () => {
                 const response = await fetchWithAuth(`${BASE_URL}/order/reports/`);
                 if (response.ok) {
                     const data: Report[] = await response.json();
+                    console.log(data);
                     setReports(data.reports);
                     // console.log(data);
                     setCustomerId(data.user_id);
-                    // console.log(data[0].user);
+                    // console.log(data[0].customer);
                 } else {
                     console.error("Failed to fetch reports");
                 }

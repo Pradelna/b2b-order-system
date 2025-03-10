@@ -17,5 +17,4 @@ urlpatterns = [
     path("photos/download/<int:file_id>/", download_file_view, name="photo-download"),
     path("reports/", UserReportListView.as_view(), name="user-reports"),
     path("reports/<int:pk>/", UserReportDetailView.as_view(), name="report-detail"),
-    path("reports/generate/", GenerateMonthlyReport.as_view(), name="generate-report"),
 ]

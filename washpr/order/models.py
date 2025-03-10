@@ -17,7 +17,7 @@ def report_file_path(instance, filename):
     invoices/{user_id}/YYYY-MM/{filename}
     """
     report_month_str = instance.report.report_month.strftime("%Y-%m")  # Пример: "2025-02"
-    user_id = instance.report.user.id  # Получаем ID пользователя
+    user_id = instance.report.customer.user.id  # Получаем ID пользователя
 
     return os.path.join("invoices", str(user_id), report_month_str, filename)
 
@@ -165,13 +165,17 @@ class Order(models.Model):
 
 
 class OrderReport(models.Model):
-    user = models.ForeignKey(Customer, on_delete=models.CASCADE, related_name="order_reports")
+    customer = models.ForeignKey(Customer, on_delete=models.CASCADE, related_name="order_reports")
     report_month = models.DateField()
     orders = models.ManyToManyField("Order", related_name="reports")
     created_at = models.DateTimeField(auto_now_add=True)
 
     def __str__(self):
-        return f"Report for {self.user} - {self.report_month.strftime('%B %Y')}"
+        return f"Report for {self.customer} - {self.report_month.strftime('%B %Y')}"
+
+    class Meta:
+        verbose_name = 'Order monthly report'
+        verbose_name_plural = 'Order monthly reports'
 
 class ReportFile(models.Model):
     report = models.ForeignKey(OrderReport, on_delete=models.CASCADE, related_name="files")
@@ -179,7 +183,11 @@ class ReportFile(models.Model):
     uploaded_at = models.DateTimeField(auto_now_add=True)
 
     def __str__(self):
-        return f"File {self.file.name} for Report {self.report.id}"
+        return f"Invoice {self.file.name} for Report {self.report.id}"
+
+    class Meta:
+        verbose_name = 'Monthly invoice'
+        verbose_name_plural = 'Monthly invoices'
 
 
 class PhotoReport(models.Model):
@@ -191,3 +199,7 @@ class PhotoReport(models.Model):
 
     def __str__(self):
         return f"File {self.file_id} for order {self.order.rp_contract_external_id}"
+
+    class Meta:
+        verbose_name = 'Photo report'
+        verbose_name_plural = 'Photo reports'
