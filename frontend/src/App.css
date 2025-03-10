@@ -782,6 +782,10 @@ svg.loader{
   right: 20px;
 }
 
+#card-history .image-icon-container {
+  display: none;
+}
+
 .image-icon-position {
   position: relative;
 }
