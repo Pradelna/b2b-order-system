@@ -263,7 +263,6 @@ const PlaceDetails: React.FC = () => {
                         <NavButtons />
                     </div>
                     <div className="col-xl-7 col-lg-10 col-12">
-                        <p className="alert alert-success">fgdgdgfdg dfgdfgdfgdgdg dfgdg</p>
                         {successMessage && (
                             <p className="alert alert-success">{successMessage}</p>
                         )}
