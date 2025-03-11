@@ -81,12 +81,12 @@ const Header: React.FC = () => {
                 </button>
               </div>
 
-              {/* Burger Menu */}
-              <button className="burg">
-                <span></span>
-                <span></span>
-                <span></span>
-              </button>
+              <div className="to-website">
+                <button onClick={handleAuthClick} className="header-menu">
+                  <FontAwesomeIcon icon={faUser} className="icon" />
+                  <span>{isAuthenticated ? menuData.header_account : "Log in"}</span>
+                </button>
+              </div>
             </div>
           </div>
         </div>

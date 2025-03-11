@@ -164,7 +164,6 @@ const Account: React.FC<AccountProps> = ({ customerData, setCustomerData }) => {
         <div className="container margin-top-90 wrapper account-page">
             <div className="row message-block-76">
                 <div className="col-xl-9 col-lg-8 col-12">
-                    {/*<p className="alert alert-success">Message f g fhfhfh hfghfh  fhfh fhfhf fghfghfhh fghfghfgh hffhfhf</p>*/}
                     {successMessage && (
                         <p className="alert alert-success">{successMessage}</p>
                     )}
@@ -284,7 +283,7 @@ const Account: React.FC<AccountProps> = ({ customerData, setCustomerData }) => {
                             </>
 
                         ) : (
-                            <div className="col-lg-3 col-md-8 col-sm-7 col-6" style={{ paddingTop: "16px" }}>
+                            <div className="col-lg-4 col-md-8 col-sm-7 col-6" style={{ paddingTop: "16px" }}>
                                 <h4>Your places</h4>
                             </div>
                         )}

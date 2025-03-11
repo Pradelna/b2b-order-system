@@ -9,7 +9,7 @@ import {
   faMobileScreen,
   faEnvelope,
   faEarthAmerica,
-  faFileInvoiceDollar
+  faFileInvoiceDollar, faClockRotateLeft
 } from "@fortawesome/free-solid-svg-icons";
 import Loader from "@/components/Loader";
 import {Link} from "react-router-dom";
@@ -47,10 +47,10 @@ const HeaderAccount: React.FC = ({customerId}) => {
 
               {/* Contact Information */}
               <div className="contact">
-                <a href="/" className="mail">
+                <Link to="/" className="mail">
                   <FontAwesomeIcon icon={faEarthAmerica} className="icon"/>
                   <span>Website</span>
-                </a>
+                </Link>
                 <a href="/account" className="mail">
                   <FontAwesomeIcon icon={faHouse} className="icon"/>
                   <span>{menuData.header_dashboard || "Panel"}</span>
@@ -70,12 +70,27 @@ const HeaderAccount: React.FC = ({customerId}) => {
                 </Link>
               </div>
 
-              {/* Burger Menu */}
-              <button className="burg">
-                <span></span>
-                <span></span>
-                <span></span>
-              </button>
+              <div className="to-website">
+                <Link to="/" className="mail">
+                  <FontAwesomeIcon icon={faEarthAmerica} className="icon"/>
+                  <span>Website</span>
+                </Link>
+              </div>
+
+              <nav className="navbar-bottom">
+                <Link to={`/customer/${customerId}`}>
+                  <FontAwesomeIcon icon={faUser} className="icon"/>
+                </Link>
+                <Link to="/all-orders">
+                  <FontAwesomeIcon icon={faClockRotateLeft} className="icon" />
+                </Link>
+                <Link to="/invoices">
+                  <FontAwesomeIcon icon={faFileInvoiceDollar} className="icon" />
+                </Link>
+                <Link to="/account">
+                  <FontAwesomeIcon icon={faHouse} className="icon" />
+                </Link>
+              </nav>
             </div>
           </div>
         </div>
