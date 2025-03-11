@@ -282,7 +282,7 @@ def send_orders_task():
 
     # Выбираем заказы, не отправленные ранее и созданные более 35 минут назад
     time_threshold = timezone.now() - timedelta(minutes=2)
-    orders = Order.objects.filter(active=False, created_at__lte=time_threshold)
+    orders = Order.objects.filter(active=False, canceled=False, created_at__lte=time_threshold)
 
     # print(f"Orders after {time_threshold}: {orders}")
     # find out oldest order
