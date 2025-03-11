@@ -310,13 +310,16 @@ const OrderHistory: React.FC<OrderHistoryProps> = ({ placeId, orders = [], setOr
                                                         )}
                                                     </>
                                                 )}
+                                                {(order.rp_status === 20 || order.rp_status === 0 || order.rp_status === 1 || order.rp_status === 7 || order.rp_status === 10)  ? (<>
+                                                    {order.rp_time_planned && (
+                                                        <p>
+                                                            <strong>Planned date:</strong> {formatDate(order.rp_time_planned) || " No information"}
+                                                        </p>
+                                                    )}
+                                                </>) : (<>
                                                 <p><strong>Pickup Date:</strong> {formatViceDate(order.date_pickup)}</p>
                                                 <p><strong>Delivery Date:</strong> {formatViceDate(order.date_delivery)}</p>
-                                                {order.rp_time_planned && (
-                                                    <p>
-                                                        <strong>Planned date:</strong> {formatDate(order.rp_time_planned) || " No information"}
-                                                    </p>
-                                                )}
+                                                </>)}
                                                 {order.rp_time_realization && (
                                                     <p>
                                                         <strong>Realization date:</strong> {formatDate(order.rp_time_realization) || " No information"}

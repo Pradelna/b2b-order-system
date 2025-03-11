@@ -163,17 +163,18 @@ const Account: React.FC<AccountProps> = ({ customerData, setCustomerData }) => {
     return (
         <div className="container margin-top-90 wrapper account-page">
             <div className="row message-block-76">
-                <div className="col-lg-8 col-md-10 col-12">
+                <div className="col-xl-9 col-lg-8 col-12">
+                    {/*<p className="alert alert-success">Message f g fhfhfh hfghfh  fhfh fhfhf fghfghfhh fghfghfgh hffhfhf</p>*/}
                     {successMessage && (
                         <p className="alert alert-success">{successMessage}</p>
                     )}
                 </div>
             </div>
             <div className="row">
-                <div className="col-xl-8 col-12">
+                <div className="col-xl-9 col-lg-8 col-12">
                     <div id="company-top" className="row">
 
-                        <div className={`${customerData && !customerData.error ? "col-lg-6" : "col-12"}`}>
+                        <div className={`${customerData && !customerData.error ? "col-xl-6 col-lg-12 mb-4" : "col-12"}`}>
                             {loading || forceWait ? (
                                 <>
                                     <div className="card dashboard-button">
@@ -204,7 +205,7 @@ const Account: React.FC<AccountProps> = ({ customerData, setCustomerData }) => {
                             <>
                                 {loading || forceWait ? (
                                     [...Array(3)].map((_, index) => (
-                                        <div className="col-lg-2 col-4" key={index}>
+                                        <div className="col-lg-4 col-xl-2 col-4 mb-4" key={index}>
                                             <div className="card dashboard-button">
                                                 <div className="card-body button-history">
                                                     <Skeleton
@@ -226,7 +227,7 @@ const Account: React.FC<AccountProps> = ({ customerData, setCustomerData }) => {
                                 ) : (
                                     <>
 
-                                        <div className="col-lg-2 col-4">
+                                        <div className="col-lg-4 col-xl-2 col-4 mb-4">
                                             <Link to="/all-orders" className="text-decoration-none">
                                                 <div className="card dashboard-button">
                                                     <div className="card-body button-history">
@@ -237,7 +238,7 @@ const Account: React.FC<AccountProps> = ({ customerData, setCustomerData }) => {
                                             </Link>
                                         </div>
 
-                                        <div className="col-lg-2 col-4">
+                                        <div className="col-lg-4 col-xl-2 col-4">
                                             <Link to="/invoices" className="text-decoration-none">
                                                 <div className="card dashboard-button">
                                                     <div className="card-body">
@@ -248,7 +249,7 @@ const Account: React.FC<AccountProps> = ({ customerData, setCustomerData }) => {
                                             </Link>
                                         </div>
 
-                                        <div className="col-lg-2 col-4">
+                                        <div className="col-lg-4 col-xl-2 col-4">
                                             {/* New Order Button */}
                                             <div className="card dashboard-button" onClick={handleCreateOrder}>
                                                 <div className="card-body">
@@ -271,29 +272,29 @@ const Account: React.FC<AccountProps> = ({ customerData, setCustomerData }) => {
                         />
                     )}
 
-                    <div className="row mt-4">
+                    <div className="row mt-mobile">
 
                         {places.length === 0 ? (
                             <>
                                 {customerData && !customerData.error && (
-                                    <div className="col-lg-4 col-12">
+                                    <div className="col-lg-4 col-md-7 col-sm-5 col-6">
                                         <p>You don't have any place.<br />Please add one</p>
                                     </div>
                                 )}
                             </>
 
                         ) : (
-                            <div className="col-lg-3 col-12" style={{ paddingTop: "16px" }}>
+                            <div className="col-lg-3 col-md-8 col-sm-7 col-6" style={{ paddingTop: "16px" }}>
                                 <h4>Your places</h4>
                             </div>
                         )}
 
-                        <div className="col-lg-3 col-12 text-left">
+                        <div className="col-lg-3 col-md-4 col-sm-5 col-6 text-left place-desktop-button">
                             {loading || forceWait ? (
                                 <Skeleton
                                     variant="rectangular"
                                     width={200} height={55}
-                                    className=""
+                                    className="btn-link-skeleton"
                                     sx={{ borderRadius: "26px", marginTop: 0 }}
                                 />
                             ) : (
@@ -312,7 +313,7 @@ const Account: React.FC<AccountProps> = ({ customerData, setCustomerData }) => {
 
                     <div className="row mt-4 mb-4">
                         {loading || forceWait ? (
-                            [...Array(3)].map((_, index) => (
+                            [...Array(2)].map((_, index) => (
                                 <div className="col-12 dashboard" key={index}>
                                     <div className="card place-card">
                                         <div className="place">
@@ -344,7 +345,7 @@ const Account: React.FC<AccountProps> = ({ customerData, setCustomerData }) => {
                                             <div className="place-icon">
                                                 <FontAwesomeIcon icon={faHouse} className="s" />
                                             </div>
-                                            <h5>{place.place_name}</h5>
+                                            <h5 className="place-card-name">{place.place_name}</h5>
                                             <p className="card-text">
                                                 {place.rp_street} {place.rp_number}, {place.rp_city}, {place.rp_zip}
                                             </p>
@@ -370,10 +371,32 @@ const Account: React.FC<AccountProps> = ({ customerData, setCustomerData }) => {
                             ))}
                         </> )}
                     </div>
+                    <div className="row place-mobile-button text-center">
+                        <div className="col-12 text-center">
+                            {loading || forceWait ? (
+                                <Skeleton
+                                    variant="rectangular"
+                                    width={200} height={55}
+                                    className="btn-link-skeleton"
+                                    sx={{ borderRadius: "26px", marginTop: 0 }}
+                                />
+                            ) : (
+                                <>
+                                    {customerData && !customerData.error && (
+                                        <button className="btn-link" onClick={handleCreatePlace}>
+                                            <FontAwesomeIcon icon={faHouse} className="icon" />
+                                            <span className="ms-2">{currentData.service.new_place || "New Place"}</span>
+
+                                        </button>
+                                    )}
+                                </>
+                            )}
+                        </div>
+                    </div>
                 </div>
 
                 {/*History block*/}
-                <div className="col-4 col-history">
+                <div className="col-xl-3 col-lg-2 col-history">
                     <div
                         id="card-history"
                         className={`card ${activeButton !== null ? "active" : ""}`}

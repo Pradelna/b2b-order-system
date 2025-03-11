@@ -80,21 +80,6 @@ const HeaderAccount: React.FC = ({customerId}) => {
           </div>
         </div>
 
-        {/* Mobile Contacts */}
-        <div className="header__mobile__contacts">
-          <div className="container">
-            <div className="header__mobile__contacts__wrap">
-              <a href="tel:+420734246834" className="tel">
-                <FontAwesomeIcon icon={faMobileScreen} className="icon"/>
-                <span>+420 734 246 834</span>
-              </a>
-              <a href="mailto:pradelna1cz@gmail.com" className="mail">
-                <FontAwesomeIcon icon={faEnvelope} className="icon"/>
-                <span>pradelna1cz@gmail.com</span>
-              </a>
-            </div>
-          </div>
-        </div>
       </header>
   );
 };

@@ -1,5 +1,32 @@
 @import "bootstrap/dist/css/bootstrap.min.css";
 
+/* Стиль для Chrome, Safari, Edge (Chromium) */
+::-webkit-scrollbar {
+  width: 6px;
+}
+
+::-webkit-scrollbar-track {
+  background: #f1f1f1;
+  border-top: 15px solid transparent;    /* верхняя прозрачная область 15px */
+  border-bottom: 15px solid transparent; /* нижняя прозрачная область 15px */
+  background-clip: padding-box;          /* фон ограничен только внутренним блоком без бордеров */
+  border-radius: 6px;                    /* скругление, подберите под дизайн */
+}
+
+::-webkit-scrollbar-thumb {
+  background-color: #888;                /* основной цвет ползунка */
+  border-top: 15px solid transparent;    /* верхняя прозрачная область 15px */
+  border-bottom: 15px solid transparent; /* нижняя прозрачная область 15px */
+  background-clip: padding-box;          /* фон ограничен только внутренним блоком без бордеров */
+  border-radius: 6px;                    /* скругление, подберите под дизайн */
+}
+
+/* Стиль для Firefox */
+.element-with-scrollbar {
+  scrollbar-width: thin;            /* "auto", "thin" или "none" */
+  scrollbar-color: #888 #f1f1f1;    /* thumb color, track color */
+}
+
 body {
   font-family: 'Montserrat', sans-serif;
   background: #e1f6f845;
@@ -124,6 +151,136 @@ a {
   left: 14px;
   width: 70px;
   border-radius: 30px;
+}
+
+@media (min-width: 576px) and (max-width: 1200px) {
+  .new-order-button {
+    top: 16%;
+    right: 16px;
+    font-size: 14px;
+    font-weight: 600;
+    line-height: 18px;
+    width: 60px;
+    height: 60px;
+    border-radius: 16px;
+  }
+  .details-place-button {
+    top: 16%;
+    right: 92px;
+    font-size: 14px;
+    font-weight: 600;
+    line-height: 18px;
+    width: 60px;
+    height: 60px;
+    border-radius: 16px;
+  }
+  .place-card .place {
+    padding: 21px 160px 16px 90px !important;
+  }
+  .place-icon {
+    height: 58px !important;
+    width: 58px !important;
+    background: #e1f6f8;
+    border-radius: 14px !important;
+    padding: 18px 18px !important;
+    position: absolute;
+    top: 16px !important;
+    left: 16px !important;
+  }
+  .place-card-name,
+  .place .card-text {
+    width: 260px;            /* или любая другая фиксированная ширина */
+    white-space: nowrap;     /* не переносить текст на новую строку */
+    overflow: hidden;        /* скрывать выходящий за границы текст */
+    text-overflow: ellipsis; /* добавить «…» вместо обрезанного текста */
+  }
+}
+
+@media (min-width: 200px) and (max-width: 575px) {
+  .new-order-button {
+    top: 16%;
+    right: 16px;
+    font-size: 14px;
+    font-weight: 600;
+    line-height: 18px;
+    width: 60px;
+    height: 60px;
+    border-radius: 16px;
+    z-index: 11;
+  }
+  .details-place-button {
+    top: 0;
+    right: 0;
+    width: 100%;
+    height: 100%;
+    opacity: 0;
+    z-index: 10;
+  }
+  .place-card .place {
+    padding: 21px 80px 16px 20px !important;
+  }
+  .place-icon {
+    display: none;
+  }
+  .place-card-name,
+  .place .card-text {
+    width: 250px;            /* или любая другая фиксированная ширина */
+    white-space: nowrap;     /* не переносить текст на новую строку */
+    overflow: hidden;        /* скрывать выходящий за границы текст */
+    text-overflow: ellipsis; /* добавить «…» вместо обрезанного текста */
+  }
+  .account-page .btn-link,
+  .account-page .btn-link-skeleton {
+    width: 160px !important;
+  }
+  .place-card.active {
+    border: 0 !important;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2) !important;
+    transform: none !important;
+  }
+  .col-history {
+    display: none;
+  }
+  .message-block-76 {
+    min-height: 10px;
+    height: auto;
+  }
+  #company-top .mb-4 {
+    margin-bottom: 6px !important;
+  }
+  #company-top.row>* {
+    padding-right: 3px !important;
+    padding-left: 3px !important;
+  }
+  #company-top.row {
+    margin-right: 0 !important;
+    margin-left: 0 !important;
+  }
+  .mt-mobile {
+    margin-top: 10px !important;
+  }
+  .account-page h4 {
+    font-size: 18px !important;
+  }
+  .account-page .mt-4 {
+    margin-top: 0 !important;
+  }
+  .account-page .place-card {
+    margin-bottom: 10px;
+  }
+  .place-icon-skeleton {
+    left: auto !important;
+    right: 20px;
+  }
+  .place-mobile-button {
+    display: block;
+  }
+  .place-mobile-button .btn-link-skeleton {
+    margin: auto;
+  }
+  .place-desktop-button {
+    display: none;
+  }
 }
 
 #company-top .card {
@@ -275,7 +432,7 @@ p.text-history {
 
 .place h5,
 .card-history h5 {
-  font-size: 18px;
+  font-size: 16px;
 }
 
 .card-history svg {
@@ -303,7 +460,7 @@ p.text-history {
 }
 
 #card-history {
-  position: absolute;
+  /*position: absolute;*/
   left: 20px;
   width: clamp(300px, 100%, 400px);
   background: #f8fcff;
@@ -313,6 +470,32 @@ p.text-history {
   opacity: 0;
   display: none;
   transition: height 0.3s ease, top 0.3s ease, opacity 0.3s ease, box-shadow 0.3s;
+  overflow: hidden;
+  padding: 0;
+  max-height: calc(100vh - 50px); /* Ограничивает высоту окна до видимой области */
+  overflow-y: auto; /* Добавляет прокрутку, если контент превышает высоту */
+  position: relative;
+}
+
+@media (min-width: 1200px) and (max-width: 1260px) {
+  #card-history {
+    max-width: 270px;
+  }
+}
+
+#card-history .card-history {
+  overflow-y: auto;       /* Включаем прокрутку */
+  height: 100%;           /* Или фиксированная/автоматическая высота */
+
+  /* Важное место: благодаря отступам справа,
+     реальная полоса прокрутки будет "на 12px левее",
+     чем край внешнего контейнера */
+  padding-right: 16px;
+  box-sizing: content-box; /* Чтобы padding не сжимал контент */
+}
+
+#card-history .card-body {
+  padding: 16px;
 }
 
 #card-history .cancel-order {
@@ -855,26 +1038,19 @@ svg.loader{
   font-size: 18px;
 }
 
-#card-history {
-  padding: 0;
-  max-height: calc(100vh - 50px); /* Ограничивает высоту окна до видимой области */
-  overflow-y: auto; /* Добавляет прокрутку, если контент превышает высоту */
-  position: relative;
-}
-
 
 .details-place-button-in-history {
   position: absolute;
-  top: 55px;
-  right: 20px;
+  top: 14px;
+  right: 14px;
   font-size: 14px;
   font-weight: 600;
-  line-height: 36px;
+  line-height: 34px;
   color: #00aab7;
   text-align: center;
   width: 140px;
-  height: 50px;
-  border-radius: 27px;
+  height: 36px;
+  border-radius: 17px;
   border: solid 2px #00aab7;
   cursor: pointer; /* Изменение курсора */
   transition: all 0.3s ease; /* Плавный переход при наведении */
