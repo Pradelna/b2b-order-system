@@ -174,7 +174,7 @@ const Account: React.FC<AccountProps> = ({ customerData, setCustomerData }) => {
                     <div id="company-top" className="row">
 
                         <div className={`${customerData && !customerData.error ? "col-xl-6 col-lg-12 mb-4" : "col-12"}`}>
-                            {loading || forceWait ? (
+                            {(customerData && (loading || forceWait)) ? (
                                 <>
                                     <div className="card dashboard-button">
                                         <div className="card-body button-history">
@@ -276,7 +276,7 @@ const Account: React.FC<AccountProps> = ({ customerData, setCustomerData }) => {
                         {places.length === 0 ? (
                             <>
                                 {customerData && !customerData.error && (
-                                    <div className="col-lg-4 col-md-7 col-sm-5 col-6">
+                                    <div className="col-xl-4 col-12">
                                         <p>You don't have any place.<br />Please add one</p>
                                     </div>
                                 )}

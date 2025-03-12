@@ -2,8 +2,8 @@ import React, { useState, useRef, useContext, FormEvent } from "react";
 import { LanguageContext } from "../../context/LanguageContext.js";
 import ReCAPTCHA from "react-google-recaptcha";
 import { fetchWithAuth } from "../account/auth.ts";
-import Header from "../Header.js";
-import Footer from "../Footer.tsx";
+import Header from "../Header";
+import Footer from "../Footer";
 
 const RegistrationForm: React.FC = () => {
   const [email, setEmail] = useState<string>("");
@@ -74,7 +74,7 @@ const RegistrationForm: React.FC = () => {
         <Header />
 
         <div className="container margin-top-130 wrapper">
-          <div style={{ width: "400px", margin: "5rem auto" }}>
+          <div className="form-login">
             {message && (
                 <p
                     className={`mt-3 alert ${

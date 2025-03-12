@@ -133,7 +133,12 @@ def get_all_orders(request):
         serializer = GetOrderSerializer(orders, many=True)
         # print(serializer.data)
         print("ok")
-        return Response(serializer.data, status=status.HTTP_200_OK)
+        # return Response(serializer.data, status=status.HTTP_200_OK)
+        return Response({
+            "user_id": request.user.id,
+            "orders": serializer.data,
+
+        }, status=status.HTTP_200_OK)
     except Exception as e:
         return Response({"error": str(e)}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
 

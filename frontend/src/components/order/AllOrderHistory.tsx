@@ -35,7 +35,7 @@ const AllOrderHistory: React.FC = () => {
     const [hasMoreOrders, setHasMoreOrders] = useState<boolean>(false);
     const [loading, setLoading] = useState<boolean>(true);
     const [expandedOrders, setExpandedOrders] = useState<{ [key: number]: boolean }>({});
-    const [customerId, setCustomerId] = useState<number | null>(null); // ✅ Fix type
+    const [customerId, setCustomerId] = useState<number | null>(null);
     const [forceWait, setForceWait] = useState<boolean>(true);
     const BASE_URL = import.meta.env.VITE_API_URL;
     const { currentData } = useContext(LanguageContext);
@@ -82,8 +82,9 @@ const AllOrderHistory: React.FC = () => {
                 const response = await fetchWithAuth(`${BASE_URL}/order/all-orders/`);
                 if (response.ok) {
                     const data: Order[] = await response.json();
-                    setOrders(data.sort((a, b) => b.id - a.id)); // ✅ Sort orders (newest first)
-                    setHasMoreOrders(data.length > visibleOrders);
+                    setOrders(data.orders.sort((a, b) => b.id - a.id)); // Sort orders (newest first)
+                    setHasMoreOrders(data.orders.length > visibleOrders);
+                    setCustomerId(data.user_id);
                     // console.log(data);
                 } else {
                     console.error("Failed to fetch orders");
@@ -110,9 +111,7 @@ const AllOrderHistory: React.FC = () => {
 
     //  Set customerId AFTER orders are fetched
     useEffect(() => {
-        if (orders.length > 0) {
-            setCustomerId(orders[0].user); //  it's safe to access orders[0]
-        }
+        // console.log(orders)
     }, [orders]); //  Run when `orders` is updated
 
     return (

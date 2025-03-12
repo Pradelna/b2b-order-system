@@ -534,7 +534,8 @@ a {
     display: none;
   }
 }
-@media (min-width: 200px) and (max-width: 575px) {
+
+@media (min-width: 350px) and (max-width: 575px) {
   .new-order-button {
     top: 16%;
     right: 16px;
@@ -567,9 +568,106 @@ a {
     overflow: hidden;        /* скрывать выходящий за границы текст */
     text-overflow: ellipsis; /* добавить «…» вместо обрезанного текста */
   }
+  .account-page .btn-submit,
   .account-page .btn-link,
   .account-page .btn-link-skeleton {
     width: 160px !important;
+  }
+  .place-card.active {
+    border: 0 !important;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2) !important;
+    transform: none !important;
+  }
+  .col-history {
+    display: none;
+  }
+  .message-block-76 {
+    min-height: 10px;
+    height: auto;
+  }
+  #company-top .mb-4 {
+    margin-bottom: 6px !important;
+  }
+  #company-top.row>* {
+    padding-right: 3px !important;
+    padding-left: 3px !important;
+  }
+  #company-top.row {
+    margin-right: 0 !important;
+    margin-left: 0 !important;
+  }
+  #detail-page .row {
+    margin-right: -5px !important;
+    margin-left: -5px !important;
+  }
+  .mt-mobile {
+    margin-top: 10px !important;
+  }
+  .account-page h4 {
+    font-size: 18px !important;
+  }
+  .account-page .mt-4 {
+    margin-top: 0 !important;
+  }
+  .account-page .place-card {
+    margin-bottom: 10px;
+  }
+  .account-page .place-icon-skeleton {
+    left: auto !important;
+    right: 20px;
+  }
+  .place-mobile-button {
+    display: block;
+    margin-bottom: 30px;
+  }
+  .place-mobile-button .btn-link-skeleton {
+    margin-right: auto;
+    margin-left: auto;
+    margin-bottom: 30px;
+  }
+  .place-desktop-button {
+    display: none;
+  }
+}
+
+@media (max-width: 349px) {
+  .new-order-button {
+    top: 16%;
+    right: 16px;
+    font-size: 14px;
+    font-weight: 600;
+    line-height: 18px;
+    width: 60px;
+    height: 60px;
+    border-radius: 16px;
+    z-index: 11;
+  }
+  .details-place-button {
+    top: 0;
+    right: 0;
+    width: 100%;
+    height: 100%;
+    opacity: 0;
+    z-index: 10;
+  }
+  .place-card .place {
+    padding: 21px 80px 16px 20px !important;
+  }
+  .place-icon {
+    display: none;
+  }
+  .place-card-name,
+  .place .card-text {
+    width: 250px;            /* или любая другая фиксированная ширина */
+    white-space: nowrap;     /* не переносить текст на новую строку */
+    overflow: hidden;        /* скрывать выходящий за границы текст */
+    text-overflow: ellipsis; /* добавить «…» вместо обрезанного текста */
+  }
+  .account-page .btn-submit,
+  .account-page .btn-link,
+  .account-page .btn-link-skeleton {
+    width: 100% !important;
+    margin-bottom: 10px !important;
   }
   .place-card.active {
     border: 0 !important;
@@ -638,7 +736,7 @@ a {
 }
 
 h1.detail-page  {
-  font-size: 24px;
+  font-size: 20px !important;
 }
 
 .detail-page .card {
@@ -1672,4 +1770,30 @@ p.back-link {
   position: absolute;
   z-index: 1;
   left: 2000px;
+}
+
+.form-login {
+  width: 400px;
+  margin: 5rem auto;
+}
+
+@media (max-width: 430px) {
+  .form-login {
+    width: auto;
+    margin-right: 10px;
+    margin-left: 10px;
+  }
+  .form-login .card-body {
+    padding: 0;
+  }
+}
+
+@media (max-width: 575px) {
+  .form-label {
+    margin-bottom: 0;
+  }
+  .place-details h1,
+  .modal-content h3 {
+    font-size: 20px;
+  }
 }
