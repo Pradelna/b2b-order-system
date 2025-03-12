@@ -162,6 +162,8 @@ class LandingPageSerializer(serializers.ModelSerializer):
             'important_files': obj.customer_important_files,
             'send_to_check': obj.customer_send_to_check,
             'wait_for_active': obj.customer_wait_for_active,
+            'your_places': obj.customer_your_places,
+            'you_dont_have_place': obj.customer_you_dont_have_place,
         }
 
     def get_buttons(self, obj):
@@ -170,6 +172,12 @@ class LandingPageSerializer(serializers.ModelSerializer):
             'cancel': obj.button_cancel,
             'upload': obj.button_upload,
             'uploading': obj.button_uploading,
+            'add_place': obj.button_add_place,
+            'all_history': obj.button_all_history,
+            'invoices': obj.button_invoices,
+            'new_order': obj.button_new_order,
+            'details': obj.button_details,
+            'back': obj.button_back,
         }
 
     def get_messages(self, obj):
@@ -195,6 +203,10 @@ class LandingPageSerializer(serializers.ModelSerializer):
             'note_one_time': obj.order_note_one_time,
             'note_quick': obj.order_note_quick,
             'note_every_week': obj.order_note_every_week,
+            'mon_wed_fri': obj.order_mon_wed_fri,
+            'tue_thu': obj.order_tue_thu,
+            'every_day': obj.order_every_day,
+            'own_system': obj.order_own_system,
         }
 
     def get_form(self, obj):

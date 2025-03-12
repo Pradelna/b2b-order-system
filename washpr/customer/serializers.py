@@ -10,6 +10,10 @@ class CustomerSerializer(serializers.ModelSerializer):
         model = Customer
         fields = [
             'user_id',
+            'new_company_name',
+            'new_company_address',
+            'new_company_ico',
+            'new_company_dic',
             'company_name',
             'company_address',
             'company_ico',
@@ -20,9 +24,10 @@ class CustomerSerializer(serializers.ModelSerializer):
             'vop',
             'terms_of_use',
             'gdpr',
-            'active'
+            'active',
+            'change_data'
         ]
-        read_only_fields = ['user', 'user_id', 'company_email']  # Поле user остаётся только для чтения
+        read_only_fields = ['user', 'user_id', 'company_email']  # Поля остаётся только для чтения
 
 
 class CustomerGetSerializer(serializers.ModelSerializer):
@@ -31,6 +36,10 @@ class CustomerGetSerializer(serializers.ModelSerializer):
         model = Customer
         fields = [
             'user_id',
+            'new_company_name',
+            'new_company_address',
+            'new_company_ico',
+            'new_company_dic',
             'company_name',
             'company_address',
             'company_ico',

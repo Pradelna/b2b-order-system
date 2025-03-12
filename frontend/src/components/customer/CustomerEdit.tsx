@@ -6,12 +6,13 @@ import { faSquareXmark } from "@fortawesome/free-solid-svg-icons";
 import { Tooltip as ReactTooltip } from "react-tooltip";
 
 interface CustomerData {
-    company_name: string;
-    company_address: string;
-    company_ico: string;
-    company_dic: string;
+    new_company_name: string;
+    new_company_address: string;
+    new_company_ico: string;
+    new_company_dic: string;
     company_phone: string;
     company_person: string;
+    change_data: boolean;
 }
 
 interface Labels {
@@ -33,21 +34,22 @@ const CustomerEdit: React.FC<CustomerEditProps> = ({
                                                    }) => {
     const { currentData } = useContext(LanguageContext);
     const [formData, setFormData] = useState<CustomerData>({
-        company_name: customerData?.company_name || "",
-        company_address: customerData?.company_address || "",
-        company_ico: customerData?.company_ico || "",
-        company_dic: customerData?.company_dic || "",
+        new_company_name: customerData?.new_company_name || "",
+        new_company_address: customerData?.new_company_address || "",
+        new_company_ico: customerData?.new_company_ico || "",
+        new_company_dic: customerData?.new_company_dic || "",
         company_phone: customerData?.company_phone || "",
         company_person: customerData?.company_person || "",
+        change_data: customerData?.change_data ?? false,
     });
 
     const BASE_URL = import.meta.env.VITE_API_URL;
 
     const labels: Labels = {
-        company_name: currentData.customer.company_name,
-        company_address: currentData.customer.company_address,
-        company_ico: currentData.customer.company_number,
-        company_dic: currentData.customer.vat_number,
+        new_company_name: currentData.customer.company_name,
+        new_company_address: currentData.customer.company_address,
+        new_company_ico: currentData.customer.company_number,
+        new_company_dic: currentData.customer.vat_number,
         company_phone: currentData.customer.phone,
         company_person: currentData.customer.full_name,
         vop: currentData.customer.vop,
@@ -116,17 +118,41 @@ const CustomerEdit: React.FC<CustomerEditProps> = ({
                     {Object.keys(formData).map((key) => (
                         <div key={key} className="row form-group">
                             <div className="col-12 col-md-4 label-form">
-                                <label className="form-label">{labels[key] || key.replace("_", " ")}</label>
+
+
+
+
+                                <label className="form-label">
+                                    {labels[key] || key.replace("_", " ")}
+                                </label>
                             </div>
                             <div className="col-12 col-md-8">
-                                <input
-                                    type="text"
-                                    name={key}
-                                    value={(formData as any)[key]} // Ensures dynamic access to formData fields
-                                    onChange={handleChange}
-                                    className="form-control"
-                                    required
-                                />
+                                {key === "change_data" ? (
+                                    <div className="checkbox-wrapper-19">
+                                    <input
+                                        id="change_data"
+                                        type="checkbox"
+                                        name={key}
+                                        checked={(formData as any)[key]}
+                                        onChange={(e) =>
+                                            setFormData({ ...formData, [key]: e.target.checked })
+                                        }
+                                        className="form-check-input"
+                                        required
+                                        style={{ opacity: 0 }}
+                                    />
+                                        <label htmlFor="change_data" className="check-box" />
+                                    </div>
+                                ) : (
+                                    <input
+                                        type="text"
+                                        name={key}
+                                        value={(formData as any)[key]} // Динамический доступ к полям formData
+                                        onChange={handleChange}
+                                        className="form-control"
+                                        required
+                                    />
+                                )}
                             </div>
                         </div>
                     ))}

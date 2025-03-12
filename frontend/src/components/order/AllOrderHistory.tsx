@@ -130,7 +130,7 @@ const AllOrderHistory: React.FC = () => {
 
                         <div className="order-history">
 
-                            <h3 className="account-info">Order History</h3>
+                            <h3 className="account-info">{currentData?.buttons["all_history"] || "Historie objednávek"}</h3>
 
                             {loading || forceWait ? (
                                 [...Array(8)].map((_, index) => (

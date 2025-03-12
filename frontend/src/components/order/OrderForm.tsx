@@ -548,10 +548,10 @@ const OrderForm: React.FC<OrderFormProps> = ({ placeId, onClose, onSuccess }) =>
                             required={!useCustomDays}
                         >
                           <option value="">{ currentData.form["select_system"] || "Zvolte systém" }</option>
-                          <option value="Mon_Wed_Fri">Monday Wednesday Friday</option>
-                          <option value="Tue_Thu">Tuesday Thursday</option>
-                          <option value="Every_day">Every Day</option>
-                          <option value="Own">Own Systems</option>
+                          <option value="Mon_Wed_Fri">{ currentData.form["mon_wed_fri"] || "Pondělí středa pátek" }</option>
+                          <option value="Tue_Thu">{ currentData.form["tue_thu"] || "Úterý čtvrte" }</option>
+                          <option value="Every_day">{ currentData.form["every_day"] || "Každý den" }</option>
+                          <option value="Own">{ currentData.form["own_system"] || "Vlastní systém" }</option>
                         </select>
                       </div>
                     </div>

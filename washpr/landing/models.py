@@ -114,6 +114,8 @@ class LandingPage(models.Model):
     customer_important_files = models.CharField("Important files", max_length=200, blank=True, null=True)
     customer_send_to_check = models.CharField("Send to check", max_length=200, blank=True, null=True)
     customer_wait_for_active = models.CharField("Wait for activation", max_length=200, blank=True, null=True)
+    customer_your_places = models.CharField("Title Your places", max_length=200, blank=True, null=True)
+    customer_you_dont_have_place = models.CharField("Title You don't have any place", max_length=200, blank=True, null=True)
     # buttons
     button_submit = models.CharField("Button submit", max_length=50, blank=True, null=True)
     button_cancel = models.CharField("Button cancel", max_length=50, blank=True, null=True)
@@ -124,6 +126,7 @@ class LandingPage(models.Model):
     button_invoices = models.CharField("Button invoices", max_length=100, blank=True, null=True)
     button_new_order = models.CharField("Button new order", max_length=100, blank=True, null=True)
     button_details = models.CharField("Button details", max_length=100, blank=True, null=True)
+    button_back = models.CharField("Button back", max_length=100, blank=True, null=True)
     # messages
     message_file_ok = models.CharField("File uploaded successfully!", max_length=100, blank=True, null=True)
     message_file_size = models.CharField("The selected file exceeds the maximum size of 2MB", max_length=100,
@@ -137,7 +140,7 @@ class LandingPage(models.Model):
     message_file_failed_delete = models.CharField("Failed to delete the file", max_length=100, blank=True, null=True)
     message_file_failed_while_deleting = models.CharField("An error occurred while deleting the file", max_length=100,
                                                           blank=True, null=True)
-    # type of shipping system new 19 feb
+    # order
     order_type_sipping_clear_for_dirty = models.CharField("Order type sipping clear for dirty", max_length=100,
                                                           blank=True, null=True)
     order_type_sipping_1_in_3 = models.CharField("Order type sipping 1 in 3", max_length=100, blank=True, null=True)
@@ -148,6 +151,10 @@ class LandingPage(models.Model):
     order_note_one_time = models.TextField("Note for one time", max_length=500, blank=True, null=True)
     order_note_quick = models.TextField("Note for quick order", max_length=500, blank=True, null=True)
     order_note_every_week = models.TextField("Note for every week", max_length=500, blank=True, null=True)
+    order_mon_wed_fri = models.CharField("Monday Wednesday Friday", max_length=100, blank=True, null=True)
+    order_tue_thu = models.CharField("Tuesday Thursday", max_length=100, blank=True, null=True)
+    order_every_day = models.CharField("Every day", max_length=100, blank=True, null=True)
+    order_own_system = models.CharField("Order own system", max_length=100, blank=True, null=True)
 
     form_add_place = models.CharField("Form title add new place", max_length=100, blank=True, null=True)
     form_place_name = models.CharField("Form place name", max_length=100, blank=True, null=True)

@@ -354,12 +354,23 @@ a {
   width: 70px;
   border-radius: 30px;
 }
+.order-mobile {
+  display: none;
+}
 @media (min-width: 1200px) {
   .place-mobile-button {
     display: none;
   }
 }
 @media (min-width: 576px) and (max-width: 1200px) {
+  .order-mobile {
+    display: block;
+    width: 26px;
+    height: 26px;
+  }
+  .text-new-order-in-button {
+    display: none;
+  }
   .new-order-button {
     top: 16%;
     right: 16px;
@@ -369,6 +380,7 @@ a {
     width: 60px;
     height: 60px;
     border-radius: 16px;
+    padding: 12px;
   }
   .details-place-button {
     top: 16%;
@@ -467,6 +479,7 @@ a {
     width: 60px;
     height: 60px;
     border-radius: 16px;
+    padding: 12px;
   }
 }
 @media (min-width: 768px) and (max-width: 991px) {
@@ -495,6 +508,7 @@ a {
     height: 60px;
     border-radius: 16px;
     z-index: 11;
+    padding: 12px;
   }
   .place-card.active {
     border: 0 !important;
@@ -524,6 +538,7 @@ a {
     height: 60px;
     border-radius: 16px;
     z-index: 11;
+    padding: 12px;
   }
   .place-card.active {
     border: 0 !important;
@@ -536,6 +551,14 @@ a {
 }
 
 @media (min-width: 350px) and (max-width: 575px) {
+  .text-new-order-in-button {
+    display: none;
+  }
+  .order-mobile {
+    display: block;
+    width: 26px;
+    height: 26px;
+  }
   .new-order-button {
     top: 16%;
     right: 16px;
@@ -546,6 +569,7 @@ a {
     height: 60px;
     border-radius: 16px;
     z-index: 11;
+    padding: 12px;
   }
   .details-place-button {
     top: 0;
@@ -572,6 +596,9 @@ a {
   .account-page .btn-link,
   .account-page .btn-link-skeleton {
     width: 160px !important;
+  }
+  .place-mobile-button .btn-link {
+    width: 200px !important;
   }
   .place-card.active {
     border: 0 !important;
@@ -631,6 +658,14 @@ a {
 }
 
 @media (max-width: 349px) {
+  .text-new-order-in-button {
+    display: none;
+  }
+  .order-mobile {
+    display: block;
+    width: 26px;
+    height: 26px;
+  }
   .new-order-button {
     top: 16%;
     right: 16px;
@@ -641,6 +676,7 @@ a {
     height: 60px;
     border-radius: 16px;
     z-index: 11;
+    padding: 12px;
   }
   .details-place-button {
     top: 0;
@@ -729,6 +765,7 @@ a {
 #company-top .card {
   border: solid 1px #e1f6f8;
   min-height: 120px;
+  padding: 15px;
 }
 
 #company-top .card .company-name{
@@ -1287,6 +1324,10 @@ svg.loader{
   font-size: 24px;
 }
 
+.modal-content .alert {
+  margin-bottom: 0;
+}
+
 
 .order-message .modal-wrapper {
   min-height: 400px;
@@ -1526,6 +1567,22 @@ svg.loader{
 }
 
 .place-detail-page .dates .expanded {
+  height: auto;
+}
+
+.order-history .card {
+  cursor: pointer;
+  overflow: hidden;
+  transition: height 0.3s ease-in-out;
+}
+
+.order-history .expanded {
+  /*height: 220px;*/
+  height: var(--card-height, 220px);
+  transition: height 0.3s ease;
+}
+
+.order-history .dates .expanded {
   height: auto;
 }
 
@@ -1787,7 +1844,11 @@ p.back-link {
     padding: 0;
   }
 }
-
+@media (min-width: 576px) and (max-width: 767px) {
+  .detail-page .form-label {
+    margin-bottom: 0;
+  }
+}
 @media (max-width: 575px) {
   .form-label {
     margin-bottom: 0;
@@ -1795,5 +1856,9 @@ p.back-link {
   .place-details h1,
   .modal-content h3 {
     font-size: 20px;
+  }
+  .detail-page .company-card .row>* {
+    padding-right: 0 !important;
+    padding-left: 3px !important;
   }
 }

@@ -8,10 +8,10 @@ interface CustomerFormProps {
 }
 
 interface FormData {
-  company_name: string;
-  company_address: string;
-  company_ico: string;
-  company_dic: string;
+  new_company_name: string;
+  new_company_address: string;
+  new_company_ico: string;
+  new_company_dic: string;
   company_phone: string;
   company_person: string;
   vop: boolean;
@@ -22,10 +22,10 @@ interface FormData {
 const CustomerForm: React.FC<CustomerFormProps> = ({ onSubmit }) => {
   const { currentData } = useContext(LanguageContext);
   const [formData, setFormData] = useState<FormData>({
-    company_name: "",
-    company_address: "",
-    company_ico: "",
-    company_dic: "",
+    new_company_name: "",
+    new_company_address: "",
+    new_company_ico: "",
+    new_company_dic: "",
     company_phone: "",
     company_person: "",
     vop: false,
@@ -59,14 +59,14 @@ const CustomerForm: React.FC<CustomerFormProps> = ({ onSubmit }) => {
           {/* Company Name */}
           <div className="row mb-1">
             <div className="col-12 col-md-4 col-lg-3 label-form">
-              <label htmlFor="company_name">{currentData.customer.company_name}*</label>
+              <label htmlFor="new_company_name">{currentData.customer.company_name}*</label>
             </div>
             <div className="col-12 col-md-8 col-lg-9">
               <input
                   className="form-control"
                   type="text"
-                  name="company_name"
-                  value={formData.company_name}
+                  name="new_company_name"
+                  value={formData.new_company_name}
                   onChange={handleChange}
                   required
               />
@@ -76,14 +76,14 @@ const CustomerForm: React.FC<CustomerFormProps> = ({ onSubmit }) => {
           {/* Company address */}
           <div className="row mb-1">
             <div className="col-12 col-md-4 col-lg-3 label-form">
-              <label htmlFor="company_name">{currentData.customer.company_address}*</label>
+              <label htmlFor="new_company_address">{currentData.customer.company_address}*</label>
             </div>
             <div className="col-12 col-md-8 col-lg-9">
               <input
                   className="form-control"
                   type="text"
-                  name="company_address"
-                  value={formData.company_address}
+                  name="new_company_address"
+                  value={formData.new_company_address}
                   onChange={handleChange}
                   required
               />
@@ -93,14 +93,14 @@ const CustomerForm: React.FC<CustomerFormProps> = ({ onSubmit }) => {
           {/* Company ico */}
           <div className="row mb-1">
             <div className="col-12 col-md-4 col-lg-3 label-form">
-              <label htmlFor="company_name">{currentData.customer.company_number}*</label>
+              <label htmlFor="new_company_ico">{currentData.customer.company_number}*</label>
             </div>
             <div className="col-12 col-md-8 col-lg-9">
               <input
                   className="form-control"
                   type="text"
-                  name="company_ico"
-                  value={formData.company_ico}
+                  name="new_company_ico"
+                  value={formData.new_company_ico}
                   onChange={handleChange}
                   required
               />
@@ -110,14 +110,14 @@ const CustomerForm: React.FC<CustomerFormProps> = ({ onSubmit }) => {
           {/* Company dic */}
           <div className="row mb-1">
             <div className="col-12 col-md-4 col-lg-3 label-form">
-              <label htmlFor="company_name">{currentData.customer.vat_number}*</label>
+              <label htmlFor="new_company_dic">{currentData.customer.vat_number}*</label>
             </div>
             <div className="col-12 col-md-8 col-lg-9">
               <input
                   className="form-control"
                   type="text"
-                  name="company_dic"
-                  value={formData.company_dic}
+                  name="new_company_dic"
+                  value={formData.new_company_dic}
                   onChange={handleChange}
                   required
               />
