@@ -610,7 +610,7 @@ a {
   .account-page .place-card {
     margin-bottom: 10px;
   }
-  .place-icon-skeleton {
+  .account-page .place-icon-skeleton {
     left: auto !important;
     right: 20px;
   }
@@ -1372,6 +1372,20 @@ svg.loader{
   display: none;
 }
 
+@media (max-width: 767px) {
+  .download-invoice .download-invoice-span {
+   display: none;
+  }
+  .download-invoice .btn-download {
+    width: 50px;
+  }
+}
+@media (max-width: 530px) {
+  .invoices-page .invoice-icon {
+    display: none;
+  }
+}
+
 .account-page .order-history .card {
   height: 60px;
   padding: 10px 14px;
@@ -1622,6 +1636,24 @@ p.back-link {
 
 #card-history .card {
   border-radius: 16px
+}
+@media (max-width: 768px) {
+  .all-history-page .mt-4 {
+    margin-top: 2px !important;
+  }
+}
+@media (max-width: 530px) {
+  .order-history .history-icon {
+    display: none;
+  }
+  .order-history .card {
+    padding: 20px 16px;
+    margin-bottom: 10px;
+  }
+  .order-history .place-icon-skeleton {
+    left: auto;
+    right: 20px;
+  }
 }
 
 .display-none{

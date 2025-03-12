@@ -16,6 +16,8 @@ import { formatViceDate } from "@/components/utils/FormatViceDate";
 import { styled } from '@mui/material/styles';
 import Tooltip, { TooltipProps, tooltipClasses } from '@mui/material/Tooltip';
 import FileDownloadIcon from "@/components/order/FileDownloadIcon";
+import UseMediaQuery from "@/hooks/UseMediaQuery";
+import DarkTooltip from "../utils/DarkTooltip.tsx";
 
 interface Order {
     id: number;
@@ -38,6 +40,7 @@ const AllOrderHistory: React.FC = () => {
     const BASE_URL = import.meta.env.VITE_API_URL;
     const { currentData } = useContext(LanguageContext);
     const [orderPhotos, setOrderPhotos] = useState<OrderPhoto[]>([]);
+    const isMobileMax530 = UseMediaQuery('(max-width: 530px)');
 
     // get photo for orders
     const fetchOrderPhotos = async () => {
@@ -71,17 +74,6 @@ const AllOrderHistory: React.FC = () => {
             [orderId]: !prev[orderId]
         }));
     };
-
-    const DarkTooltip = styled(({ className, ...props }: TooltipProps) => (
-        <Tooltip {...props} classes={{ popper: className }} />
-    ))(({ theme }) => ({
-        [`& .${tooltipClasses.tooltip}`]: {
-            backgroundColor: theme.palette.common.black,
-            color: '#fff',
-            boxShadow: theme.shadows[2],
-            fontSize: 15,
-        },
-    }));
 
     //  Fetch Orders on Mount
     useEffect(() => {
@@ -127,14 +119,14 @@ const AllOrderHistory: React.FC = () => {
         <>
             <HeaderAccount customerId={customerId} />
 
-            <div className="container margin-top-90 wrapper place-detail-page">
-                <div className="row message-block">
-                    <div className="col-1 back-button">
+            <div className="container margin-top-90 wrapper all-history-page">
+                <div className="row">
+                    <div className="col-3 back-button">
                         <NavButtons />
                     </div>
                 </div>
 
-                <div className="row mt-4">
+                <div className="row mt-4 mb-4">
                     <div className="col-lg-8 col-md-10 col-12">
 
                         <div className="order-history">
@@ -175,7 +167,7 @@ const AllOrderHistory: React.FC = () => {
                                             // Если фотографий больше двух – вычисляем высоту контейнера с иконками,
                                             // иначе высота задаётся классом "expanded" (из CSS)
 
-                                            const dynamicHeight = photos.length > 3
+                                            const dynamicHeight = ((photos.length > 3 || isMobileMax530) && !photos.length == 0)
                                                 ? `${photos.length * 72 + 90}px` : '220px';
 
                                             return (
@@ -272,7 +264,7 @@ const AllOrderHistory: React.FC = () => {
                                                     </div>
                                                 )}
 
-                                                    {photos.length <= 3 ? (
+                                                    {((photos.length <= 3 && !isMobileMax530) || !photos.length > 0) ? (
                                                         <div className="image-icon-container">
 
                                                             <div className="image-icon-position">

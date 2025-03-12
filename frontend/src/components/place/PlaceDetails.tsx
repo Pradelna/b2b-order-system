@@ -111,7 +111,6 @@ const PlaceDetails: React.FC = () => {
                 );
 
                 setCurrentOrder(current || null);
-                console.log(currentOrder);
                 setOrderHistory(history);
                 setHasMoreOrders(history.length > 10);
                 // Проверяем сразу, можно ли отменить заказ
@@ -128,9 +127,7 @@ const PlaceDetails: React.FC = () => {
         }
     };
 
-    console.log(currentOrder);
-
-
+    // delete place, but only add "deleted"=True
     const handleDelete = async () => {
         // deleting of the place
         if (window.confirm("Are you sure you want to delete this place?")) {
@@ -157,8 +154,6 @@ const PlaceDetails: React.FC = () => {
             }
         }
     };
-
-    console.log(currentOrder);
 
     const handleStopOrder = async (orderId: number) => {
         // stop repeat order
