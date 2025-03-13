@@ -1,3 +1,5 @@
+import ForgotPas from "./components/auth/ForgotPas";
+
 const BASE_URL = import.meta.env.VITE_API_URL;
 import { useState, useEffect } from "react";
 import {
@@ -17,6 +19,8 @@ import AccountPage from "./components/account/AccountPage";
 import CustomerDetailPage from "./components/customer/CustomerDetailPage";
 import LoaderTestPage from "./components/LoaderTestPage";
 import PlaceDetails from "./components/place/PlaceDetails";
+import ResetPasswordConfirm from "./components/auth/ResetPasswordConfirm";
+import ResetPasswordComplete from "./components/auth/ResetPasswordComplete";
 
 import "./App.css";
 import ReportList from "./components/order/ReportList";
@@ -145,6 +149,14 @@ const App: React.FC = () => {
 
             {/* Fallback for unknown routes */}
             <Route path="*" element={<Navigate to="/" />} />
+
+              {/* Страница для ввода нового пароля (переход по ссылке из email) */}
+              <Route path="/reset-password/:uidb64/:token" element={<ResetPasswordConfirm />} />
+
+              {/* Страница после успешного сброса пароля */}
+              <Route path="/reset-password/done" element={<ResetPasswordComplete />} />
+
+              <Route path="/forgot-password/" element={<ForgotPas />} />
           </Routes>
         </div>
       </BrowserRouter>

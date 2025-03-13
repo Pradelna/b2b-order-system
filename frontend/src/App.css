@@ -1876,3 +1876,54 @@ p.back-link {
   right: auto;
   left: 17px;
 }
+
+#auth-data-block .other-card .card {
+  min-height: 122px;
+}
+
+.btn-logout {
+  background-color: #d90505;
+  text-decoration: none;
+  font-size: 14px;
+  font-weight: 400;
+  line-height: 36px;
+  color: #fff;
+  text-align: center;
+  width: 100%;
+  height: 36px;
+  border-radius: 18px;
+  border: solid 2px #d90505;
+  display: -webkit-box;
+  display: -ms-flexbox;
+  display: flex;
+  -webkit-box-orient: horizontal;
+  -webkit-box-direction: normal;
+  -ms-flex-direction: row;
+  flex-direction: row;
+  -webkit-box-align: center;
+  -ms-flex-align: center;
+  align-items: center;
+  -webkit-box-pack: center;
+  -ms-flex-pack: center;
+  justify-content: center;
+  -ms-flex-wrap: nowrap;
+  flex-wrap: nowrap;
+  margin: 0 auto;
+}
+
+.btn-logout:hover {
+  color: #d90505;
+  background-color: #fff;
+}
+
+#auth-data-block .modal-wrapper {
+  max-width: 400px;
+}
+
+.reset-forma {
+  position: absolute;
+  top: -4px;
+  right: -4px;
+  width: 24px;
+  height: auto;
+}

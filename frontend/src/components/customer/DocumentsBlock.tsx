@@ -38,7 +38,7 @@ const DocumentsBlock: React.FC = () => {
         <div id="document-block">
             <div className="row other-card">
                 <div className="card">
-                    <h3 style={{ fontSize: "20px" }} className="mt-3">
+                    <h3 style={{ fontSize: "20px" }}>
                         {currentData.customer.important_files}
                     </h3>
 

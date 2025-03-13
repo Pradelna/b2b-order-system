@@ -55,6 +55,7 @@ const Header: React.FC = ({formCustomer}) => {
       navigate("/account/login");
     }
   };
+  console.log("Current path:", location.pathname);
 
   return (
       <header className="header">
@@ -79,7 +80,7 @@ const Header: React.FC = ({formCustomer}) => {
                   <FontAwesomeIcon icon={faEnvelope} className="icon" />
                   <span>pradelna1cz@gmail.com</span>
                 </a>
-                {formCustomer ? (
+                {(location.pathname === "/account/auth/" || location.pathname === "/account/login/" || formCustomer) ? (
                     <Link to="/" className="mail">
                       <FontAwesomeIcon icon={faEarthAmerica} className="icon"/>
                       <span>Website</span>
@@ -87,7 +88,7 @@ const Header: React.FC = ({formCustomer}) => {
                 ) : (
                 <button onClick={handleAuthClick} className="header-menu">
                   <FontAwesomeIcon icon={faUser} className="icon" />
-                  <span>{isAuthenticated ? menuData.header_account : "Log in"}</span>
+                  <span>{isAuthenticated ? menuData?.header_account : (currentData?.auth.login || "Přihlásit se")}</span>
                 </button>)}
               </div>
 

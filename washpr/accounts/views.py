@@ -1,4 +1,5 @@
-from rest_framework.permissions import IsAuthenticated
+from django.contrib.auth.forms import PasswordResetForm
+from rest_framework.permissions import IsAuthenticated, AllowAny
 from rest_framework.views import APIView
 from rest_framework.response import Response
 from rest_framework import status, permissions
@@ -14,7 +15,7 @@ from django.contrib.auth.tokens import default_token_generator
 from django.utils.http import urlsafe_base64_decode
 from django.utils.encoding import force_str
 from django.shortcuts import render
-from rest_framework.decorators import api_view
+from rest_framework.decorators import api_view, permission_classes, authentication_classes
 from rest_framework.response import Response
 from rest_framework import status
 
@@ -81,3 +82,65 @@ class AccountDataView(APIView):
             "some_data": "secret info"
         }
         return Response(data, status=status.HTTP_200_OK)
+
+
+@api_view(['POST'])
+@authentication_classes([])
+@permission_classes([AllowAny])  # Доступ для всех, включая неавторизованных пользователей
+def api_password_reset(request):
+    """
+    API для сброса пароля.
+    Ожидает JSON с ключом "email".
+    Если email корректный и связан с пользователем, отправляет письмо для сброса пароля.
+    """
+    # Для неавторизованных пользователей лучше брать email из request.data:
+    email = request.data.get("email")
+    if not email:
+        return Response({"error": "Email is required."}, status=status.HTTP_400_BAD_REQUEST)
+
+    form = PasswordResetForm({"email": email})
+    if form.is_valid():
+        form.save(
+            request=request,
+            use_https=request.is_secure(),
+            email_template_name='registration/password_reset_email.html',
+            subject_template_name='registration/password_reset_subject.txt',
+            from_email=settings.DEFAULT_FROM_EMAIL,
+        )
+        return Response({"detail": "Password reset email sent."}, status=status.HTTP_200_OK)
+    else:
+        return Response(form.errors, status=status.HTTP_400_BAD_REQUEST)
+
+
+@api_view(['GET', 'POST'])
+@permission_classes([AllowAny])
+def api_password_reset_confirm(request, uidb64, token):
+    if request.method == 'GET':
+        # Перенаправляем GET-запрос на страницу React для сброса пароля.
+        react_url = f"{settings.REACT_FRONTEND_URL}/reset-password/{uidb64}/{token}"
+        return HttpResponseRedirect(react_url)
+    elif request.method == 'POST':
+        new_password = request.data.get("new_password")
+        if not new_password:
+            return Response({"error": "New password is required."}, status=status.HTTP_400_BAD_REQUEST)
+        try:
+            uid = urlsafe_base64_decode(uidb64).decode()
+            user = get_user_model().objects.get(pk=uid)
+        except (TypeError, ValueError, OverflowError, get_user_model().DoesNotExist):
+            return Response({"error": "Invalid user."}, status=status.HTTP_400_BAD_REQUEST)
+        if not default_token_generator.check_token(user, token):
+            return Response({"error": "Invalid or expired token."}, status=status.HTTP_400_BAD_REQUEST)
+
+        user.set_password(new_password)
+        user.save()
+        return Response({"detail": "Password has been reset successfully."}, status=status.HTTP_200_OK)
+
+
+from django.http import HttpResponseRedirect
+
+@api_view(['GET'])
+@permission_classes([AllowAny])
+def api_password_reset_complete(request):
+    # Перенаправляем пользователя на страницу React с сообщением об успешном сбросе пароля
+    react_url = f"{settings.REACT_FRONTEND_URL}/reset-password/done"
+    return HttpResponseRedirect(react_url)

@@ -10,6 +10,7 @@ import UploadFile from "./UploadFile.js";
 import DocumentsBlock from "./DocumentsBlock.js";
 import NavButtons from "@/components/account/NavButtons.js";
 import {Skeleton} from "@mui/material";
+import AuthBlock from "@/components/customer/AuthBlock.js";
 
 interface CustomerData {
     company_name: string;
@@ -31,12 +32,6 @@ const CustomerDetailPage: React.FC = () => {
     const [loading, setLoading] = useState<boolean>(true);
     const [forceWait, setForceWait] = useState<boolean>(true);
     const BASE_URL = import.meta.env.VITE_API_URL;
-
-    const handleLogout = () => {
-        localStorage.removeItem("accessToken");
-        alert("You have been logged out.");
-        window.location.href = "/account/login";
-    };
 
     const fetchCustomerData = async () => {
         const token = localStorage.getItem("accessToken");
@@ -120,7 +115,6 @@ const CustomerDetailPage: React.FC = () => {
                                         customerData={customerData}
                                         setCustomerData={setCustomerData}
                                         setSuccessMessage={setSuccessMessage}
-                                        onLogout={handleLogout}
                                         setIsEditing={setIsEditing}
                                     />
                                 ) : (
@@ -191,12 +185,7 @@ const CustomerDetailPage: React.FC = () => {
 
                             <DocumentsBlock />
 
-                            <div className="row mt-3 mb-5">
-                                {/* Logout Button */}
-                                <button className="btn-red" onClick={handleLogout}>
-                                    {currentData.auth.logout || 'Log Out'}
-                                </button>
-                            </div>
+                            <AuthBlock customerData={customerData} />
 
                         </>)}
 
