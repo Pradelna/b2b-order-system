@@ -194,7 +194,7 @@ const CustomerDetailPage: React.FC = () => {
                             <div className="row mt-3 mb-5">
                                 {/* Logout Button */}
                                 <button className="btn-red" onClick={handleLogout}>
-                                    Log Out
+                                    {currentData.auth.logout || 'Log Out'}
                                 </button>
                             </div>
 
