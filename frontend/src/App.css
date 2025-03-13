@@ -1338,6 +1338,7 @@ svg.loader{
   transform: translate(-50%, -50%);
 }
 
+.form-customer-edit p,
 .order-message p {
   margin-bottom: 3px;
 }
@@ -1861,4 +1862,17 @@ p.back-link {
     padding-right: 0 !important;
     padding-left: 3px !important;
   }
+}
+
+.form-customer-edit .alert {
+  padding: 5px 10px;
+  margin-bottom: 0;
+}
+
+.form-customer-edit input[type=checkbox] {
+  opacity: 0;
+  position: absolute;
+  top: 5%;
+  right: auto;
+  left: 17px;
 }

@@ -164,6 +164,9 @@ class LandingPageSerializer(serializers.ModelSerializer):
             'wait_for_active': obj.customer_wait_for_active,
             'your_places': obj.customer_your_places,
             'you_dont_have_place': obj.customer_you_dont_have_place,
+            'new_data_change': obj.new_data_change,
+            'new_data_wait': obj.new_data_wait,
+            'new_data_faktur': obj.new_data_faktur,
         }
 
     def get_buttons(self, obj):

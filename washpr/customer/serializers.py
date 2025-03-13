@@ -46,7 +46,8 @@ class CustomerGetSerializer(serializers.ModelSerializer):
             'company_phone',
             'company_email',
             'company_person',
-            'active'
+            'active',
+            'change_data'
         ]
         read_only_fields = ['user']  # Поле user заполняется автоматически
 

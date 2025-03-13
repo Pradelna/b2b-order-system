@@ -116,6 +116,9 @@ class LandingPage(models.Model):
     customer_wait_for_active = models.CharField("Wait for activation", max_length=200, blank=True, null=True)
     customer_your_places = models.CharField("Title Your places", max_length=200, blank=True, null=True)
     customer_you_dont_have_place = models.CharField("Title You don't have any place", max_length=200, blank=True, null=True)
+    new_data_change = models.CharField("New data changing", max_length=200, blank=True, null=True)
+    new_data_wait = models.CharField("New data waiting for comfirm", max_length=200, blank=True, null=True)
+    new_data_faktur = models.CharField("New data for invoices", max_length=200, blank=True, null=True)
     # buttons
     button_submit = models.CharField("Button submit", max_length=50, blank=True, null=True)
     button_cancel = models.CharField("Button cancel", max_length=50, blank=True, null=True)
