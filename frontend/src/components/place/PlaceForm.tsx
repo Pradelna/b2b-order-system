@@ -1,5 +1,6 @@
-import { useState, ChangeEvent, FormEvent } from "react";
+import {useState, ChangeEvent, FormEvent, useContext} from "react";
 import { fetchWithAuth } from "../account/auth.ts";
+import { LanguageContext } from "../../context/LanguageContext";
 
 interface PlaceFormProps {
     onClose: () => void;
@@ -28,6 +29,7 @@ const PlaceForm: React.FC<PlaceFormProps> = ({ onClose, onSuccess }) => {
         rp_phone: "",
         rp_email: "",
     });
+    const { currentData } = useContext(LanguageContext);
 
     const BASE_URL = import.meta.env.VITE_API_URL;
 
@@ -63,16 +65,16 @@ const PlaceForm: React.FC<PlaceFormProps> = ({ onClose, onSuccess }) => {
         <div className="modal-backdrop">
             <div className="modal-wrapper">
                 <div className="modal-content">
-                    <h3>Add New Place</h3>
+                    <h3>{ currentData.form["add_place"] || "Add New Place" }</h3>
                     <form onSubmit={handleSubmit}>
                         {Object.entries(formData).map(([key, value]) => (
                             <div className="row mb-3" key={key}>
-                                <div className="col-3 label-form">
+                                <div className="col-sm-4 col-12 label-form">
                                     <label htmlFor={key}>
-                                        {key.replace("rp_", "").replace("_", " ").toUpperCase()}
+                                        {(currentData.form[key])}
                                     </label>
                                 </div>
-                                <div className="col-9">
+                                <div className="col-sm-8 col-12">
                                     <input
                                         className="form-control"
                                         type="text"
@@ -90,10 +92,10 @@ const PlaceForm: React.FC<PlaceFormProps> = ({ onClose, onSuccess }) => {
                         {/* Submit and Close Buttons */}
                         <div className="row mt-3">
                             <button className="btn-submit me-2" type="submit">
-                                Submit
+                                { currentData.buttons["submit"] || "Uložit" }
                             </button>
                             <button className="btn-link" type="button" onClick={onClose}>
-                                Cancel
+                                { currentData.buttons["cancel"] || "Zrušit" }
                             </button>
                         </div>
                     </form>

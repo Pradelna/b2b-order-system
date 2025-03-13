@@ -59,11 +59,14 @@ def get_list_place(request):
     try:
         # Получаем текущего пользователя
         customer = Customer.objects.get(user=request.user)
-        places = Place.objects.filter(customer=customer, active=True, deleted=False)
-        serializer = PlaceSerializer(places, many=True)
-        return Response(serializer.data)
-    except Place.DoesNotExist:
+    except Customer.DoesNotExist:
+        return Response({"error": "Customer not found"}, status=status.HTTP_404_NOT_FOUND)
+    places = Place.objects.filter(customer=customer, active=True, deleted=False)
+    if not places.exists():
         return Response({"error": "Places not found"}, status=status.HTTP_404_NOT_FOUND)
+    serializer = PlaceSerializer(places, many=True)
+    return Response(serializer.data)
+
 
 
 @api_view(['GET'])

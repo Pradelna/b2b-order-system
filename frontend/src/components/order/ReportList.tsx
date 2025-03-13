@@ -2,11 +2,21 @@ import React, { useState, useEffect } from "react";
 import { Link } from "react-router-dom";
 import { fetchWithAuth } from "../account/auth";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import {faFilePdf, faDownload, faSpinner, faFileInvoiceDollar} from "@fortawesome/free-solid-svg-icons";
+import {
+    faFilePdf,
+    faDownload,
+    faSpinner,
+    faFileInvoiceDollar,
+    faFileImage,
+    faFileArrowDown
+} from "@fortawesome/free-solid-svg-icons";
 import HeaderAccount from "../HeaderAccount";
 import Footer from "../Footer";
 import NavButtons from "../account/NavButtons";
 import {Skeleton} from "@mui/material";
+import {styled} from "@mui/material/styles";
+import Tooltip, {tooltipClasses, TooltipProps} from "@mui/material/Tooltip";
+import DarkTooltip from "../utils/DarkTooltip.tsx";
 
 interface Report {
     id: number;
@@ -27,6 +37,8 @@ const ReportList: React.FC = () => {
     const [customerId, setCustomerId] = useState<Customer | null>(null);
     const [forceWait, setForceWait] = useState<boolean>(true);
     const BASE_URL = import.meta.env.VITE_API_URL;
+
+
 
     useEffect(() => {
         const fetchReports = async () => {
@@ -59,7 +71,7 @@ const ReportList: React.FC = () => {
             <HeaderAccount customerId={customerId} />
             <div className="container margin-top-90 wrapper invoices-page">
                 <div className="row message-block-76">
-                    <div className="col-1 back-button">
+                    <div className="col-2 back-button">
                         <NavButtons />
                     </div>
 
@@ -120,7 +132,12 @@ const ReportList: React.FC = () => {
                                                             className="btn btn-download"
                                                             target="_blank"
                                                         >
-                                                            <FontAwesomeIcon icon={faDownload} /> Download
+                                                            <DarkTooltip title="Download invoie" placement="top" arrow>
+                                                                <FontAwesomeIcon
+                                                                    icon={faFileArrowDown}
+                                                                    style={{ cursor: "pointer" }}
+                                                                />
+                                                            </DarkTooltip><span className="download-invoice-span"> Download</span>
                                                         </a>
                                                     ))
                                                 ) : (

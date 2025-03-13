@@ -63,7 +63,7 @@ const LoginForm: React.FC = () => {
             <Header />
 
             <div className="container margin-top-130 wrapper">
-                <div style={{ width: "400px", margin: "5rem auto" }}>
+                <div className="form-login">
                     {errorMessage && (
                         <p className="alert alert-danger">{errorMessage}</p>
                     )}

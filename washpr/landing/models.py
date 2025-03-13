@@ -114,10 +114,22 @@ class LandingPage(models.Model):
     customer_important_files = models.CharField("Important files", max_length=200, blank=True, null=True)
     customer_send_to_check = models.CharField("Send to check", max_length=200, blank=True, null=True)
     customer_wait_for_active = models.CharField("Wait for activation", max_length=200, blank=True, null=True)
+    customer_your_places = models.CharField("Title Your places", max_length=200, blank=True, null=True)
+    customer_you_dont_have_place = models.CharField("Title You don't have any place", max_length=200, blank=True, null=True)
+    new_data_change = models.CharField("New data changing", max_length=200, blank=True, null=True)
+    new_data_wait = models.CharField("New data waiting for comfirm", max_length=200, blank=True, null=True)
+    new_data_faktur = models.CharField("New data for invoices", max_length=200, blank=True, null=True)
     # buttons
     button_submit = models.CharField("Button submit", max_length=50, blank=True, null=True)
+    button_cancel = models.CharField("Button cancel", max_length=50, blank=True, null=True)
     button_upload = models.CharField("Button upload file", max_length=50, blank=True, null=True)
     button_uploading = models.CharField("Button uploading", max_length=50, blank=True, null=True)
+    button_add_place = models.CharField("Button add new place", max_length=100, blank=True, null=True)
+    button_all_history = models.CharField("Button all history", max_length=100, blank=True, null=True)
+    button_invoices = models.CharField("Button invoices", max_length=100, blank=True, null=True)
+    button_new_order = models.CharField("Button new order", max_length=100, blank=True, null=True)
+    button_details = models.CharField("Button details", max_length=100, blank=True, null=True)
+    button_back = models.CharField("Button back", max_length=100, blank=True, null=True)
     # messages
     message_file_ok = models.CharField("File uploaded successfully!", max_length=100, blank=True, null=True)
     message_file_size = models.CharField("The selected file exceeds the maximum size of 2MB", max_length=100,
@@ -131,12 +143,42 @@ class LandingPage(models.Model):
     message_file_failed_delete = models.CharField("Failed to delete the file", max_length=100, blank=True, null=True)
     message_file_failed_while_deleting = models.CharField("An error occurred while deleting the file", max_length=100,
                                                           blank=True, null=True)
-    # type of shipping system new 19 feb
+    # order
     order_type_sipping_clear_for_dirty = models.CharField("Order type sipping clear for dirty", max_length=100,
                                                           blank=True, null=True)
     order_type_sipping_1_in_3 = models.CharField("Order type sipping 1 in 3", max_length=100, blank=True, null=True)
     order_one_time = models.CharField("One time order", max_length=100, blank=True, null=True)
     order_quick = models.CharField("Quick order", max_length=100, blank=True, null=True)
+    order_note_sh_cl_dr = models.TextField("Note for sipping clear for dirty", max_length=500, blank=True, null=True)
+    order_note_sh_1_3 = models.TextField("Note for sipping 1 in 3", max_length=500, blank=True, null=True)
+    order_note_one_time = models.TextField("Note for one time", max_length=500, blank=True, null=True)
+    order_note_quick = models.TextField("Note for quick order", max_length=500, blank=True, null=True)
+    order_note_every_week = models.TextField("Note for every week", max_length=500, blank=True, null=True)
+    order_mon_wed_fri = models.CharField("Monday Wednesday Friday", max_length=100, blank=True, null=True)
+    order_tue_thu = models.CharField("Tuesday Thursday", max_length=100, blank=True, null=True)
+    order_every_day = models.CharField("Every day", max_length=100, blank=True, null=True)
+    order_own_system = models.CharField("Order own system", max_length=100, blank=True, null=True)
+
+    form_add_place = models.CharField("Form title add new place", max_length=100, blank=True, null=True)
+    form_place_name = models.CharField("Form place name", max_length=100, blank=True, null=True)
+    form_rp_city = models.CharField("Form RP city", max_length=100, blank=True, null=True)
+    form_rp_street = models.CharField("Form RP street", max_length=100, blank=True, null=True)
+    form_rp_zip = models.CharField("Form RP zip", max_length=100, blank=True, null=True)
+    form_rp_number = models.CharField("Form RP number", max_length=100, blank=True, null=True)
+    form_rp_person = models.CharField("Form RP person", max_length=100, blank=True, null=True)
+    form_rp_email = models.CharField("Form RP email", max_length=100, blank=True, null=True)
+    form_rp_phone = models.CharField("Form RP phone", max_length=100, blank=True, null=True)
+    form_create_order = models.CharField("Form create new order", max_length=100, blank=True, null=True)
+    form_place = models.CharField("Form place", max_length=100, blank=True, null=True)
+    form_type_ship = models.CharField("Form type shipping", max_length=100, blank=True, null=True)
+    form_system = models.CharField("Form system", max_length=100, blank=True, null=True)
+    form_start_day = models.CharField("Form start day", max_length=100, blank=True, null=True)
+    form_note = models.CharField("Form note", max_length=100, blank=True, null=True)
+    form_type_note = models.CharField("Form type note", max_length=100, blank=True, null=True)
+    form_select_place = models.CharField("Form select place", max_length=100, blank=True, null=True)
+    form_select_type = models.CharField("Form select type", max_length=100, blank=True, null=True)
+    form_select_system = models.CharField("Form select system", max_length=100, blank=True, null=True)
+
 
     def __str__(self):
         return self.lang

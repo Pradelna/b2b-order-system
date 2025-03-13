@@ -124,7 +124,10 @@ def create_client_task(customer_id):
         client_id = response["id"]
         customer.rp_client_id = client_id
         customer.data_sent = True
-        customer.save(update_fields=["rp_client_id", "data_sent"])
+        customer.save(update_fields=[
+            "rp_client_id",
+            "data_sent",
+        ])
 
         create_all_place_task.delay(customer_id)
 

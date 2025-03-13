@@ -16,6 +16,7 @@ import {
     faFileInvoiceDollar, faCircleCheck, faStopwatch
 } from "@fortawesome/free-solid-svg-icons";
 import {Skeleton} from "@mui/material";
+import {fontSize} from "@mui/system";
 
 
 interface AccountProps {
@@ -164,7 +165,6 @@ const Account: React.FC<AccountProps> = ({ customerData, setCustomerData }) => {
         <div className="container margin-top-90 wrapper account-page">
             <div className="row message-block-76">
                 <div className="col-xl-9 col-lg-8 col-12">
-                    {/*<p className="alert alert-success">Message f g fhfhfh hfghfh  fhfh fhfhf fghfghfhh fghfghfgh hffhfhf</p>*/}
                     {successMessage && (
                         <p className="alert alert-success">{successMessage}</p>
                     )}
@@ -175,7 +175,7 @@ const Account: React.FC<AccountProps> = ({ customerData, setCustomerData }) => {
                     <div id="company-top" className="row">
 
                         <div className={`${customerData && !customerData.error ? "col-xl-6 col-lg-12 mb-4" : "col-12"}`}>
-                            {loading || forceWait ? (
+                            {(customerData && (loading || forceWait)) ? (
                                 <>
                                     <div className="card dashboard-button">
                                         <div className="card-body button-history">
@@ -232,7 +232,9 @@ const Account: React.FC<AccountProps> = ({ customerData, setCustomerData }) => {
                                                 <div className="card dashboard-button">
                                                     <div className="card-body button-history">
                                                         <FontAwesomeIcon icon={faClockRotateLeft} className="icon" />
-                                                        <p className="text-history">All history</p>
+                                                        <p className="text-history">
+                                                            {currentData.buttons["all_history"] || "Historie objednávek"}
+                                                        </p>
                                                     </div>
                                                 </div>
                                             </Link>
@@ -243,7 +245,7 @@ const Account: React.FC<AccountProps> = ({ customerData, setCustomerData }) => {
                                                 <div className="card dashboard-button">
                                                     <div className="card-body">
                                                         <FontAwesomeIcon icon={faFileInvoiceDollar} className="icon" />
-                                                        <p className="text-history">{currentData.service.invoices || "Invoices"}</p>
+                                                        <p className="text-history">{currentData.buttons["invoices"] || "Faktury"}</p>
                                                     </div>
                                                 </div>
                                             </Link>
@@ -254,7 +256,7 @@ const Account: React.FC<AccountProps> = ({ customerData, setCustomerData }) => {
                                             <div className="card dashboard-button" onClick={handleCreateOrder}>
                                                 <div className="card-body">
                                                     <FontAwesomeIcon icon={faCartPlus} className="icon" />
-                                                    <p className="text-history">{currentData.service.new_order || "New Order"}</p>
+                                                    <p className="text-history">{currentData.buttons["new_order"] || "Nová objednávka"}</p>
                                                 </div>
                                             </div>
                                         </div>
@@ -277,15 +279,15 @@ const Account: React.FC<AccountProps> = ({ customerData, setCustomerData }) => {
                         {places.length === 0 ? (
                             <>
                                 {customerData && !customerData.error && (
-                                    <div className="col-lg-4 col-md-7 col-sm-5 col-6">
-                                        <p>You don't have any place.<br />Please add one</p>
+                                    <div className="col-xl-4 col-12">
+                                        <p style={{fontSize: "20px", marginTop: "15px"}}>{currentData.customer["you_dont_have_place"] || "Nemáte žádné místo"}</p>
                                     </div>
                                 )}
                             </>
 
                         ) : (
-                            <div className="col-lg-3 col-md-8 col-sm-7 col-6" style={{ paddingTop: "16px" }}>
-                                <h4>Your places</h4>
+                            <div className="col-lg-4 col-md-8 col-sm-7 col-6" style={{ paddingTop: "16px" }}>
+                                <h4>{currentData.customer["your_places"] || "Vaše místa"}</h4>
                             </div>
                         )}
 
@@ -302,7 +304,9 @@ const Account: React.FC<AccountProps> = ({ customerData, setCustomerData }) => {
                                     {customerData && !customerData.error && (
                                         <button className="btn-link" onClick={handleCreatePlace}>
                                             <FontAwesomeIcon icon={faHouse} className="icon" />
-                                            <span className="ms-2">{currentData.service.new_place || "New Place"}</span>
+                                            <span className="ms-2">
+                                                {currentData.buttons["add_place"] || "Přidat nové místo"}
+                                            </span>
 
                                         </button>
                                     )}
@@ -356,14 +360,17 @@ const Account: React.FC<AccountProps> = ({ customerData, setCustomerData }) => {
                                                     setShowOrderForm(true);
                                                 }}
                                             >
-                                                new order
+                                                <span className="text-new-order-in-button">
+                                                    {currentData.buttons["new_order"] || "Nová objednávka"}
+                                                </span>
+                                                <FontAwesomeIcon icon={faCartPlus} className="icon order-mobile" />
                                             </button>
                                             <button
                                                 onClick={() => place.id && navigate(`/place/${place.id}`)}
                                                 disabled={!place.id} // Отключаем кнопку, если нет ID
                                                 className="call details-place-button"
                                             >
-                                                details
+                                                {currentData.buttons["details"] || "Detail"}
                                             </button>
                                         </div>
                                     </div>
@@ -385,7 +392,9 @@ const Account: React.FC<AccountProps> = ({ customerData, setCustomerData }) => {
                                     {customerData && !customerData.error && (
                                         <button className="btn-link" onClick={handleCreatePlace}>
                                             <FontAwesomeIcon icon={faHouse} className="icon" />
-                                            <span className="ms-2">{currentData.service.new_place || "New Place"}</span>
+                                            <span className="ms-2">
+                                                {currentData.buttons["add_place"] || "Přidat nové místo"}
+                                            </span>
 
                                         </button>
                                     )}

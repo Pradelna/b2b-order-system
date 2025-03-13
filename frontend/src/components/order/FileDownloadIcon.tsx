@@ -3,6 +3,7 @@ import { styled } from '@mui/material/styles';
 import Tooltip, { TooltipProps, tooltipClasses } from '@mui/material/Tooltip';
 import { faFileImage, faFileLines } from '@fortawesome/free-solid-svg-icons';
 import { fetchWithAuth } from '@/components/account/auth.ts';
+import DarkTooltip from "../utils/DarkTooltip.tsx";
 
 interface Photo {
     id: string;
@@ -56,18 +57,6 @@ const FileDownloadIcon: React.FC<PhotoDownloadIconProps> = ({ photo, styleData }
             console.error("Error of downloading file:", error);
         }
     };
-
-    // Tooltip
-    const DarkTooltip = styled(({ className, ...props }: TooltipProps) => (
-        <Tooltip {...props} classes={{ popper: className }} />
-    ))(({ theme }) => ({
-        [`& .${tooltipClasses.tooltip}`]: {
-            backgroundColor: theme.palette.common.black,
-            color: '#fff',
-            boxShadow: theme.shadows[2],
-            fontSize: 15,
-        },
-    }));
 
     return (
         <div

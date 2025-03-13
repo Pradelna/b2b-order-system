@@ -17,11 +17,12 @@ class LandingPageSerializer(serializers.ModelSerializer):
     buttons = serializers.SerializerMethodField()
     messages = serializers.SerializerMethodField()
     order = serializers.SerializerMethodField()
+    form = serializers.SerializerMethodField()
 
     class Meta:
         model = LandingPage
         fields = [
-            'lang', 'prefix', 'menu', 'start_banner', 'about_us', 'service', 'messages',
+            'lang', 'prefix', 'menu', 'start_banner', 'about_us', 'service', 'messages', 'form',
             'technologies', 'price', 'contacts', 'footer', 'auth', 'customer', 'buttons', 'order'
         ]
 
@@ -161,13 +162,25 @@ class LandingPageSerializer(serializers.ModelSerializer):
             'important_files': obj.customer_important_files,
             'send_to_check': obj.customer_send_to_check,
             'wait_for_active': obj.customer_wait_for_active,
+            'your_places': obj.customer_your_places,
+            'you_dont_have_place': obj.customer_you_dont_have_place,
+            'new_data_change': obj.new_data_change,
+            'new_data_wait': obj.new_data_wait,
+            'new_data_faktur': obj.new_data_faktur,
         }
 
     def get_buttons(self, obj):
         return {
             'submit': obj.button_submit,
+            'cancel': obj.button_cancel,
             'upload': obj.button_upload,
             'uploading': obj.button_uploading,
+            'add_place': obj.button_add_place,
+            'all_history': obj.button_all_history,
+            'invoices': obj.button_invoices,
+            'new_order': obj.button_new_order,
+            'details': obj.button_details,
+            'back': obj.button_back,
         }
 
     def get_messages(self, obj):
@@ -188,4 +201,36 @@ class LandingPageSerializer(serializers.ModelSerializer):
             'type_sipping_1_in_3': obj.order_type_sipping_1_in_3,
             'one_time': obj.order_one_time,
             'quick': obj.order_quick,
+            'note_sh_cl_dr': obj.order_note_sh_cl_dr,
+            'note_sh_1_3': obj.order_note_sh_1_3,
+            'note_one_time': obj.order_note_one_time,
+            'note_quick': obj.order_note_quick,
+            'note_every_week': obj.order_note_every_week,
+            'mon_wed_fri': obj.order_mon_wed_fri,
+            'tue_thu': obj.order_tue_thu,
+            'every_day': obj.order_every_day,
+            'own_system': obj.order_own_system,
+        }
+
+    def get_form(self, obj):
+        return {
+            'add_place': obj.form_add_place,
+            'place_name': obj.form_place_name,
+            'rp_city': obj.form_rp_city,
+            'rp_street': obj.form_rp_street,
+            'rp_zip': obj.form_rp_zip,
+            'rp_number': obj.form_rp_number,
+            'rp_person': obj.form_rp_person,
+            'rp_email': obj.form_rp_email,
+            'rp_phone': obj.form_rp_phone,
+            'create_order': obj.form_create_order,
+            'place': obj.form_place,
+            'type_ship': obj.form_type_ship,
+            'system': obj.form_system,
+            'start_day': obj.form_start_day,
+            'note': obj.form_note,
+            'type_note': obj.form_type_note,
+            'select_place': obj.form_select_place,
+            'select_type': obj.form_select_type,
+            'select_system,': obj.form_select_system,
         }

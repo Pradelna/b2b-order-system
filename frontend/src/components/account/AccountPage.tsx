@@ -17,6 +17,7 @@ function AccountPage(): JSX.Element {
     const [ customerId, setCustomerId ] = useState<{ customerId: any }>();
     const [loading, setLoading] = useState<boolean>(true);
     const BASE_URL = import.meta.env.VITE_API_URL;
+    const [formCustomer, setFormCustomer] = useState<boolean>(true);
 
     useEffect(() => {
         const fetchCustomerData = async () => {
@@ -37,7 +38,7 @@ function AccountPage(): JSX.Element {
                 if (!data.company_email) {
                     console.warn("No email found in customer data");
                 }
-
+                setFormCustomer(false);
                 setCustomerData(data);
                 setCustomerId(data.user_id);
             } catch (error) {
@@ -50,17 +51,12 @@ function AccountPage(): JSX.Element {
         fetchCustomerData();
     }, []);
 
-
-    if (loading) {
-        return <div>Loading...</div>;
-    }
-
     return (
         <>
             { customerId ? (
                 <HeaderAccount customerId={customerId} />
             ) : (
-                <Header />
+                <Header formCustomer={formCustomer} />
             )}
 
             <Account

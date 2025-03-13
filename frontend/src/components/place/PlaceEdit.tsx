@@ -102,12 +102,12 @@ const PlaceEdit: React.FC<PlaceEditProps> = ({
             </div>
         ))}
         <div className="row">
-          <div className="col-6">
+          <div className="col-sm-6 col-12 mb-2">
             <button type="submit" className="btn btn-submit">
               Save Changes
             </button>
           </div>
-          <div className="col-6">
+          <div className="col-sm-6 col-12">
             <button
                 type="button"
                 className="btn btn-link"

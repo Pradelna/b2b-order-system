@@ -1,11 +1,11 @@
-import { useContext, useState, useEffect } from "react";
-import { useNavigate, useLocation } from "react-router-dom";
+import React, { useContext, useState, useEffect } from "react";
+import {useNavigate, useLocation, Link} from "react-router-dom";
 import { LanguageContext } from "../context/LanguageContext.js";
 import MenuComponent from "./MenuComponent.js";
 import AccountMenuComponent from "./AccountMenuComponent";
 import LanguageSwitcher from "./LanguageSwitcher.js";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { faHouse, faUser, faMobileScreen, faEnvelope } from "@fortawesome/free-solid-svg-icons";
+import {faHouse, faUser, faMobileScreen, faEnvelope, faEarthAmerica} from "@fortawesome/free-solid-svg-icons";
 import Loader from "@/components/Loader";
 
 interface MenuData {
@@ -13,7 +13,11 @@ interface MenuData {
   header_account: string;
 }
 
-const Header: React.FC = () => {
+interface HeaderProps {
+  formCustomer: boolean
+}
+
+const Header: React.FC = ({formCustomer}) => {
   const { language, handleLanguageChange, languageData } = useContext(LanguageContext);
   const [loading, setLoading] = useState<boolean>(true);
   const navigate = useNavigate();
@@ -75,37 +79,53 @@ const Header: React.FC = () => {
                   <FontAwesomeIcon icon={faEnvelope} className="icon" />
                   <span>pradelna1cz@gmail.com</span>
                 </a>
+                {formCustomer ? (
+                    <Link to="/" className="mail">
+                      <FontAwesomeIcon icon={faEarthAmerica} className="icon"/>
+                      <span>Website</span>
+                    </Link>
+                ) : (
                 <button onClick={handleAuthClick} className="header-menu">
                   <FontAwesomeIcon icon={faUser} className="icon" />
                   <span>{isAuthenticated ? menuData.header_account : "Log in"}</span>
-                </button>
+                </button>)}
               </div>
 
-              {/* Burger Menu */}
-              <button className="burg">
-                <span></span>
-                <span></span>
-                <span></span>
-              </button>
+              <div className="to-website">
+                {(location.pathname === "/account/auth/" || location.pathname === "/account/login/" || formCustomer) ? (
+                    <Link to="/" className="mail">
+                      <FontAwesomeIcon icon={faEarthAmerica} className="icon"/>
+                      <span>Website</span>
+                    </Link>
+                ) : (
+                    <button onClick={handleAuthClick} className="header-menu">
+                      <FontAwesomeIcon icon={faUser} className="icon" />
+                      <span>{isAuthenticated ? menuData.header_account : "Account"}</span>
+                    </button>
+                )}
+              </div>
             </div>
           </div>
         </div>
 
         {/* Mobile Contacts */}
-        <div className="header__mobile__contacts">
-          <div className="container">
-            <div className="header__mobile__contacts__wrap">
-              <a href="tel:+420734246834" className="tel">
-                <FontAwesomeIcon icon={faMobileScreen} className="icon" />
-                <span>+420 734 246 834</span>
-              </a>
-              <a href="mailto:pradelna1cz@gmail.com" className="mail">
-                <FontAwesomeIcon icon={faEnvelope} className="icon" />
-                <span>pradelna1cz@gmail.com</span>
-              </a>
+        {!formCustomer && (
+            <div className="header__mobile__contacts">
+              <div className="container">
+                <div className="header__mobile__contacts__wrap">
+                  <a href="tel:+420734246834" className="tel">
+                    <FontAwesomeIcon icon={faMobileScreen} className="icon" />
+                    <span>+420 734 246 834</span>
+                  </a>
+                  <a href="mailto:pradelna1cz@gmail.com" className="mail">
+                    <FontAwesomeIcon icon={faEnvelope} className="icon" />
+                    <span>pradelna1cz@gmail.com</span>
+                  </a>
+                </div>
+              </div>
             </div>
-          </div>
-        </div>
+        )}
+
 
         {/* Dynamic Menu */}
         <DynamicMenu menuData={menuData} />

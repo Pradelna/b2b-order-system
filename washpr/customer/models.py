@@ -21,6 +21,10 @@ class Customer(models.Model):
     company_address = models.CharField("Company address", max_length=200, null=True, blank=True)
     company_ico = models.CharField("Company ICO", max_length=20, null=True, blank=True)
     company_dic = models.CharField("Company DIC", max_length=20, null=True, blank=True)
+    new_company_name = models.CharField("NEW Company name", max_length=200, null=True, blank=True)
+    new_company_address = models.CharField("NEW Company address", max_length=200, null=True, blank=True)
+    new_company_ico = models.CharField("NEW Company ICO", max_length=20, null=True, blank=True)
+    new_company_dic = models.CharField("NEW Company DIC", max_length=20, null=True, blank=True)
     phone_regex = RegexValidator(
         regex=r'^\+?(\d){6,18}$',
         message="Phone number must be entered in the format: '+420234567890' or 01234567890"
@@ -35,6 +39,7 @@ class Customer(models.Model):
     rp_client_id = models.IntegerField("ItineraryClient id", null=True, blank=True)
     rp_client_external_id = models.CharField("ItineraryClient external id", max_length=250, null=True, blank=True)
     data_sent = models.BooleanField("Data sent", default=False)
+    change_data = models.BooleanField("Change data", default=False)
 
     def save(self, *args, **kwargs):
         if not self.pk:
@@ -42,9 +47,19 @@ class Customer(models.Model):
             super().save(*args, **kwargs)
             # Если поле rp_client_external_id ещё не заполнено, формируем его, используя pk
             if not self.rp_client_external_id:
-                self.rp_client_external_id = "test" + str(self.pk)
+                self.rp_client_external_id = "zakaznik_" + str(self.pk)
+                self.company_name = self.new_company_name
+                self.company_address = self.new_company_address
+                self.company_ico = self.new_company_ico
+                self.company_dic = self.new_company_dic
             # Обновляем запись с новым значением rp_client_external_id
-            super().save(update_fields=['rp_client_external_id'])
+            super().save(update_fields=[
+                'rp_client_external_id',
+                'company_name',
+                'company_address',
+                'company_ico',
+                'company_dic',
+            ])
             return
         else:
             # Если объект уже существует, но rp_client_external_id не заполнено, устанавливаем его
@@ -60,7 +75,10 @@ class Customer(models.Model):
         super().save(*args, **kwargs)
 
     def __str__(self):
-        return self.company_name
+        if self.change_data:
+            return f"CHANGE DATA for NEW - {self.new_company_name}"
+        else:
+            return str(self.company_name or f"NEW - {self.new_company_name}" or self.id)
 
     class Meta:
         verbose_name = 'Company info'

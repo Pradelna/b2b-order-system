@@ -24,6 +24,9 @@ const OrderForm: React.FC<OrderFormProps> = ({ placeId, onClose, onSuccess }) =>
   const [showDaySystem, setShowDaySystem] = useState(true);
   const [useCustomDays, setUseCustomDays] = useState(false);
   const [useOnetimeOrder, setUseOnetimeOrder] = useState(false);
+  const [useThirdOrder, setUseThirdOrder] = useState(false);
+  const [useClearDirtyOrder, setUseClearDirtyOrder] = useState(false);
+  const [useQuickOrder, setUseQuickOrder] = useState(false);
   const BASE_URL = import.meta.env.VITE_API_URL;
   const { currentData } = useContext(LanguageContext);
   const [alredyCurrentOrder, setAlredyCurrentOrder] = useState(false);
@@ -48,6 +51,12 @@ const OrderForm: React.FC<OrderFormProps> = ({ placeId, onClose, onSuccess }) =>
   });
 
   const [places, setPlaces] = useState<Place[]>([]);
+
+  const localeMapping: { [key: string]: string } = {
+    cz: "cs-CZ", // для чешского языка
+    ru: "ru-RU", // для русского языка
+    en: "en-US", // для английского языка
+  };
 
   // Functions for calculating available start dates
   function getAvailableStartDays() {
@@ -216,6 +225,10 @@ const OrderForm: React.FC<OrderFormProps> = ({ placeId, onClose, onSuccess }) =>
       if (name === "type_ship") {
         if (value === "pickup_ship_dif") {
           updatedData.system = "Own";
+          setUseThirdOrder(true);
+          setUseClearDirtyOrder(false);
+          setUseOnetimeOrder(false);
+          setUseQuickOrder(false);
           setUseCustomDays(true);
           setShowDaySystem(false);
           updatedData.monday = false;
@@ -227,6 +240,10 @@ const OrderForm: React.FC<OrderFormProps> = ({ placeId, onClose, onSuccess }) =>
           setEveryWeek(true);
           setUseOnetimeOrder(false);
         } else if (value === "pickup_ship_one") {
+          setUseClearDirtyOrder(true);
+          setUseThirdOrder(false);
+          setUseOnetimeOrder(false);
+          setUseQuickOrder(false);
           setShowDaySystem(true);
           setUseOnetimeOrder(false);
           setUseCustomDays(false);
@@ -249,8 +266,16 @@ const OrderForm: React.FC<OrderFormProps> = ({ placeId, onClose, onSuccess }) =>
           const pickupDate = new Date(formattedTomorrow);
           let deliveryDate: Date;
           if (value === "quick_order") {
+            setUseClearDirtyOrder(false);
+            setUseThirdOrder(false);
+            setUseOnetimeOrder(false);
+            setUseQuickOrder(true);
             deliveryDate = addWorkingDays(pickupDate, 1);
           } else if (value === "one_time") {
+            setUseClearDirtyOrder(false);
+            setUseThirdOrder(false);
+            setUseOnetimeOrder(true);
+            setUseQuickOrder(false);
             deliveryDate = addWorkingDays(pickupDate, 2);
           }
           updatedData.date_delivery = deliveryDate.toISOString().split("T")[0];
@@ -274,6 +299,10 @@ const OrderForm: React.FC<OrderFormProps> = ({ placeId, onClose, onSuccess }) =>
           updatedData.friday = false;
           updatedData.every_week = false;
           setEveryWeek(false);
+          setUseClearDirtyOrder(false);
+          setUseThirdOrder(false);
+          setUseOnetimeOrder(false);
+          setUseQuickOrder(false);
         }
       }
       return updatedData;
@@ -399,16 +428,18 @@ const OrderForm: React.FC<OrderFormProps> = ({ placeId, onClose, onSuccess }) =>
     fetchPlaces();
   }, [BASE_URL]);
 
+  console.log(currentData);
+
   return (
       <div className="modal-backdrop">
         <div className="modal-wrapper">
           <div className="modal-content">
-            <h3>Create New Order</h3>
+            <h3>{ currentData.form["create_order"] || "Vytvořte novou objednávku" }</h3>
             <form onSubmit={handleSubmit}>
               {/* Place Dropdown */}
               <div className="row mb-3">
                 <div className="col-12 label-form">
-                  <label htmlFor="place">Place*</label>
+                  <label htmlFor="place">{ currentData.form["place"] || "Misto" }*</label>
                 </div>
                 <div className="col-12">
                   <select
@@ -419,7 +450,7 @@ const OrderForm: React.FC<OrderFormProps> = ({ placeId, onClose, onSuccess }) =>
                       required
                       disabled={!!placeId}
                   >
-                    <option value="">Select Place</option>
+                    <option value="">{ currentData.form["select_place"] || "Vybrat provozovnu" }</option>
                     {places
                         .filter((place) => place.data_sent)
                         .map((place) => (
@@ -434,7 +465,7 @@ const OrderForm: React.FC<OrderFormProps> = ({ placeId, onClose, onSuccess }) =>
               {/* Type of Shipping */}
               <div className="row mb-3">
                 <div className="col-12 label-form">
-                  <label htmlFor="type_ship">Type of Shipping*</label>
+                  <label htmlFor="type_ship">{ currentData.form["type_ship"] || "Typ závozu" }*</label>
                 </div>
                 <div className="col-12">
                   <select
@@ -444,7 +475,7 @@ const OrderForm: React.FC<OrderFormProps> = ({ placeId, onClose, onSuccess }) =>
                       onChange={handleInputChange}
                       required
                   >
-                    <option value="">Select Type</option>
+                    <option value="">{ currentData.form["select_type"] || "Vyberte typ" }</option>
                     <option value="pickup_ship_one">
                       {currentData.order.type_sipping_clear_for_dirty}
                     </option>
@@ -457,6 +488,47 @@ const OrderForm: React.FC<OrderFormProps> = ({ placeId, onClose, onSuccess }) =>
                 </div>
               </div>
 
+              {useClearDirtyOrder && (
+                  <div className="row mb-3">
+                    <div className="col-12">
+                      <div className="alert alert-success">
+                        {currentData.order["note_sh_cl_dr"] || "Prádelna v daný den přijede, " +
+                            "vyzvedne špinavé a doručí čisté."}
+                      </div>
+                    </div>
+                  </div>
+              )}
+              {useThirdOrder && (
+                  <div className="row mb-3">
+                    <div className="col-12">
+                      <div className="alert alert-success">
+                        {currentData.order["note_sh_1_3"] || "Vyzvednutí špinavého prádla " +
+                            "v určený den a doručení prádla."}
+                      </div>
+                    </div>
+                  </div>
+              )}
+              {useOnetimeOrder && (
+                  <div className="row mb-3">
+                    <div className="col-12">
+                      <div className="alert alert-success">
+                        {currentData.order["note_one_time"] || "Jedná se pouze o jednorázovou objednávku. V 1. " +
+                            "den prádelna přijede, vyzvedne špinavé prádlo a 2. den přiveze čisté."}
+                      </div>
+                    </div>
+                  </div>
+              )}
+              {useQuickOrder && (
+                  <div className="row mb-3">
+                    <div className="col-12">
+                      <div className="alert alert-success">
+                        {currentData.order["note_quick"] || "Expresní doručení do 2. dne (V pondělí vyzvedneme, " +
+                            "v úterý přivezeme)."}
+                      </div>
+                    </div>
+                  </div>
+              )}
+
               {/* System or Days of the Week */}
               {!useOnetimeOrder && (
                   <div className="row mb-3">
@@ -465,7 +537,7 @@ const OrderForm: React.FC<OrderFormProps> = ({ placeId, onClose, onSuccess }) =>
                     </div>
                     <div className={`day-system-hide ${showDaySystem ? "opacity-1" : "opacity-0 height-1 z-index-1"}`}>
                       <div className="col-12 label-form">
-                        <label htmlFor="system">System*</label>
+                        <label htmlFor="system">{ currentData.form["system"] || "Systém" }*</label>
                       </div>
                       <div className="col-12">
                         <select
@@ -475,11 +547,11 @@ const OrderForm: React.FC<OrderFormProps> = ({ placeId, onClose, onSuccess }) =>
                             onChange={handleSystemChange}
                             required={!useCustomDays}
                         >
-                          <option value="">Select System</option>
-                          <option value="Mon_Wed_Fri">Monday Wednesday Friday</option>
-                          <option value="Tue_Thu">Tuesday Thursday</option>
-                          <option value="Every_day">Every Day</option>
-                          <option value="Own">Own Systems</option>
+                          <option value="">{ currentData.form["select_system"] || "Zvolte systém" }</option>
+                          <option value="Mon_Wed_Fri">{ currentData.form["mon_wed_fri"] || "Pondělí středa pátek" }</option>
+                          <option value="Tue_Thu">{ currentData.form["tue_thu"] || "Úterý čtvrte" }</option>
+                          <option value="Every_day">{ currentData.form["every_day"] || "Každý den" }</option>
+                          <option value="Own">{ currentData.form["own_system"] || "Vlastní systém" }</option>
                         </select>
                       </div>
                     </div>
@@ -519,7 +591,7 @@ const OrderForm: React.FC<OrderFormProps> = ({ placeId, onClose, onSuccess }) =>
               {!useOnetimeOrder && (
                   <div className="row mb-3">
                     <div className="col-12 label-form">
-                      <label htmlFor="date_start_day">Start Day*</label>
+                      <label htmlFor="date_start_day">{ currentData.form["start_day"] || "Začátek závozu" }*</label>
                     </div>
                     <div className="col-12">
                       <select
@@ -531,11 +603,14 @@ const OrderForm: React.FC<OrderFormProps> = ({ placeId, onClose, onSuccess }) =>
                       >
                         {getAvailableStartDays().map((date) => (
                             <option key={date} value={date}>
-                              {new Date(date).toLocaleDateString("en-US", {
-                                weekday: "long",
-                                month: "short",
-                                day: "numeric",
-                              })}
+                              {new Date(date).toLocaleDateString(
+                                  localeMapping[currentData.lang] || "en-US",
+                                  {
+                                    weekday: "long",
+                                    month: "short",
+                                    day: "numeric",
+                                  }
+                              )}
                             </option>
                         ))}
                       </select>
@@ -559,11 +634,14 @@ const OrderForm: React.FC<OrderFormProps> = ({ placeId, onClose, onSuccess }) =>
                         >
                           {getAvailablePickupDates().map((date) => (
                               <option key={date} value={date}>
-                                {new Date(date).toLocaleDateString("en-US", {
-                                  weekday: "long",
-                                  month: "short",
-                                  day: "numeric",
-                                })}
+                                {new Date(date).toLocaleDateString(
+                                    localeMapping[currentData.lang] || "en-US",
+                                    {
+                                      weekday: "long",
+                                      month: "short",
+                                      day: "numeric",
+                                    }
+                                )}
                               </option>
                           ))}
                         </select>
@@ -584,11 +662,14 @@ const OrderForm: React.FC<OrderFormProps> = ({ placeId, onClose, onSuccess }) =>
                         >
                           {getAvailableDeliveryDates().map((date) => (
                               <option key={date} value={date}>
-                                {new Date(date).toLocaleDateString("en-US", {
-                                  weekday: "long",
-                                  month: "short",
-                                  day: "numeric",
-                                })}
+                                {new Date(date).toLocaleDateString(
+                                    localeMapping[currentData.lang] || "en-US",
+                                    {
+                                      weekday: "long",
+                                      month: "short",
+                                      day: "numeric",
+                                    }
+                                )}
                               </option>
                           ))}
                         </select>
@@ -611,14 +692,16 @@ const OrderForm: React.FC<OrderFormProps> = ({ placeId, onClose, onSuccess }) =>
               {!useOnetimeOrder && everyWeek && (
                   <div className="row mb-3">
                     <div className="col-12">
-                      <div className="alert alert-warning">This order will be repeated every week until end of month</div>
+                      <div className="alert alert-warning">
+                        { currentData.order["note_every_week"] || "Tato objednávka se bude opakovat každý týden do konce měsíce" }
+                      </div>
                     </div>
                   </div>
               )}
 
               <div className="row mb-3">
                 <div className="col-12 label-form">
-                  <label>Note</label>
+                  <label>{ currentData.form["note"] || "Poznámka pro řidiče" }</label>
                 </div>
                 <div className="col-12">
                 <textarea
@@ -627,7 +710,7 @@ const OrderForm: React.FC<OrderFormProps> = ({ placeId, onClose, onSuccess }) =>
                     value={formData.rp_customer_note}
                     onChange={handleInputChange}
                     rows={2}
-                    placeholder="Enter your notes here..."
+                    placeholder={ currentData.form["type_note"] || "Napište text..." }
                 />
                 </div>
               </div>
@@ -649,7 +732,7 @@ const OrderForm: React.FC<OrderFormProps> = ({ placeId, onClose, onSuccess }) =>
                   </div>
                 </div>
                 <div className="col-11">
-                  Terms of Use
+                  { currentData.customer["terms_use"] || "Podmínky užití" }
                   {showError && !formData.terms && (
                       <p className="text-danger mt-1">You must accept the Terms of Use</p>
                   )}
@@ -658,10 +741,10 @@ const OrderForm: React.FC<OrderFormProps> = ({ placeId, onClose, onSuccess }) =>
 
               <div className="row mt-3">
                 <button className="btn-submit me-2" type="submit">
-                  Submit
+                  { currentData.buttons["submit"] || "Uložit" }
                 </button>
                 <button className="btn-link" type="button" onClick={onClose}>
-                  Cancel
+                  { currentData.buttons["cancel"] || "Zrušit" }
                 </button>
               </div>
             </form>

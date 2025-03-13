@@ -111,7 +111,6 @@ const PlaceDetails: React.FC = () => {
                 );
 
                 setCurrentOrder(current || null);
-                console.log(currentOrder);
                 setOrderHistory(history);
                 setHasMoreOrders(history.length > 10);
                 // Проверяем сразу, можно ли отменить заказ
@@ -128,9 +127,7 @@ const PlaceDetails: React.FC = () => {
         }
     };
 
-    console.log(currentOrder);
-
-
+    // delete place, but only add "deleted"=True
     const handleDelete = async () => {
         // deleting of the place
         if (window.confirm("Are you sure you want to delete this place?")) {
@@ -157,8 +154,6 @@ const PlaceDetails: React.FC = () => {
             }
         }
     };
-
-    console.log(currentOrder);
 
     const handleStopOrder = async (orderId: number) => {
         // stop repeat order
@@ -258,11 +253,11 @@ const PlaceDetails: React.FC = () => {
             <HeaderAccount customerId={customerId} />
 
             <div className="container margin-top-90 wrapper place-detail-page">
-                <div className="row message-block">
-                    <div className="col-1 back-button">
+                <div className="row message-block-76">
+                    <div className="col-xl-1 col-lg-3 col-sm-2 back-button">
                         <NavButtons />
                     </div>
-                    <div className="col-lg-6 col-md-9 col-11">
+                    <div className="col-xl-7 col-lg-10 col-12">
                         {successMessage && (
                             <p className="alert alert-success">{successMessage}</p>
                         )}
@@ -270,7 +265,7 @@ const PlaceDetails: React.FC = () => {
                 </div>
                 <div className="row other-card">
 
-                    <div className="col-lg-7 col-md-10 col-12">
+                    <div className="col-lg-10 col-12">
 
                         {loading || forceWait ? (
                             <div className="card place-details">
@@ -391,7 +386,7 @@ const PlaceDetails: React.FC = () => {
                 {loading || forceWait ? (<></>) : (<>
                     {currentOrder && (
                         <div className="row current-order other-card">
-                            <div className="col-lg-7 col-md-10 col-12">
+                            <div className="col-lg-10 col-12">
                                 <div className="card current-order">
 
                                     <h3>Current Order #{currentOrder.id}</h3>
@@ -511,7 +506,7 @@ const PlaceDetails: React.FC = () => {
                 </>)}
 
                 <div className="row mt-4">
-                    <div className="col-lg-7 col-md-10 col-12">
+                    <div className="col-lg-10 col-12">
                         <OrderHistory
                             placeId={place.id}
                             hasMoreOrders={false}

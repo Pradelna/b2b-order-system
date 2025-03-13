@@ -78,12 +78,14 @@ const CustomerDetailPage: React.FC = () => {
     return (
         <>
             <HeaderAccount customerId={customerId} />
+            <div id="detail-page">
             <div className="container margin-top-90 wrapper">
                 <div className="row message-block-76">
-                    <div className="col-1 back-button">
+                    <div className="col-xl-1 col-sm-2 back-button">
                         <NavButtons />
                     </div>
-                    <div className="col-lg-7 col-md-9 col-11">
+
+                    <div className="col-xl-7 col-12">
                         {successMessage && (
                             <p className="alert alert-success">{successMessage}</p>
                         )}
@@ -200,6 +202,7 @@ const CustomerDetailPage: React.FC = () => {
 
                     </div>
                 </div>
+            </div>
             </div>
             <Footer />
         </>

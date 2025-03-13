@@ -10,6 +10,8 @@ import {Skeleton} from "@mui/material";
 import { formatDate } from "@/components/utils/FormatDate";
 import {formatViceDate} from "@/components/utils/FormatViceDate";
 import FileDownloadIcon from "@/components/order/FileDownloadIcon";
+import UseMediaQuery from "@/hooks/UseMediaQuery";
+import DarkTooltip from "../utils/DarkTooltip.tsx";
 
 interface Order {
     id: number;
@@ -39,6 +41,7 @@ const OrderHistory: React.FC<OrderHistoryProps> = ({ placeId, orders = [], setOr
     const { currentData } = useContext(LanguageContext);
     const [orderPhotos, setOrderPhotos] = useState<OrderPhoto[]>([]);
     const [expandedPhoto, setExpandedPhoto] = useState(false); // for expend photo if theya are many
+    const isMobileMax530 = UseMediaQuery('(max-width: 530px)');
 
     // Fetch orders from the API
     const fetchOrders = async () => {
@@ -123,19 +126,6 @@ const OrderHistory: React.FC<OrderHistoryProps> = ({ placeId, orders = [], setOr
         }
     };
 
-
-    // Tooltip
-    const DarkTooltip = styled(({ className, ...props }: TooltipProps) => (
-        <Tooltip {...props} classes={{ popper: className }} />
-    ))(({ theme }) => ({
-        [`& .${tooltipClasses.tooltip}`]: {
-            backgroundColor: theme.palette.common.black,
-            color: '#fff',
-            boxShadow: theme.shadows[2],
-            fontSize: 15,
-        },
-    }));
-
     // check if order is old then 30 minut
     useEffect(() => {
         const checkCancelableOrders = () => {
@@ -176,7 +166,7 @@ const OrderHistory: React.FC<OrderHistoryProps> = ({ placeId, orders = [], setOr
 
     return (
         <div className="order-history mb-5">
-            <h3 className="account-info">Order History</h3>
+            <h3 className="account-info">{currentData.buttons["all_history"] || "Historie objednávek"}</h3>
             <h3 className="detail-info">{orders.length > 0 ? orders[0].place_name : ""}</h3>
             {successMessage && (
                 <p className="alert alert-success mb-3">{successMessage}</p>
@@ -213,10 +203,10 @@ const OrderHistory: React.FC<OrderHistoryProps> = ({ placeId, orders = [], setOr
                                 .map((order) => {
                                     // Получаем фотографии для данного заказа
                                     const photos = orderPhotos.filter((photo) => photo.group_pair_id === order.group_pair_id);
-                                    // Если фотографий больше двух – вычисляем высоту контейнера с иконками,
+                                    // Если файлов больше 3 – вычисляем высоту контейнера с иконками,
                                     // иначе высота задаётся классом "expanded" (из CSS)
 
-                                    const dynamicHeight = photos.length > 3
+                                    const dynamicHeight = ((photos.length > 3 || isMobileMax530) && !photos.length == 0)
                                         ? `${photos.length * 72 + 90}px` : '220px';
 
                                 return (
@@ -341,7 +331,7 @@ const OrderHistory: React.FC<OrderHistoryProps> = ({ placeId, orders = [], setOr
                                             </button>
                                         )}
 
-                                        {photos.length <= 3 ? (
+                                        {((photos.length <= 3 && !isMobileMax530) || !photos.length > 0) ? (
                                         <div className="image-icon-container">
 
                                             <div className="image-icon-position">

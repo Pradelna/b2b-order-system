@@ -44,6 +44,208 @@ a {
   color: inherit;
 }
 
+.header .header__top {
+  width: 100%;
+  background-color: #e1f6f8;
+}
+
+.header .header__top__wrap {
+  width: 100%;
+  padding: 15px 0;
+  display: -webkit-box;
+  display: -ms-flexbox;
+  display: flex;
+  -webkit-box-orient: horizontal;
+  -webkit-box-direction: normal;
+  -ms-flex-direction: row;
+  flex-direction: row;
+  -webkit-box-align: center;
+  -ms-flex-align: center;
+  align-items: center;
+  -webkit-box-pack: justify;
+  -ms-flex-pack: justify;
+  justify-content: space-between;
+  -ms-flex-wrap: nowrap;
+  flex-wrap: nowrap;
+}
+
+.header .lang {
+  list-style-type: none;
+  font-size: 16px;
+  font-weight: 500;
+  color: #414141;
+  text-transform: capitalize;
+}
+
+.header .lang > li {
+  position: relative;
+  display: -webkit-box;
+  display: -ms-flexbox;
+  display: flex;
+  -webkit-box-orient: horizontal;
+  -webkit-box-direction: normal;
+  -ms-flex-direction: row;
+  flex-direction: row;
+  -webkit-box-align: center;
+  -ms-flex-align: center;
+  align-items: center;
+  -webkit-box-pack: start;
+  -ms-flex-pack: start;
+  justify-content: flex-start;
+  -ms-flex-wrap: nowrap;
+  flex-wrap: nowrap;
+  position: relative;
+  cursor: pointer;
+}
+
+.header .lang > li > img:first-child{
+  width: 20px !important;
+  height: 20px !important;
+  -o-object-fit: contain;
+  object-fit: contain;
+  margin-right: 11px;
+}
+
+.header .lang > li span {
+  margin-right: 9px;
+}
+
+.language-switcher {
+  position: relative;
+  display: inline-block;
+}
+
+.language-switcher ul {
+  margin-bottom: 0;
+}
+
+.header .lang .sub__lang {
+  position: absolute;
+  left: 24px;
+  top: 50px;
+  background-color: #e1f6f8;
+  list-style-type: none;
+  padding: 10px;
+  white-space: nowrap;
+  width: 136px;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+  z-index: 9999;
+  border-radius: 10px;
+}
+
+.header .lang .sub__lang li {
+  margin-bottom: 8px;
+  cursor: pointer;
+}
+.header .lang .sub__lang li a{
+  display: flex;
+  align-items: center;
+}
+.header .lang .sub__lang li img{
+  margin-right: 7px;
+  width: 20px !important;
+  height: auto;
+}
+
+.header .lang.open .sub__lang {
+  display: block;
+}
+
+.header .lang.open .arr {
+  -webkit-transform: rotateX(180deg);
+  transform: rotateX(180deg);
+}
+
+.to-website {
+  display: none;
+}
+.header {
+  width: 100%;
+  position: absolute;
+  left: 0;
+  top: 0;
+}
+
+.header .header__mobile__contacts {
+  display: none;
+  background-color: #00aab7;
+}
+@media (min-width: 971px) and (max-width: 991px) {
+  header .container {
+    max-width: 950px;
+  }
+}
+@media (min-width: 971px) {
+  .navbar-bottom {
+    display: none;
+  }
+  .margin-top-90 {
+    margin-top: 60px !important;
+  }
+}
+@media (max-width: 970px) {
+  /* Основной контейнер навигации */
+  .navbar-bottom {
+    position: fixed;         /* Фиксируем в окне браузера */
+    bottom: 0;               /* Располагаем у нижней границы экрана */
+    left: 0;                 /* Прижимаем к левой стороне экрана */
+    width: 100%;             /* Ширина на всю страницу */
+    height: 60px;            /* Примерная высота; подберите под ваш дизайн */
+    background-color: #00aab7;  /* Цвет фона (можно заменить на свой) */
+    color: #fff;             /* Цвет текста (контрастный фону) */
+    display: flex;           /* Для удобного расположения элементов */
+    align-items: center;     /* Вертикальное выравнивание по центру */
+    justify-content: space-around; /* Распределяем пункты меню равномерно */
+    box-shadow: 0 -2px 5px rgba(0, 0, 0, 0.3); /* Небольшая тень сверху */
+    z-index: 9999;           /* Чтобы панель перекрывала другой контент */
+  }
+  .navbar-bottom svg {
+    width: 26px;
+    height: 26px;
+  }
+  .header .contact {
+    display: none;
+  }
+  .header .header__mobile__contacts {
+    display: block;
+  }
+  .header .header__top__wrap {
+    padding-right: 50px;
+    position: relative;
+    padding: 10px 0;
+  }
+  .header .lang .sub__lang {
+    top: 30px;
+  }
+  .margin-top-90 {
+    margin-top: 50px !important;
+  }
+  .to-website {
+    display: -webkit-box;
+    display: -ms-flexbox;
+    display: flex
+  ;
+    -webkit-box-orient: horizontal;
+    -webkit-box-direction: normal;
+    -ms-flex-direction: row;
+    flex-direction: row;
+    -webkit-box-align: center;
+    -ms-flex-align: center;
+    align-items: center;
+    -webkit-box-pack: end;
+    -ms-flex-pack: end;
+    justify-content: flex-end;
+    -ms-flex-wrap: nowrap;
+    flex-wrap: nowrap;
+    font-size: 16px;
+    font-weight: 500;
+    color: #414141;
+  }
+  .to-website svg {
+    margin-right: 10px;
+    color: #00aab7;
+  }
+}
 .contact svg {
   margin-right: 10px;
   color: #00aab7;
@@ -152,8 +354,23 @@ a {
   width: 70px;
   border-radius: 30px;
 }
-
+.order-mobile {
+  display: none;
+}
+@media (min-width: 1200px) {
+  .place-mobile-button {
+    display: none;
+  }
+}
 @media (min-width: 576px) and (max-width: 1200px) {
+  .order-mobile {
+    display: block;
+    width: 26px;
+    height: 26px;
+  }
+  .text-new-order-in-button {
+    display: none;
+  }
   .new-order-button {
     top: 16%;
     right: 16px;
@@ -163,6 +380,7 @@ a {
     width: 60px;
     height: 60px;
     border-radius: 16px;
+    padding: 12px;
   }
   .details-place-button {
     top: 16%;
@@ -189,14 +407,97 @@ a {
   }
   .place-card-name,
   .place .card-text {
-    width: 260px;            /* или любая другая фиксированная ширина */
+    width: 336px;            /* или любая другая фиксированная ширина */
     white-space: nowrap;     /* не переносить текст на новую строку */
     overflow: hidden;        /* скрывать выходящий за границы текст */
     text-overflow: ellipsis; /* добавить «…» вместо обрезанного текста */
   }
+  .place-mobile-button {
+    display: block;
+  }
+  .place-mobile-button .btn-link-skeleton {
+    margin: auto;
+  }
+  .place-desktop-button {
+    display: none;
+  }
+  .message-block-76 {
+    min-height: 10px;
+    height: auto;
+  }
+  #company-top .mb-4 {
+    margin-bottom: 10px !important;
+  }
+  #company-top.row>* {
+    padding-right: 5px !important;
+    padding-left: 5px !important;
+  }
+  #company-top.row {
+    margin-right: 0 !important;
+    margin-left: 0 !important;
+  }
+  .account-page .place-card {
+    margin-bottom: 10px;
+  }
+  .account-page .mt-4 {
+    margin-top: 0 !important;
+  }
+  .place-mobile-button {
+    display: block;
+    margin-bottom: 30px;
+  }
+  .place-mobile-button .btn-link-skeleton {
+    margin-right: auto;
+    margin-left: auto;
+    margin-bottom: 30px;
+  }
 }
-
-@media (min-width: 200px) and (max-width: 575px) {
+@media (min-width: 992px) and (max-width: 1200px) {
+  .place-card-name,
+  .place .card-text {
+    width: 350px;            /* или любая другая фиксированная ширина */
+    white-space: nowrap;     /* не переносить текст на новую строку */
+    overflow: hidden;        /* скрывать выходящий за границы текст */
+    text-overflow: ellipsis; /* добавить «…» вместо обрезанного текста */
+  }
+  .details-place-button {
+    top: 16%;
+    right: 92px;
+    font-size: 14px;
+    font-weight: 600;
+    line-height: 18px;
+    width: 60px;
+    height: 60px;
+    border-radius: 16px;
+  }
+  .new-order-button {
+    top: 16%;
+    right: 16px;
+    font-size: 14px;
+    font-weight: 600;
+    line-height: 18px;
+    width: 60px;
+    height: 60px;
+    border-radius: 16px;
+    padding: 12px;
+  }
+}
+@media (min-width: 768px) and (max-width: 991px) {
+  .place-card-name,
+  .place .card-text {
+    width: 506px;            /* или любая другая фиксированная ширина */
+    white-space: nowrap;     /* не переносить текст на новую строку */
+    overflow: hidden;        /* скрывать выходящий за границы текст */
+    text-overflow: ellipsis; /* добавить «…» вместо обрезанного текста */
+  }
+  .details-place-button {
+    top: 0;
+    right: 0;
+    width: 100%;
+    height: 100%;
+    opacity: 0;
+    z-index: 10;
+  }
   .new-order-button {
     top: 16%;
     right: 16px;
@@ -207,6 +508,68 @@ a {
     height: 60px;
     border-radius: 16px;
     z-index: 11;
+    padding: 12px;
+  }
+  .place-card.active {
+    border: 0 !important;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2) !important;
+    transform: none !important;
+  }
+  .col-history {
+    display: none;
+  }
+}
+@media (min-width: 576px) and (max-width: 767px) {
+  .details-place-button {
+    top: 0;
+    right: 0;
+    width: 100%;
+    height: 100%;
+    opacity: 0;
+    z-index: 10;
+  }
+  .new-order-button {
+    top: 16%;
+    right: 16px;
+    font-size: 14px;
+    font-weight: 600;
+    line-height: 18px;
+    width: 60px;
+    height: 60px;
+    border-radius: 16px;
+    z-index: 11;
+    padding: 12px;
+  }
+  .place-card.active {
+    border: 0 !important;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2) !important;
+    transform: none !important;
+  }
+  .col-history {
+    display: none;
+  }
+}
+
+@media (min-width: 350px) and (max-width: 575px) {
+  .text-new-order-in-button {
+    display: none;
+  }
+  .order-mobile {
+    display: block;
+    width: 26px;
+    height: 26px;
+  }
+  .new-order-button {
+    top: 16%;
+    right: 16px;
+    font-size: 14px;
+    font-weight: 600;
+    line-height: 18px;
+    width: 60px;
+    height: 60px;
+    border-radius: 16px;
+    z-index: 11;
+    padding: 12px;
   }
   .details-place-button {
     top: 0;
@@ -229,9 +592,13 @@ a {
     overflow: hidden;        /* скрывать выходящий за границы текст */
     text-overflow: ellipsis; /* добавить «…» вместо обрезанного текста */
   }
+  .account-page .btn-submit,
   .account-page .btn-link,
   .account-page .btn-link-skeleton {
     width: 160px !important;
+  }
+  .place-mobile-button .btn-link {
+    width: 200px !important;
   }
   .place-card.active {
     border: 0 !important;
@@ -256,6 +623,10 @@ a {
     margin-right: 0 !important;
     margin-left: 0 !important;
   }
+  #detail-page .row {
+    margin-right: -5px !important;
+    margin-left: -5px !important;
+  }
   .mt-mobile {
     margin-top: 10px !important;
   }
@@ -268,15 +639,123 @@ a {
   .account-page .place-card {
     margin-bottom: 10px;
   }
-  .place-icon-skeleton {
+  .account-page .place-icon-skeleton {
     left: auto !important;
     right: 20px;
   }
   .place-mobile-button {
     display: block;
+    margin-bottom: 30px;
   }
   .place-mobile-button .btn-link-skeleton {
-    margin: auto;
+    margin-right: auto;
+    margin-left: auto;
+    margin-bottom: 30px;
+  }
+  .place-desktop-button {
+    display: none;
+  }
+}
+
+@media (max-width: 349px) {
+  .text-new-order-in-button {
+    display: none;
+  }
+  .order-mobile {
+    display: block;
+    width: 26px;
+    height: 26px;
+  }
+  .new-order-button {
+    top: 16%;
+    right: 16px;
+    font-size: 14px;
+    font-weight: 600;
+    line-height: 18px;
+    width: 60px;
+    height: 60px;
+    border-radius: 16px;
+    z-index: 11;
+    padding: 12px;
+  }
+  .details-place-button {
+    top: 0;
+    right: 0;
+    width: 100%;
+    height: 100%;
+    opacity: 0;
+    z-index: 10;
+  }
+  .place-card .place {
+    padding: 21px 80px 16px 20px !important;
+  }
+  .place-icon {
+    display: none;
+  }
+  .place-card-name,
+  .place .card-text {
+    width: 250px;            /* или любая другая фиксированная ширина */
+    white-space: nowrap;     /* не переносить текст на новую строку */
+    overflow: hidden;        /* скрывать выходящий за границы текст */
+    text-overflow: ellipsis; /* добавить «…» вместо обрезанного текста */
+  }
+  .account-page .btn-submit,
+  .account-page .btn-link,
+  .account-page .btn-link-skeleton {
+    width: 100% !important;
+    margin-bottom: 10px !important;
+  }
+  .place-card.active {
+    border: 0 !important;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2) !important;
+    transform: none !important;
+  }
+  .col-history {
+    display: none;
+  }
+  .message-block-76 {
+    min-height: 10px;
+    height: auto;
+  }
+  #company-top .mb-4 {
+    margin-bottom: 6px !important;
+  }
+  #company-top.row>* {
+    padding-right: 3px !important;
+    padding-left: 3px !important;
+  }
+  #company-top.row {
+    margin-right: 0 !important;
+    margin-left: 0 !important;
+  }
+  #detail-page .row {
+    margin-right: -5px !important;
+    margin-left: -5px !important;
+  }
+  .mt-mobile {
+    margin-top: 10px !important;
+  }
+  .account-page h4 {
+    font-size: 18px !important;
+  }
+  .account-page .mt-4 {
+    margin-top: 0 !important;
+  }
+  .account-page .place-card {
+    margin-bottom: 10px;
+  }
+  .account-page .place-icon-skeleton {
+    left: auto !important;
+    right: 20px;
+  }
+  .place-mobile-button {
+    display: block;
+    margin-bottom: 30px;
+  }
+  .place-mobile-button .btn-link-skeleton {
+    margin-right: auto;
+    margin-left: auto;
+    margin-bottom: 30px;
   }
   .place-desktop-button {
     display: none;
@@ -286,6 +765,7 @@ a {
 #company-top .card {
   border: solid 1px #e1f6f8;
   min-height: 120px;
+  padding: 15px;
 }
 
 #company-top .card .company-name{
@@ -293,7 +773,7 @@ a {
 }
 
 h1.detail-page  {
-  font-size: 24px;
+  font-size: 20px !important;
 }
 
 .detail-page .card {
@@ -844,6 +1324,10 @@ svg.loader{
   font-size: 24px;
 }
 
+.modal-content .alert {
+  margin-bottom: 0;
+}
+
 
 .order-message .modal-wrapper {
   min-height: 400px;
@@ -854,6 +1338,7 @@ svg.loader{
   transform: translate(-50%, -50%);
 }
 
+.form-customer-edit p,
 .order-message p {
   margin-bottom: 3px;
 }
@@ -1027,6 +1512,20 @@ svg.loader{
   display: none;
 }
 
+@media (max-width: 767px) {
+  .download-invoice .download-invoice-span {
+   display: none;
+  }
+  .download-invoice .btn-download {
+    width: 50px;
+  }
+}
+@media (max-width: 530px) {
+  .invoices-page .invoice-icon {
+    display: none;
+  }
+}
+
 .account-page .order-history .card {
   height: 60px;
   padding: 10px 14px;
@@ -1069,6 +1568,22 @@ svg.loader{
 }
 
 .place-detail-page .dates .expanded {
+  height: auto;
+}
+
+.order-history .card {
+  cursor: pointer;
+  overflow: hidden;
+  transition: height 0.3s ease-in-out;
+}
+
+.order-history .expanded {
+  /*height: 220px;*/
+  height: var(--card-height, 220px);
+  transition: height 0.3s ease;
+}
+
+.order-history .dates .expanded {
   height: auto;
 }
 
@@ -1278,6 +1793,24 @@ p.back-link {
 #card-history .card {
   border-radius: 16px
 }
+@media (max-width: 768px) {
+  .all-history-page .mt-4 {
+    margin-top: 2px !important;
+  }
+}
+@media (max-width: 530px) {
+  .order-history .history-icon {
+    display: none;
+  }
+  .order-history .card {
+    padding: 20px 16px;
+    margin-bottom: 10px;
+  }
+  .order-history .place-icon-skeleton {
+    left: auto;
+    right: 20px;
+  }
+}
 
 .display-none{
   display: none;
@@ -1295,4 +1828,51 @@ p.back-link {
   position: absolute;
   z-index: 1;
   left: 2000px;
+}
+
+.form-login {
+  width: 400px;
+  margin: 5rem auto;
+}
+
+@media (max-width: 430px) {
+  .form-login {
+    width: auto;
+    margin-right: 10px;
+    margin-left: 10px;
+  }
+  .form-login .card-body {
+    padding: 0;
+  }
+}
+@media (min-width: 576px) and (max-width: 767px) {
+  .detail-page .form-label {
+    margin-bottom: 0;
+  }
+}
+@media (max-width: 575px) {
+  .form-label {
+    margin-bottom: 0;
+  }
+  .place-details h1,
+  .modal-content h3 {
+    font-size: 20px;
+  }
+  .detail-page .company-card .row>* {
+    padding-right: 0 !important;
+    padding-left: 3px !important;
+  }
+}
+
+.form-customer-edit .alert {
+  padding: 5px 10px;
+  margin-bottom: 0;
+}
+
+.form-customer-edit input[type=checkbox] {
+  opacity: 0;
+  position: absolute;
+  top: 5%;
+  right: auto;
+  left: 17px;
 }
