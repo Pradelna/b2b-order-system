@@ -15,6 +15,7 @@ import {
 import { fetchWithAuth } from "../account/auth.ts";
 import { Tooltip as ReactTooltip } from "react-tooltip";
 import {Skeleton} from "@mui/material";
+import DarkTooltip from "@/components/utils/DarkTooltip";
 
 interface CustomerData {
     company_name: string;
@@ -124,13 +125,14 @@ const CompanyInfo: React.FC<CompanyInfoProps> = ({
         <div className="card company-card">
             {/* Conditional icon display based on the page */}
             {isDetailPage ? (
-                <FontAwesomeIcon
-                    icon={faPenToSquare}
-                    className="settings"
-                    style={{ cursor: "pointer" }}
-                    onClick={() => setIsEditing && setIsEditing(true)}
-                    data-tooltip-id="edit-tooltip"
-                />
+                <DarkTooltip title="Edit Customer Information" placement="top" arrow>
+                    <FontAwesomeIcon
+                        icon={faPenToSquare}
+                        className="settings"
+                        style={{ cursor: "pointer" }}
+                        onClick={() => setIsEditing && setIsEditing(true)}
+                    />
+                </DarkTooltip>
             ) : customerId ? (
                 <Link to={`/customer/${customerId}`}>
                     <FontAwesomeIcon
@@ -151,12 +153,6 @@ const CompanyInfo: React.FC<CompanyInfoProps> = ({
                 id="settings-tooltip"
                 place="top"
                 content="Account settings"
-                className="custom-tooltip"
-            />
-            <ReactTooltip
-                id="edit-tooltip"
-                place="top"
-                content="Edit Customer Information"
                 className="custom-tooltip"
             />
 

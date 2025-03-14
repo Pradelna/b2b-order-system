@@ -11,7 +11,7 @@ import { formatDate } from "@/components/utils/FormatDate";
 import {formatViceDate} from "@/components/utils/FormatViceDate";
 import FileDownloadIcon from "@/components/order/FileDownloadIcon";
 import UseMediaQuery from "@/hooks/UseMediaQuery";
-import DarkTooltip from "../utils/DarkTooltip.tsx";
+import DarkTooltip from "@/components/utils/DarkTooltip";
 
 interface Order {
     id: number;
@@ -166,7 +166,7 @@ const OrderHistory: React.FC<OrderHistoryProps> = ({ placeId, orders = [], setOr
 
     return (
         <div className="order-history mb-5">
-            <h3 className="account-info">{currentData.buttons["all_history"] || "Historie objednávek"}</h3>
+            <h3 className="account-info">{currentData?.buttons["all_history"] || "Historie objednávek"}</h3>
             <h3 className="detail-info">{orders.length > 0 ? orders[0].place_name : ""}</h3>
             {successMessage && (
                 <p className="alert alert-success mb-3">{successMessage}</p>
@@ -292,10 +292,10 @@ const OrderHistory: React.FC<OrderHistoryProps> = ({ placeId, orders = [], setOr
                                                     <>
                                                         {/* if order is one time */}
                                                         {order.type_ship === "quick_order" ? (<>
-                                                            {currentData.order?.quick}
+                                                            {currentData?.order?.quick}
                                                         </>) : (
                                                             <>
-                                                                {currentData.order?.one_time || "one time order"}
+                                                                {currentData?.order?.one_time || "one time order"}
                                                             </>
                                                         )}
                                                     </>

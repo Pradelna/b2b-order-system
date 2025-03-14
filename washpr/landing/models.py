@@ -6,10 +6,11 @@ class LandingPage(models.Model):
     lang = models.CharField("language prefix", max_length=100)
     prefix = models.CharField("language name", max_length=10)
     # header section
-    header_home = models.CharField("about us", max_length=100)
+    header_home = models.CharField("Home", max_length=100)
     header_login = models.CharField("login", max_length=100)
     header_logout = models.CharField("logout", max_length=100)
     header_account = models.CharField("account", max_length=100)
+    header_panel = models.CharField("panel", max_length=100, blank=True, null=True)
     # menu section
     menu_about_us = models.CharField("about us", max_length=100)
     menu_technology = models.CharField("technology", max_length=100)
@@ -161,6 +162,10 @@ class LandingPage(models.Model):
     order_tue_thu = models.CharField("Tuesday Thursday", max_length=100, blank=True, null=True)
     order_every_day = models.CharField("Every day", max_length=100, blank=True, null=True)
     order_own_system = models.CharField("Order own system", max_length=100, blank=True, null=True)
+    order_day_next_visit = models.CharField("Order: Day of next visit", max_length=100, blank=True, null=True)
+    order_info_waiting = models.CharField("Order: Information is waiting for update", max_length=100, blank=True, null=True)
+    order_status = models.CharField("Order status", max_length=100, blank=True, null=True)
+    order_current_order = models.CharField("Order: Current order", max_length=100, blank=True, null=True)
 
     form_add_place = models.CharField("Form title add new place", max_length=100, blank=True, null=True)
     form_place_name = models.CharField("Form place name", max_length=100, blank=True, null=True)
@@ -181,6 +186,19 @@ class LandingPage(models.Model):
     form_select_place = models.CharField("Form select place", max_length=100, blank=True, null=True)
     form_select_type = models.CharField("Form select type", max_length=100, blank=True, null=True)
     form_select_system = models.CharField("Form select system", max_length=100, blank=True, null=True)
+    form_close = models.CharField("Form close", max_length=100, blank=True, null=True)
+    form_monday = models.CharField("Form monday", max_length=100, blank=True, null=True)
+    form_tuesday = models.CharField("Form tuesday", max_length=100, blank=True, null=True)
+    form_wednesday = models.CharField("Form wednesday", max_length=100, blank=True, null=True)
+    form_thursday = models.CharField("Form thursday", max_length=100, blank=True, null=True)
+    form_friday = models.CharField("Form friday", max_length=100, blank=True, null=True)
+    form_saturday = models.CharField("Form saturday", max_length=100, blank=True, null=True)
+    form_sunday = models.CharField("Form sunday", max_length=100, blank=True, null=True)
+
+    place_detail_title = models.CharField("Place title", max_length=100, blank=True, null=True)
+    place_address = models.CharField("Place address", max_length=100, blank=True, null=True)
+    place_edit_place = models.CharField("Place edit place", max_length=100, blank=True, null=True)
+
 
 
     def __str__(self):

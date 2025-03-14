@@ -18,12 +18,14 @@ class LandingPageSerializer(serializers.ModelSerializer):
     messages = serializers.SerializerMethodField()
     order = serializers.SerializerMethodField()
     form = serializers.SerializerMethodField()
+    place = serializers.SerializerMethodField()
 
     class Meta:
         model = LandingPage
         fields = [
             'lang', 'prefix', 'menu', 'start_banner', 'about_us', 'service', 'messages', 'form',
-            'technologies', 'price', 'contacts', 'footer', 'auth', 'customer', 'buttons', 'order'
+            'technologies', 'price', 'contacts', 'footer', 'auth', 'customer', 'buttons', 'order',
+            'place'
         ]
 
     def get_menu(self, obj):
@@ -40,6 +42,7 @@ class LandingPageSerializer(serializers.ModelSerializer):
             'header_login': obj.header_login,
             'header_logout': obj.header_logout,
             'header_account': obj.header_account,
+            'header_panel': obj.header_panel,
         }
 
     def get_start_banner(self, obj):
@@ -48,6 +51,7 @@ class LandingPageSerializer(serializers.ModelSerializer):
             'description': obj.start_banner_description,
             'button_request_call': obj.start_banner_button_request_call,
             'button_two': obj.start_banner_button_two,
+
         }
 
     def get_about_us(self, obj):
@@ -213,6 +217,10 @@ class LandingPageSerializer(serializers.ModelSerializer):
             'tue_thu': obj.order_tue_thu,
             'every_day': obj.order_every_day,
             'own_system': obj.order_own_system,
+            'day_next_visit': obj.order_day_next_visit,
+            'info_waiting': obj.order_info_waiting,
+            'status': obj.order_status,
+            'current_order': obj.order_current_order,
         }
 
     def get_form(self, obj):
@@ -236,4 +244,19 @@ class LandingPageSerializer(serializers.ModelSerializer):
             'select_place': obj.form_select_place,
             'select_type': obj.form_select_type,
             'select_system,': obj.form_select_system,
+            'close': obj.form_close,
+            'monday': obj.form_monday,
+            'tuesday': obj.form_tuesday,
+            'wednesday': obj.form_wednesday,
+            'thursday': obj.form_thursday,
+            'friday': obj.form_friday,
+            'saturday': obj.form_saturday,
+            'sunday': obj.form_sunday,
+        }
+
+    def get_place(self, obj):
+        return {
+            'detail_title': obj.place_detail_title,
+            'address': obj.place_address,
+            'edit_place': obj.place_edit_place,
         }

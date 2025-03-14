@@ -1325,7 +1325,7 @@ svg.loader{
 }
 
 .modal-content .alert {
-  margin-bottom: 0;
+  margin-bottom: 5px;
 }
 
 
@@ -1967,4 +1967,49 @@ p.back-link {
   top: 50%;
   transform: translateY(-50%);
   pointer-events: none; /* чтобы клики попадали на input */
+}
+.footer {
+  background-color: #e1f6f8;
+  padding: 30px;
+}
+.footer__list {
+  padding-top: 30px;
+}
+.footer .contact {
+  padding-top: 15px;
+}
+@media (min-width: 992px) {
+  .footer .footer__list {
+    font-size: 16px;
+  }
+}
+@media (min-width: 576px) and (max-width: 991px) {
+  .footer .footer__list {
+    font-size: 16px;
+    display: block;
+    padding-top: 0;
+  }
+  .footer .logo {
+    margin-right: 0;
+    margin-bottom: 0;
+    margin-top: 20px;
+  }
+  .footer .footer__list li {
+    margin: 0 0 5px;
+  }
+}
+@media (max-width: 575px) {
+  .footer .logo-col {
+    display: none;
+  }
+  .footer .footer__list li {
+    margin: 0 0 5px;
+  }
+  .footer .footer__list {
+    font-size: 16px;
+    display: block;
+    padding-top: 0;
+    padding-left: 0;
+    text-align: left;
+  }
 }

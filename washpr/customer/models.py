@@ -36,6 +36,7 @@ class Customer(models.Model):
     terms_of_use = models.BooleanField("Pravidla", default=False)
     gdpr = models.BooleanField("GDPR", default=False)
     active = models.BooleanField("Active", default=False)
+    weekend_able = models.BooleanField("Weekend able", default=False)
     rp_client_id = models.IntegerField("ItineraryClient id", null=True, blank=True)
     rp_client_external_id = models.CharField("ItineraryClient external id", max_length=250, null=True, blank=True)
     data_sent = models.BooleanField("Data sent", default=False)

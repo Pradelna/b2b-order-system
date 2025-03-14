@@ -32,6 +32,26 @@ const OrderForm: React.FC<OrderFormProps> = ({ placeId, onClose, onSuccess }) =>
   const [alredyCurrentOrder, setAlredyCurrentOrder] = useState(false);
   const [firstStartForm, setFirstStartForm] = useState(true);
   const [everyWeek, setEveryWeek] = useState(false);
+  const [customerWeekend, setCustomerWeekend] = useState<boolean>(false)
+
+  const [wholeWeek, setWholeWeek] = useState([
+    "monday",
+    "tuesday",
+    "wednesday",
+    "thursday",
+    "friday",
+    "saturday",
+    "sunday"
+  ]);
+  const [workWeek, setWhorkWeek] = useState([
+    "monday",
+    "tuesday",
+    "wednesday",
+    "thursday",
+    "friday"
+  ]);
+
+  const selectedDays = customerWeekend ? wholeWeek : workWeek;
 
   const [formData, setFormData] = useState({
     place: placeId || "",
@@ -100,7 +120,6 @@ const OrderForm: React.FC<OrderFormProps> = ({ placeId, onClose, onSuccess }) =>
       }
 
       if (formData.type_ship === "one_time" && formData.type_ship === "quick" && (dayOfWeek >= 1 && dayOfWeek <= 5)) {
-        console.log("it works")
         availableDates.push(date.toISOString().split("T")[0]);
       }
     }
@@ -400,16 +419,21 @@ const OrderForm: React.FC<OrderFormProps> = ({ placeId, onClose, onSuccess }) =>
     fetchPlaces();
   }, [BASE_URL]);
 
-  // Check if exist an active current order
+  // Check if exist an active current order AND check if weekend Able customer
   useEffect(() => {
     const fetchPlaces = async () => {
       try {
         const response = await fetchWithAuth(`${BASE_URL}/order/check-current-order/`);
         if (response.ok) {
           const currentOrderData = await response.json();
+          console.log(currentOrderData);
+          if (currentOrderData.weekend_able) {
+            setCustomerWeekend(true)
+          }
+          console.log(currentOrderData.weekend_able);
           // if active order exists for this place
-          if (currentOrderData.length != 0) {
-            const exists = currentOrderData.some(order => order.place === placeId);
+          if (currentOrderData.orders.length != 0) {
+            const exists = currentOrderData.orders.some(order => order.place === placeId);
             if (exists) {
               setAlredyCurrentOrder(true); // this change avaibles start dates and show message in the order form
               console.log("Order with this placeId exists");
@@ -428,7 +452,7 @@ const OrderForm: React.FC<OrderFormProps> = ({ placeId, onClose, onSuccess }) =>
     fetchPlaces();
   }, [BASE_URL]);
 
-  console.log(currentData);
+  console.log(selectedDays);
 
   return (
       <div className="modal-backdrop">
@@ -561,9 +585,19 @@ const OrderForm: React.FC<OrderFormProps> = ({ placeId, onClose, onSuccess }) =>
               {useCustomDays && !useOnetimeOrder && (
                   <div className="row mb-3">
                     <div className="col-12">
-                      {["monday", "tuesday", "wednesday", "thursday", "friday"].map((day, index, days) => {
+                      {selectedDays.map((day, index, days) => {
                         const hasPrevSelected = index > 0 && formData[days[index - 1] as keyof typeof formData];
                         const hasNextSelected = index < days.length - 1 && formData[days[index + 1] as keyof typeof formData];
+                        const dayLabels: { [key: string]: string } = {
+                          monday: currentData?.form.monday || "Pondělí",
+                          tuesday: currentData?.form.tuesday || "Úterý",
+                          wednesday: currentData?.form.wednesday || "Středa",
+                          thursday: currentData?.form.thursday || "Čtvrtek",
+                          friday: currentData?.form.friday || "Pátek",
+                          //
+                          saturday: currentData?.form.saturday || "Sobota",
+                          sunday: currentData?.form.sunday || "Neděle",
+                        };
                         return (
                             <div className="form-check" key={day}>
                               <input
@@ -579,7 +613,7 @@ const OrderForm: React.FC<OrderFormProps> = ({ placeId, onClose, onSuccess }) =>
                                   }
                               />
                               <label className="form-check-label" htmlFor={day}>
-                                {day.charAt(0).toUpperCase() + day.slice(1)}
+                                {dayLabels[day]}
                               </label>
                             </div>
                         );
