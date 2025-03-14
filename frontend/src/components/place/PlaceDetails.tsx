@@ -265,7 +265,7 @@ const PlaceDetails: React.FC = () => {
                 </div>
                 <div className="row other-card">
 
-                    <div className="col-lg-10 col-12">
+                    <div className="col-xl-8 col-lg-10 col-12">
 
                         {loading || forceWait ? (
                             <div className="card place-details">
@@ -386,7 +386,7 @@ const PlaceDetails: React.FC = () => {
                 {loading || forceWait ? (<></>) : (<>
                     {currentOrder && (
                         <div className="row current-order other-card">
-                            <div className="col-lg-10 col-12">
+                            <div className="col-xl-8 col-lg-10 col-12">
                                 <div className="card current-order">
 
                                     <h3>Current Order #{currentOrder.id}</h3>
@@ -506,7 +506,7 @@ const PlaceDetails: React.FC = () => {
                 </>)}
 
                 <div className="row mt-4">
-                    <div className="col-lg-10 col-12">
+                    <div className="col-xl-8 col-lg-10 col-12">
                         <OrderHistory
                             placeId={place.id}
                             hasMoreOrders={false}
