@@ -143,7 +143,8 @@ class LandingPageSerializer(serializers.ModelSerializer):
             'unknown_error': obj.auth_unknown_error,
             'network_error': obj.auth_network_error,
             'logout': obj.auth_logout,
-            'auth_pass_reset': obj.auth_pass_reset,
+            'pass_reset': obj.auth_pass_reset,
+            'log_data': obj.auth_log_data,
         }
 
     def get_customer(self, obj):

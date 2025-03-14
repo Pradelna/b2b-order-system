@@ -83,6 +83,7 @@ class LandingPage(models.Model):
     auth_login = models.CharField("log in", max_length=100, blank=True, null=True)
     auth_logout = models.CharField("log out", max_length=100, blank=True, null=True)
     auth_pass_reset = models.CharField("reset password", max_length=100, blank=True, null=True)
+    auth_log_data = models.CharField("login data", max_length=100, blank=True, null=True)
     auth_email = models.CharField("your email", max_length=100, blank=True, null=True)
     auth_pass = models.CharField("password", max_length=100, blank=True, null=True)
     auth_no_account = models.CharField("Don't have an account yet", max_length=150, blank=True, null=True)
