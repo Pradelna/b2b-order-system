@@ -19,6 +19,13 @@ from django.core.mail import send_mail
 from django.utils import timezone
 
 
+@shared_task
+def send_contact_email_task(subject, message, from_email, recipient_list):
+    print("Sending contact email", subject, message, from_email, recipient_list)
+    send_mail(subject, message, from_email, recipient_list)
+    return "Sending contact email"
+
+
 # Класс для работы с внешним API
 class RestApiClient:
     def __init__(self, api_key):
