@@ -113,7 +113,7 @@ const LoginForm: React.FC = () => {
                                     </button>
                                 </div>
                                 <div className="mt-3 mb-3">
-                                    <a href="/forgot-password/" className="btn-link">{messageData.forgot_password}</a>
+                                    <a href="/forgot-password" className="btn-link">{messageData.forgot_password}</a>
                                 </div>
                                 <div className="text-center">
                                     {messageData.no_account}?<br />

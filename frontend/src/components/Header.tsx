@@ -55,7 +55,7 @@ const Header: React.FC = ({formCustomer}) => {
       navigate("/account/login");
     }
   };
-  console.log("Current path:", location.pathname);
+
 
   return (
       <header className="header">
@@ -80,7 +80,10 @@ const Header: React.FC = ({formCustomer}) => {
                   <FontAwesomeIcon icon={faEnvelope} className="icon" />
                   <span>pradelna1cz@gmail.com</span>
                 </a>
-                {(location.pathname === "/account/auth/" || location.pathname === "/account/login/" || formCustomer) ? (
+                {(location.pathname === "/account/auth" ||
+                    location.pathname === "/account/login" ||
+                    location.pathname === "/forgot-password" ||
+                    formCustomer) ? (
                     <Link to="/" className="mail">
                       <FontAwesomeIcon icon={faEarthAmerica} className="icon"/>
                       <span>Website</span>
@@ -93,7 +96,10 @@ const Header: React.FC = ({formCustomer}) => {
               </div>
 
               <div className="to-website">
-                {(location.pathname === "/account/auth/" || location.pathname === "/account/login/" || formCustomer) ? (
+                {(location.pathname === "/account/auth" ||
+                    location.pathname === "/account/login" ||
+                    location.pathname === "/forgot-password" ||
+                    formCustomer) ? (
                     <Link to="/" className="mail">
                       <FontAwesomeIcon icon={faEarthAmerica} className="icon"/>
                       <span>Website</span>
@@ -101,7 +107,7 @@ const Header: React.FC = ({formCustomer}) => {
                 ) : (
                     <button onClick={handleAuthClick} className="header-menu">
                       <FontAwesomeIcon icon={faUser} className="icon" />
-                      <span>{isAuthenticated ? menuData.header_account : "Account"}</span>
+                      <span>{isAuthenticated ? menuData.header_account : (currentData?.auth.login || "Přihlásit se")}</span>
                     </button>
                 )}
               </div>
@@ -143,9 +149,8 @@ interface DynamicMenuProps {
 const DynamicMenu: React.FC<DynamicMenuProps> = ({ menuData }) => {
   const location = useLocation();
 
-  if (location.pathname.startsWith("/account")) {
+  if (location.pathname.startsWith("/account") || location.pathname === "/forgot-password") {
     return <AccountMenuComponent menuData={menuData} />;
   }
-
   return <MenuComponent menuData={menuData} />;
 };

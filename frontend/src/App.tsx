@@ -156,7 +156,7 @@ const App: React.FC = () => {
               {/* Страница после успешного сброса пароля */}
               <Route path="/reset-password/done" element={<ResetPasswordComplete />} />
 
-              <Route path="/forgot-password/" element={<ForgotPas />} />
+              <Route path="/forgot-password" element={<ForgotPas />} />
           </Routes>
         </div>
       </BrowserRouter>

@@ -47,8 +47,8 @@ const PasswordResetForm: React.FC<PasswordResetFormProps> = ({ customerEmail, on
                         </h3>
                         {/* Static link for important document */}
                         <div className="row mb-2">
-                            <div className="col-lg-6 col-12 mb-2">
-                                <label htmlFor="email">Email:</label>
+                            <div className="col-12 mb-2">
+                                <label htmlFor="email">E-mail:</label>
                                     <input
                                         id="email"
                                         type="email"
@@ -60,13 +60,17 @@ const PasswordResetForm: React.FC<PasswordResetFormProps> = ({ customerEmail, on
                                     />
                             </div>
 
-                            <div className="col-lg-6 col-12 mb-2">
+                            <div className="col-12 mb-2">
                                 <button type="submit" className="btn-upload">
                                     {currentData?.auth.pass_reset || "Reset password"}
                                 </button>
                             </div>
                         </div>
-                        {message && <p className="alert alert-success">{message}</p>}
+                        {message && <p className="alert alert-success">
+                            {currentData.lang === "en" && ("Password reset email sent")}
+                            {currentData.lang === "cz" && ("E-mail s resetováním hesla odeslán")}
+                            {currentData.lang === "ru" && ("E-mail для сброса пароля отправлен")}
+                        </p>}
                         {error && <p className="alert alert-danger">{error}</p>}
                     </form>
 

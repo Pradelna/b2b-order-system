@@ -1927,3 +1927,11 @@ p.back-link {
   width: 24px;
   height: auto;
 }
+
+.forgot-pass .card-login {
+  min-height: 200px;
+}
+.forgot-pass p,
+.forgot-pass .alert {
+  margin-bottom: 0;
+}
