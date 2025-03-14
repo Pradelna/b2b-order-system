@@ -438,7 +438,7 @@ const PlaceDetails: React.FC = () => {
 
                                         {currentOrder.system === "Own" && (
                                             <div className="form-control mb-2">
-                                                <strong>Days: </strong>
+                                                <strong>{currentData?.order.days || "Dny"}: </strong>
 
                                                 {currentOrder.monday && <span>{currentData?.form.monday || "Pondělí"} </span>}
                                                 {currentOrder.tuesday && <span>{currentData?.form.tuesday || "Úterý"} </span>}
@@ -467,7 +467,7 @@ const PlaceDetails: React.FC = () => {
 
                                         {currentOrder.rp_problem_description && (
                                             <div className="form-control mb-2">
-                                                <strong>Customer note:</strong> {currentOrder.rp_problem_description || "None"}
+                                                <strong>{currentData?.form.note || "Poznámka"}:</strong> {currentOrder.rp_problem_description || "None"}
                                             </div>
                                         )}
 
@@ -479,7 +479,7 @@ const PlaceDetails: React.FC = () => {
                                             onClick={() => handleStopOrder(currentOrder!.id)}
                                         >
                                             <FontAwesomeIcon icon={faPowerOff} className="icon" />
-                                            <span className="ms-2">cancel this order</span>
+                                            <span className="ms-2">{currentData?.buttons.cancel || "Stornovat"}</span>
                                         </button>
                                     )}
 
@@ -514,7 +514,7 @@ const PlaceDetails: React.FC = () => {
                                 setCurrentOrder(newOrder);
                             }
                             setSuccessMessage(
-                                `Order created successfully`
+                                currentData?.messages.order_created || "Objednávka úspěšně vytvořená"
                             );
                             setTimeout(() => setSuccessMessage(""), 10000);
                             setShowOrderForm(false);

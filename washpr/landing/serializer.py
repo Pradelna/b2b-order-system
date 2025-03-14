@@ -200,6 +200,7 @@ class LandingPageSerializer(serializers.ModelSerializer):
             'file_failed_delete': obj.message_file_failed_delete,
             'file_failed_while_deleting': obj.message_file_failed_while_deleting,
             'file_size': obj.message_file_size,
+            'order_created': obj.message_order_created,
         }
 
     def get_order(self, obj):
@@ -221,6 +222,7 @@ class LandingPageSerializer(serializers.ModelSerializer):
             'info_waiting': obj.order_info_waiting,
             'status': obj.order_status,
             'current_order': obj.order_current_order,
+            'days': obj.order_days,
         }
 
     def get_form(self, obj):

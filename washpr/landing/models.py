@@ -147,6 +147,7 @@ class LandingPage(models.Model):
     message_file_failed_delete = models.CharField("Failed to delete the file", max_length=100, blank=True, null=True)
     message_file_failed_while_deleting = models.CharField("An error occurred while deleting the file", max_length=100,
                                                           blank=True, null=True)
+    message_order_created = models.CharField("Order created successfully!", max_length=150, blank=True, null=True)
     # order
     order_type_sipping_clear_for_dirty = models.CharField("Order type sipping clear for dirty", max_length=100,
                                                           blank=True, null=True)
@@ -166,6 +167,7 @@ class LandingPage(models.Model):
     order_info_waiting = models.CharField("Order: Information is waiting for update", max_length=100, blank=True, null=True)
     order_status = models.CharField("Order status", max_length=100, blank=True, null=True)
     order_current_order = models.CharField("Order: Current order", max_length=100, blank=True, null=True)
+    order_days = models.CharField("Order days", max_length=100, blank=True, null=True)
 
     form_add_place = models.CharField("Form title add new place", max_length=100, blank=True, null=True)
     form_place_name = models.CharField("Form place name", max_length=100, blank=True, null=True)
