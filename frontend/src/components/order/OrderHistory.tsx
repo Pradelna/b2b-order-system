@@ -154,7 +154,7 @@ const OrderHistory: React.FC<OrderHistoryProps> = ({ placeId, orders = [], setOr
 
     useEffect(() => {
         if (!placeId) {
-            console.error("Invalid placeId:", placeId);
+            // console.error("Invalid placeId:", placeId);
             return;
         }
         fetchOrders();

@@ -426,11 +426,9 @@ const OrderForm: React.FC<OrderFormProps> = ({ placeId, onClose, onSuccess }) =>
         const response = await fetchWithAuth(`${BASE_URL}/order/check-current-order/`);
         if (response.ok) {
           const currentOrderData = await response.json();
-          console.log(currentOrderData);
           if (currentOrderData.weekend_able) {
             setCustomerWeekend(true)
           }
-          console.log(currentOrderData.weekend_able);
           // if active order exists for this place
           if (currentOrderData.orders.length != 0) {
             const exists = currentOrderData.orders.some(order => order.place === placeId);
@@ -451,8 +449,6 @@ const OrderForm: React.FC<OrderFormProps> = ({ placeId, onClose, onSuccess }) =>
 
     fetchPlaces();
   }, [BASE_URL]);
-
-  console.log(selectedDays);
 
   return (
       <div className="modal-backdrop">
