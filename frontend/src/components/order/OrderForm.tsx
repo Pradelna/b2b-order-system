@@ -125,14 +125,14 @@ const OrderForm: React.FC<OrderFormProps> = ({ placeId, onClose, onSuccess }) =>
         dateSet.add(dateString);
       } else if (formData.system === "Every_day" && (dayOfWeek >= 1 && dayOfWeek <= 5)) {
         dateSet.add(dateString);
-      } else if (formData.system === "Every_day_with_weekend" && (dayOfWeek >= 1 && dayOfWeek <= 7)) {
+      } else if (formData.system === "Every_day_with_weekend" && (dayOfWeek >= 0 && dayOfWeek <= 6)) {
 
         dateSet.add(dateString);
       }
 
       if (customerWeekend) {
         if (
-            (formData.type_ship === "one_time" || formData.type_ship === "quick") && (dayOfWeek >= 1 && dayOfWeek <= 7)
+            (formData.type_ship === "one_time" || formData.type_ship === "quick") && (dayOfWeek >= 0 && dayOfWeek <= 6)
         ) {
           dateSet.add(dateString);
         }
@@ -176,7 +176,7 @@ const OrderForm: React.FC<OrderFormProps> = ({ placeId, onClose, onSuccess }) =>
       date.setDate(startDate.getDate() + i);
       const dayOfWeek = date.getDay();
       if (customerWeekend) {
-        if (dayOfWeek >= 1 && dayOfWeek <= 7) {
+        if (dayOfWeek >= 0 && dayOfWeek <= 6) {
           availableDates.push(date.toISOString().split("T")[0]);
         }
       } else {
@@ -629,7 +629,9 @@ const OrderForm: React.FC<OrderFormProps> = ({ placeId, onClose, onSuccess }) =>
                           <option value="Mon_Wed_Fri">{ currentData.order.mon_wed_fri || "Pondělí středa pátek" }</option>
                           <option value="Tue_Thu">{ currentData.order.tue_thu || "Úterý čtvrte" }</option>
                           <option value="Every_day">{ currentData.order.every_day || "Každý pracovní den" }</option>
-                          <option value="Every_day_with_weekend">{ currentData.order.every_day_with_weekend || "Každý den a na víkend" }</option>
+                          {customerWeekend && (
+                              <option value="Every_day_with_weekend">{ currentData.order.every_day_with_weekend || "Každý den a na víkend" }</option>
+                          )}
                           <option value="Own">{ currentData.order.own_system || "Vlastní systém" }</option>
                         </select>
                       </div>
