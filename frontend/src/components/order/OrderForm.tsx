@@ -1,7 +1,6 @@
 import { useState, useEffect, useContext } from "react";
 import { LanguageContext } from "../../context/LanguageContext";
 import { fetchWithAuth } from "../account/auth";
-import { formatViceDate} from "@/components/utils/FormatViceDate";
 
 interface OrderFormProps {
   placeId?: string; // Может быть не передан
@@ -226,7 +225,6 @@ const OrderForm: React.FC<OrderFormProps> = ({ placeId, onClose, onSuccess }) =>
     setFormData((prev) => ({ ...prev, date_start_day: e.target.value }));
   };
 
-  // this maybe no needs
   const handlePickupChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
     setFormData((prev) => ({
       ...prev,
@@ -235,7 +233,6 @@ const OrderForm: React.FC<OrderFormProps> = ({ placeId, onClose, onSuccess }) =>
     setFirstStartForm(false);
   };
 
-  // this maybe no needs
   const handleDeliveryChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
     const selectedDeliveryDate = new Date(e.target.value);
     const pickupDate = new Date(formData.date_pickup);
@@ -412,7 +409,7 @@ const OrderForm: React.FC<OrderFormProps> = ({ placeId, onClose, onSuccess }) =>
     const dateStartDayElement = document.querySelector<HTMLInputElement | HTMLSelectElement>("select[name='date_start_day'], input[name='date_start_day']");
     const displayedDateStartDay = dateStartDayElement ? dateStartDayElement.value : formData.date_start_day;
 
-    const formatDate = (date: string) => (date ? date.split("T")[0] : "");
+    // const formatDate = (date: string) => (date ? date.split("T")[0] : "");
     const formattedData = {
       ...formData,
       place: placeId || formData.place,

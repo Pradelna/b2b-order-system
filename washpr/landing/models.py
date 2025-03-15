@@ -201,6 +201,7 @@ class LandingPage(models.Model):
     place_detail_title = models.CharField("Place title", max_length=100, blank=True, null=True)
     place_address = models.CharField("Place address", max_length=100, blank=True, null=True)
     place_edit_place = models.CharField("Place edit place", max_length=100, blank=True, null=True)
+    place_no_edit_place = models.CharField("Place: cant edit place", max_length=100, blank=True, null=True)
 
 
 

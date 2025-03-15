@@ -262,4 +262,5 @@ class LandingPageSerializer(serializers.ModelSerializer):
             'detail_title': obj.place_detail_title,
             'address': obj.place_address,
             'edit_place': obj.place_edit_place,
+            'no_edit_place': obj.place_no_edit_place,
         }

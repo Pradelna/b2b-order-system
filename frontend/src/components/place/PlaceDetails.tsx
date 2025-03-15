@@ -294,14 +294,24 @@ const PlaceDetails: React.FC = () => {
                             <div className="card place-details">
                                 {!showEditForm ? (
                                     <>
-                                    <DarkTooltip title={currentData?.place.edit_place || "Upravit místo"} placement="top" arrow>
-                                        <FontAwesomeIcon
-                                            icon={faPenToSquare}
-                                            className="settings"
-                                            style={{ cursor: "pointer" }}
-                                            onClick={() => setShowEditForm(true)}
-                                        />
-                                    </DarkTooltip>
+                                        {currentOrder ? (
+                                            <DarkTooltip title={currentData?.place?.no_edit_place || "Nemůžete změnit místo, dokud jsou nedokončené objednávky"} placement="top" arrow>
+                                                <FontAwesomeIcon
+                                                    icon={faPenToSquare}
+                                                    className="settings"
+                                                    style={{ cursor: "pointer" }}
+                                                />
+                                            </DarkTooltip>
+                                        ) : (
+                                            <DarkTooltip title={currentData?.place.edit_place || "Upravit místo"} placement="top" arrow>
+                                                <FontAwesomeIcon
+                                                    icon={faPenToSquare}
+                                                    className="settings"
+                                                    style={{ cursor: "pointer" }}
+                                                    onClick={() => setShowEditForm(true)}
+                                                />
+                                            </DarkTooltip>
+                                        )}
                                     </>
                                 ) : (
                                     <DarkTooltip title={currentData?.form.close || "Zavřít"} placement="top" arrow>
@@ -337,7 +347,10 @@ const PlaceDetails: React.FC = () => {
                                         <div className="row mb-2">
                                             <div className="col-12">
                                                 <div className="form-control">
-                                                    <strong>{currentData?.form.rp_person || "Kontaktní osoba"}:</strong> {place.rp_person}
+                                                    <strong>{currentData?.form.rp_person || "Kontaktní osoba"}: </strong>
+                                                    {place.rp_person}
+                                                    {place?.rp_phone && `, ${place?.rp_phone}`}
+                                                    {place?.rp_email && `, ${place?.rp_email}`}
                                                 </div>
                                             </div>
                                         </div>

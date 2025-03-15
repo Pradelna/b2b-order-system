@@ -68,7 +68,6 @@ const PlaceEdit: React.FC<PlaceEditProps> = ({
             body: JSON.stringify(formData),
           }
       );
-      console.log(formData);
       if (response.ok) {
         const updatedPlace = await response.json();
         onPlaceUpdated(updatedPlace);

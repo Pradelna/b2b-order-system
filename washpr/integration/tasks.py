@@ -19,7 +19,10 @@ from django.core.mail import send_mail
 from django.utils import timezone
 
 
-@shared_task
+@shared_task(
+    autoretry_for=(requests.exceptions.RequestException,),
+    retry_kwargs={"max_retries": 5, "countdown": 180}
+)
 def send_contact_email_task(subject, message, from_email, recipient_list):
     print("Sending contact email", subject, message, from_email, recipient_list)
     send_mail(subject, message, from_email, recipient_list)
@@ -105,7 +108,10 @@ class RestApiClient:
             return None
 
 
-@shared_task
+@shared_task(
+    autoretry_for=(requests.exceptions.RequestException,),
+    retry_kwargs={"max_retries": 5, "countdown": 180}
+)
 def create_client_task(customer_id):
     """
     Задача создания клиента во внешней системе.
@@ -152,7 +158,10 @@ def create_client_task(customer_id):
     else:
         return f"Failed to create client for customer {customer_id}."
 
-@shared_task
+@shared_task(
+    autoretry_for=(requests.exceptions.RequestException,),
+    retry_kwargs={"max_retries": 5, "countdown": 180}
+)
 def create_place_task(place_id):
     """
     Задача отправки данных места во внешнюю систему.
@@ -201,7 +210,10 @@ def create_place_task(place_id):
         return f"Customer is not active yet"
 
 
-@shared_task
+@shared_task(
+    autoretry_for=(requests.exceptions.RequestException,),
+    retry_kwargs={"max_retries": 5, "countdown": 180}
+)
 def create_all_place_task(customer_id):
     """
     Задача отправки данных всех мест во внешнюю систему.
@@ -251,8 +263,61 @@ def create_all_place_task(customer_id):
     return result
 
 
+@shared_task(
+    autoretry_for=(requests.exceptions.RequestException,),
+    retry_kwargs={"max_retries": 5, "countdown": 180}
+)
+def update_place_task(place_id):
+    """
+    Обновляет данные существующего Place (который уже был создан во внешней системе).
+    Для этого у Place должен быть заполнен place.rp_id.
+    """
+    close_old_connections()
+    from place.models import Place  # Модель Place
 
-@shared_task
+    try:
+        place = Place.objects.get(pk=place_id)
+    except Place.DoesNotExist:
+        return f"Place with id {place_id} not found."
+
+    # Проверяем, что у place есть внешний идентификатор (rp_id),
+    # иначе нечего обновлять (или сначала нужно вызвать create_place_task).
+    if not place.rp_id:
+        return f"Place {place_id} does not have rp_id. Nothing to update."
+
+    # Инициализируем API-клиент
+    from django.conf import settings
+    api_key = settings.EXTERNAL_API_KEY
+    api_client = RestApiClient(api_key)
+
+    # Допустим, часть полей берём из place, часть — жёстко
+    response = api_client.create_client_place(
+        client_external_id=place.rp_client_external_id,
+        place_external_id=place.rp_external_id,
+        place_title=place.place_name,
+        place_country="CZ",
+        place_city=place.rp_city,
+        place_street=place.rp_street,
+        place_number=place.rp_number,
+        place_zip=place.rp_zip,
+        contact_person_name=place.rp_person,
+        contact_person_phone=place.rp_phone,
+        contact_person_email=place.rp_email,
+        lat=None,
+        lng=None,
+    )
+
+    if response and "id" in response:
+        # Если во внешней системе возвращается тот же id или обновлённые данные, можно их сохранить
+        return f"Place {place_id} updated with remote id {response['id']}."
+    else:
+        return f"Failed to update place {place_id}."
+
+
+@shared_task(
+    autoretry_for=(requests.exceptions.RequestException,),
+    retry_kwargs={"max_retries": 5, "countdown": 180}
+)
 def send_orders_task():
     """
     Задача запускается каждый час и выбирает заказы, которые:
@@ -386,7 +451,10 @@ def send_orders_task():
     return results
 
 
-@shared_task
+@shared_task(
+    autoretry_for=(requests.exceptions.RequestException,),
+    retry_kwargs={"max_retries": 5, "countdown": 180}
+)
 def create_orders_task():
     """
     Задача запускается каждый час и создает автоматически заказы на месяц или второй для одноразовых:
@@ -506,7 +574,10 @@ def create_orders_task():
     return results
 
 
-@shared_task
+@shared_task(
+    autoretry_for=(requests.exceptions.RequestException,),
+    retry_kwargs={"max_retries": 5, "countdown": 180}
+)
 def update_orders_task():
     """
     Update status order
@@ -555,7 +626,10 @@ def update_orders_task():
         return "Request doesn't work"
 
 
-@shared_task
+@shared_task(
+    autoretry_for=(requests.exceptions.RequestException,),
+    retry_kwargs={"max_retries": 5, "countdown": 180}
+)
 def check_file_in_orders_task():
     """
     Check if file exists in order
@@ -625,7 +699,10 @@ def check_file_in_orders_task():
     return result
 
 
-@shared_task
+@shared_task(
+    autoretry_for=(requests.exceptions.RequestException,),
+    retry_kwargs={"max_retries": 5, "countdown": 180}
+)
 def download_file_from_external_api(file_id):
     """
     Запрашивает файл с внешнего API и сохраняет его в базе данных.
@@ -651,7 +728,10 @@ def download_file_from_external_api(file_id):
         return f"Failed to download file {file_id}: {str(e)}"
 
 
-@shared_task
+@shared_task(
+    autoretry_for=(requests.exceptions.RequestException,),
+    retry_kwargs={"max_retries": 5, "countdown": 180}
+)
 def generate_order_report(user, year, month):
     """
     Создаёт (или обновляет) запись OrderReport за переданный год/месяц для указанного пользователя.
@@ -698,7 +778,10 @@ def generate_order_report(user, year, month):
     return report
 
 
-@shared_task
+@shared_task(
+    autoretry_for=(requests.exceptions.RequestException,),
+    retry_kwargs={"max_retries": 5, "countdown": 180}
+)
 def generate_monthly_reports_task():
     """
     Создаётся раз в месяц.
