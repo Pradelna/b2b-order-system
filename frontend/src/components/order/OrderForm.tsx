@@ -550,15 +550,15 @@ const OrderForm: React.FC<OrderFormProps> = ({ placeId, onClose, onSuccess }) =>
                       onChange={handleInputChange}
                       required
                   >
-                    <option value="">{ currentData.form["select_type"] || "Vyberte typ" }</option>
+                    <option value="">{ currentData?.form["select_type"] || "Vyberte typ" }</option>
                     <option value="pickup_ship_one">
-                      {currentData.order.type_sipping_clear_for_dirty}
+                      {currentData?.order.type_sipping_clear_for_dirty || "Výměna čistého prádla za špinavé"}
                     </option>
                     <option value="pickup_ship_dif">
-                      {currentData.order.type_sipping_1_in_3}
+                      {currentData?.order.type_sipping_1_in_3 || "Vyzvednuti a dodání v rozdilné dny"}
                     </option>
-                    <option value="one_time">{currentData.order.one_time}</option>
-                    <option value="quick_order">{currentData.order.quick}</option>
+                    <option value="one_time">{currentData?.order.one_time || "Jednorázová objednávka"}</option>
+                    <option value="quick_order">{currentData?.order.quick || "Rychlé doručení"}</option>
                   </select>
                 </div>
               </div>

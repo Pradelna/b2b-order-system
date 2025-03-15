@@ -246,7 +246,7 @@ class LandingPageSerializer(serializers.ModelSerializer):
             'type_note': obj.form_type_note,
             'select_place': obj.form_select_place,
             'select_type': obj.form_select_type,
-            'select_system,': obj.form_select_system,
+            'select_system': obj.form_select_system,
             'close': obj.form_close,
             'monday': obj.form_monday,
             'tuesday': obj.form_tuesday,
