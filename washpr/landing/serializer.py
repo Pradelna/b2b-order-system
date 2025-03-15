@@ -217,6 +217,7 @@ class LandingPageSerializer(serializers.ModelSerializer):
             'mon_wed_fri': obj.order_mon_wed_fri,
             'tue_thu': obj.order_tue_thu,
             'every_day': obj.order_every_day,
+            'every_day_with_weekend': obj.order_every_day_with_weekend,
             'own_system': obj.order_own_system,
             'day_next_visit': obj.order_day_next_visit,
             'info_waiting': obj.order_info_waiting,

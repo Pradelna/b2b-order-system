@@ -38,6 +38,7 @@ class Order(models.Model):
         ('Mon_Wed_Fri', 'Monday Wednesday Friday'),
         ('Tue_Thu', 'Tuesday Thursday'),
         ('Every_day', 'Every day'),
+        ('Every_day_with_weekend', 'Every day with weekend'),
         ('Own', 'Own system')
     ]
     system = models.CharField("System days", max_length=100, null=True, blank=True, choices=choice_system)
