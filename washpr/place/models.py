@@ -1,6 +1,6 @@
 from django.db import models
 from customer.models import Customer
-from integration.tasks import create_place_task
+from integration.tasks import create_place_task, update_place_task
 
 
 class Place(models.Model):
@@ -52,7 +52,8 @@ class Place(models.Model):
             create_place_task.delay(self.pk)
             super().save(update_fields=['active'])
             return
-
+        if self.rp_id:
+            update_place_task.delay(place_id=self.pk)
         super().save(*args, **kwargs)
 
     def __str__(self):

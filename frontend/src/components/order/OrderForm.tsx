@@ -1,7 +1,6 @@
 import { useState, useEffect, useContext } from "react";
 import { LanguageContext } from "../../context/LanguageContext";
 import { fetchWithAuth } from "../account/auth";
-import { formatViceDate} from "@/components/utils/FormatViceDate";
 
 interface OrderFormProps {
   placeId?: string; // Может быть не передан
@@ -21,17 +20,38 @@ const OrderForm: React.FC<OrderFormProps> = ({ placeId, onClose, onSuccess }) =>
 
   const [successMessage, setSuccessMessage] = useState<string | null>(null);
   const [showError, setShowError] = useState(false);
-  const [showDaySystem, setShowDaySystem] = useState(true);
+  const [showDaySystem, setShowDaySystem] = useState(false);
   const [useCustomDays, setUseCustomDays] = useState(false);
+  const [useShowDaysSystem, setUseShowDaysSystem] = useState(false);
   const [useOnetimeOrder, setUseOnetimeOrder] = useState(false);
+  const [useQuickOrder, setUseQuickOrder] = useState(false);
   const [useThirdOrder, setUseThirdOrder] = useState(false);
   const [useClearDirtyOrder, setUseClearDirtyOrder] = useState(false);
-  const [useQuickOrder, setUseQuickOrder] = useState(false);
   const BASE_URL = import.meta.env.VITE_API_URL;
   const { currentData } = useContext(LanguageContext);
   const [alredyCurrentOrder, setAlredyCurrentOrder] = useState(false);
   const [firstStartForm, setFirstStartForm] = useState(true);
   const [everyWeek, setEveryWeek] = useState(false);
+  const [customerWeekend, setCustomerWeekend] = useState<boolean>(false)
+
+  const [wholeWeek, setWholeWeek] = useState([
+    "monday",
+    "tuesday",
+    "wednesday",
+    "thursday",
+    "friday",
+    "saturday",
+    "sunday"
+  ]);
+  const [workWeek, setWhorkWeek] = useState([
+    "monday",
+    "tuesday",
+    "wednesday",
+    "thursday",
+    "friday"
+  ]);
+
+  const selectedDays = customerWeekend ? wholeWeek : workWeek;
 
   const [formData, setFormData] = useState({
     place: placeId || "",
@@ -43,6 +63,8 @@ const OrderForm: React.FC<OrderFormProps> = ({ placeId, onClose, onSuccess }) =>
     wednesday: false,
     thursday: false,
     friday: false,
+    saturday: false,
+    sunday: false,
     date_pickup: getAvailablePickupDates()[0],
     date_delivery: "",
     every_week: false,
@@ -52,6 +74,7 @@ const OrderForm: React.FC<OrderFormProps> = ({ placeId, onClose, onSuccess }) =>
 
   const [places, setPlaces] = useState<Place[]>([]);
 
+  // localization for week days
   const localeMapping: { [key: string]: string } = {
     cz: "cs-CZ", // для чешского языка
     ru: "ru-RU", // для русского языка
@@ -60,7 +83,8 @@ const OrderForm: React.FC<OrderFormProps> = ({ placeId, onClose, onSuccess }) =>
 
   // Functions for calculating available start dates
   function getAvailableStartDays() {
-    const availableDates: string[] = [];
+    // const availableDates: string[] = [];
+    const dateSet = new Set<string>();
     const startDate = new Date();
 
     // if repeated order already exist start from next month
@@ -80,39 +104,60 @@ const OrderForm: React.FC<OrderFormProps> = ({ placeId, onClose, onSuccess }) =>
       if (formData.wednesday) selectedDays.push(3);
       if (formData.thursday) selectedDays.push(4);
       if (formData.friday) selectedDays.push(5);
+      if (formData.saturday) selectedDays.push(6);
+      if (formData.sunday) selectedDays.push(0);
     }
 
     for (let i = 0; i < 30; i++) {
       const date = new Date(startDate);
       date.setDate(startDate.getDate() + i);
       const dayOfWeek = date.getDay();
+      const dateString = date.toISOString().split("T")[0];
 
       if (formData.system === "Own") {
         if (selectedDays.includes(dayOfWeek)) {
-          availableDates.push(date.toISOString().split("T")[0]);
+          dateSet.add(dateString);
         }
       } else if (formData.system === "Tue_Thu" && (dayOfWeek === 2 || dayOfWeek === 4)) {
-        availableDates.push(date.toISOString().split("T")[0]);
+        dateSet.add(dateString);
       } else if (formData.system === "Mon_Wed_Fri" && (dayOfWeek === 1 || dayOfWeek === 3 || dayOfWeek === 5)) {
-        availableDates.push(date.toISOString().split("T")[0]);
+        dateSet.add(dateString);
       } else if (formData.system === "Every_day" && (dayOfWeek >= 1 && dayOfWeek <= 5)) {
-        availableDates.push(date.toISOString().split("T")[0]);
+        dateSet.add(dateString);
+      } else if (formData.system === "Every_day_with_weekend" && (dayOfWeek >= 0 && dayOfWeek <= 6)) {
+
+        dateSet.add(dateString);
       }
 
-      if (formData.type_ship === "one_time" && formData.type_ship === "quick" && (dayOfWeek >= 1 && dayOfWeek <= 5)) {
-        console.log("it works")
-        availableDates.push(date.toISOString().split("T")[0]);
+      if (customerWeekend) {
+        if (
+            (formData.type_ship === "one_time" || formData.type_ship === "quick") && (dayOfWeek >= 0 && dayOfWeek <= 6)
+        ) {
+          dateSet.add(dateString);
+        }
+      } else {
+        if (
+            (formData.type_ship === "one_time" || formData.type_ship === "quick") && (dayOfWeek >= 1 && dayOfWeek <= 5)
+        ) {
+          dateSet.add(dateString);
+        }
       }
     }
-    return availableDates;
+    return Array.from(dateSet);
   }
 
-  // only working days for a week
+  // only working days for a week if customerWeekend false
   function addWorkingDays(date: Date, days: number): Date {
     const result = new Date(date);
+    if (customerWeekend) {
+      // Если включены выходные, просто прибавляем количество дней
+      result.setDate(result.getDate() + days);
+      return result;
+    }
+    // Если выходные не включены, прибавляем только рабочие дни
     while (days > 0) {
       result.setDate(result.getDate() + 1);
-      // if is not suterday (6) and not sunday (0) – incrise counter
+      // Если день не суббота (6) и не воскресенье (0) – уменьшаем счетчик
       if (result.getDay() !== 0 && result.getDay() !== 6) {
         days--;
       }
@@ -129,8 +174,14 @@ const OrderForm: React.FC<OrderFormProps> = ({ placeId, onClose, onSuccess }) =>
       const date = new Date(startDate);
       date.setDate(startDate.getDate() + i);
       const dayOfWeek = date.getDay();
-      if (dayOfWeek >= 1 && dayOfWeek <= 5) {
-        availableDates.push(date.toISOString().split("T")[0]);
+      if (customerWeekend) {
+        if (dayOfWeek >= 0 && dayOfWeek <= 6) {
+          availableDates.push(date.toISOString().split("T")[0]);
+        }
+      } else {
+        if (dayOfWeek >= 1 && dayOfWeek <= 5) {
+          availableDates.push(date.toISOString().split("T")[0]);
+        }
       }
     }
     return availableDates;
@@ -164,7 +215,9 @@ const OrderForm: React.FC<OrderFormProps> = ({ placeId, onClose, onSuccess }) =>
       const optionDate = addWorkingDays(minDeliveryDate, i);
       availableDates.push(optionDate.toISOString().split("T")[0]);
     }
-    return availableDates;
+    // remove dubles
+    const uniqueDates = Array.from(new Set(availableDates));
+    return uniqueDates;
   }
 
   // Обработчики событий this maybe no needs
@@ -172,7 +225,6 @@ const OrderForm: React.FC<OrderFormProps> = ({ placeId, onClose, onSuccess }) =>
     setFormData((prev) => ({ ...prev, date_start_day: e.target.value }));
   };
 
-  // this maybe no needs
   const handlePickupChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
     setFormData((prev) => ({
       ...prev,
@@ -181,7 +233,6 @@ const OrderForm: React.FC<OrderFormProps> = ({ placeId, onClose, onSuccess }) =>
     setFirstStartForm(false);
   };
 
-  // this maybe no needs
   const handleDeliveryChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
     const selectedDeliveryDate = new Date(e.target.value);
     const pickupDate = new Date(formData.date_pickup);
@@ -200,9 +251,9 @@ const OrderForm: React.FC<OrderFormProps> = ({ placeId, onClose, onSuccess }) =>
     setFormData((prev) => {
       const updatedFormData = { ...prev, [name]: checked };
       // 🔥 НЕ сбрасываем дни недели, если изменяется НЕ day checkbox
-      if (["monday", "tuesday", "wednesday", "thursday", "friday"].includes(name)) {
+      if (selectedDays.includes(name)) {
         if (prev.type_ship === "pickup_ship_dif") {
-          const days = ["monday", "tuesday", "wednesday", "thursday", "friday"];
+          const days = selectedDays;
           const index = days.indexOf(name);
           if (checked) {
             if (index > 0) updatedFormData[days[index - 1]] = false;
@@ -221,13 +272,12 @@ const OrderForm: React.FC<OrderFormProps> = ({ placeId, onClose, onSuccess }) =>
     const { name, value } = e.target;
     setFormData((prev) => {
       const updatedData = { ...prev, [name]: value };
-
       if (name === "type_ship") {
         if (value === "pickup_ship_dif") {
           updatedData.system = "Own";
           setUseThirdOrder(true);
+          setUseShowDaysSystem(true);
           setUseClearDirtyOrder(false);
-          setUseOnetimeOrder(false);
           setUseQuickOrder(false);
           setUseCustomDays(true);
           setShowDaySystem(false);
@@ -236,60 +286,82 @@ const OrderForm: React.FC<OrderFormProps> = ({ placeId, onClose, onSuccess }) =>
           updatedData.wednesday = false;
           updatedData.thursday = false;
           updatedData.friday = false;
+          updatedData.saturday = false;
+          updatedData.sunday = false;
           updatedData.every_week = true;
           setEveryWeek(true);
           setUseOnetimeOrder(false);
         } else if (value === "pickup_ship_one") {
           setUseClearDirtyOrder(true);
           setUseThirdOrder(false);
-          setUseOnetimeOrder(false);
           setUseQuickOrder(false);
           setShowDaySystem(true);
           setUseOnetimeOrder(false);
           setUseCustomDays(false);
+          setUseShowDaysSystem(true);
           updatedData.system = "";
           updatedData.monday = false;
           updatedData.tuesday = false;
           updatedData.wednesday = false;
           updatedData.thursday = false;
           updatedData.friday = false;
+          updatedData.saturday = false;
+          updatedData.sunday = false;
           updatedData.every_week = true;
           setEveryWeek(true);
-        } else if (value === "one_time" || value === "quick_order") {
+        } else if (value === "one_time") {
           setShowDaySystem(true);
-          setUseOnetimeOrder(true);
-          setUseCustomDays(true);
+          setUseCustomDays(false);
           setFirstStartForm(true);
-          updatedData.system = "Own";
+          setUseThirdOrder(false);
+          setUseShowDaysSystem(false);
           // Устанавливаем date_pickup равной завтрашнему дню
           updatedData.date_pickup = formattedTomorrow;
           const pickupDate = new Date(formattedTomorrow);
           let deliveryDate: Date;
-          if (value === "quick_order") {
-            setUseClearDirtyOrder(false);
-            setUseThirdOrder(false);
-            setUseOnetimeOrder(false);
-            setUseQuickOrder(true);
-            deliveryDate = addWorkingDays(pickupDate, 1);
-          } else if (value === "one_time") {
-            setUseClearDirtyOrder(false);
-            setUseThirdOrder(false);
-            setUseOnetimeOrder(true);
-            setUseQuickOrder(false);
-            deliveryDate = addWorkingDays(pickupDate, 2);
-          }
+          setUseClearDirtyOrder(false);
+          setUseQuickOrder(false);
+          setUseOnetimeOrder(true);
+          deliveryDate = addWorkingDays(pickupDate, 2);
+          updatedData.system = "Own";
           updatedData.date_delivery = deliveryDate.toISOString().split("T")[0];
           updatedData.monday = false;
           updatedData.tuesday = false;
           updatedData.wednesday = false;
           updatedData.thursday = false;
           updatedData.friday = false;
+          updatedData.saturday = false;
+          updatedData.sunday = false;
+          updatedData.every_week = false;
+          setEveryWeek(false);
+        } else if (value === "quick_order") {
+          setUseQuickOrder(true);
+          setShowDaySystem(false);
+          setUseCustomDays(false);
+          setFirstStartForm(true);
+          setUseClearDirtyOrder(false);
+          setUseThirdOrder(false);
+          setUseOnetimeOrder(false);
+          setUseShowDaysSystem(false);
+          // Устанавливаем date_pickup равной завтрашнему дню
+          updatedData.date_pickup = formattedTomorrow;
+          const pickupDate = new Date(formattedTomorrow);
+          let deliveryDate: Date;
+          deliveryDate = addWorkingDays(pickupDate, 1);
+          updatedData.system = "Own";
+          updatedData.date_delivery = deliveryDate.toISOString().split("T")[0];
+          updatedData.monday = false;
+          updatedData.tuesday = false;
+          updatedData.wednesday = false;
+          updatedData.thursday = false;
+          updatedData.friday = false;
+          updatedData.saturday = false;
+          updatedData.sunday = false;
           updatedData.every_week = false;
           setEveryWeek(false);
         } else {
           // Сброс для других значений
           setShowDaySystem(true);
-          setUseOnetimeOrder(false);
           setUseCustomDays(false);
           updatedData.system = "";
           updatedData.monday = false;
@@ -297,6 +369,8 @@ const OrderForm: React.FC<OrderFormProps> = ({ placeId, onClose, onSuccess }) =>
           updatedData.wednesday = false;
           updatedData.thursday = false;
           updatedData.friday = false;
+          updatedData.saturday = false;
+          updatedData.sunday = false;
           updatedData.every_week = false;
           setEveryWeek(false);
           setUseClearDirtyOrder(false);
@@ -335,7 +409,7 @@ const OrderForm: React.FC<OrderFormProps> = ({ placeId, onClose, onSuccess }) =>
     const dateStartDayElement = document.querySelector<HTMLInputElement | HTMLSelectElement>("select[name='date_start_day'], input[name='date_start_day']");
     const displayedDateStartDay = dateStartDayElement ? dateStartDayElement.value : formData.date_start_day;
 
-    const formatDate = (date: string) => (date ? date.split("T")[0] : "");
+    // const formatDate = (date: string) => (date ? date.split("T")[0] : "");
     const formattedData = {
       ...formData,
       place: placeId || formData.place,
@@ -400,16 +474,19 @@ const OrderForm: React.FC<OrderFormProps> = ({ placeId, onClose, onSuccess }) =>
     fetchPlaces();
   }, [BASE_URL]);
 
-  // Check if exist an active current order
+  // Check if exist an active current order AND check if weekend Able customer
   useEffect(() => {
     const fetchPlaces = async () => {
       try {
         const response = await fetchWithAuth(`${BASE_URL}/order/check-current-order/`);
         if (response.ok) {
           const currentOrderData = await response.json();
+          if (currentOrderData.weekend_able) {
+            setCustomerWeekend(true)
+          }
           // if active order exists for this place
-          if (currentOrderData.length != 0) {
-            const exists = currentOrderData.some(order => order.place === placeId);
+          if (currentOrderData.orders.length != 0) {
+            const exists = currentOrderData.orders.some(order => order.place === placeId);
             if (exists) {
               setAlredyCurrentOrder(true); // this change avaibles start dates and show message in the order form
               console.log("Order with this placeId exists");
@@ -427,8 +504,6 @@ const OrderForm: React.FC<OrderFormProps> = ({ placeId, onClose, onSuccess }) =>
 
     fetchPlaces();
   }, [BASE_URL]);
-
-  console.log(currentData);
 
   return (
       <div className="modal-backdrop">
@@ -475,15 +550,15 @@ const OrderForm: React.FC<OrderFormProps> = ({ placeId, onClose, onSuccess }) =>
                       onChange={handleInputChange}
                       required
                   >
-                    <option value="">{ currentData.form["select_type"] || "Vyberte typ" }</option>
+                    <option value="">{ currentData?.form["select_type"] || "Vyberte typ" }</option>
                     <option value="pickup_ship_one">
-                      {currentData.order.type_sipping_clear_for_dirty}
+                      {currentData?.order.type_sipping_clear_for_dirty || "Výměna čistého prádla za špinavé"}
                     </option>
                     <option value="pickup_ship_dif">
-                      {currentData.order.type_sipping_1_in_3}
+                      {currentData?.order.type_sipping_1_in_3 || "Vyzvednuti a dodání v rozdilné dny"}
                     </option>
-                    <option value="one_time">{currentData.order.one_time}</option>
-                    <option value="quick_order">{currentData.order.quick}</option>
+                    <option value="one_time">{currentData?.order.one_time || "Jednorázová objednávka"}</option>
+                    <option value="quick_order">{currentData?.order.quick || "Rychlé doručení"}</option>
                   </select>
                 </div>
               </div>
@@ -530,7 +605,7 @@ const OrderForm: React.FC<OrderFormProps> = ({ placeId, onClose, onSuccess }) =>
               )}
 
               {/* System or Days of the Week */}
-              {!useOnetimeOrder && (
+              {useShowDaysSystem && formData.type_ship !== "one_time" && formData.type_ship !== "quick_order" && (
                   <div className="row mb-3">
                     <div className={`col-12 days ${showDaySystem ? "display-none" : ""}`}>
                       <p>Choose days</p>
@@ -547,23 +622,36 @@ const OrderForm: React.FC<OrderFormProps> = ({ placeId, onClose, onSuccess }) =>
                             onChange={handleSystemChange}
                             required={!useCustomDays}
                         >
-                          <option value="">{ currentData.form["select_system"] || "Zvolte systém" }</option>
-                          <option value="Mon_Wed_Fri">{ currentData.form["mon_wed_fri"] || "Pondělí středa pátek" }</option>
-                          <option value="Tue_Thu">{ currentData.form["tue_thu"] || "Úterý čtvrte" }</option>
-                          <option value="Every_day">{ currentData.form["every_day"] || "Každý den" }</option>
-                          <option value="Own">{ currentData.form["own_system"] || "Vlastní systém" }</option>
+                          <option value="">{ currentData.form.select_system || "Zvolte systém" }</option>
+                          <option value="Mon_Wed_Fri">{ currentData.order.mon_wed_fri || "Pondělí středa pátek" }</option>
+                          <option value="Tue_Thu">{ currentData.order.tue_thu || "Úterý čtvrte" }</option>
+                          <option value="Every_day">{ currentData.order.every_day || "Každý pracovní den" }</option>
+                          {customerWeekend && (
+                              <option value="Every_day_with_weekend">{ currentData.order.every_day_with_weekend || "Každý den a na víkend" }</option>
+                          )}
+                          <option value="Own">{ currentData.order.own_system || "Vlastní systém" }</option>
                         </select>
                       </div>
                     </div>
                   </div>
               )}
 
-              {useCustomDays && !useOnetimeOrder && (
+              {useCustomDays && (
                   <div className="row mb-3">
                     <div className="col-12">
-                      {["monday", "tuesday", "wednesday", "thursday", "friday"].map((day, index, days) => {
+                      {selectedDays.map((day, index, days) => {
                         const hasPrevSelected = index > 0 && formData[days[index - 1] as keyof typeof formData];
                         const hasNextSelected = index < days.length - 1 && formData[days[index + 1] as keyof typeof formData];
+                        const dayLabels: { [key: string]: string } = {
+                          monday: currentData?.form.monday || "Pondělí",
+                          tuesday: currentData?.form.tuesday || "Úterý",
+                          wednesday: currentData?.form.wednesday || "Středa",
+                          thursday: currentData?.form.thursday || "Čtvrtek",
+                          friday: currentData?.form.friday || "Pátek",
+                          //
+                          saturday: currentData?.form.saturday || "Sobota",
+                          sunday: currentData?.form.sunday || "Neděle",
+                        };
                         return (
                             <div className="form-check" key={day}>
                               <input
@@ -579,7 +667,7 @@ const OrderForm: React.FC<OrderFormProps> = ({ placeId, onClose, onSuccess }) =>
                                   }
                               />
                               <label className="form-check-label" htmlFor={day}>
-                                {day.charAt(0).toUpperCase() + day.slice(1)}
+                                {dayLabels[day]}
                               </label>
                             </div>
                         );
@@ -588,7 +676,7 @@ const OrderForm: React.FC<OrderFormProps> = ({ placeId, onClose, onSuccess }) =>
                   </div>
               )}
 
-              {!useOnetimeOrder && (
+              {!useOnetimeOrder && !useQuickOrder && (
                   <div className="row mb-3">
                     <div className="col-12 label-form">
                       <label htmlFor="date_start_day">{ currentData.form["start_day"] || "Začátek závozu" }*</label>
@@ -618,7 +706,7 @@ const OrderForm: React.FC<OrderFormProps> = ({ placeId, onClose, onSuccess }) =>
                   </div>
               )}
 
-              {useOnetimeOrder && (
+              {(useOnetimeOrder || useQuickOrder) && (
                   <>
                     <div className="row mb-3">
                       <div className="col-12 label-form">
@@ -633,7 +721,7 @@ const OrderForm: React.FC<OrderFormProps> = ({ placeId, onClose, onSuccess }) =>
                             required
                         >
                           {getAvailablePickupDates().map((date) => (
-                              <option key={date} value={date}>
+                              <option key={`pickup_${date}`} value={date}>
                                 {new Date(date).toLocaleDateString(
                                     localeMapping[currentData.lang] || "en-US",
                                     {
@@ -661,7 +749,7 @@ const OrderForm: React.FC<OrderFormProps> = ({ placeId, onClose, onSuccess }) =>
                             required
                         >
                           {getAvailableDeliveryDates().map((date) => (
-                              <option key={date} value={date}>
+                              <option key={`delivery_${date}`} value={date}>
                                 {new Date(date).toLocaleDateString(
                                     localeMapping[currentData.lang] || "en-US",
                                     {
@@ -678,7 +766,7 @@ const OrderForm: React.FC<OrderFormProps> = ({ placeId, onClose, onSuccess }) =>
                   </>
               )}
 
-              {alredyCurrentOrder && (
+              {alredyCurrentOrder && (!useOnetimeOrder && !useQuickOrder) && (
                   <div className="row">
                     <div className="col-12">
                       <div className="alert alert-warning">

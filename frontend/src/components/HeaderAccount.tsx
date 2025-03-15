@@ -49,23 +49,23 @@ const HeaderAccount: React.FC = ({customerId}) => {
               <div className="contact">
                 <Link to="/" className="mail">
                   <FontAwesomeIcon icon={faEarthAmerica} className="icon"/>
-                  <span>Website</span>
+                  <span>{currentData?.auth.button_error}</span>
                 </Link>
                 <a href="/account" className="mail">
                   <FontAwesomeIcon icon={faHouse} className="icon"/>
-                  <span>{menuData.header_dashboard || "Panel"}</span>
+                  <span>{menuData.header_panel || "Domov"}</span>
                 </a>
                 <Link to="/invoices">
                   <div className="mail">
                     <FontAwesomeIcon icon={faFileInvoiceDollar} className="icon"/>
-                    <span>Invoces</span>
+                    <span>{currentData?.buttons.invoices || "Faktury"}</span>
                   </div>
                 </Link>
 
                 <Link to={`/customer/${customerId}`}>
                   <div className="mail">
                     <FontAwesomeIcon icon={faUser} className="icon"/>
-                    <span>{menuData.header_account}</span>
+                    <span>{menuData?.header_account || "Můj účet"}</span>
                   </div>
                 </Link>
               </div>
@@ -73,7 +73,7 @@ const HeaderAccount: React.FC = ({customerId}) => {
               <div className="to-website">
                 <Link to="/" className="mail">
                   <FontAwesomeIcon icon={faEarthAmerica} className="icon"/>
-                  <span>Website</span>
+                  <span>{currentData?.auth.button_error || "Web stránka"}</span>
                 </Link>
               </div>
 

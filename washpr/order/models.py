@@ -38,6 +38,7 @@ class Order(models.Model):
         ('Mon_Wed_Fri', 'Monday Wednesday Friday'),
         ('Tue_Thu', 'Tuesday Thursday'),
         ('Every_day', 'Every day'),
+        ('Every_day_with_weekend', 'Every day with weekend'),
         ('Own', 'Own system')
     ]
     system = models.CharField("System days", max_length=100, null=True, blank=True, choices=choice_system)
@@ -47,6 +48,8 @@ class Order(models.Model):
     wednesday = models.BooleanField("wednesday", default=False)
     thursday = models.BooleanField("thursday", default=False)
     friday = models.BooleanField("friday", default=False)
+    saturday = models.BooleanField("saturday", default=False)
+    sunday = models.BooleanField("sunday", default=False)
     date_pickup = models.DateField("Pick up day", default=datetime.now)
     date_delivery = models.DateField("Delivery day", default=datetime.now)
     every_week = models.BooleanField("Every week", default=False)

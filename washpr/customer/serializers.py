@@ -25,7 +25,8 @@ class CustomerSerializer(serializers.ModelSerializer):
             'terms_of_use',
             'gdpr',
             'active',
-            'change_data'
+            'change_data',
+            'weekend_able'
         ]
         read_only_fields = ['user', 'user_id', 'company_email']  # Поля остаётся только для чтения
 
@@ -48,6 +49,7 @@ class CustomerGetSerializer(serializers.ModelSerializer):
             'company_person',
             'active',
             'change_data'
+            'weekend_able'
         ]
         read_only_fields = ['user']  # Поле user заполняется автоматически
 

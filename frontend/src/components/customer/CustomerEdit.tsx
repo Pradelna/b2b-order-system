@@ -3,7 +3,7 @@ import { LanguageContext } from "@/context/LanguageContext";
 import { fetchWithAuth } from "../account/auth.ts";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faSquareXmark } from "@fortawesome/free-solid-svg-icons";
-import { Tooltip as ReactTooltip } from "react-tooltip";
+import DarkTooltip from "@/components/utils/DarkTooltip";
 
 interface CustomerData {
     new_company_name: string;
@@ -42,21 +42,7 @@ const CustomerEdit: React.FC<CustomerEditProps> = ({
         company_person: customerData?.company_person || "",
         change_data: customerData?.change_data ?? false,
     });
-
     const BASE_URL = import.meta.env.VITE_API_URL;
-
-    // const labels: Labels = {
-    //     new_company_name: currentData.customer.company_name,
-    //     new_company_address: currentData.customer.company_address,
-    //     new_company_ico: currentData.customer.company_number,
-    //     new_company_dic: currentData.customer.vat_number,
-    //     company_phone: currentData.customer.phone,
-    //     company_person: currentData.customer.full_name,
-    //     vop: currentData.customer.vop,
-    //     terms_of_use: currentData.customer.terms_use,
-    //     gdpr: currentData.customer.gdpr,
-    //     change_data: currentData.customer.new_data_change,
-    // };
 
     const handleChange = (e: ChangeEvent<HTMLInputElement>) => {
         const { name, value, type, checked } = e.target;
@@ -102,6 +88,7 @@ const CustomerEdit: React.FC<CustomerEditProps> = ({
 
     return (
         <div className="card company-card card-form">
+            <DarkTooltip title="Close" placement="top" arrow>
             <FontAwesomeIcon
                 icon={faSquareXmark}
                 className="settings"
@@ -109,13 +96,7 @@ const CustomerEdit: React.FC<CustomerEditProps> = ({
                 onClick={handleCancel}
                 data-tooltip-id="cross-tooltip"
             />
-            <ReactTooltip
-                id="cross-tooltip"
-                place="top"
-                content="Close editing"
-                effect="solid"
-                className="custom-tooltip"
-            />
+            </DarkTooltip>
             <h1 className="detail-page mb-3">Edit Customer Information</h1>
             <form onSubmit={handleSubmit}>
                 <div className="row form-customer-edit">

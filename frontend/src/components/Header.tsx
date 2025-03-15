@@ -1,9 +1,9 @@
 import React, { useContext, useState, useEffect } from "react";
 import {useNavigate, useLocation, Link} from "react-router-dom";
-import { LanguageContext } from "../context/LanguageContext.js";
-import MenuComponent from "./MenuComponent.js";
+import { LanguageContext } from "../context/LanguageContext";
+import MenuComponent from "./MenuComponent";
 import AccountMenuComponent from "./AccountMenuComponent";
-import LanguageSwitcher from "./LanguageSwitcher.js";
+import LanguageSwitcher from "./LanguageSwitcher";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import {faHouse, faUser, faMobileScreen, faEnvelope, faEarthAmerica} from "@fortawesome/free-solid-svg-icons";
 import Loader from "@/components/Loader";
@@ -86,7 +86,7 @@ const Header: React.FC = ({formCustomer}) => {
                     formCustomer) ? (
                     <Link to="/" className="mail">
                       <FontAwesomeIcon icon={faEarthAmerica} className="icon"/>
-                      <span>Website</span>
+                      <span>{currentData?.auth.button_error}</span>
                     </Link>
                 ) : (
                 <button onClick={handleAuthClick} className="header-menu">
@@ -102,12 +102,12 @@ const Header: React.FC = ({formCustomer}) => {
                     formCustomer) ? (
                     <Link to="/" className="mail">
                       <FontAwesomeIcon icon={faEarthAmerica} className="icon"/>
-                      <span>Website</span>
+                      <span>{currentData?.auth.button_error}</span>
                     </Link>
                 ) : (
                     <button onClick={handleAuthClick} className="header-menu">
                       <FontAwesomeIcon icon={faUser} className="icon" />
-                      <span>{isAuthenticated ? menuData.header_account : (currentData?.auth.login || "Přihlásit se")}</span>
+                      <span>{isAuthenticated ? menuData?.header_account : (currentData?.auth.login || "Přihlásit se")}</span>
                     </button>
                 )}
               </div>

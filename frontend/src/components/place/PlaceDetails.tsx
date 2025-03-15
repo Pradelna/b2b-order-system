@@ -17,7 +17,7 @@ import OrderForm from "../order/OrderForm";
 import OrderHistory from "../order/OrderHistory";
 import OrderSuccess from "../order/OrderSuccess";
 import { fetchWithAuth } from "../account/auth.ts";
-import {Tooltip as ReactTooltip} from "react-tooltip";
+import DarkTooltip from "@/components/utils/DarkTooltip";
 import NavButtons from "@/components/account/NavButtons";
 import {Skeleton} from "@mui/material";
 import { formatDate } from "@/components/utils/FormatDate";
@@ -294,56 +294,49 @@ const PlaceDetails: React.FC = () => {
                             <div className="card place-details">
                                 {!showEditForm ? (
                                     <>
-                                        <FontAwesomeIcon
-                                            icon={faPenToSquare}
-                                            className="settings"
-                                            style={{ cursor: "pointer" }}
-                                            onClick={() => setShowEditForm(true)}
-                                            data-tooltip-id="edit-card-tooltip"
-                                        />
-                                        <ReactTooltip
-                                            id="edit-card-tooltip"
-                                            place="top"
-                                            arrowPlace="top"
-                                            effect="solid"
-                                            delayShow={120}
-                                            content="Edit place information"
-                                            globalEventOff="click"
-                                        />
+                                        {currentOrder ? (
+                                            <DarkTooltip title={currentData?.place?.no_edit_place || "Nemůžete změnit místo, dokud jsou nedokončené objednávky"} placement="top" arrow>
+                                                <FontAwesomeIcon
+                                                    icon={faPenToSquare}
+                                                    className="settings"
+                                                    style={{ cursor: "pointer" }}
+                                                />
+                                            </DarkTooltip>
+                                        ) : (
+                                            <DarkTooltip title={currentData?.place.edit_place || "Upravit místo"} placement="top" arrow>
+                                                <FontAwesomeIcon
+                                                    icon={faPenToSquare}
+                                                    className="settings"
+                                                    style={{ cursor: "pointer" }}
+                                                    onClick={() => setShowEditForm(true)}
+                                                />
+                                            </DarkTooltip>
+                                        )}
                                     </>
                                 ) : (
+                                    <DarkTooltip title={currentData?.form.close || "Zavřít"} placement="top" arrow>
                                     <FontAwesomeIcon
                                         icon={faSquareXmark}
                                         className="settings"
                                         style={{ cursor: "pointer" }}
                                         onClick={() => setShowEditForm(false)}
-                                        data-tooltip-id="close-tooltip"
                                     />
+                                    </DarkTooltip>
                                 )}
-
-                                <ReactTooltip
-                                    id="close-tooltip"
-                                    place="top"
-                                    effect="solid"
-                                    delayShow={100}
-                                    content="Close"
-                                    className="custom-tooltip"
-                                    globalEventOff="click"
-                                />
-                                <h1>Place Details</h1>
+                                <h1>{currentData?.place.detail_title || "Podrobnosti o místě"}</h1>
                                 {!showEditForm ? (
                                     <div>
                                         <div className="row mb-2">
                                             <div className="col-12">
                                                 <div className="form-control">
-                                                    <strong>Name:</strong> {place.place_name}
+                                                    <strong>{currentData?.form.place_name || "Název místa"}:</strong> {place.place_name}
                                                 </div>
                                             </div>
                                         </div>
                                         <div className="row mb-2">
                                             <div className="col-12">
                                                 <div className="form-control">
-                                                    <strong>Address:</strong>{" "}
+                                                    <strong>{currentData?.place.address || "Adresa"}:</strong>{" "}
                                                     {place.rp_street},{" "}
                                                     {place.rp_number},{" "}
                                                     {place.rp_city},{" "}
@@ -354,7 +347,10 @@ const PlaceDetails: React.FC = () => {
                                         <div className="row mb-2">
                                             <div className="col-12">
                                                 <div className="form-control">
-                                                    <strong>Contact Person:</strong> {place.rp_person}
+                                                    <strong>{currentData?.form.rp_person || "Kontaktní osoba"}: </strong>
+                                                    {place.rp_person}
+                                                    {place?.rp_phone && `, ${place?.rp_phone}`}
+                                                    {place?.rp_email && `, ${place?.rp_email}`}
                                                 </div>
                                             </div>
                                         </div>
@@ -364,7 +360,7 @@ const PlaceDetails: React.FC = () => {
                                             disabled={notActivePlace}
                                         >
                                             <FontAwesomeIcon icon={faCartPlus} className="icon" />
-                                            <span className="ms-3">New Order</span>
+                                            <span className="ms-3">{currentData?.buttons.new_order || "Nová objednávka"}</span>
                                         </button>
                                     </div>
                                 ) : (
@@ -389,15 +385,15 @@ const PlaceDetails: React.FC = () => {
                             <div className="col-xl-8 col-lg-10 col-12">
                                 <div className="card current-order">
 
-                                    <h3>Current Order #{currentOrder.id}</h3>
+                                    <h3>{currentData?.order.current_order || "Current Order"} #{currentOrder.id}</h3>
                                     <div className="order-details">
 
                                         <div className="form-control mb-2">
-                                            <strong>Day of next visit: </strong>
+                                            <strong>{currentData?.order.day_next_visit || "Den další návštěvy" }: </strong>
                                             { formatDate(currentOrder.rp_time_planned)  || " None "}
                                         </div>
                                         <div className="form-control dates mb-2">
-                                            {currentOrder.rp_status === 20 ? (<strong>Information is waiting for update</strong>) : (<>
+                                            {currentOrder.rp_status === 20 ? (<strong>{currentData?.order.info_waiting || "Informace čekají na aktualizaci"}</strong>) : (<>
                                                 <div onClick={toggleExpand} style={{ cursor: "pointer" }}>
                                                     <strong>{expandedDates ? "Close upcoming Start Dates" : "Show upcoming Start Dates"}</strong>
                                                 </div>
@@ -420,7 +416,7 @@ const PlaceDetails: React.FC = () => {
 
                                         </div>
                                         <div className="form-control mb-2">
-                                            <strong>Status:</strong>
+                                            <strong>{currentData?.order.status || "Status" }:</strong>
                                             {currentOrder.rp_status === 20 && (" Nová")}
                                             {currentOrder.rp_status === 0 && (" Nová")}
                                             {currentOrder.rp_status === 1 && (" In progress 1")}
@@ -438,30 +434,32 @@ const PlaceDetails: React.FC = () => {
                                             {currentOrder.rp_status === 13 && (" Marný výjezd")}
                                         </div>
                                         <div className="form-control mb-2">
-                                            <strong>Type of Shipping:</strong>
+                                            <strong>{currentData?.form.type_ship || "Typ závozu" }:</strong>
                                             {currentOrder.type_ship === "pickup_ship_dif" && (" zber špinavého a dodanie čistého na tretí deň")}
                                             {currentOrder.type_ship === "pickup_ship_one" && (" čisté prádlo za špinavé")}
                                             {currentOrder.type_ship === "one_time" && (" One time order")}
                                         </div>
                                         {currentOrder.type_ship != "pickup_ship_dif" && (
                                             <div className="form-control mb-2">
-                                                <strong>System:</strong>
-                                                {currentOrder.system === "Mon_Wed_Fri" && (" Monday Wendsdey Friday")}
-                                                {currentOrder.system === "Tue_Thu" && (" Tuesday Thusday")}
-                                                {currentOrder.system === "Every_day" && (" Every day")}
-                                                {currentOrder.system === "Own" && (" Own")}
+                                                <strong>System: </strong>
+                                                {currentOrder.system === "Mon_Wed_Fri" && (currentData?.order.mon_wed_fri || "Pondělí středa pátek")}
+                                                {currentOrder.system === "Tue_Thu" && (currentData?.order.tue_thu || "Úterý Čtvrtek")}
+                                                {currentOrder.system === "Every_day" && (currentData?.order.every_day || "Každý den")}
+                                                {currentOrder.system === "Own" && (currentData?.order.own_system || "Vlastní systém")}
                                             </div>
                                         )}
 
                                         {currentOrder.system === "Own" && (
                                             <div className="form-control mb-2">
-                                                <strong>Days: </strong>
+                                                <strong>{currentData?.order.days || "Dny"}: </strong>
 
-                                                {currentOrder.monday && <span>Monday </span>}
-                                                {currentOrder.tuesday && <span>Tuesday </span>}
-                                                {currentOrder.wednesday && <span>Wednesday </span>}
-                                                {currentOrder.thursday && <span>Thursday </span>}
-                                                {currentOrder.friday && <span>Friday </span>}
+                                                {currentOrder.monday && <span>{currentData?.form.monday || "Pondělí"} </span>}
+                                                {currentOrder.tuesday && <span>{currentData?.form.tuesday || "Úterý"} </span>}
+                                                {currentOrder.wednesday && <span>{currentData?.form.wednesday || "Středa"} </span>}
+                                                {currentOrder.thursday && <span>{currentData?.form.thursday || "Čtvrtek"} </span>}
+                                                {currentOrder.friday && <span>{currentData?.form.friday || "Pátek"} </span>}
+                                                {currentOrder.saturday && <span>{currentData?.form.saturday || "Sobota"} </span>}
+                                                {currentOrder.sunday && <span>{currentData?.form.sunday || "Neděle"} </span>}
 
                                             </div>
                                         )}
@@ -482,7 +480,7 @@ const PlaceDetails: React.FC = () => {
 
                                         {currentOrder.rp_problem_description && (
                                             <div className="form-control mb-2">
-                                                <strong>Customer note:</strong> {currentOrder.rp_problem_description || "None"}
+                                                <strong>{currentData?.form.note || "Poznámka"}:</strong> {currentOrder.rp_problem_description || "None"}
                                             </div>
                                         )}
 
@@ -494,7 +492,7 @@ const PlaceDetails: React.FC = () => {
                                             onClick={() => handleStopOrder(currentOrder!.id)}
                                         >
                                             <FontAwesomeIcon icon={faPowerOff} className="icon" />
-                                            <span className="ms-2">cancel this order</span>
+                                            <span className="ms-2">{currentData?.buttons.cancel || "Stornovat"}</span>
                                         </button>
                                     )}
 
@@ -529,7 +527,7 @@ const PlaceDetails: React.FC = () => {
                                 setCurrentOrder(newOrder);
                             }
                             setSuccessMessage(
-                                `Order created successfully`
+                                currentData?.messages.order_created || "Objednávka úspěšně vytvořená"
                             );
                             setTimeout(() => setSuccessMessage(""), 10000);
                             setShowOrderForm(false);

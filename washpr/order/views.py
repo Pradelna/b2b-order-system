@@ -20,6 +20,7 @@ from datetime import datetime
 
 from integration.tasks import RestApiClient
 from washpr import settings
+from customer.models import Customer
 
 
 def convert_date_to_unix(date_str):
@@ -117,9 +118,13 @@ def get_orders(request):
 def get_current_order(request):
     try:
         user = request.user
+        customer = Customer.objects.get(user=user)
         orders = Order.objects.filter(place__customer__user=user, every_week=True, active=True, end_order=False, canceled=False)
         serializer = CurrentOrderSerializer(orders, many=True)
-        return Response(serializer.data, status=status.HTTP_200_OK)
+        return Response({
+            "weekend_able": customer.weekend_able,
+            "orders": serializer.data,
+        }, status=status.HTTP_200_OK)
     except Exception as e:
         return Response({"error": str(e)}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
 
