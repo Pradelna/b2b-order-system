@@ -11,12 +11,12 @@ import {
     faStopwatch, faFileInvoiceDollar
 } from "@fortawesome/free-solid-svg-icons";
 import HeaderAccount from "../HeaderAccount";
-import Footer from "../Footer";
+import FooterAccount from "../FooterAccount";
 import PlaceEdit from "./PlaceEdit";
 import OrderForm from "../order/OrderForm";
 import OrderHistory from "../order/OrderHistory";
 import OrderSuccess from "../order/OrderSuccess";
-import { fetchWithAuth } from "../account/auth.ts";
+import { fetchWithAuth } from "../account/auth";
 import DarkTooltip from "@/components/utils/DarkTooltip";
 import NavButtons from "@/components/account/NavButtons";
 import {Skeleton} from "@mui/material";
@@ -542,7 +542,7 @@ const PlaceDetails: React.FC = () => {
                     <OrderSuccess newOrder={successOrderMessage} onClose={() => setSuccessOrderMessage(null)} />
                 )}
             </div>
-            <Footer />
+            <FooterAccount />
         </>
     );
 };

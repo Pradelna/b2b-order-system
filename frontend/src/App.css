@@ -190,7 +190,7 @@ a {
     bottom: 0;               /* Располагаем у нижней границы экрана */
     left: 0;                 /* Прижимаем к левой стороне экрана */
     width: 100%;             /* Ширина на всю страницу */
-    height: 60px;            /* Примерная высота; подберите под ваш дизайн */
+    height: 50px;            /* Примерная высота; подберите под ваш дизайн */
     background-color: #00aab7;  /* Цвет фона (можно заменить на свой) */
     color: #fff;             /* Цвет текста (контрастный фону) */
     display: flex;           /* Для удобного расположения элементов */
@@ -1834,7 +1834,9 @@ p.back-link {
   width: 400px;
   margin: 5rem auto;
 }
-
+#detail-page label.checkbox-label-edit-form {
+  padding-left: 50px !important;
+}
 @media (max-width: 430px) {
   .form-login {
     width: auto;
@@ -1849,6 +1851,12 @@ p.back-link {
   .detail-page .form-label {
     margin-bottom: 0;
   }
+  .form-login {
+    margin: 1rem auto;
+  }
+  .margin-top-130 {
+    margin-top: 110px;
+  }
 }
 @media (max-width: 575px) {
   .form-label {
@@ -1862,7 +1870,17 @@ p.back-link {
     padding-right: 0 !important;
     padding-left: 3px !important;
   }
+  #detail-page label.checkbox-label-edit-form {
+    padding-left: 40px !important;
+  }
+  .form-login {
+    margin-top: 1rem;
+  }
+  .margin-top-130 {
+    margin-top: 110px;
+  }
 }
+
 
 .form-customer-edit .alert {
   padding: 5px 10px;
@@ -1970,7 +1988,7 @@ p.back-link {
 }
 .footer {
   background-color: #e1f6f8;
-  padding: 30px;
+  padding: 30px 30px 80px 30px;
 }
 .footer__list {
   padding-top: 30px;
@@ -2010,6 +2028,12 @@ p.back-link {
     display: block;
     padding-top: 0;
     padding-left: 0;
+    text-align: left;
+  }
+}
+
+#footer-account .contact {
+  h6 {
     text-align: left;
   }
 }

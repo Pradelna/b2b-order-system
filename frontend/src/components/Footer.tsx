@@ -34,23 +34,28 @@ const Footer: React.FC = () => {
                 </a>
               </div>
               <div className="col-lg-7 col-md-5 col-sm-6 col-12">
-                <ul className="footer__list">
-                  <li>
-                    <a href="#about">{menu.about_us}</a>
-                  </li>
-                  <li>
-                    <a href="#technology">{menu.technology}</a>
-                  </li>
-                  <li>
-                    <a href="#price">{menu.prices}</a>
-                  </li>
-                  <li>
-                    <a href="#services">{menu.services}</a>
-                  </li>
-                  <li>
-                    <a href="#contacts">{menu.contacts}</a>
-                  </li>
-                </ul>
+                {(location.pathname === "/account/auth" ||
+                    location.pathname === "/account/login" ||
+                    location.pathname === "/forgot-password") ? (<></>) : (
+                    <ul className="footer__list">
+                      <li>
+                        <a href="#about">{menu.about_us}</a>
+                      </li>
+                      <li>
+                        <a href="#technology">{menu.technology}</a>
+                      </li>
+                      <li>
+                        <a href="#price">{menu.prices}</a>
+                      </li>
+                      <li>
+                        <a href="#services">{menu.services}</a>
+                      </li>
+                      <li>
+                        <a href="#contacts">{menu.contacts}</a>
+                      </li>
+                    </ul>
+                )}
+
               </div>
               <div className="col-lg-3 col-md-4 col-12">
                 <div className="contact">

@@ -101,6 +101,8 @@ class LandingPage(models.Model):
     auth_author_error = models.CharField("Authorization error", max_length=100, blank=True, null=True)
     auth_unknown_error = models.CharField("Unknown error", max_length=50, blank=True, null=True)
     auth_network_error = models.CharField("Network error", max_length=50, blank=True, null=True)
+    auth_new_pass = models.CharField("New password", max_length=100, blank=True, null=True)
+    auth_confirm_new_pass = models.CharField("Confirm new password", max_length=100, blank=True, null=True)
     # customer info
     customer_full_name = models.CharField("Name and surname", max_length=200, blank=True, null=True)
     customer_company_name = models.CharField("Company name", max_length=200, blank=True, null=True)
@@ -134,6 +136,8 @@ class LandingPage(models.Model):
     button_new_order = models.CharField("Button new order", max_length=100, blank=True, null=True)
     button_details = models.CharField("Button details", max_length=100, blank=True, null=True)
     button_back = models.CharField("Button back", max_length=100, blank=True, null=True)
+    button_show_pass = models.CharField("Button show pass", max_length=100, blank=True, null=True)
+    button_hide_pass = models.CharField("Button hide pass", max_length=100, blank=True, null=True)
     # messages
     message_file_ok = models.CharField("File uploaded successfully!", max_length=100, blank=True, null=True)
     message_file_size = models.CharField("The selected file exceeds the maximum size of 2MB", max_length=100,
@@ -148,6 +152,11 @@ class LandingPage(models.Model):
     message_file_failed_while_deleting = models.CharField("An error occurred while deleting the file", max_length=100,
                                                           blank=True, null=True)
     message_order_created = models.CharField("Order created successfully!", max_length=150, blank=True, null=True)
+    message_pass_more = models.CharField("Password must be at least 8 characters", max_length=150, blank=True, null=True)
+    message_pass_uppercase = models.CharField("Password must contain at least one uppercase letter", max_length=150, blank=True, null=True)
+    message_pass_number = models.CharField("Password must contain at least one number", max_length=150, blank=True, null=True)
+    message_pass_note_match = models.CharField("Password does note match", max_length=150, blank=True, null=True)
+    message_pass_match = models.CharField("Password match", max_length=150, blank=True, null=True)
     # order
     order_type_sipping_clear_for_dirty = models.CharField("Order type sipping clear for dirty", max_length=100,
                                                           blank=True, null=True)

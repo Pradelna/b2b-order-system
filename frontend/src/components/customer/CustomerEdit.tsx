@@ -252,7 +252,7 @@ const CustomerEdit: React.FC<CustomerEditProps> = ({
                         />
                         <label htmlFor="change_data" className="check-box" />
                     </div>
-                    <label className="form-label" style={{paddingLeft: "50px"}}>
+                    <label className="checkbox-label-edit-form form-label" style={{paddingLeft: "50px"}}>
                         {currentData.customer.new_data_change}
                     </label>
 

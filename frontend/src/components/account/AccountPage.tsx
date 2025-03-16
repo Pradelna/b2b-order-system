@@ -3,8 +3,8 @@ import { fetchWithAuth } from "./auth";
 import HeaderAccount from "../HeaderAccount";
 import Header from "../Header";
 import Account from "./Account";
-import Footer from "../Footer";
-import {useParams} from "react-router-dom";
+import FooterAccount from "../FooterAccount";
+// import {useParams} from "react-router-dom";
 
 // Define the shape of the customer data
 interface CustomerData {
@@ -63,7 +63,7 @@ function AccountPage(): JSX.Element {
                 customerData={customerData}
                 setCustomerData={setCustomerData}
             />
-            <Footer />
+            <FooterAccount />
         </>
     );
 }

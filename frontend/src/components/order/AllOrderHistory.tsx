@@ -9,7 +9,7 @@ import {
 import { fetchWithAuth } from "../account/auth";
 import HeaderAccount from "../HeaderAccount";
 import NavButtons from "../account/NavButtons";
-import Footer from "../Footer";
+import FooterAccount from "../FooterAccount";
 import {Skeleton} from "@mui/material";
 import { formatDate } from "@/components/utils/FormatDate";
 import { formatViceDate } from "@/components/utils/FormatViceDate";
@@ -17,7 +17,7 @@ import { styled } from '@mui/material/styles';
 import Tooltip, { TooltipProps, tooltipClasses } from '@mui/material/Tooltip';
 import FileDownloadIcon from "@/components/order/FileDownloadIcon";
 import UseMediaQuery from "@/hooks/UseMediaQuery";
-import DarkTooltip from "../utils/DarkTooltip.tsx";
+import DarkTooltip from "../utils/DarkTooltip";
 
 interface Order {
     id: number;
@@ -363,7 +363,7 @@ const AllOrderHistory: React.FC = () => {
                 </div>
             </div>
 
-            <Footer />
+            <FooterAccount />
         </>
     );
 };
