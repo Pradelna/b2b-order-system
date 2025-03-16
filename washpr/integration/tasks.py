@@ -337,27 +337,38 @@ def send_orders_task():
     import requests
 
     url = "https://online.auto-gps.eu/cnt/apiItinerary/contractList"
-    params = {
-        "show_closed": 0,
-        "last_status_change": 86400,
-        "limit": 300,
-        "offset": 0,
-    }
+    offset = 0
+    limit = 50
+    all_items = []
+    count = 0
+    while True:
+        params = {
+            "show_closed": 0,
+            "last_status_change": 31536000,
+            "limit": limit,
+            "offset": offset,
+        }
 
-    try:
-        response = api_client.call_api(url, http_method="GET", params=params)
-        # print("API Response:", response)
-        orders_data_from_rp = response
-        success_get = True
-    except requests.exceptions.RequestException as e:
-        print("API Request failed:", e)
+        try:
+            response = api_client.call_api(url, http_method="GET", params=params)
+            # print("API Response:", response)
+            orders_data_from_rp = response
+            if not orders_data_from_rp:  # пустой список, кончились данные
+                break
+            all_items.extend(orders_data_from_rp)
+            offset += limit
+            count += 1
+            # print(count)
+            success_get = True
+        except requests.exceptions.RequestException as e:
+            print("API Request failed:", e)
 
     close_old_connections()
     from order.models import Order  # Импортируем модель заказа из приложения order
 
     # Выбираем заказы, не отправленные ранее и созданные более 35 минут назад
     time_threshold = timezone.now() - timedelta(minutes=2)
-    orders = Order.objects.filter(active=False, canceled=False, created_at__lte=time_threshold)
+    orders = Order.objects.filter(active=False, canceled=False, processed=True ,created_at__lte=time_threshold)
 
     # print(f"Orders after {time_threshold}: {orders}")
     # find out oldest order
@@ -368,30 +379,48 @@ def send_orders_task():
     # print(f"220 min_time: {min_time}")
     # dictionary for max external_id {'01-03-2025': 7}
     max_external_number_by_day = defaultdict(int)
-    if orders_data_from_rp:
-        for item in orders_data_from_rp:
-            time_planned = item["time_planned"]
-            # print(f"time_planned 225: {time_planned}")
-            # use only date from min_time until now
-            if time_planned >= min_time:
-                external_id = item["external_id"]
-                # print(f"229 {time_planned} >= {min_time}. External ID: {external_id}")
+    # print("Orders data from rp", orders_data_from_rp)
+    # print(f"all items: {len(all_items)}")
+    if all_items:
+        for item in all_items:
+            # print(item)
+            # print(item['id'], item['external_id'])
+            # get external_id
+            external_id = item["external_id"]
+            # get the date from externel_id
+            external_id_date_str = external_id.split("/")[0]  # '170325'
+            # интерпретируем '170325' как день=17, месяц=03, год=25:
+            try:
+                time_from_order  = datetime.strptime(external_id_date_str, '%d%m%y')
+                time_planned = int(time_from_order.timestamp())
 
-                # Преобразуем timestamp в формат DD-MM-YYYY
-                date_str = datetime.utcfromtimestamp(time_planned).strftime('%d%m%y')
-                # print(f"233 Date: {date_str}")
+                # time_planned = item["time_planned"]
+                # print(f"time_planned 225: {time_planned}")
+                # use only date from min_time until now
+                if time_planned >= min_time:
+                    # print(f"229 {time_planned} >= {min_time}. External ID: {external_id}")
+                    # Преобразуем timestamp в формат DD-MM-YYYY
+                    date_str = datetime.utcfromtimestamp(time_planned).strftime('%d%m%y')
+                    # print(f"233 Date: {date_str}")
+                    external_number = 0
+                    # Извлекаем число после "/"
+                    try:
+                        external_number = int(external_id.split("/")[-1])
+                        # print(f"238 External number: {external_number}")
+                    except ValueError:
+                        external_number = 0  # Если не удалось извлечь число
 
-                # Извлекаем число после "/"
-                try:
-                    external_number = int(external_id.split("/")[-1])
-                    # print(f"238 External number: {external_number}")
-                except ValueError:
-                    external_number = 0  # Если не удалось извлечь число
+                    # Обновляем максимум для конкретного дня
+                    max_external_number_by_day[date_str] = max(max_external_number_by_day[date_str], external_number)
+            except:
+                pass
 
-                # Обновляем максимум для конкретного дня
-                max_external_number_by_day[date_str] = max(max_external_number_by_day[date_str], external_number)
+    # print(f"397 max_externel: {len(max_external_number_by_day)}")
+    # for key, value in max_external_number_by_day.items():
+    #     print(f"Ключ = {key}/{value}")
 
-        # print(f"245 max_externel: {max_external_number_by_day}")
+    # for key in sorted(max_external_number_by_day):
+        # print(f"{key} / {max_external_number_by_day[key]}")
 
     results = []
 
@@ -436,6 +465,7 @@ def send_orders_task():
             # print(f"Sending order {order.pk} with payload: {payload}")
             response = api_client.call_api(url, http_method="POST", params=payload)
             # print(response)
+            # response = False
             if response and "id" in response:
                 order.active = True
                 order.rp_id = response["id"]
@@ -447,7 +477,7 @@ def send_orders_task():
                 results.append(f"Failed to send order {order.pk}.")
     else:
         print(f"Failed to get orders fro route plane")
-    print(f"created {len(results)} orders. Orders: {results}")
+    print(f"Sent {len(results)} orders. Orders: {results}")
     return results
 
 
@@ -464,9 +494,8 @@ def create_orders_task():
     from order.models import Order  # Импортируем модель заказа из приложения order
 
     # Выбираем заказы, не отправленные ранее и созданные более 35 минут назад
-    time_threshold = timezone.now() - timedelta(minutes=10)
+    time_threshold = timezone.now() - timedelta(minutes=1)
     orders = Order.objects.filter(processed=False, canceled=False, main_order=True, created_at__lte=time_threshold)
-    # print(len(orders), orders)
 
     results = []
 
@@ -523,13 +552,14 @@ def create_orders_task():
             new_order_dates = get_dates_by_weekdays(order.date_start_day, days_list)
             new_order_pk = 0
             for idx, date in enumerate(new_order_dates):
+                rp_time_planned = int(datetime.combine(date, time()).timestamp()) + 43200
                 if idx == 0:
                     group_pair_id = order.group_pair_id # id of main order
                 else:
                     group_pair_id = new_order_pk # id of previous order
                 if idx % 2 == 0: # even = delivery, odd = pickup
                     base_order_data.update({
-                        'rp_time_planned': int(datetime.combine(date, time()).timestamp()),  # заменим позже, если нужно
+                        'rp_time_planned': rp_time_planned,
                         'date_start_day': date,  # для нового заказа
                         'rp_problem_description': "delivery",
                         'date_pickup': order.date_start_day,  # дата предыдущего заказа
@@ -540,7 +570,7 @@ def create_orders_task():
                     })
                 else:
                     base_order_data.update({
-                        'rp_time_planned': int(datetime.combine(date, time()).timestamp()),
+                        'rp_time_planned': rp_time_planned,
                         'date_start_day': date,  # для нового заказа
                         'rp_problem_description': "pickup",
                         'date_pickup': date,  # текущая дата
@@ -549,17 +579,19 @@ def create_orders_task():
                     })
                 new_order = Order(**base_order_data)
                 new_order.save()
-                print("success")
+                print(f"success create EVERY WEEK {new_order.pk}")
                 new_order_pk = new_order.pk
                 results.append(new_order.pk)
 
         elif order.type_ship == 'one_time' or order.type_ship == 'quick_order':
             date = order.date_delivery
+            print(f"date delivery: {date}. And date planned: {int(datetime.combine(date, time()).timestamp())}")
+            rp_time_planned = int(datetime.combine(date, time()).timestamp()) + 43200
             base_order_data.update({
-                'rp_time_planned': int(datetime.combine(date, time()).timestamp()),
-                'date_start_day': order.date_pickup,  # дата предыдущего заказа
-                'date_pickup': order.date_pickup,  # дата предыдущего заказа
-                'date_delivery': date,             # текущая дата
+                'rp_time_planned': rp_time_planned,
+                'date_start_day': order.date_pickup,
+                'date_pickup': order.date_pickup,
+                'date_delivery': date,
                 'delivery': True,
                 'pickup': False,
                 'group_pair_id': order.group_pair_id,
@@ -567,7 +599,7 @@ def create_orders_task():
             })
             new_order = Order(**base_order_data)
             new_order.save()
-            print("success")
+            print(f"success create ONE TIME ORDER {new_order.pk}")
         order.processed = True
         order.rp_status = 0
         order.save(update_fields=["processed", "rp_status"])
@@ -690,10 +722,9 @@ def check_file_in_orders_task():
                 name=name,
                 mime=mime,
             )
-            # print(f"PhotoReport создан: file_id={item_id}")
+            print(f"PhotoReport создан: file_id={item_id}")
             result.append(item_id)
         else:
-            # print(f"PhotoReport уже существует: file_id={item_id}")
             pass
 
     return result
