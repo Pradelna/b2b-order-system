@@ -103,8 +103,9 @@ def api_password_reset(request):
         form.save(
             request=request,
             use_https=request.is_secure(),
-            email_template_name='registration/password_reset_email.html',
+            email_template_name='registration/password_reset_email.txt',
             subject_template_name='registration/password_reset_subject.txt',
+            html_email_template_name='registration/password_reset_email.html',
             from_email=settings.DEFAULT_FROM_EMAIL,
         )
         return Response({"detail": "Password reset email sent."}, status=status.HTTP_200_OK)
