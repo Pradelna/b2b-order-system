@@ -139,6 +139,10 @@ class LandingPage(models.Model):
     button_show_pass = models.CharField("Button show pass", max_length=100, blank=True, null=True)
     button_hide_pass = models.CharField("Button hide pass", max_length=100, blank=True, null=True)
     button_delete_place = models.CharField("Button delete place", max_length=100, blank=True, null=True)
+    button_cancel_order = models.CharField("Button cancel order", max_length=100, blank=True, null=True)
+
+    button_open_file = models.CharField("Button open file", max_length=100, blank=True, null=True)
+    button_more = models.CharField("Button more", max_length=100, blank=True, null=True)
     # messages
     message_file_ok = models.CharField("File uploaded successfully!", max_length=100, blank=True, null=True)
     message_file_size = models.CharField("The selected file exceeds the maximum size of 2MB", max_length=100,
@@ -158,6 +162,11 @@ class LandingPage(models.Model):
     message_pass_number = models.CharField("Password must contain at least one number", max_length=150, blank=True, null=True)
     message_pass_note_match = models.CharField("Password does note match", max_length=150, blank=True, null=True)
     message_pass_match = models.CharField("Password match", max_length=150, blank=True, null=True)
+
+    message_sure_cancel_order = models.CharField("Are you sure you want to cancel this order?", max_length=150, blank=True, null=True)
+    message_order_suc_canceled = models.CharField("Order successfully canceled!", max_length=150, blank=True, null=True)
+    message_no_history = models.CharField("No order history available", max_length=150, blank=True, null=True)
+
     # order
     order_type_sipping_clear_for_dirty = models.CharField("Order type sipping clear for dirty", max_length=100,
                                                           blank=True, null=True)
@@ -207,6 +216,8 @@ class LandingPage(models.Model):
     form_friday = models.CharField("Form friday", max_length=100, blank=True, null=True)
     form_saturday = models.CharField("Form saturday", max_length=100, blank=True, null=True)
     form_sunday = models.CharField("Form sunday", max_length=100, blank=True, null=True)
+    form_pickup = models.CharField("Form pickup", max_length=100, blank=True, null=True)
+    form_delivery = models.CharField("Form delivery", max_length=100, blank=True, null=True)
 
     success_success = models.CharField("Success!", max_length=100, blank=True, null=True)
     success_message_mistake_1 = models.CharField("If you made a mistake, you can cancel", max_length=100, blank=True, null=True)
@@ -219,6 +230,27 @@ class LandingPage(models.Model):
     place_address = models.CharField("Place address", max_length=100, blank=True, null=True)
     place_edit_place = models.CharField("Place edit place", max_length=100, blank=True, null=True)
     place_no_edit_place = models.CharField("Place: cant edit place", max_length=100, blank=True, null=True)
+
+    history_order_number = models.CharField("History order number", max_length=100, blank=True, null=True)
+    history_repeated_order = models.CharField("Pravidelná opakující se objednávka", max_length=100, blank=True, null=True)
+    history_time_realization = models.CharField("Realization date", max_length=100, blank=True, null=True)
+    history_time_planned = models.CharField("Planned date", max_length=100, blank=True, null=True)
+
+    status_0 = models.CharField("Status 0", max_length=100, blank=True, null=True)
+    status_1 = models.CharField("Status 1", max_length=100, blank=True, null=True)
+    status_2 = models.CharField("Status 2", max_length=100, blank=True, null=True)
+    status_3 = models.CharField("Status 3", max_length=100, blank=True, null=True)
+    status_4 = models.CharField("Status 4", max_length=100, blank=True, null=True)
+    status_5 = models.CharField("Status 5", max_length=100, blank=True, null=True)
+    status_6 = models.CharField("Status 6", max_length=100, blank=True, null=True)
+    status_7 = models.CharField("Status 7", max_length=100, blank=True, null=True)
+    status_8 = models.CharField("Status 8", max_length=100, blank=True, null=True)
+    status_9 = models.CharField("Status 9", max_length=100, blank=True, null=True)
+    status_10 = models.CharField("Status 10", max_length=100, blank=True, null=True)
+    status_11 = models.CharField("Status 11", max_length=100, blank=True, null=True)
+    status_12 = models.CharField("Status 12", max_length=100, blank=True, null=True)
+    status_13 = models.CharField("Status 13", max_length=100, blank=True, null=True)
+    status_20 = models.CharField("Status 20", max_length=100, blank=True, null=True)
 
 
 
