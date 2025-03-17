@@ -157,6 +157,21 @@ const Account: React.FC<AccountProps> = ({ customerData, setCustomerData }) => {
         fetchOrders();
     }, []);
 
+    useEffect(() => {
+        if (showPlaceForm || showOrderForm) {
+            // Добавляем класс
+            document.body.classList.add("no-scroll");
+        } else {
+            // Убираем класс
+            document.body.classList.remove("no-scroll");
+        }
+
+        // Очистка при размонтировании компонента:
+        return () => {
+            document.body.classList.remove("no-scroll");
+        };
+    }, [showPlaceForm, showOrderForm]);
+
     if (!currentData || !currentData.service) {
         return <div>Loading...</div>; // Если данных нет, компонент ничего не отображает
     }

@@ -710,7 +710,7 @@ const OrderForm: React.FC<OrderFormProps> = ({ placeId, onClose, onSuccess }) =>
                   <>
                     <div className="row mb-3">
                       <div className="col-12 label-form">
-                        <label htmlFor="date_pickup">Pick-up Date*</label>
+                        <label htmlFor="date_pickup">{currentData?.form?.pickup || "Vyzvednutí"}*</label>
                       </div>
                       <div className="col-12">
                         <select
@@ -738,7 +738,7 @@ const OrderForm: React.FC<OrderFormProps> = ({ placeId, onClose, onSuccess }) =>
 
                     <div className="row mb-3">
                       <div className="col-12 label-form">
-                        <label htmlFor="date_delivery">Delivery Date*</label>
+                        <label htmlFor="date_delivery">{currentData?.form?.delivery || "Dodání"}*</label>
                       </div>
                       <div className="col-12">
                         <select
@@ -828,12 +828,13 @@ const OrderForm: React.FC<OrderFormProps> = ({ placeId, onClose, onSuccess }) =>
               </div>
 
               <div className="row mt-3">
-                <button className="btn-submit me-2" type="submit">
-                  { currentData.buttons["submit"] || "Uložit" }
-                </button>
                 <button className="btn-link" type="button" onClick={onClose}>
                   { currentData.buttons["cancel"] || "Zrušit" }
                 </button>
+                <button className="btn-submit" type="submit">
+                  { currentData.buttons["submit"] || "Uložit" }
+                </button>
+
               </div>
             </form>
           </div>

@@ -331,7 +331,7 @@ const OrderHistory: React.FC<OrderHistoryProps> = ({ placeId, orders = [], setOr
                                             </button>
                                         )}
 
-                                        {((photos.length <= 3 && !isMobileMax530) || !photos.length > 0) ? (
+                                        {((photos.length <= 3 && !isMobileMax530) || !photos.length > 0 || (isMobileMax530 && photos.length < 2)) ? (
                                         <div className="image-icon-container">
 
                                             <div className="image-icon-position">

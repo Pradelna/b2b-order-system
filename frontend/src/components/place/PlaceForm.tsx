@@ -91,11 +91,11 @@ const PlaceForm: React.FC<PlaceFormProps> = ({ onClose, onSuccess }) => {
 
                         {/* Submit and Close Buttons */}
                         <div className="row mt-3">
-                            <button className="btn-submit me-2" type="submit">
-                                { currentData.buttons["submit"] || "Uložit" }
-                            </button>
                             <button className="btn-link" type="button" onClick={onClose}>
                                 { currentData.buttons["cancel"] || "Zrušit" }
+                            </button>
+                            <button className="btn-submit" type="submit">
+                                { currentData.buttons["submit"] || "Uložit" }
                             </button>
                         </div>
                     </form>

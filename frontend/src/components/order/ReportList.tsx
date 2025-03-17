@@ -11,11 +11,9 @@ import {
     faFileArrowDown
 } from "@fortawesome/free-solid-svg-icons";
 import HeaderAccount from "../HeaderAccount";
-import Footer from "../Footer";
+import FooterAccount from "../FooterAccount";
 import NavButtons from "../account/NavButtons";
 import {Skeleton} from "@mui/material";
-import {styled} from "@mui/material/styles";
-import Tooltip, {tooltipClasses, TooltipProps} from "@mui/material/Tooltip";
 import DarkTooltip from "../utils/DarkTooltip.tsx";
 
 interface Report {
@@ -153,7 +151,7 @@ const ReportList: React.FC = () => {
                         </>)}
                 </div>
             </div>
-            <Footer />
+            <FooterAccount />
         </>
     );
 };

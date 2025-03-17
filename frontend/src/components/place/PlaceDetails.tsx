@@ -11,12 +11,12 @@ import {
     faStopwatch, faFileInvoiceDollar
 } from "@fortawesome/free-solid-svg-icons";
 import HeaderAccount from "../HeaderAccount";
-import Footer from "../Footer";
+import FooterAccount from "../FooterAccount";
 import PlaceEdit from "./PlaceEdit";
 import OrderForm from "../order/OrderForm";
 import OrderHistory from "../order/OrderHistory";
 import OrderSuccess from "../order/OrderSuccess";
-import { fetchWithAuth } from "../account/auth.ts";
+import { fetchWithAuth } from "../account/auth";
 import DarkTooltip from "@/components/utils/DarkTooltip";
 import NavButtons from "@/components/account/NavButtons";
 import {Skeleton} from "@mui/material";
@@ -246,6 +246,21 @@ const PlaceDetails: React.FC = () => {
         return () => clearInterval(timer); // Очищаем таймер при размонтировании компонента
     }, [currentOrder]); // Зависимость — currentOrder
 
+    useEffect(() => {
+        if (showOrderForm) {
+            // Добавляем класс
+            document.body.classList.add("no-scroll");
+        } else {
+            // Убираем класс
+            document.body.classList.remove("no-scroll");
+        }
+
+        // Очистка при размонтировании компонента:
+        return () => {
+            document.body.classList.remove("no-scroll");
+        };
+    }, [showOrderForm]);
+
     if (!place) return <p>Place not found.</p>;
 
     return (
@@ -325,7 +340,7 @@ const PlaceDetails: React.FC = () => {
                                 )}
                                 <h1>{currentData?.place.detail_title || "Podrobnosti o místě"}</h1>
                                 {!showEditForm ? (
-                                    <div>
+                                    <div className="place-info">
                                         <div className="row mb-2">
                                             <div className="col-12">
                                                 <div className="form-control">
@@ -542,7 +557,7 @@ const PlaceDetails: React.FC = () => {
                     <OrderSuccess newOrder={successOrderMessage} onClose={() => setSuccessOrderMessage(null)} />
                 )}
             </div>
-            <Footer />
+            <FooterAccount />
         </>
     );
 };

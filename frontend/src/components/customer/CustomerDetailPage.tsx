@@ -1,16 +1,16 @@
 import React, { useState, useEffect, useContext } from "react";
 import { LanguageContext } from "../../context/LanguageContext";
 import { useParams } from "react-router-dom";
-import CustomerEdit from "./CustomerEdit.js";
+import CustomerEdit from "./CustomerEdit";
 import CompanyInfo from "./CompanyInfo";
-import HeaderAccount from "../HeaderAccount.js";
-import Footer from "../Footer.tsx";
-import { fetchWithAuth } from "../account/auth.ts";
-import UploadFile from "./UploadFile.js";
-import DocumentsBlock from "./DocumentsBlock.js";
-import NavButtons from "@/components/account/NavButtons.js";
+import HeaderAccount from "../HeaderAccount";
+import FooterAccount from "../FooterAccount";
+import { fetchWithAuth } from "../account/auth";
+import UploadFile from "./UploadFile";
+import DocumentsBlock from "./DocumentsBlock";
+import NavButtons from "@/components/account/NavButtons";
 import {Skeleton} from "@mui/material";
-import AuthBlock from "@/components/customer/AuthBlock.js";
+import AuthBlock from "@/components/customer/AuthBlock";
 
 interface CustomerData {
     company_name: string;
@@ -193,7 +193,7 @@ const CustomerDetailPage: React.FC = () => {
                 </div>
             </div>
             </div>
-            <Footer />
+            <FooterAccount />
         </>
     );
 };

@@ -19,13 +19,13 @@ const ResetPasswordConfirm: React.FC = () => {
     const validatePassword = (password: string): string | null => {
         if (!password) return null; // если поле пустое, не возвращаем ошибку
         if (password.length < 8) {
-            return "Password must be at least 8 characters.";
+            return currentData?.message?.pass_more || "Heslo musí mít alespoň 8 znaků"; // Password must be at least 8 characters currentData?.message?.pass_more
         }
         if (!/[A-Z]/.test(password)) {
-            return "Password must contain at least one uppercase letter.";
+            return currentData?.message?.pass_uppercase || "Heslo musí obsahovat alespoň jedno velké písmeno."; // Password must contain at least one uppercase letter
         }
         if (!/\d/.test(password)) {
-            return "Password must contain at least one number.";
+            return currentData?.message?.pass_number || "Heslo musí obsahovat alespoň jedno číslo."; // Password must contain at least one number
         }
         return null;
     };
@@ -41,10 +41,10 @@ const ResetPasswordConfirm: React.FC = () => {
         const timer = setTimeout(() => {
             if (confirmPassword) {
                 if (newPassword !== confirmPassword) {
-                    setError("Passwords do not match.");
+                    setError(currentData?.message?.pass_note_match || "Hesla se neshodují");
                     setMatchMessage(null);
                 } else {
-                    setMatchMessage("Passwords match.");
+                    setMatchMessage(currentData?.message?.pass_match || "Hesla se shodují");
                     setError(null);
                 }
             } else {
@@ -121,7 +121,7 @@ const ResetPasswordConfirm: React.FC = () => {
 
                             <form onSubmit={handleSubmit}>
                                 <div className="form-group" style={{ marginBottom: "1rem" }}>
-                                    <label>{currentData?.auth.new_pass || "New pass"}:</label>
+                                    <label>{currentData?.auth.new_pass || "Nové heslo"}:</label>
                                     <br />
                                     <input
                                         type={showPassword ? 'text' : 'password'}
@@ -135,7 +135,7 @@ const ResetPasswordConfirm: React.FC = () => {
                                     )}
                                 </div>
                                 <div className="form-group" style={{ marginBottom: "1rem" }}>
-                                    <label>{currentData?.auth.confirm_new_pass || "Confirm New Password"}:</label>
+                                    <label>{currentData?.auth.confirm_new_pass || "Opakujte nové heslo"}:</label>
                                     <br />
                                     <input
                                         type={showPassword ? 'text' : 'password'}
@@ -157,7 +157,7 @@ const ResetPasswordConfirm: React.FC = () => {
                                     <button className="btn-upload" type="button" onClick={() => setShowPassword(!showPassword)}
                                             style={{ minWidth: "140px", width: "auto" }}
                                     >
-                                        {showPassword ? (currentData?.buttons.show_pass || "Hide Password") : (currentData?.buttons.show_pass || "Show Password")}
+                                        {showPassword ? (currentData?.buttons.hide_pass || "Skrýt heslo") : (currentData?.buttons.show_pass || "Zobrazit heslo")}
                                     </button>
 
                                 </div>
