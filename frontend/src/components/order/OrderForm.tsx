@@ -710,7 +710,7 @@ const OrderForm: React.FC<OrderFormProps> = ({ placeId, onClose, onSuccess }) =>
                   <>
                     <div className="row mb-3">
                       <div className="col-12 label-form">
-                        <label htmlFor="date_pickup">Pick-up Date*</label>
+                        <label htmlFor="date_pickup">{currentData?.form?.pickup || "Vyzvednutí"}*</label>
                       </div>
                       <div className="col-12">
                         <select
@@ -738,7 +738,7 @@ const OrderForm: React.FC<OrderFormProps> = ({ placeId, onClose, onSuccess }) =>
 
                     <div className="row mb-3">
                       <div className="col-12 label-form">
-                        <label htmlFor="date_delivery">Delivery Date*</label>
+                        <label htmlFor="date_delivery">{currentData?.form?.delivery || "Dodání"}*</label>
                       </div>
                       <div className="col-12">
                         <select

@@ -19,13 +19,14 @@ class LandingPageSerializer(serializers.ModelSerializer):
     order = serializers.SerializerMethodField()
     form = serializers.SerializerMethodField()
     place = serializers.SerializerMethodField()
+    success = serializers.SerializerMethodField()
 
     class Meta:
         model = LandingPage
         fields = [
             'lang', 'prefix', 'menu', 'start_banner', 'about_us', 'service', 'messages', 'form',
             'technologies', 'price', 'contacts', 'footer', 'auth', 'customer', 'buttons', 'order',
-            'place'
+            'place', 'success'
         ]
 
     def get_menu(self, obj):
@@ -255,6 +256,16 @@ class LandingPageSerializer(serializers.ModelSerializer):
             'friday': obj.form_friday,
             'saturday': obj.form_saturday,
             'sunday': obj.form_sunday,
+        }
+
+    def get_success(self, obj):
+        return {
+            'success': obj.success_success,
+            'message_mistake_1': obj.success_message_mistake_1,
+            'message_mistake_2': obj.success_message_mistake_2,
+            'message_mistake_3': obj.success_message_mistake_3,
+            'message_mate_30': obj.success_message_mate_30,
+            'order_success': obj.success_order_success,
         }
 
     def get_place(self, obj):

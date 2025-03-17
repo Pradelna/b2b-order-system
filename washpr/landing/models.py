@@ -207,6 +207,13 @@ class LandingPage(models.Model):
     form_saturday = models.CharField("Form saturday", max_length=100, blank=True, null=True)
     form_sunday = models.CharField("Form sunday", max_length=100, blank=True, null=True)
 
+    success_success = models.CharField("Success!", max_length=100, blank=True, null=True)
+    success_message_mistake_1 = models.CharField("If you made a mistake, you can cancel", max_length=100, blank=True, null=True)
+    success_message_mistake_2 = models.CharField("this order", max_length=100, blank=True, null=True)
+    success_message_mistake_3 = models.CharField("and create a new one.", max_length=100, blank=True, null=True)
+    success_message_mate_30 = models.CharField("You have 30 minutes for that.", max_length=100, blank=True, null=True)
+    success_order_success = models.CharField("The order is created successfully", max_length=100, blank=True, null=True)
+
     place_detail_title = models.CharField("Place title", max_length=100, blank=True, null=True)
     place_address = models.CharField("Place address", max_length=100, blank=True, null=True)
     place_edit_place = models.CharField("Place edit place", max_length=100, blank=True, null=True)

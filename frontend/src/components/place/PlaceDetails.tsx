@@ -246,6 +246,21 @@ const PlaceDetails: React.FC = () => {
         return () => clearInterval(timer); // Очищаем таймер при размонтировании компонента
     }, [currentOrder]); // Зависимость — currentOrder
 
+    useEffect(() => {
+        if (showOrderForm) {
+            // Добавляем класс
+            document.body.classList.add("no-scroll");
+        } else {
+            // Убираем класс
+            document.body.classList.remove("no-scroll");
+        }
+
+        // Очистка при размонтировании компонента:
+        return () => {
+            document.body.classList.remove("no-scroll");
+        };
+    }, [showOrderForm]);
+
     if (!place) return <p>Place not found.</p>;
 
     return (

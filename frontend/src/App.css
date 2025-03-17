@@ -220,11 +220,15 @@ a {
   .margin-top-90 {
     margin-top: 50px !important;
   }
+  .header .to-website .header-menu span {
+    color: #414141;
+    font-size: 16px;
+    font-weight: 500;
+  }
   .to-website {
     display: -webkit-box;
     display: -ms-flexbox;
-    display: flex
-  ;
+    display: flex;
     -webkit-box-orient: horizontal;
     -webkit-box-direction: normal;
     -ms-flex-direction: row;
@@ -592,6 +596,8 @@ a {
     overflow: hidden;        /* скрывать выходящий за границы текст */
     text-overflow: ellipsis; /* добавить «…» вместо обрезанного текста */
   }
+  .place-detail-page .btn-submit,
+  .place-detail-page .btn-link,
   .account-page .btn-submit,
   .account-page .btn-link,
   .account-page .btn-link-skeleton {
@@ -1295,15 +1301,17 @@ svg.loader{
   display: flex;
   justify-content: center;
   align-items: center;
-  overflow: hidden;
+  /*overflow: hidden;*/
+  overflow-y: auto;
   z-index: 9999;
 }
 
 .modal-wrapper {
   width: 100%;
   max-width: 600px; /* Максимальная ширина формы */
-  max-height: 90vh; /* Максимальная высота формы */
+  max-height: 80vh; /* Максимальная высота формы */
   overflow-y: auto; /* Включаем прокрутку, если контент формы не помещается */
+  -webkit-overflow-scrolling: touch;
   background-color: #fff;
   border-radius: 8px;
   padding: 20px;
@@ -1880,8 +1888,6 @@ p.back-link {
     margin-top: 110px;
   }
 }
-
-
 .form-customer-edit .alert {
   padding: 5px 10px;
   margin-bottom: 0;
