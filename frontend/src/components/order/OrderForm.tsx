@@ -770,8 +770,8 @@ const OrderForm: React.FC<OrderFormProps> = ({ placeId, onClose, onSuccess }) =>
                   <div className="row">
                     <div className="col-12">
                       <div className="alert alert-warning">
-                        You already have orders for this month.<br />
-                        You can create a new for a next month.
+                        { currentData?.messages.have_current_order || "Už máte objednávky na tento měsíc.\n" +
+                            "Můžete vytvořit novou na příští měsíc." }
                       </div>
                     </div>
                   </div>
@@ -781,7 +781,7 @@ const OrderForm: React.FC<OrderFormProps> = ({ placeId, onClose, onSuccess }) =>
                   <div className="row mb-3">
                     <div className="col-12">
                       <div className="alert alert-warning">
-                        { currentData.order["note_every_week"] || "Tato objednávka se bude opakovat každý týden do konce měsíce" }
+                        { currentData?.order.note_every_week || "Tato objednávka se bude opakovat každý týden do konce měsíce" }
                       </div>
                     </div>
                   </div>
@@ -789,7 +789,7 @@ const OrderForm: React.FC<OrderFormProps> = ({ placeId, onClose, onSuccess }) =>
 
               <div className="row mb-3">
                 <div className="col-12 label-form">
-                  <label>{ currentData.form["note"] || "Poznámka pro řidiče" }</label>
+                  <label>{ currentData?.form["note"] || "Poznámka pro řidiče" }</label>
                 </div>
                 <div className="col-12">
                 <textarea

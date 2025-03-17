@@ -208,6 +208,7 @@ class LandingPageSerializer(serializers.ModelSerializer):
             'sure_cancel_order': obj.message_sure_cancel_order,
             'order_suc_canceled': obj.message_order_suc_canceled,
             'no_history': obj.message_no_history,
+            'have_current_order': obj.message_have_current_order,
         }
 
     def get_order(self, obj):

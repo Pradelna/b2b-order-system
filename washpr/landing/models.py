@@ -162,10 +162,10 @@ class LandingPage(models.Model):
     message_pass_number = models.CharField("Password must contain at least one number", max_length=150, blank=True, null=True)
     message_pass_note_match = models.CharField("Password does note match", max_length=150, blank=True, null=True)
     message_pass_match = models.CharField("Password match", max_length=150, blank=True, null=True)
-
     message_sure_cancel_order = models.CharField("Are you sure you want to cancel this order?", max_length=150, blank=True, null=True)
     message_order_suc_canceled = models.CharField("Order successfully canceled!", max_length=150, blank=True, null=True)
     message_no_history = models.CharField("No order history available", max_length=150, blank=True, null=True)
+    message_have_current_order = models.CharField("You already have orders for this month. You can create a new for a next month.", max_length=150, blank=True, null=True)
 
     # order
     order_type_sipping_clear_for_dirty = models.CharField("Order type sipping clear for dirty", max_length=100,
