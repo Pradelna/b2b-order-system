@@ -138,6 +138,7 @@ class LandingPage(models.Model):
     button_back = models.CharField("Button back", max_length=100, blank=True, null=True)
     button_show_pass = models.CharField("Button show pass", max_length=100, blank=True, null=True)
     button_hide_pass = models.CharField("Button hide pass", max_length=100, blank=True, null=True)
+    button_delete_place = models.CharField("Button delete place", max_length=100, blank=True, null=True)
     # messages
     message_file_ok = models.CharField("File uploaded successfully!", max_length=100, blank=True, null=True)
     message_file_size = models.CharField("The selected file exceeds the maximum size of 2MB", max_length=100,

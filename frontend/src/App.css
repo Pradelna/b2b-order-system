@@ -603,6 +603,9 @@ a {
   .account-page .btn-link-skeleton {
     width: 160px !important;
   }
+  .place-detail-page .place-info .btn-submit {
+    width: 200px !important;
+  }
   .place-mobile-button .btn-link {
     width: 200px !important;
   }

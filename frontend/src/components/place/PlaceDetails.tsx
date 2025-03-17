@@ -340,7 +340,7 @@ const PlaceDetails: React.FC = () => {
                                 )}
                                 <h1>{currentData?.place.detail_title || "Podrobnosti o místě"}</h1>
                                 {!showEditForm ? (
-                                    <div>
+                                    <div className="place-info">
                                         <div className="row mb-2">
                                             <div className="col-12">
                                                 <div className="form-control">

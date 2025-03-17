@@ -189,6 +189,7 @@ class LandingPageSerializer(serializers.ModelSerializer):
             'new_order': obj.button_new_order,
             'details': obj.button_details,
             'back': obj.button_back,
+            'delete_place': obj.button_delete_place,
         }
 
     def get_messages(self, obj):
