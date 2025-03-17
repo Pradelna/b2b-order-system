@@ -263,7 +263,7 @@ const AllOrderHistory: React.FC = () => {
                                                     </div>
                                                 )}
 
-                                                    {((photos.length <= 3 && !isMobileMax530) || !photos.length > 0) ? (
+                                                    {((photos.length <= 3 && !isMobileMax530) || !photos.length > 0 || (isMobileMax530 && photos.length < 2)) ? (
                                                         <div className="image-icon-container">
 
                                                             <div className="image-icon-position">
