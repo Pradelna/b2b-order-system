@@ -20,13 +20,15 @@ class LandingPageSerializer(serializers.ModelSerializer):
     form = serializers.SerializerMethodField()
     place = serializers.SerializerMethodField()
     success = serializers.SerializerMethodField()
+    history = serializers.SerializerMethodField()
+    status = serializers.SerializerMethodField()
 
     class Meta:
         model = LandingPage
         fields = [
             'lang', 'prefix', 'menu', 'start_banner', 'about_us', 'service', 'messages', 'form',
             'technologies', 'price', 'contacts', 'footer', 'auth', 'customer', 'buttons', 'order',
-            'place', 'success'
+            'place', 'success', 'history', 'status'
         ]
 
     def get_menu(self, obj):
@@ -203,6 +205,9 @@ class LandingPageSerializer(serializers.ModelSerializer):
             'file_failed_while_deleting': obj.message_file_failed_while_deleting,
             'file_size': obj.message_file_size,
             'order_created': obj.message_order_created,
+            'sure_cancel_order': obj.message_sure_cancel_order,
+            'order_suc_canceled': obj.message_order_suc_canceled,
+            'no_history': obj.message_no_history,
         }
 
     def get_order(self, obj):
@@ -257,6 +262,8 @@ class LandingPageSerializer(serializers.ModelSerializer):
             'friday': obj.form_friday,
             'saturday': obj.form_saturday,
             'sunday': obj.form_sunday,
+            'pickup': obj.form_pickup,
+            'delivery': obj.form_delivery,
         }
 
     def get_success(self, obj):
@@ -275,4 +282,31 @@ class LandingPageSerializer(serializers.ModelSerializer):
             'address': obj.place_address,
             'edit_place': obj.place_edit_place,
             'no_edit_place': obj.place_no_edit_place,
+        }
+
+    def get_history(self, obj):
+        return {
+            'order_number': obj.history_order_number,
+            'repeated_order': obj.history_repeated_order,
+            'time_planned': obj.history_time_planned,
+            'time_realization': obj.history_time_realization,
+        }
+
+    def get_status(self, obj):
+        return {
+            'status_0': obj.status_0,
+            'status_1': obj.status_1,
+            'status_2': obj.status_2,
+            'status_3': obj.status_3,
+            'status_4': obj.status_4,
+            'status_5': obj.status_5,
+            'status_6': obj.status_6,
+            'status_7': obj.status_7,
+            'status_8': obj.status_8,
+            'status_9': obj.status_9,
+            'status_10': obj.status_10,
+            'status_11': obj.status_11,
+            'status_12': obj.status_12,
+            'status_13': obj.status_13,
+            'status_20': obj.status_20,
         }

@@ -83,13 +83,13 @@ const OrderSuccess: React.FC<OrderSuccessProps> = ({ newOrder, onClose }) => {
                                 {/* Дни недели, если система "Own" */}
                                 {order.system === "Own" && (
                                     <>
-                                        {order.monday && <p>{currentData?.form.monday || "Pondělí"}</p>}
-                                        {order.tuesday && <p>{currentData?.form.tuesday || "Úterý"}</p>}
-                                        {order.wednesday && <p>{currentData?.form.wednesday || "Středa"}</p>}
-                                        {order.thursday && <p>{currentData?.form.thursday || "Čtvrtek"}</p>}
-                                        {order.friday && <p>{currentData?.form.friday || "Pátek"}</p>}
-                                        {order.saturday && <p>{currentData?.form.saturday || "Sobota"}</p>}
-                                        {order.sunday && <p>{currentData?.form.sunday || "Neděle"}</p>}
+                                        {order.monday && (currentData?.form.monday || "Pondělí")}{" "}
+                                        {order.tuesday && (currentData?.form.tuesday || "Úterý")}{" "}
+                                        {order.wednesday && (currentData?.form.wednesday || "Středa")}{" "}
+                                        {order.thursday && (currentData?.form.thursday || "Čtvrtek")}{" "}
+                                        {order.friday && (currentData?.form.friday || "Pátek")}{" "}
+                                        {order.saturday && (currentData?.form.saturday || "Sobota")}{" "}
+                                        {order.sunday && (currentData?.form.sunday || "Neděle")}{" "}
                                     </>
                                 )}
                             </>

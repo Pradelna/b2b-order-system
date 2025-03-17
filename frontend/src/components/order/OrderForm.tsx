@@ -540,7 +540,7 @@ const OrderForm: React.FC<OrderFormProps> = ({ placeId, onClose, onSuccess }) =>
               {/* Type of Shipping */}
               <div className="row mb-3">
                 <div className="col-12 label-form">
-                  <label htmlFor="type_ship">{ currentData.form["type_ship"] || "Typ závozu" }*</label>
+                  <label htmlFor="type_ship">{ currentData?.form["type_ship"] || "Typ závozu" }*</label>
                 </div>
                 <div className="col-12">
                   <select

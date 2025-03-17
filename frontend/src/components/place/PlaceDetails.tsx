@@ -157,7 +157,7 @@ const PlaceDetails: React.FC = () => {
 
     const handleStopOrder = async (orderId: number) => {
         // stop repeat order
-        if (window.confirm("Are you sure you want to cancel this order?")) {
+        if (window.confirm(currentData?.messages?.sure_cancel_order || "Opravdu si přejete zrušit tuto objednávku?")) {
             try {
                 const response = await fetchWithAuth(`${BASE_URL}/order/update/${orderId}/`, {
                     method: "PUT",
@@ -178,7 +178,7 @@ const PlaceDetails: React.FC = () => {
                         }
                         return [updatedOrder, ...prevOrders];
                     });
-                    setSuccessMessage("Order successfully stopped.");
+                    setSuccessMessage(currentData?.messages?.order_suc_canceled || "Objednávka byla úspěšně zrušena!");
                     setTimeout(() => setSuccessMessage(""), 10000);
                 } else {
                     console.error("Failed to stop order.");
@@ -456,7 +456,7 @@ const PlaceDetails: React.FC = () => {
                                         </div>
                                         {currentOrder.type_ship != "pickup_ship_dif" && (
                                             <div className="form-control mb-2">
-                                                <strong>System: </strong>
+                                                <strong>{ currentData?.form["system"] || "Systém" }:{" "}</strong>
                                                 {currentOrder.system === "Mon_Wed_Fri" && (currentData?.order.mon_wed_fri || "Pondělí středa pátek")}
                                                 {currentOrder.system === "Tue_Thu" && (currentData?.order.tue_thu || "Úterý Čtvrtek")}
                                                 {currentOrder.system === "Every_day" && (currentData?.order.every_day || "Každý den")}
