@@ -637,6 +637,8 @@ def update_orders_task():
             close_old_connections()
             from order.models import Order
             result = []
+            success =[]
+            not_success = []
             for item in orders_data_from_rp:
                 external_id = item["external_id"]
                 try:
@@ -645,12 +647,13 @@ def update_orders_task():
                     order.rp_time_realization = item["time_realization"]
                     order.rp_status = item["status"]
                     order.save(update_fields=["rp_problem_description", "rp_status", "rp_time_realization"])
+                    success.append("order No" + str(order.pk) + " with " + external_id)
 
                 except:
                     # print(f"Order {external_id} not found.")
-                    return f"Order {external_id} not found."
+                    not_success.append("order doesn't find " + external_id)
 
-            return result
+            return {"success": success, "not_success": not_success}
 
         else:
             return "order_data_from_rp is empty"

@@ -192,7 +192,7 @@ const AllOrderHistory: React.FC = () => {
 
                                                     <strong className="ms-2">
                                                         {order.rp_status === 20 && (currentData?.status?.status_20 || "Nová")}
-                                                        {order.rp_status === 0 && (currentData?.status?.status_21 || "Nová")}
+                                                        {order.rp_status === 0 && (currentData?.status?.status_0 || "Nová")}
                                                         {order.rp_status === 1 && (currentData?.status?.status_1 || "In progress 1")}
                                                         {order.rp_status === 2 && (currentData?.status?.status_2 || "Přiřazeno")}
                                                         {order.rp_status === 3 && (currentData?.status?.status_3 || "V procesu")}

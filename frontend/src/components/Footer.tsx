@@ -59,13 +59,13 @@ const Footer: React.FC = () => {
               </div>
               <div className="col-lg-3 col-md-4 col-12">
                 <div className="contact">
-                  <a href="tel:+420734246834" className="tel">
+                  <a href="tel:+420736164797" className="tel">
                     <FontAwesomeIcon icon={faMobileScreen} className="icon" />
-                    <span>+420 734 246 834</span>
+                    <span>+420 736 164 797</span>
                   </a>
-                  <a href="mailto:pradelna1cz@gmail.com" className="mail">
+                  <a href="mailto:office@pradelna1.com" className="mail">
                     <FontAwesomeIcon icon={faEnvelope} className="icon" />
-                    <span>pradelna1cz@gmail.com</span>
+                    <span>office@pradelna1.com</span>
                   </a>
                 </div>
               </div>

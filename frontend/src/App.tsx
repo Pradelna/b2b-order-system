@@ -1,4 +1,5 @@
 import ForgotPas from "./components/auth/ForgotPas";
+import ScrollToTop from "./components/utils/ScrollToTop";
 
 const BASE_URL = import.meta.env.VITE_API_URL;
 import { useState, useEffect } from "react";
@@ -74,6 +75,7 @@ const App: React.FC = () => {
   return (
       <BrowserRouter>
         <div className="App">
+          <ScrollToTop />
           <Routes>
             {/* Main page without prefix */}
             <Route path="/" element={<MainPage />} />
