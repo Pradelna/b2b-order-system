@@ -410,7 +410,7 @@ const PlaceDetails: React.FC = () => {
                                         <div className="form-control dates mb-2">
                                             {currentOrder.rp_status === 20 ? (<strong>{currentData?.order.info_waiting || "Informace čekají na aktualizaci"}</strong>) : (<>
                                                 <div onClick={toggleExpand} style={{ cursor: "pointer" }}>
-                                                    <strong>{expandedDates ? "Close upcoming Start Dates" : "Show upcoming Start Dates"}</strong>
+                                                    <strong>{expandedDates ? (currentData?.messages?.hide_next_days || "Skrýt další dny") : (currentData?.messages?.show_next_days || "Zobrazit další dny")}</strong>
                                                 </div>
 
                                                 <div

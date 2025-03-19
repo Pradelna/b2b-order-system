@@ -209,6 +209,8 @@ class LandingPageSerializer(serializers.ModelSerializer):
             'order_suc_canceled': obj.message_order_suc_canceled,
             'no_history': obj.message_no_history,
             'have_current_order': obj.message_have_current_order,
+            'show_next_days': obj.message_show_next_days,
+            'hide_next_days': obj.message_hide_next_days,
         }
 
     def get_order(self, obj):
@@ -291,6 +293,8 @@ class LandingPageSerializer(serializers.ModelSerializer):
             'repeated_order': obj.history_repeated_order,
             'time_planned': obj.history_time_planned,
             'time_realization': obj.history_time_realization,
+            'your_invoices': obj.history_your_invoices,
+            'no_invoices': obj.history_no_invoices,
         }
 
     def get_status(self, obj):
