@@ -31,7 +31,7 @@ interface Order {
 
 const AllOrderHistory: React.FC = () => {
     const [orders, setOrders] = useState<Order[]>([]);
-    const [visibleOrders, setVisibleOrders] = useState<number>(50);
+    const [visibleOrders, setVisibleOrders] = useState<number>(80);
     const [hasMoreOrders, setHasMoreOrders] = useState<boolean>(false);
     const [loading, setLoading] = useState<boolean>(true);
     const [expandedOrders, setExpandedOrders] = useState<{ [key: number]: boolean }>({});
