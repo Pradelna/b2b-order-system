@@ -26,6 +26,9 @@ import ResetPasswordComplete from "./components/auth/ResetPasswordComplete";
 import "./App.css";
 import ReportList from "./components/order/ReportList";
 import AllOrderHistory from "./components/order/AllOrderHistory";
+import Dashboard from "./components/admin/Dashboard";
+import AdminRoute from "./components/admin/AdminRoute";
+import CustomerDetailAdmin from "./components/admin/CustomerDetailAdmin";
 
 // Define the shape of the language data
 interface LanguageData {
@@ -148,6 +151,25 @@ const App: React.FC = () => {
                   </PrivateRoute>
                 }
             />
+
+          {/* admin */}
+          <Route
+              path="/admin/dashboard"
+              element={
+                  <AdminRoute>
+                      <Dashboard />
+                  </AdminRoute>
+              }
+          />
+
+              <Route
+                  path="/admin/customer-detail/:customerId"
+                  element={
+                      <AdminRoute>
+                          <CustomerDetailAdmin />
+                      </AdminRoute>
+                      }
+              />
 
             {/* Fallback for unknown routes */}
             <Route path="*" element={<Navigate to="/" />} />

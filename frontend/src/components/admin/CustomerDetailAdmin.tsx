@@ -1,12 +1,8 @@
 import React, { useState, useEffect, useContext } from "react";
-import { LanguageContext } from "../../context/LanguageContext";
-import {useNavigate, useLocation, Link} from "react-router-dom";
-import CompanyInfo from "../customer/CompanyInfo";
-import PlaceForm from "../place/PlaceForm";
-import OrderForm from "../order/OrderForm";
+import {useNavigate, useLocation, Link, useParams} from "react-router-dom";
+import CompanyInfoAdmin from "./CompanyInfoAdmin";
 import OrderHistory from "../order/OrderHistory";
-import OrderSuccess from "../order/OrderSuccess";
-import { fetchWithAuth } from "./auth";
+import { fetchWithAuth } from "../account/auth";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import {
     faClockRotateLeft,
@@ -17,12 +13,10 @@ import {
 } from "@fortawesome/free-solid-svg-icons";
 import {Skeleton} from "@mui/material";
 import {fontSize} from "@mui/system";
-
-
-interface AccountProps {
-    customerData: Record<string, any> | null;
-    setCustomerData: (data: Record<string, any>) => void;
-}
+import HeaderAdmin from "./HeaderAdmin";
+import FooterAccount from "../FooterAccount";
+import CustomerFormAdmin from "./CustomerFormAdmin";
+import UploadFileAdmin from "./UploadFileAdmin";
 
 interface Place {
     rp_number: any;
@@ -33,11 +27,12 @@ interface Place {
     rp_zip: string;
 }
 
-const Account: React.FC<AccountProps> = ({ customerData, setCustomerData }) => {
-    const { currentData } = useContext(LanguageContext);
+const CustomerDetailAdmin: React.FC = () => {
+    const { customerId } = useParams<{ customerId: string }>();
     const navigate = useNavigate();
     const location = useLocation();
     const BASE_URL = import.meta.env.VITE_API_URL;
+    const [customerData, setCustomerData] = useState(null);
 
     const [cardStyle, setCardStyle] = useState<React.CSSProperties>({ display: "none" });
     const [cardContent, setCardContent] = useState<string>("");
@@ -48,11 +43,10 @@ const Account: React.FC<AccountProps> = ({ customerData, setCustomerData }) => {
     const [orders, setOrders] = useState<Record<string, any>[]>([]);
     const [visibleOrders, setVisibleOrders] = useState<number>(5);
     const [showOrderForm, setShowOrderForm] = useState<boolean>(false);
-    const [currentPlaceId, setCurrentPlaceId] = useState<number | null>(null);
     const [selectedPlaceId, setSelectedPlaceId] = useState<number | null>(null);
-    const [successOrderMessage, setSuccessOrderMessage] = useState(null);
     const [loading, setLoading] = useState<boolean>(true);
     const [forceWait, setForceWait] = useState<boolean>(true);
+    const [isEditing, setIsEditing] = useState<boolean>(false);
 
     const handleCardClick = (
         event: React.MouseEvent<HTMLDivElement>,
@@ -114,13 +108,35 @@ const Account: React.FC<AccountProps> = ({ customerData, setCustomerData }) => {
     }, [location.state]);
 
     useEffect(() => {
+        const fetchCustomerData = async () => {
+            try {
+                const response = await fetchWithAuth(`${BASE_URL}/admin/adminpanel/customer/detail/${customerId}/`);
+                if (response.ok) {
+                    const data = await response.json();
+                    setCustomerData(data.customer);
+                    console.log(data.customer);
+                } else {
+                    console.error("Error fetching customer data");
+                }
+            } catch (error) {
+                console.error(error);
+            } finally {
+                setLoading(false);
+            }
+        };
+
+        fetchCustomerData();
+    }, [customerId]);
+
+    useEffect(() => {
         setLoading(true);
         const fetchPlaces = async () => {
             try {
-                const response = await fetchWithAuth(`${BASE_URL}/place/list/`);
+                const response = await fetchWithAuth(`${BASE_URL}/admin/adminpanel/customer-place/list/${customerId}`);
                 if (response.ok) {
                     const data = await response.json();
-                    setPlaces(data);
+                    console.log(data);
+                    setPlaces(data.places);
                     setLoading(false);
                 } else {
                     console.error("Failed to fetch places");
@@ -172,11 +188,9 @@ const Account: React.FC<AccountProps> = ({ customerData, setCustomerData }) => {
         };
     }, [showPlaceForm, showOrderForm]);
 
-    if (!currentData || !currentData.service) {
-        return <div>Loading...</div>; // Если данных нет, компонент ничего не отображает
-    }
-
     return (
+        <>
+        <HeaderAdmin />
         <div className="container margin-top-90 wrapper account-page">
             <div className="row message-block-76">
                 <div className="col-xl-9 col-lg-8 col-12">
@@ -187,9 +201,9 @@ const Account: React.FC<AccountProps> = ({ customerData, setCustomerData }) => {
             </div>
             <div className="row">
                 <div className="col-xl-9 col-lg-8 col-12">
-                    <div id="company-top" className="row">
+                    <div id="company-top-admin" className="row">
 
-                        <div className={`${customerData && !customerData.error ? "col-xl-6 col-lg-12 mb-4" : "col-12"}`}>
+                        <div className={`${customerData && !customerData?.error ? "col-xl-8 col-lg-10 col-12 mb-4" : "col-12"}`}>
                             {(customerData && (loading || forceWait)) ? (
                                 <>
                                     <div className="card dashboard-button">
@@ -207,87 +221,92 @@ const Account: React.FC<AccountProps> = ({ customerData, setCustomerData }) => {
                                         </div>
                                     </div>
                                 </>
-                            ) : (
-                                <CompanyInfo
-                                    customerData={customerData}
-                                    setCustomerData={setCustomerData}
-                                    setSuccessMessage={setSuccessMessage}
-                                />
+                            ) : ( <>
+
+                                {isEditing ? (
+                                    <CustomerFormAdmin
+                                        customerData={customerData}
+                                        setCustomerData={setCustomerData}
+                                        setSuccessMessage={setSuccessMessage}
+                                        setIsEditing={setIsEditing}
+                                    />
+                                ) : (
+                                    <CompanyInfoAdmin
+                                        customerData={customerData}
+                                        setCustomerData={setCustomerData}
+                                        setSuccessMessage={setSuccessMessage}
+                                        setIsEditing={setIsEditing}
+                                    />
+                                )}
+                            </>
+
                             )}
                         </div>
 
                         {customerData && !customerData.error && (
                             <>
-                                {(customerData && (loading || forceWait)) ? (
-                                    [...Array(3)].map((_, index) => (
-                                        <div className="col-lg-4 col-xl-2 col-4 mb-4" key={index}>
-                                            <div className="card dashboard-button">
-                                                <div className="card-body button-history">
-                                                    <Skeleton
-                                                        variant="rectangular"
-                                                        width={36} height={36}
-                                                        className=""
-                                                        sx={{ borderRadius: "18px", marginBottom: 2 }}
-                                                    />
-                                                    <Skeleton
-                                                        variant="rectangular"
-                                                        width={70} height={20}
-                                                        className=""
-                                                        sx={{ borderRadius: "6px", marginBottom: 0 }}
-                                                    />
-                                                </div>
-                                            </div>
-                                        </div>
-                                    ))
-                                ) : (
-                                    <>
+                                <div className="col-4">
+                                <div className="row">
 
-                                        <div className="col-lg-4 col-xl-2 col-4 mb-4">
-                                            <Link to="/all-orders" className="text-decoration-none">
-                                                <div className="card dashboard-button">
-                                                    <div className="card-body button-history">
-                                                        <FontAwesomeIcon icon={faClockRotateLeft} className="icon" />
-                                                        <p className="text-history">
-                                                            {currentData.buttons["all_history"] || "Historie objednávek"}
-                                                        </p>
+
+                                        {(customerData && (!loading || !forceWait)) ? (
+                                            [...Array(3)].map((_, index) => (
+                                                <div className="col-lg-4 col-xl-6 col-4 mb-4" key={index}>
+                                                    <div className="card dashboard-button">
+                                                        <div className="card-body button-history">
+                                                            <Skeleton
+                                                                variant="rectangular"
+                                                                width={36} height={36}
+                                                                className=""
+                                                                sx={{ borderRadius: "18px", marginBottom: 2 }}
+                                                            />
+                                                            <Skeleton
+                                                                variant="rectangular"
+                                                                width={70} height={20}
+                                                                className=""
+                                                                sx={{ borderRadius: "6px", marginBottom: 0 }}
+                                                            />
+                                                        </div>
                                                     </div>
                                                 </div>
-                                            </Link>
-                                        </div>
+                                            ))
+                                        ) : (
+                                            <>
 
-                                        <div className="col-lg-4 col-xl-2 col-4">
-                                            <Link to="/invoices" className="text-decoration-none">
-                                                <div className="card dashboard-button">
-                                                    <div className="card-body">
-                                                        <FontAwesomeIcon icon={faFileInvoiceDollar} className="icon" />
-                                                        <p className="text-history">{currentData.buttons["invoices"] || "Faktury"}</p>
-                                                    </div>
+                                                <div className="col-lg-4 col-xl-2 col-4 mb-4">
+                                                    <Link to="/all-orders" className="text-decoration-none">
+                                                        <div className="card dashboard-button">
+                                                            <div className="card-body button-history">
+                                                                <FontAwesomeIcon icon={faClockRotateLeft} className="icon" />
+                                                                <p className="text-history">
+                                                                    Historie objednávek
+                                                                </p>
+                                                            </div>
+                                                        </div>
+                                                    </Link>
                                                 </div>
-                                            </Link>
-                                        </div>
 
-                                        <div className="col-lg-4 col-xl-2 col-4">
-                                            {/* New Order Button */}
-                                            <div className="card dashboard-button" onClick={handleCreateOrder}>
-                                                <div className="card-body">
-                                                    <FontAwesomeIcon icon={faCartPlus} className="icon" />
-                                                    <p className="text-history">{currentData.buttons["new_order"] || "Nová objednávka"}</p>
+                                                <div className="col-lg-4 col-xl-2 col-4">
+                                                    <Link to="/invoices" className="text-decoration-none">
+                                                        <div className="card dashboard-button">
+                                                            <div className="card-body">
+                                                                <FontAwesomeIcon icon={faFileInvoiceDollar} className="icon" />
+                                                                <p className="text-history">Faktury</p>
+                                                            </div>
+                                                        </div>
+                                                    </Link>
                                                 </div>
-                                            </div>
-                                        </div>
 
-                                    </>
-                                )}
+                                            </>
+                                        )}
+                                    </div>
+                                </div>
+
                             </>
                         )}
                     </div>
 
-                    {showPlaceForm && (
-                        <PlaceForm
-                            onClose={() => setShowPlaceForm(false)}
-                            onSuccess={handleSuccess}
-                        />
-                    )}
+                    <UploadFileAdmin customer_id={customerData?.user_id}/>
 
                     <div className="row mt-mobile">
 
@@ -295,38 +314,17 @@ const Account: React.FC<AccountProps> = ({ customerData, setCustomerData }) => {
                             <>
                                 {customerData && !customerData.error && (
                                     <div className="col-xl-4 col-12">
-                                        <p style={{fontSize: "20px", marginTop: "15px"}}>{currentData.customer["you_dont_have_place"] || "Nemáte žádné místo"}</p>
+                                        <p style={{fontSize: "20px", marginTop: "15px"}}>Nemá žádné místo</p>
                                     </div>
                                 )}
                             </>
 
                         ) : (
                             <div className="col-lg-4 col-md-8 col-sm-7 col-6" style={{ paddingTop: "16px" }}>
-                                <h4>{currentData.customer["your_places"] || "Vaše místa"}</h4>
+                                <h4>Místa</h4>
                             </div>
                         )}
 
-                        <div className="col-lg-3 col-md-4 col-sm-5 col-6 text-left place-desktop-button">
-                            {(customerData && (loading || forceWait)) ? (
-                                <Skeleton
-                                    variant="rectangular"
-                                    width={200} height={55}
-                                    className="btn-link-skeleton"
-                                    sx={{ borderRadius: "26px", marginTop: 0 }}
-                                />
-                            ) : (
-                                <>
-                                    {customerData && !customerData.error && (
-                                        <button className="btn-link" onClick={handleCreatePlace}>
-                                            <FontAwesomeIcon icon={faHouse} className="icon" />
-                                            <span className="ms-2">
-                                                {currentData.buttons["add_place"] || "Přidat nové místo"}
-                                            </span>
-
-                                        </button>
-                                    )}
-                                </>
-                            )}
                         </div>
                     </div>
 
@@ -368,62 +366,28 @@ const Account: React.FC<AccountProps> = ({ customerData, setCustomerData }) => {
                                             <p className="card-text">
                                                 {place.rp_street} {place.rp_number}, {place.rp_city}, {place.rp_zip}
                                             </p>
-                                            <button
-                                                className="call new-order-button"
-                                                onClick={() => {
-                                                    setCurrentPlaceId(place.id);
-                                                    setShowOrderForm(true);
-                                                }}
-                                            >
-                                                <span className="text-new-order-in-button">
-                                                    {currentData.buttons["new_order"] || "Nová objednávka"}
-                                                </span>
-                                                <FontAwesomeIcon icon={faCartPlus} className="icon order-mobile" />
-                                            </button>
-                                            <button
-                                                onClick={() => place.id && navigate(`/place/${place.id}`)}
-                                                disabled={!place.id} // Отключаем кнопку, если нет ID
-                                                className="call details-place-button"
-                                            >
-                                                {currentData.buttons["details"] || "Detail"}
-                                            </button>
+
+                                            {/*<button*/}
+                                            {/*    onClick={() => place.id && navigate(`/place/${place.id}`)}*/}
+                                            {/*    disabled={!place.id} // Отключаем кнопку, если нет ID*/}
+                                            {/*    className="call details-place-button"*/}
+                                            {/*>*/}
+                                            {/*    Detail*/}
+                                            {/*</button>*/}
                                         </div>
                                     </div>
                                 </div>
                             ))}
                         </> )}
                     </div>
-                    <div className="row place-mobile-button text-center">
-                        <div className="col-12 text-center">
-                            {loading || forceWait ? (
-                                <Skeleton
-                                    variant="rectangular"
-                                    width={200} height={55}
-                                    className="btn-link-skeleton"
-                                    sx={{ borderRadius: "26px", marginTop: 0 }}
-                                />
-                            ) : (
-                                <>
-                                    {customerData && !customerData.error && (
-                                        <button className="btn-link" onClick={handleCreatePlace}>
-                                            <FontAwesomeIcon icon={faHouse} className="icon" />
-                                            <span className="ms-2">
-                                                {currentData.buttons["add_place"] || "Přidat nové místo"}
-                                            </span>
 
-                                        </button>
-                                    )}
-                                </>
-                            )}
-                        </div>
-                    </div>
                 </div>
 
                 {/*History block*/}
                 <div className="col-xl-3 col-lg-2 col-history">
                     <div
                         id="card-history"
-                        className={`card ${activeButton !== null ? "active" : ""}`}
+                        // className={`card ${activeButton !== null ? "active" : ""}`}
                         style={cardStyle}
                     >
                         <div className="card-body card-history">
@@ -449,23 +413,9 @@ const Account: React.FC<AccountProps> = ({ customerData, setCustomerData }) => {
                 </div>
             </div>
 
-            {showOrderForm && (
-                <OrderForm
-                    placeId={currentPlaceId}
-                    onClose={() => setShowOrderForm(false)}
-                    onSuccess={(newOrder) => {
-                        setOrders((prevOrders) => [...prevOrders, newOrder]);
-                        handleOrderSuccess(currentPlaceId);
-                        setSuccessOrderMessage(newOrder);
-                    }}
-                />
-            )}
-
-            {successOrderMessage && (
-                <OrderSuccess newOrder={successOrderMessage} onClose={() => setSuccessOrderMessage(null)} />
-            )}
-        </div>
+    <FooterAccount />
+        </>
     );
 };
 
-export default Account;
+export default CustomerDetailAdmin;

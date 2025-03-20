@@ -195,7 +195,6 @@ const OrderHistory: React.FC<OrderHistoryProps> = ({ placeId, orders = [], setOr
                 ))
             ) : (
                 <>
-
                     {orders.length > 0 ? (
                         <div>
                             {orders.slice(0, visibleOrders)
