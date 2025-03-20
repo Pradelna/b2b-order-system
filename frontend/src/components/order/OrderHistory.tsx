@@ -29,7 +29,7 @@ interface OrderHistoryProps {
 }
 
 const OrderHistory: React.FC<OrderHistoryProps> = ({ placeId, orders = [], setOrders, stopedOrder}) => {
-    const [visibleOrders, setVisibleOrders] = useState<number>(60);
+    const [visibleOrders, setVisibleOrders] = useState<number>(80);
     const [hasMoreOrders, setHasMoreOrders] = useState<boolean>(false);
     const [loading, setLoading] = useState<boolean>(true);
     const [expandedOrders, setExpandedOrders] = useState<{ [key: number]: boolean }>({});
@@ -243,9 +243,9 @@ const OrderHistory: React.FC<OrderHistoryProps> = ({ placeId, orders = [], setOr
                                                             <strong className="ms-2">
                                                                 {order.rp_status === 20 && (currentData?.status?.status_20 || "Nová")}
                                                                 {order.rp_status === 0 && (currentData?.status?.status_0 || "Nová")}
-                                                                {order.rp_status === 1 && (currentData?.status?.status_1 || "In progress 1")}
-                                                                {order.rp_status === 2 && (currentData?.status?.status_2 || "Přiřazeno")}
-                                                                {order.rp_status === 3 && (currentData?.status?.status_3 || "V procesu")}
+                                                                {order.rp_status === 1 && (currentData?.status?.status_1 || "Nová")}
+                                                                {order.rp_status === 2 && (currentData?.status?.status_2 || "Přijato")}
+                                                                {order.rp_status === 3 && (currentData?.status?.status_3 || "Na cestě")}
                                                                 {order.rp_status === 4 && (currentData?.status?.status_4 || "Dokončeno")}
                                                                 {order.rp_status === 5 && (currentData?.status?.status_5 || "Complited")}
                                                                 {order.rp_status === 6 && (currentData?.status?.status_6 || "Ověřeno")}
@@ -264,10 +264,16 @@ const OrderHistory: React.FC<OrderHistoryProps> = ({ placeId, orders = [], setOr
                                             )}
                                         </p>
 
+                                        {order.rp_contract_external_id ? (
+                                            <p>
+                                                <strong>{currentData?.history?.order_number || "Číslo objednávky"}:</strong> {order.rp_contract_external_id}
+                                            </p>
+                                        ) : (
+                                            <p>
+                                                <strong>{currentData?.history?.wait_processing || "Objednávka čeká na zpracování"}</strong>
+                                            </p>
+                                        )}
 
-                                        <p>
-                                            <strong>{currentData?.history?.order_number || "Číslo objednávky"}:</strong> {order.id}
-                                        </p>
                                         {/* Дополнительная информация показывается только если карточка развернута */}
                                         {expandedOrders[order.id] && (
                                             <div className="expanded-content">
@@ -306,12 +312,17 @@ const OrderHistory: React.FC<OrderHistoryProps> = ({ placeId, orders = [], setOr
                                                 <p><strong>{currentData?.form?.delivery || "Dodání"}: </strong>
                                                     {formatViceDate(order.date_delivery)}</p>
                                                 </>)}
+                                                {order.rp_status === 4 && (
+                                                <>
                                                 {order.rp_time_realization && (
-                                                    <p>
-                                                        <strong>{currentData?.history?.time_realization || "Datum realizace"}: </strong>
+                                                    <p><strong>
+                                                        {currentData?.history?.time_realization || "Datum realizace"}: </strong>
                                                         {formatDate(order.rp_time_realization) || " No information"}
                                                     </p>
                                                 )}
+                                                </>
+                                                )}
+
                                                 {/* Отображение системы */}
                                                 {(order.system && (order.type_ship !== "one_time" && order.type_ship !== "quick_order")) && (
                                                     <p>

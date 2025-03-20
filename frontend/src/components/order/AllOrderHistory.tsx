@@ -209,9 +209,15 @@ const AllOrderHistory: React.FC = () => {
                                                     </strong>
                                                 </p>
 
-                                                <p>
-                                                    <strong>{currentData?.history?.order_number || "Číslo objednávky"}:</strong> {order.id}
-                                                </p>
+                                                {order.rp_contract_external_id ? (
+                                                    <p>
+                                                        <strong>{currentData?.history?.order_number || "Číslo objednávky"}:</strong> {order.rp_contract_external_id}
+                                                    </p>
+                                                ) : (
+                                                    <p>
+                                                        <strong>{currentData?.history?.wait_processing || "Objednávka čeká na zpracování"}</strong>
+                                                    </p>
+                                                )}
 
                                                 {expandedOrders[order.id] && (
                                                     <div className="expanded-content">

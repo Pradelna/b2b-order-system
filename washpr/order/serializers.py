@@ -9,7 +9,7 @@ class OrderSerializer(serializers.ModelSerializer):
             'place', 'rp_place_title', 'type_ship', 'system', 'monday', 'tuesday', 'wednesday', 'thursday',
             'friday', 'saturday', 'sunday', 'date_pickup', 'date_delivery', 'every_week', 'rp_customer_note', 'terms',
             'active', 'end_order', 'rp_status', 'date_start_day', 'created_at', 'canceled', 'id',
-            'rp_problem_description'
+            'rp_problem_description', 'rp_contract_external_id'
         ]
         extra_kwargs = {
             'terms': {'required': True},
@@ -44,9 +44,9 @@ class GetOrderSerializer(serializers.ModelSerializer):
             'wednesday', 'thursday', 'friday', 'saturday', 'sunday', 'date_pickup', 'date_delivery', 'created_at',
             'every_week', 'terms', 'end_order', 'rp_customer_note', 'rp_problem_description', 'group_pair_id',
             'canceled', 'rp_time_from', 'rp_time_to', 'rp_time_realization', 'rp_time_planned', 'rp_problem_description',
-            'rp_status',
+            'rp_status', 'rp_contract_external_id'
         ]
-        read_only_fields = ['id', 'user', 'place', 'created_at']
+        read_only_fields = ['id', 'user', 'place', 'created_at', 'rp_contract_external_id']
 
 
 class PhotoReportSerializer(serializers.ModelSerializer):
