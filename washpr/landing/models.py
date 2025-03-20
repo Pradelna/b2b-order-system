@@ -165,7 +165,12 @@ class LandingPage(models.Model):
     message_sure_cancel_order = models.CharField("Are you sure you want to cancel this order?", max_length=150, blank=True, null=True)
     message_order_suc_canceled = models.CharField("Order successfully canceled!", max_length=150, blank=True, null=True)
     message_no_history = models.CharField("No order history available", max_length=150, blank=True, null=True)
-    message_have_current_order = models.CharField("You already have orders for this month. You can create a new for a next month.", max_length=150, blank=True, null=True)
+    message_have_current_order = models.CharField(
+        "You already have orders for this month. You can create a new for a next month.",
+        max_length=150, blank=True, null=True
+    )
+    message_show_next_days = models.CharField("Show next days", max_length=150, blank=True, null=True)
+    message_hide_next_days = models.CharField("Hide next days", max_length=150, blank=True, null=True)
 
     # order
     order_type_sipping_clear_for_dirty = models.CharField("Order type sipping clear for dirty", max_length=100,
@@ -235,6 +240,8 @@ class LandingPage(models.Model):
     history_repeated_order = models.CharField("Pravidelná opakující se objednávka", max_length=100, blank=True, null=True)
     history_time_realization = models.CharField("Realization date", max_length=100, blank=True, null=True)
     history_time_planned = models.CharField("Planned date", max_length=100, blank=True, null=True)
+    history_your_invoices = models.CharField("Your invoices", max_length=100, blank=True, null=True)
+    history_no_invoices = models.CharField("No invoices", max_length=100, blank=True, null=True)
 
     status_0 = models.CharField("Status 0", max_length=100, blank=True, null=True)
     status_1 = models.CharField("Status 1", max_length=100, blank=True, null=True)

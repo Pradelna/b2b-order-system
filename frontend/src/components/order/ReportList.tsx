@@ -1,20 +1,16 @@
-import React, { useState, useEffect } from "react";
-import { Link } from "react-router-dom";
+import React, {useState, useEffect, useContext} from "react";
 import { fetchWithAuth } from "../account/auth";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import {
-    faFilePdf,
-    faDownload,
-    faSpinner,
     faFileInvoiceDollar,
-    faFileImage,
     faFileArrowDown
 } from "@fortawesome/free-solid-svg-icons";
 import HeaderAccount from "../HeaderAccount";
 import FooterAccount from "../FooterAccount";
 import NavButtons from "../account/NavButtons";
 import {Skeleton} from "@mui/material";
-import DarkTooltip from "../utils/DarkTooltip.tsx";
+import DarkTooltip from "../utils/DarkTooltip";
+import { LanguageContext } from "../../context/LanguageContext";
 
 interface Report {
     id: number;
@@ -35,6 +31,7 @@ const ReportList: React.FC = () => {
     const [customerId, setCustomerId] = useState<Customer | null>(null);
     const [forceWait, setForceWait] = useState<boolean>(true);
     const BASE_URL = import.meta.env.VITE_API_URL;
+    const { currentData } = useContext(LanguageContext);
 
 
 
@@ -69,12 +66,12 @@ const ReportList: React.FC = () => {
             <HeaderAccount customerId={customerId} />
             <div className="container margin-top-90 wrapper invoices-page">
                 <div className="row message-block-76">
-                    <div className="col-2 back-button">
+                    <div className="col-3 back-button">
                         <NavButtons />
                     </div>
 
                 </div>
-                <h3 style={{fontSize:"24px"}}>Your Invoices</h3>
+                <h3 style={{fontSize:"24px"}}>{currentData?.history?.your_invoices || "Vaše faktury"}</h3>
                 <div className="row">
 
                     {loading || forceWait ? (
@@ -146,7 +143,7 @@ const ReportList: React.FC = () => {
                                     ))}
                                 </div>
                             ) : (
-                                <p>No reports available.</p>
+                                <p>{currentData?.history?.no_invoices || "V momentální chvíli nemáte žádné faktury k zobrazení"}</p>
                             )}
                         </>)}
                 </div>
