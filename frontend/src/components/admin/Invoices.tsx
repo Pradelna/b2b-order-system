@@ -187,7 +187,7 @@ const Invoices: React.FC = () => {
                                                     />
                                                 </div>
                                                 <p><strong>{new Date(report.report_month).toLocaleString("en-US", { month: "long", year: "numeric" })}</strong></p>
-                                                <p className="mb-1">Orders: {report.orders_count} {report.orders.join(', ')}</p>
+                                                <p className="mb-1">{report.orders_count} orders: {report.orders.join(', ')}</p>
                                             </div>
                                             <div className="row">
                                                 <div className="col-md-3 col-sm-4 col-6 mb-3">

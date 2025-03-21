@@ -2076,9 +2076,11 @@ p.back-link {
 .order-admin-icon {
   padding: 15px 15px;
 }
+.all-customers .user-card,
 .recent-customers .user-card {
   padding: 20px 90px;
 }
+.all-customers .user-card p,
 .recent-customers .user-card p {
   margin: 0;
 }

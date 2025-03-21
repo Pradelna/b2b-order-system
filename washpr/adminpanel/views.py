@@ -10,6 +10,7 @@ from order.models import Order
 from rest_framework import status, generics, permissions
 from rest_framework.decorators import api_view, permission_classes, parser_classes
 from rest_framework.generics import get_object_or_404
+from rest_framework.pagination import PageNumberPagination
 from rest_framework.permissions import IsAdminUser
 from rest_framework.response import Response
 from rest_framework.parsers import MultiPartParser
@@ -28,6 +29,7 @@ from order.models import OrderReport
 from order.serializers import OrderReportSerializer
 from order.models import ReportFile
 from order.serializers import ReportFileSerializer
+from customer.serializers import CustomerSerializer
 
 
 @login_required
@@ -62,12 +64,11 @@ def customer_details(request, customer_id):
 @permission_classes([IsAdminUser])
 def customers_places(request, customer_id):
     customer = get_object_or_404(Customer, user__id=customer_id)
-    print(customer)
     places = Place.objects.filter(customer=customer)
     places_all = Place.objects.all()
-    for place in places_all:
-        if customer == place.customer:
-            print(f"this place is {place} for {place.customer}")
+    # for place in places_all:
+    #     if customer == place.customer:
+    #         print(f"this place is {place} for {place.customer}")
     serializer = PlaceSerializer(places, many=True)
     return Response({"places": serializer.data})
 
@@ -239,3 +240,25 @@ def delete_report_file(request, report_id, file_id):
         return Response({'success': True})
     except ReportFile.DoesNotExist:
         return Response({'error': 'File not found'}, status=404)
+
+class StandardResultsSetPagination(PageNumberPagination):
+    page_size = 10
+
+    def get_paginated_response(self, data):
+        total_pages = self.page.paginator.num_pages
+        return Response({
+            'count': self.page.paginator.count,
+            'total_pages': total_pages,
+            'next': self.get_next_link(),
+            'previous': self.get_previous_link(),
+            'results': data
+        })
+
+@api_view(['GET'])
+@permission_classes([IsAdminUser])
+def all_customers(request):
+    paginator = StandardResultsSetPagination()
+    customers = Customer.objects.filter(vop=True).order_by('-user__date_joined')
+    result_page = paginator.paginate_queryset(customers, request)
+    serializer = CustomerGetSerializer(result_page, many=True)
+    return paginator.get_paginated_response(serializer.data)

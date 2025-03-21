@@ -5,6 +5,7 @@ import HeaderAdmin from "./HeaderAdmin";
 import TotalCustomers from "./TotalCustomers";
 import TotalOrders from "./TotalOrders";
 import NewCustomers from "./NewCustomers";
+import AllCustomers from "./AllCustomers";
 
 // Define the shape of the customer data
 interface CustomerData {
@@ -27,15 +28,20 @@ function Dashboard(): JSX.Element {
 
                     </div>
                 </div>
+
                 <div className="row">
 
                     <TotalCustomers />
+
                     <TotalOrders />
 
                 </div>
-                <div className="row">
-                    <NewCustomers />
-                </div>
+
+
+                <NewCustomers />
+
+                <AllCustomers />
+
             </div>
             <FooterAccount />
         </>

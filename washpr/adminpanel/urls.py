@@ -23,4 +23,5 @@ urlpatterns = [
     path('user/report/<int:report_id>/delete-file/<int:file_id>/',
          delete_report_file,
          name='delete_report_file'),
+    path('customers/', all_customers, name='all_customers'),
 ]
