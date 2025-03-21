@@ -1,5 +1,5 @@
 import React, { useRef, useState, useEffect, useContext } from 'react';
-import { fetchWithAuth } from "../account/auth.ts";
+import { fetchWithAuth } from "../account/auth";
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import {faFilePdf, faSpinner} from "@fortawesome/free-solid-svg-icons";
 
@@ -14,7 +14,7 @@ interface UploadFileAdminProps {
 }
 
 const UploadFileAdmin: React.FC<UploadFileAdminProps> = ({ onUploadSuccess, customer_id }) => {
-    const fileInputRef = useRef<HTMLInputElement | null>(null);
+    const fileInputRefs = useRef<{ [key: number]: HTMLInputElement | null }>({});
     const [files, setFiles] = useState<FileData[]>([]); // List of uploaded files
     const [error, setError] = useState<string>('');
     const [success, setSuccess] = useState<string>('');
@@ -35,8 +35,8 @@ const UploadFileAdmin: React.FC<UploadFileAdminProps> = ({ onUploadSuccess, cust
     };
 
     // Open file picker
-    const handleButtonClick = () => {
-        fileInputRef.current?.click();
+    const handleButtonClick = (id: number) => {
+        fileInputRefs.current[id]?.click();
     };
 
     // Handle file selection and automatic upload
@@ -60,8 +60,6 @@ const UploadFileAdmin: React.FC<UploadFileAdminProps> = ({ onUploadSuccess, cust
                 method: 'POST',
                 body: formData,
             });
-            // const responseText = await response.text();
-            // console.log("Response text:", responseText);
             const responseData = await response.json();
             if (response.status === 201) {
                 setSuccess('File uploaded successfully');
@@ -126,13 +124,17 @@ const UploadFileAdmin: React.FC<UploadFileAdminProps> = ({ onUploadSuccess, cust
                 <div className="card">
                     <div className="row">
                         <div className="col-md-3 col-sm-4 col-6">
-                            <input
-                                type="file"
-                                ref={fileInputRef}
-                                style={{ display: 'none' }}
-                                onChange={handleFileChange}
-                            />
-                            <button className="btn-upload" onClick={handleButtonClick} disabled={isUploading}>
+                            {files.map((file, index) => (
+                                <input
+                                    key={file.id}
+                                    type="file"
+                                    id={`file-upload-${file.id}`}
+                                    ref={el => fileInputRefs.current[file.id] = el}
+                                    style={{ display: 'none' }}
+                                    onChange={(e) => handleFileChange(e)}
+                                />
+                            ))}
+                            <button className="btn-upload" onClick={() => handleButtonClick(file.id)} disabled={isUploading}>
                                 {isUploading
                                     ? 'Uploading...'
                                     : 'Upload'}
@@ -152,7 +154,6 @@ const UploadFileAdmin: React.FC<UploadFileAdminProps> = ({ onUploadSuccess, cust
                         {files.map((file, index) => (
                             <div className="col-12 form-control mb-2" style={{ display: 'flex' }} key={index}>
                                 <a href={`http://localhost:8000${file.file}`} target="_blank" rel="noopener noreferrer">
-                                    {/*<a href={`https://django.raketaweb.eu${file.file}`} target="_blank" rel="noopener noreferrer">*/}
                                     <FontAwesomeIcon icon={faFilePdf} className="file-uploaded" />
                                     <span style={{ marginLeft: '5px' }}>{file.file.split('/').pop()}</span>
                                 </a>

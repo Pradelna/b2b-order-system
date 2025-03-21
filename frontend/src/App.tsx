@@ -31,6 +31,7 @@ import AdminRoute from "./components/admin/AdminRoute";
 import CustomerDetailAdmin from "./components/admin/CustomerDetailAdmin";
 import PlaceDetailAdmin from "./components/admin/PlaceDetailAdmin";
 import AllHistoryAdmin from "./components/admin/AllHistoryAdmin";
+import Invoices from "./components/admin/Invoices";
 
 // Define the shape of the language data
 interface LanguageData {
@@ -187,6 +188,15 @@ const App: React.FC = () => {
                   element={
                       <AdminRoute>
                           <AllHistoryAdmin />
+                      </AdminRoute>
+                  }
+              />
+
+              <Route
+                  path="/admin/user-invoices/:customerId"
+                  element={
+                      <AdminRoute>
+                          <Invoices />
                       </AdminRoute>
                   }
               />
