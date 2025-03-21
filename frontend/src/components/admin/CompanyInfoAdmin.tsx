@@ -9,8 +9,9 @@ import {
     faPhone,
     faEnvelope,
     faUserTie,
-    faGear,
+    faUserCheck,
     faPenToSquare,
+    faCalendarWeek,
 } from "@fortawesome/free-solid-svg-icons";
 import { fetchWithAuth } from "../account/auth";
 import { Tooltip as ReactTooltip } from "react-tooltip";
@@ -25,6 +26,9 @@ interface CustomerData {
     company_phone: string;
     company_email?: string;
     company_person: string;
+    change_data: boolean;
+    active: boolean;
+    weekend_able: boolean;
     user_id: string;
     error?: string;
 }
@@ -139,6 +143,7 @@ const CompanyInfoAdmin: React.FC<CompanyInfoAdminProps> = ({
                     <h5 className="company-name">
                         <FontAwesomeIcon icon={faBuilding} className="icon" />{" "}
                         <span className="ms-1">{customerData?.company_name || "empty"}</span>
+                        {customerData?.change_data && <span style={{color: "red"}}> NEEDS CHANGES</span>}
                     </h5>
                     <p className="company-info">
                         <FontAwesomeIcon icon={faLocationDot} className="icon" />{" "}
@@ -158,13 +163,19 @@ const CompanyInfoAdmin: React.FC<CompanyInfoAdminProps> = ({
                     </p>
                     <p className="company-info">
                         <FontAwesomeIcon icon={faEnvelope} className="icon" />{" "}
-                        <span className="ms-1">
-                  {customerData?.company_email || "empty"}
-                </span>
+                        <span className="ms-1">{customerData?.company_email || "empty"}</span>
                     </p>
                     <p className="company-info">
                         <FontAwesomeIcon icon={faUserTie} className="icon" />{" "}
                         <span className="ms-1">{customerData?.company_person || "empty"}</span>
+                    </p>
+                    <p className="company-info">
+                        <FontAwesomeIcon icon={faUserCheck} className="icon" />{" "}
+                        {customerData?.active ? <span className="ms-1">Active</span> : <span className="ms-1">Not active</span>}
+                    </p>
+                    <p className="company-info">
+                        <FontAwesomeIcon icon={faCalendarWeek} className="icon" />{" "}
+                        {customerData?.weekend_able ? <span className="ms-1">Weekend able</span> : <span className="ms-1">Not weekend</span>}
                     </p>
                 </div>
         </div>

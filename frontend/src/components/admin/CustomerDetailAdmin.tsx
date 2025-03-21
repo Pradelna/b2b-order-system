@@ -95,9 +95,6 @@ const CustomerDetailAdmin: React.FC = () => {
         setTimeout(() => setSuccessMessage(""), 10000);
     };
 
-    const handleCreatePlace = () => {
-        setShowPlaceForm(true); // Показываем форму создания места
-    };
 
     useEffect(() => {
         if (location.state?.successMessage) {
@@ -199,219 +196,216 @@ const CustomerDetailAdmin: React.FC = () => {
                     )}
                 </div>
             </div>
-            <div className="row">
-                <div className="col-xl-9 col-lg-8 col-12">
-                    <div id="company-top-admin" className="row">
+            <div id="company-top-admin" className="row">
 
-                        <div className={`${customerData && !customerData?.error ? "col-xl-8 col-lg-10 col-12 mb-4" : "col-12"}`}>
-                            {(customerData && (loading || forceWait)) ? (
-                                <>
-                                    <div className="card dashboard-button">
-                                        <div className="card-body button-history">
-                                            <Skeleton
-                                                variant="rectangular"
-                                                width={36} height={36}
-                                                sx={{ borderRadius: "18px", marginBottom: 2 }}
-                                            />
-                                            <Skeleton
-                                                variant="rectangular"
-                                                width={180} height={20}
-                                                sx={{ borderRadius: "6px", marginBottom: 0 }}
-                                            />
-                                        </div>
-                                    </div>
-                                </>
-                            ) : ( <>
+                <div className="row">
 
-                                {isEditing ? (
-                                    <CustomerFormAdmin
-                                        customerData={customerData}
-                                        setCustomerData={setCustomerData}
-                                        setSuccessMessage={setSuccessMessage}
-                                        setIsEditing={setIsEditing}
-                                    />
-                                ) : (
-                                    <CompanyInfoAdmin
-                                        customerData={customerData}
-                                        setCustomerData={setCustomerData}
-                                        setSuccessMessage={setSuccessMessage}
-                                        setIsEditing={setIsEditing}
-                                    />
-                                )}
-                            </>
-
-                            )}
-                        </div>
-
-                        {customerData && !customerData.error && (
+                    <div className="col-xl-7 col-lg-8 col-12 mb-4">
+                        {(customerData && (loading || forceWait)) ? (
                             <>
-                                <div className="col-4">
-                                <div className="row">
+                                <div className="card dashboard-button">
+                                    <div className="card-body button-history">
+                                        <Skeleton
+                                            variant="rectangular"
+                                            width={36} height={36}
+                                            sx={{ borderRadius: "18px", marginBottom: 2 }}
+                                        />
+                                        <Skeleton
+                                            variant="rectangular"
+                                            width={180} height={20}
+                                            sx={{ borderRadius: "6px", marginBottom: 0 }}
+                                        />
+                                    </div>
+                                </div>
+                            </>
+                        ) : ( <>
+
+                            {isEditing ? (
+                                <CustomerFormAdmin
+                                    customerData={customerData}
+                                    setCustomerData={setCustomerData}
+                                    setSuccessMessage={setSuccessMessage}
+                                    setIsEditing={setIsEditing}
+                                />
+                            ) : (
+                                <CompanyInfoAdmin
+                                    customerData={customerData}
+                                    setCustomerData={setCustomerData}
+                                    setSuccessMessage={setSuccessMessage}
+                                    setIsEditing={setIsEditing}
+                                />
+                            )}
+                        </>
+
+                        )}
+                    </div>
+
+                    {customerData && !customerData.error && (
+                        <>
+                            <div className="col-xl-5 col-lg-8 col-12">
+                            <div className="row">
 
 
-                                        {(customerData && (!loading || !forceWait)) ? (
-                                            [...Array(3)].map((_, index) => (
-                                                <div className="col-lg-4 col-xl-6 col-4 mb-4" key={index}>
-                                                    <div className="card dashboard-button">
-                                                        <div className="card-body button-history">
-                                                            <Skeleton
-                                                                variant="rectangular"
-                                                                width={36} height={36}
-                                                                className=""
-                                                                sx={{ borderRadius: "18px", marginBottom: 2 }}
-                                                            />
-                                                            <Skeleton
-                                                                variant="rectangular"
-                                                                width={70} height={20}
-                                                                className=""
-                                                                sx={{ borderRadius: "6px", marginBottom: 0 }}
-                                                            />
-                                                        </div>
+                                    {(customerData && (!loading || !forceWait)) ? (
+                                        [...Array(2)].map((_, index) => (
+                                            <div className="col-lg-4 col-xl-7 col-4 mb-4" key={index}>
+                                                <div className="card dashboard-button">
+                                                    <div className="card-body button-history">
+                                                        <Skeleton
+                                                            variant="rectangular"
+                                                            width={36} height={36}
+                                                            className=""
+                                                            sx={{ borderRadius: "18px", marginBottom: 2 }}
+                                                        />
+                                                        <Skeleton
+                                                            variant="rectangular"
+                                                            width={70} height={20}
+                                                            className=""
+                                                            sx={{ borderRadius: "6px", marginBottom: 0 }}
+                                                        />
                                                     </div>
                                                 </div>
-                                            ))
-                                        ) : (
-                                            <>
-
-                                                <div className="col-lg-4 col-xl-2 col-4 mb-4">
-                                                    <Link to="/all-orders" className="text-decoration-none">
-                                                        <div className="card dashboard-button">
-                                                            <div className="card-body button-history">
-                                                                <FontAwesomeIcon icon={faClockRotateLeft} className="icon" />
-                                                                <p className="text-history">
-                                                                    Historie objednávek
-                                                                </p>
-                                                            </div>
-                                                        </div>
-                                                    </Link>
-                                                </div>
-
-                                                <div className="col-lg-4 col-xl-2 col-4">
-                                                    <Link to="/invoices" className="text-decoration-none">
-                                                        <div className="card dashboard-button">
-                                                            <div className="card-body">
-                                                                <FontAwesomeIcon icon={faFileInvoiceDollar} className="icon" />
-                                                                <p className="text-history">Faktury</p>
-                                                            </div>
-                                                        </div>
-                                                    </Link>
-                                                </div>
-
-                                            </>
-                                        )}
-                                    </div>
-                                </div>
-
-                            </>
-                        )}
-                    </div>
-
-                    <UploadFileAdmin customer_id={customerData?.user_id}/>
-
-                    <div className="row mt-mobile">
-
-                        {places.length === 0 ? (
-                            <>
-                                {customerData && !customerData.error && (
-                                    <div className="col-xl-4 col-12">
-                                        <p style={{fontSize: "20px", marginTop: "15px"}}>Nemá žádné místo</p>
-                                    </div>
-                                )}
-                            </>
-
-                        ) : (
-                            <div className="col-lg-4 col-md-8 col-sm-7 col-6" style={{ paddingTop: "16px" }}>
-                                <h4>Místa</h4>
-                            </div>
-                        )}
-
-                        </div>
-                    </div>
-
-                    <div className="row mt-4 mb-4">
-                        {(customerData && (loading || forceWait)) ? (
-                            [...Array(2)].map((_, index) => (
-                                <div className="col-12 dashboard" key={index}>
-                                    <div className="card place-card">
-                                        <div className="place">
-                                            <div className="place-icon-skeleton"></div>
-                                            <Skeleton
-                                                variant="rectangular"
-                                                width={140} height={20}
-                                                className="mt-1"
-                                                sx={{ borderRadius: "6px", marginTop: 0 }}
-                                            />
-                                            <Skeleton
-                                                variant="rectangular"
-                                                width={200} height={20}
-                                                className=""
-                                                sx={{ borderRadius: "6px", marginTop: 1 }}
-                                            />
-                                        </div>
-                                    </div>
-                                </div>
-                            ))
-                        ) : ( <>
-                            {places.map((place, index) => (
-                                <div className="col-12 dashboard" key={place.id}>
-                                    <div
-                                        className={`card place-card ${activeButton === index ? "active" : ""}`}
-                                        onClick={(e) => handleCardClick(e, place.place_name, index, place.id)}
-                                    >
-                                        <div className="place">
-                                            <div className="place-icon">
-                                                <FontAwesomeIcon icon={faHouse} className="s" />
                                             </div>
-                                            <h5 className="place-card-name">{place.place_name}</h5>
-                                            <p className="card-text">
-                                                {place.rp_street} {place.rp_number}, {place.rp_city}, {place.rp_zip}
-                                            </p>
+                                        ))
+                                    ) : (
+                                        <>
 
-                                            {/*<button*/}
-                                            {/*    onClick={() => place.id && navigate(`/place/${place.id}`)}*/}
-                                            {/*    disabled={!place.id} // Отключаем кнопку, если нет ID*/}
-                                            {/*    className="call details-place-button"*/}
-                                            {/*>*/}
-                                            {/*    Detail*/}
-                                            {/*</button>*/}
-                                        </div>
-                                    </div>
+                                            <div className="col-lg-4 col-xl-2 col-4 mb-4">
+                                                <Link to="/all-orders" className="text-decoration-none">
+                                                    <div className="card dashboard-button">
+                                                        <div className="card-body button-history">
+                                                            <FontAwesomeIcon icon={faClockRotateLeft} className="icon" />
+                                                            <p className="text-history">
+                                                                Historie objednávek
+                                                            </p>
+                                                        </div>
+                                                    </div>
+                                                </Link>
+                                            </div>
+
+                                            <div className="col-lg-4 col-xl-2 col-4">
+                                                <Link to="/invoices" className="text-decoration-none">
+                                                    <div className="card dashboard-button">
+                                                        <div className="card-body">
+                                                            <FontAwesomeIcon icon={faFileInvoiceDollar} className="icon" />
+                                                            <p className="text-history">Faktury</p>
+                                                        </div>
+                                                    </div>
+                                                </Link>
+                                            </div>
+
+                                        </>
+                                    )}
                                 </div>
-                            ))}
-                        </> )}
-                    </div>
+                            </div>
+
+                        </>
+                    )}
 
                 </div>
 
-                {/*History block*/}
-                <div className="col-xl-3 col-lg-2 col-history">
-                    <div
-                        id="card-history"
-                        // className={`card ${activeButton !== null ? "active" : ""}`}
-                        style={cardStyle}
-                    >
-                        <div className="card-body card-history">
-                            <FontAwesomeIcon icon={faClockRotateLeft} className="icon" />
-                            <button
-                                onClick={() => selectedPlaceId && navigate(`/place/${selectedPlaceId}`)}
-                                disabled={!selectedPlaceId} // Отключаем кнопку, если место не выбрано
-                                className="details-place-button-in-history"
-                            >
-                                Whole history
-                            </button>
-                            <h5>Orders history for</h5>
-                            <div className="mt-1">
-                                <OrderHistory
-                                    placeId={selectedPlaceId}
-                                    orders={orders}
-                                    setOrders={setOrders}
-                                    hasMoreOrders={visibleOrders < orders.length}
-                                />
+
+                <div className="row mt-mobile mb-4">
+
+                    <div className="col-xl-7 col-lg-8 col-12 mb-4">
+
+                        <UploadFileAdmin customer_id={customerData?.user_id}/>
+
+                        {places.length === 0 ? (<>
+                            {customerData && !customerData.error && (
+                                <p style={{fontSize: "20px", marginTop: "15px"}}>Nemá žádné místo</p>
+                            )}
+                        </>) : (<h4 style={{fontSize: "20px", marginTop: "30px"}}>Místa</h4>)}
+
+
+                        <div className="row mb-4">
+                            {(customerData && (loading || forceWait)) ? (
+                                [...Array(2)].map((_, index) => (
+                                    <div className="col-12 dashboard" key={index}>
+                                        <div className="card place-card">
+                                            <div className="place">
+                                                <div className="place-icon-skeleton"></div>
+                                                <Skeleton
+                                                    variant="rectangular"
+                                                    width={140} height={20}
+                                                    className="mt-1"
+                                                    sx={{ borderRadius: "6px", marginTop: 0 }}
+                                                />
+                                                <Skeleton
+                                                    variant="rectangular"
+                                                    width={200} height={20}
+                                                    className=""
+                                                    sx={{ borderRadius: "6px", marginTop: 1 }}
+                                                />
+                                            </div>
+                                        </div>
+                                    </div>
+                                ))
+                            ) : ( <>
+                                {places.map((place, index) => (
+                                    <div className="col-12 dashboard" key={place.id}>
+                                        <div
+                                            className={`card place-card ${activeButton === index ? "active" : ""}`}
+                                            onClick={(e) => handleCardClick(e, place.place_name, index, place.id)}
+                                        >
+                                            <div className="place">
+                                                <div className="place-icon">
+                                                    <FontAwesomeIcon icon={faHouse} className="s" />
+                                                </div>
+                                                <h5 className="place-card-name">{place.place_name}</h5>
+                                                <p className="card-text">
+                                                    {place.rp_street} {place.rp_number}, {place.rp_city}, {place.rp_zip}
+                                                </p>
+
+                                                <button
+                                                    onClick={() => place.id && navigate(`/place/${place.id}`)}
+                                                    disabled={!place.id} // Отключаем кнопку, если нет ID
+                                                    className="call details-place-button"
+                                                >
+                                                    Detail
+                                                </button>
+                                            </div>
+                                        </div>
+                                    </div>
+                                ))}
+                            </> )}
+                        </div>
+
+                    </div>
+                    {/*History block*/}
+                    <div className="col-xl-3 col-lg-2 col-history">
+                        <div
+                            id="card-history"
+                            className={`card ${activeButton !== null ? "active" : ""}`}
+                            style={cardStyle}
+                        >
+                            <div className="card-body card-history">
+                                <FontAwesomeIcon icon={faClockRotateLeft} className="icon" />
+                                <button
+                                    onClick={() => selectedPlaceId && navigate(`/place/${selectedPlaceId}`)}
+                                    disabled={!selectedPlaceId} // Отключаем кнопку, если место не выбрано
+                                    className="details-place-button-in-history"
+                                >
+                                    Whole history
+                                </button>
+                                <h5>Orders history for</h5>
+                                <div className="mt-1">
+                                    <OrderHistory
+                                        placeId={selectedPlaceId}
+                                        orders={orders}
+                                        setOrders={setOrders}
+                                        hasMoreOrders={visibleOrders < orders.length}
+                                    />
+                                </div>
                             </div>
                         </div>
                     </div>
+
                 </div>
+
             </div>
+
+        </div>
 
     <FooterAccount />
         </>

@@ -32,7 +32,7 @@ interface CustomerFormAdminProps {
     setIsEditing: React.Dispatch<React.SetStateAction<boolean>>;
 }
 
-const CustomerFormAdmin: React.FC<CustomerEditProps> = ({
+const CustomerFormAdmin: React.FC<CustomerFormAdminProps> = ({
                                                        customerData,
                                                        setCustomerData,
                                                        setSuccessMessage,
@@ -43,10 +43,10 @@ const CustomerFormAdmin: React.FC<CustomerEditProps> = ({
         new_company_address: customerData.new_company_address || "",
         new_company_ico: customerData.new_company_ico || "",
         new_company_dic: customerData.new_company_dic || "",
-        company_name: customerData.new_company_name || "",
-        company_address: customerData.new_company_address || "",
-        company_ico: customerData.new_company_ico || "",
-        company_dic: customerData.new_company_dic || "",
+        company_name: customerData.company_name || "",
+        company_address: customerData.company_address || "",
+        company_ico: customerData.company_ico || "",
+        company_dic: customerData.company_dic || "",
         company_phone: customerData.company_phone || "",
         company_person: customerData.company_person || "",
         change_data: customerData.change_data,
@@ -112,159 +112,165 @@ const CustomerFormAdmin: React.FC<CustomerEditProps> = ({
             <form onSubmit={handleSubmit}>
                 <div className="row form-customer-edit">
 
-                    <div className="row form-group">
-                        <div className="col-12 label-form">
-                            <label htmlFor="new_company_name" className="form-label">
-                                new company_name
-                            </label>
+                    <div className="card">
+                        <h5>Company name {formData.new_company_name !== formData.company_name && <span style={{color: "red"}}>CHANGES</span>}</h5>
+                        <div className="row form-group">
+                            <div className="col-lg-2 col-lg-2 col-12 label-form">
+                                <label htmlFor="company_name" className="form-label">
+                                    Actual
+                                </label>
+                            </div>
+                            <div className="col-lg-10 col-12">
+                                <input
+                                    type="text"
+                                    name="company_name"
+                                    value={formData.company_name}
+                                    onChange={handleChange}
+                                    className="form-control"
+                                />
+                            </div>
                         </div>
-                        <div className="col-12">
-                            <input
-                                type="text"
-                                name="new_company_name"
-                                value={formData.new_company_name}
-                                onChange={handleChange}
-                                className="form-control"
 
-                            />
-                        </div>
-                    </div>
-                    <div className="row form-group">
-                        <div className="col-12 label-form">
-                            <label htmlFor="company_name" className="form-label">
-                                company_name
-                            </label>
-                        </div>
-                        <div className="col-12">
-                            <input
-                                type="text"
-                                name="company_name"
-                                value={formData.company_name}
-                                onChange={handleChange}
-                                className="form-control"
-
-                            />
-                        </div>
-                    </div>
-
-
-
-                    <div className="row form-group">
-                        <div className="col-12 label-form">
-                            <label htmlFor="new_company_address" className="form-label">
-                                new company address
-                            </label>
-                        </div>
-                        <div className="col-12">
-                            <input
-                                type="text"
-                                name="new_company_address"
-                                value={formData.new_company_address}
-                                onChange={handleChange}
-                                className="form-control"
-
-                            />
+                        <div className="row form-group">
+                            <div className="col-lg-2 col-lg-2 col-12 label-form">
+                                <label htmlFor="new_company_name" className="form-label">
+                                    New
+                                </label>
+                            </div>
+                            <div className="col-lg-10 col-12">
+                                <input
+                                    type="text"
+                                    name="new_company_name"
+                                    value={formData.new_company_name}
+                                    onChange={handleChange}
+                                    className="form-control"
+                                    style={formData.new_company_name !== formData.company_name ? { color: "red" } : {}}
+                                />
+                            </div>
                         </div>
                     </div>
 
-                    <div className="row form-group">
-                        <div className="col-12 label-form">
-                            <label htmlFor="company_address" className="form-label">
-                                company address
-                            </label>
+                    <div className="card mt-3">
+                        <h5>Company address {formData.new_company_address !== formData.company_address && <span style={{color: "red"}}>CHANGES</span>}</h5>
+                        <div className="row form-group">
+                            <div className="col-lg-2 col-lg-2 col-12 label-form">
+                                <label htmlFor="company_address" className="form-label">
+                                    Actual
+                                </label>
+                            </div>
+                            <div className="col-lg-10 col-12">
+                                <input
+                                    type="text"
+                                    name="company_address"
+                                    value={formData.company_address}
+                                    onChange={handleChange}
+                                    className="form-control"
+                                />
+                            </div>
                         </div>
-                        <div className="col-12">
-                            <input
-                                type="text"
-                                name="company_address"
-                                value={formData.company_address}
-                                onChange={handleChange}
-                                className="form-control"
+                        <div className="row form-group">
+                            <div className="col-lg-2 col-lg-2 col-12 label-form">
+                                <label htmlFor="new_company_address" className="form-label">
+                                    New
+                                </label>
+                            </div>
+                            <div className="col-lg-10 col-12">
+                                <input
+                                    type="text"
+                                    name="new_company_address"
+                                    value={formData.new_company_address}
+                                    onChange={handleChange}
+                                    className="form-control"
+                                    style={formData.new_company_address !== formData.company_address ? { color: "red" } : {}}
+                                />
+                            </div>
+                        </div>
+                    </div>
 
-                            />
+                    <div className="card mt-3">
+                        <h5>Company number IČO {formData.new_company_ico !== formData.company_ico && <span style={{color: "red"}}>CHANGES</span>}</h5>
+                        <div className="row form-group">
+                            <div className="col-lg-2 col-12 label-form">
+                                <label htmlFor="company_ico" className="form-label">
+                                    Actual
+                                </label>
+                            </div>
+                            <div className="col-lg-10 col-12">
+                                <input
+                                    type="text"
+                                    name="company_ico"
+                                    value={formData.company_ico}
+                                    onChange={handleChange}
+                                    className="form-control"
+
+                                />
+                            </div>
+                        </div>
+                        <div className="row form-group">
+                            <div className="col-lg-2 col-12 label-form">
+                                <label htmlFor="new_company_ico" className="form-label">
+                                    New
+                                </label>
+                            </div>
+                            <div className="col-lg-10 col-12">
+                                <input
+                                    type="text"
+                                    name="new_company_ico"
+                                    value={formData.new_company_ico}
+                                    onChange={handleChange}
+                                    className="form-control"
+
+                                />
+                            </div>
+                        </div>
+                    </div>
+
+                    <div className="card mt-3">
+                        <h5>Vat number DIČ {formData.new_company_dic !== formData.company_dic && <span style={{color: "red"}}>CHANGES</span>}</h5>
+                        <div className="row form-group">
+                            <div className="col-lg-2 col-12 label-form">
+                                <label htmlFor="company_dic" className="form-label">
+                                    Actual
+                                </label>
+                            </div>
+                            <div className="col-lg-10 col-12">
+                                <input
+                                    type="text"
+                                    name="company_dic"
+                                    value={formData.company_dic}
+                                    onChange={handleChange}
+                                    className="form-control"
+
+                                />
+                            </div>
+                        </div>
+                        <div className="row form-group">
+                            <div className="col-lg-2 col-12 label-form">
+                                <label htmlFor="new_company_dic" className="form-label">
+                                    New
+                                </label>
+                            </div>
+                            <div className="col-lg-10 col-12">
+                                <input
+                                    type="text"
+                                    name="new_company_dic"
+                                    value={formData.new_company_dic}
+                                    onChange={handleChange}
+                                    className="form-control"
+
+                                />
+                            </div>
                         </div>
                     </div>
 
 
-                    <div className="row form-group">
-                        <div className="col-12 label-form">
-                            <label htmlFor="new_company_ico" className="form-label">
-                                new company number
-                            </label>
-                        </div>
-                        <div className="col-12">
-                            <input
-                                type="text"
-                                name="new_company_ico"
-                                value={formData.new_company_ico}
-                                onChange={handleChange}
-                                className="form-control"
-
-                            />
-                        </div>
-                    </div>
-
-                    <div className="row form-group">
-                        <div className="col-12 label-form">
-                            <label htmlFor="company_ico" className="form-label">
-                                company number
-                            </label>
-                        </div>
-                        <div className="col-12">
-                            <input
-                                type="text"
-                                name="company_ico"
-                                value={formData.company_ico}
-                                onChange={handleChange}
-                                className="form-control"
-
-                            />
-                        </div>
-                    </div>
-
-                    <div className="row form-group">
-                        <div className="col-12 label-form">
-                            <label htmlFor="new_company_dic" className="form-label">
-                                new vat number
-                            </label>
-                        </div>
-                        <div className="col-12">
-                            <input
-                                type="text"
-                                name="new_company_dic"
-                                value={formData.new_company_dic}
-                                onChange={handleChange}
-                                className="form-control"
-
-                            />
-                        </div>
-                    </div>
-
-                    <div className="row form-group">
-                        <div className="col-12 label-form">
-                            <label htmlFor="company_dic" className="form-label">
-                                vat number
-                            </label>
-                        </div>
-                        <div className="col-12">
-                            <input
-                                type="text"
-                                name="company_dic"
-                                value={formData.company_dic}
-                                onChange={handleChange}
-                                className="form-control"
-
-                            />
-                        </div>
-                    </div>
-
-                    <div className="row form-group">
-                        <div className="col-12 label-form">
+                    <div className="row form-group mt-3">
+                        <div className="col-lg-2 col-12 label-form">
                             <label htmlFor="company_phone" className="form-label">
-                                phone
+                                Telephone
                             </label>
                         </div>
-                        <div className="col-12">
+                        <div className="col-lg-10 col-12">
                             <input
                                 type="text"
                                 name="company_phone"
@@ -277,12 +283,12 @@ const CustomerFormAdmin: React.FC<CustomerEditProps> = ({
                     </div>
 
                     <div className="row form-group">
-                        <div className="col-12 label-form">
+                        <div className="col-lg-2 col-12 label-form">
                             <label htmlFor="company_person" className="form-label">
-                                full name
+                                Full name
                             </label>
                         </div>
-                        <div className="col-12">
+                        <div className="col-lg-10 col-12">
                             <input
                                 type="text"
                                 name="company_person"
@@ -311,7 +317,7 @@ const CustomerFormAdmin: React.FC<CustomerEditProps> = ({
                         <label htmlFor="change_data" className="check-box" />
                     </div>
                     <label className="checkbox-label-edit-form form-label" style={{paddingLeft: "50px"}}>
-                        new_data_change
+                        Data change
                     </label>
 
                 </div>
@@ -332,7 +338,7 @@ const CustomerFormAdmin: React.FC<CustomerEditProps> = ({
                         <label htmlFor="active" className="check-box" />
                     </div>
                     <label className="checkbox-label-edit-form form-label" style={{paddingLeft: "50px"}}>
-                        active
+                        Active
                     </label>
 
                 </div>
@@ -353,14 +359,14 @@ const CustomerFormAdmin: React.FC<CustomerEditProps> = ({
                         <label htmlFor="weekend_able" className="check-box" />
                     </div>
                     <label className="checkbox-label-edit-form form-label" style={{paddingLeft: "50px"}}>
-                        weekend_able
+                        Weekend able
                     </label>
 
                 </div>
 
                 <div className="row">
                     <button type="submit" className="btn-submit">
-                        submit
+                        Submit
                     </button>
                 </div>
             </form>

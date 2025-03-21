@@ -114,12 +114,13 @@ const UploadFileAdmin: React.FC<UploadFileAdminProps> = ({ onUploadSuccess, cust
     };
 
     useEffect(() => {
+        if (!customer_id) return;
         fetchUploadedFiles();
-    }, []);
+    }, [customer_id]);
 
     return (
         <div id="upload-component">
-            <div className="row other-card">
+            <div className="">
                 {error && <p className="alert alert-danger mt-3">{error}</p>}
                 {success && <p className="alert alert-success mt-3">{success}</p>}
 

@@ -950,7 +950,7 @@ p.text-history {
 
 #card-history {
   /*position: absolute;*/
-  left: 20px;
+  left: 0;
   width: clamp(300px, 100%, 400px);
   background: #f8fcff;
   border: 2px solid #00aab7;
@@ -1000,7 +1000,7 @@ p.text-history {
 .place-card.active {
   border: 2px solid #00aab7;
   box-shadow: 0 8px 16px rgba(0, 123, 255, 0.3);
-  transform: scale(1.08);
+  transform: scale(1.04);
 }
 
 #card-history.active {
@@ -2088,4 +2088,17 @@ p.back-link {
 }
 #company-top-admin .company-info {
   font-size: 16px;
+}
+#company-top-admin .details-place-button {
+  position: absolute;
+  top: 20%;
+  right: 20px !important;
+  font-size: 14px;
+  font-weight: 600;
+  line-height: 36px;
+  color: #00aab7;
+  text-align: center;
+  width: 140px;
+  height: 55px;
+  border-radius: 27px;
 }

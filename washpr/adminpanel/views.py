@@ -4,6 +4,7 @@ from django.contrib.auth.decorators import login_required, user_passes_test
 
 from customer.models import Customer
 from order.models import Order
+from rest_framework import status
 from rest_framework.decorators import api_view, permission_classes
 from rest_framework.generics import get_object_or_404
 from rest_framework.permissions import IsAdminUser
@@ -116,7 +117,7 @@ def delete_document_admin(request, file_id, customer_id):
     if not file_id:
         return Response({"error": "File ID is required."}, status=400)
     try:
-        document = CustomerDocuments.objects.get(id=file_id, customer__user=request.user)
+        document = CustomerDocuments.objects.get(id=file_id, customer__user__id=customer_id)
         document.file.delete()  # Удаление файла физически из файловой системы
         document.delete()       # Удаление записи из базы данных
         return Response({"message": "File deleted successfully!"}, status=status.HTTP_204_NO_CONTENT)

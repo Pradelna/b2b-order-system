@@ -181,7 +181,7 @@ const CustomerDetailPage: React.FC = () => {
                         </>) : (<>
 
 
-                            <UploadFile />
+                            {/*<UploadFile />*/}
 
                             <DocumentsBlock />
 
