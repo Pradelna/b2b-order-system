@@ -72,42 +72,12 @@ const CompanyInfoAdmin: React.FC<CompanyInfoAdminProps> = ({
             });
     };
 
-    console.log(customerData);
+    // console.log(customerData);
     useEffect(() => {
         if (customerData) {
             setLoading(false);
         }
     }, [customerData]);
-
-    // useEffect(() => {
-    //     if (!customerData || !customerData.company_email) {
-    //         setLoading(true);
-    //         fetchWithAuth(`${BASE_URL}/customer/data/`)
-    //             .then((response) => {
-    //                 if (!response.ok) {
-    //                     if (response.status === 404) {
-    //                         throw new Error("Customer not found"); // Явно обрабатываем 404
-    //                     }
-    //                     throw new Error("Failed to fetch customer data");
-    //                 }
-    //                 return response.json();
-    //             })
-    //             .then((data: CustomerData) => {
-    //                 setCustomerData(data);
-    //                 setUserId(data.user_id);
-    //                 setLoading(false);
-    //             })
-    //             .catch((error) => {
-    //                 console.error("Error fetching customer data:", error.message);
-    //                 if (error.message === "Customer not found") {
-    //                     setCustomerData(null); // Setting the absence of data
-    //                 }
-    //                 setLoading(false);
-    //             });
-    //     } else {
-    //         setLoading(false);
-    //     }
-    // }, [customerData, setCustomerData]);
 
     if (loading) {
         return (

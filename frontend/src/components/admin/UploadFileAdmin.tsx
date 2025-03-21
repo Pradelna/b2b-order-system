@@ -20,7 +20,6 @@ const UploadFileAdmin: React.FC<UploadFileAdminProps> = ({ onUploadSuccess, cust
     const [success, setSuccess] = useState<string>('');
     const [isUploading, setIsUploading] = useState<boolean>(false); // State for upload animation
     const BASE_URL = import.meta.env.VITE_API_URL;
-    console.log(customer_id);
 
     // Fetch the list of uploaded files
     const fetchUploadedFiles = async () => {

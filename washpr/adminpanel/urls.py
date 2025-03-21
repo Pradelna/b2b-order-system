@@ -14,4 +14,5 @@ urlpatterns = [
     path('customer/documents/list/<int:customer_id>/', list_customer_documents_admin, name='list_customer_documents'),
     path('customer/documents/for-customer/<int:customer_id>/', list_documents_for_customer_admin, name='list_documents_for_customer_admin'),
     path('customer/documents/<int:file_id>/delete/<int:customer_id>/', delete_document_admin, name='delete_document_admin'),
+    path('place-detail/<int:place_id>/', get_place_detail_admin, name='get_place_detail_admin'),
 ]

@@ -29,6 +29,7 @@ import AllOrderHistory from "./components/order/AllOrderHistory";
 import Dashboard from "./components/admin/Dashboard";
 import AdminRoute from "./components/admin/AdminRoute";
 import CustomerDetailAdmin from "./components/admin/CustomerDetailAdmin";
+import PlaceDetailAdmin from "./components/admin/PlaceDetailAdmin";
 
 // Define the shape of the language data
 interface LanguageData {
@@ -162,14 +163,23 @@ const App: React.FC = () => {
               }
           />
 
-              <Route
-                  path="/admin/customer-detail/:customerId"
-                  element={
-                      <AdminRoute>
-                          <CustomerDetailAdmin />
-                      </AdminRoute>
-                      }
-              />
+          <Route
+              path="/admin/customer-detail/:customerId"
+              element={
+                  <AdminRoute>
+                      <CustomerDetailAdmin />
+                  </AdminRoute>
+                  }
+          />
+
+          <Route
+              path="/admin/place-detail/:id"
+              element={
+                  <AdminRoute>
+                      <PlaceDetailAdmin />
+                  </AdminRoute>
+              }
+          />
 
             {/* Fallback for unknown routes */}
             <Route path="*" element={<Navigate to="/" />} />

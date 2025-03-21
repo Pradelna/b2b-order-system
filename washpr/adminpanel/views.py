@@ -16,6 +16,7 @@ from place.serializers import PlaceSerializer
 from customer.models import CustomerDocuments
 from customer.models import DocumentsForCustomer
 from customer.serializers import CustomerDocumentSerializer
+from customer.serializers import DocumentForCustomerSerializer
 
 
 @login_required
@@ -136,3 +137,14 @@ def list_documents_for_customer_admin(request, customer_id):
     documents = DocumentsForCustomer.objects.filter(customer=customer)
     serializer = DocumentForCustomerSerializer(documents, many=True)
     return Response(serializer.data)
+
+@api_view(['GET'])
+@permission_classes([IsAdminUser])
+def get_place_detail_admin(request, place_id):
+    try:
+        # Получаем место по ID
+        place = Place.objects.get(id=place_id)
+        serializer = PlaceSerializer(place)
+        return Response(serializer.data, status=status.HTTP_200_OK)
+    except Place.DoesNotExist:
+        return Response({"error": "Place not found"}, status=status.HTTP_404_NOT_FOUND)

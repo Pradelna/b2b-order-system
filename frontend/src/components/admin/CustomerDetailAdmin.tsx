@@ -111,7 +111,7 @@ const CustomerDetailAdmin: React.FC = () => {
                 if (response.ok) {
                     const data = await response.json();
                     setCustomerData(data.customer);
-                    console.log(data.customer);
+                    // console.log(data.customer);
                 } else {
                     console.error("Error fetching customer data");
                 }
@@ -132,7 +132,7 @@ const CustomerDetailAdmin: React.FC = () => {
                 const response = await fetchWithAuth(`${BASE_URL}/admin/adminpanel/customer-place/list/${customerId}`);
                 if (response.ok) {
                     const data = await response.json();
-                    console.log(data);
+                    // console.log(data);
                     setPlaces(data.places);
                     setLoading(false);
                 } else {
@@ -358,7 +358,7 @@ const CustomerDetailAdmin: React.FC = () => {
                                                 </p>
 
                                                 <button
-                                                    onClick={() => place.id && navigate(`/place/${place.id}`)}
+                                                    onClick={() => place.id && navigate(`/admin/place-detail/${place.id}`)}
                                                     disabled={!place.id} // Отключаем кнопку, если нет ID
                                                     className="call details-place-button"
                                                 >
@@ -382,7 +382,7 @@ const CustomerDetailAdmin: React.FC = () => {
                             <div className="card-body card-history">
                                 <FontAwesomeIcon icon={faClockRotateLeft} className="icon" />
                                 <button
-                                    onClick={() => selectedPlaceId && navigate(`/place/${selectedPlaceId}`)}
+                                    onClick={() => selectedPlaceId && navigate(`/admin/place-detail/${selectedPlaceId}`)}
                                     disabled={!selectedPlaceId} // Отключаем кнопку, если место не выбрано
                                     className="details-place-button-in-history"
                                 >
