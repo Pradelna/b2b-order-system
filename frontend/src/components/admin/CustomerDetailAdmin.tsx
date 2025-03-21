@@ -1,22 +1,22 @@
 import React, { useState, useEffect, useContext } from "react";
 import {useNavigate, useLocation, Link, useParams} from "react-router-dom";
 import CompanyInfoAdmin from "./CompanyInfoAdmin";
-import OrderHistory from "../order/OrderHistory";
+import OrderHistoryAdmin from "./OrderHistoryAdmin";
 import { fetchWithAuth } from "../account/auth";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import {
     faClockRotateLeft,
     faHouse,
-    faCartPlus,
-    faBuilding,
-    faFileInvoiceDollar, faCircleCheck, faStopwatch
+    faFileInvoiceDollar,
+    faCircleCheck,
+    faStopwatch
 } from "@fortawesome/free-solid-svg-icons";
 import {Skeleton} from "@mui/material";
-import {fontSize} from "@mui/system";
 import HeaderAdmin from "./HeaderAdmin";
 import FooterAccount from "../FooterAccount";
 import CustomerFormAdmin from "./CustomerFormAdmin";
 import UploadFileAdmin from "./UploadFileAdmin";
+import AllHistoryAdmin from "./AllHistoryAdmin";
 
 interface Place {
     rp_number: any;
@@ -246,7 +246,7 @@ const CustomerDetailAdmin: React.FC = () => {
                             <div className="row">
 
 
-                                    {(customerData && (!loading || !forceWait)) ? (
+                                    {(customerData && (loading || forceWait)) ? (
                                         [...Array(2)].map((_, index) => (
                                             <div className="col-lg-4 col-xl-7 col-4 mb-4" key={index}>
                                                 <div className="card dashboard-button">
@@ -270,9 +270,9 @@ const CustomerDetailAdmin: React.FC = () => {
                                     ) : (
                                         <>
 
-                                            <div className="col-lg-4 col-xl-2 col-4 mb-4">
-                                                <Link to="/all-orders" className="text-decoration-none">
-                                                    <div className="card dashboard-button">
+                                            <div className="col-lg-6 col-xl-7 col-4 mb-4">
+                                                <Link to={`/admin/user-history/${customerId}`} className="text-decoration-none">
+                                                    <div className="card dashboard-button" style={{height:'146px'}}>
                                                         <div className="card-body button-history">
                                                             <FontAwesomeIcon icon={faClockRotateLeft} className="icon" />
                                                             <p className="text-history">
@@ -283,9 +283,9 @@ const CustomerDetailAdmin: React.FC = () => {
                                                 </Link>
                                             </div>
 
-                                            <div className="col-lg-4 col-xl-2 col-4">
+                                            <div className="col-lg-6 col-xl-7 col-4">
                                                 <Link to="/invoices" className="text-decoration-none">
-                                                    <div className="card dashboard-button">
+                                                    <div className="card dashboard-button" style={{height:'145px'}}>
                                                         <div className="card-body">
                                                             <FontAwesomeIcon icon={faFileInvoiceDollar} className="icon" />
                                                             <p className="text-history">Faktury</p>
@@ -390,7 +390,7 @@ const CustomerDetailAdmin: React.FC = () => {
                                 </button>
                                 <h5>Orders history for</h5>
                                 <div className="mt-1">
-                                    <OrderHistory
+                                    <OrderHistoryAdmin
                                         placeId={selectedPlaceId}
                                         orders={orders}
                                         setOrders={setOrders}

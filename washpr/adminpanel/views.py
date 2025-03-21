@@ -17,6 +17,9 @@ from customer.models import CustomerDocuments
 from customer.models import DocumentsForCustomer
 from customer.serializers import CustomerDocumentSerializer
 from customer.serializers import DocumentForCustomerSerializer
+from order.models import PhotoReport
+from order.serializers import PhotoReportSerializer
+from order.serializers import GetOrderSerializer
 
 
 @login_required
@@ -30,7 +33,7 @@ def total_customers(request):
 
 @user_passes_test(lambda u: u.is_staff)
 def total_orders(request):
-    total = Order.objects.filter(processed=True).count()
+    total = Order.objects.filter(processed=True, delivery=True).count()
     return JsonResponse({"total_orders": total})
 
 @api_view(['GET'])
@@ -55,11 +58,8 @@ def customers_places(request, customer_id):
     places = Place.objects.filter(customer=customer)
     places_all = Place.objects.all()
     for place in places_all:
-        # print(place.customer)
         if customer == place.customer:
             print(f"this place is {place} for {place.customer}")
-    # print(places)
-    # serializer = PlaceSerializer(places, many=True)
     serializer = PlaceSerializer(places, many=True)
     return Response({"places": serializer.data})
 
@@ -101,7 +101,6 @@ def upload_document(request, customer_id):
 @api_view(['GET'])
 @permission_classes([IsAdminUser])
 def list_customer_documents_admin(request, customer_id):
-    print(customer_id)
     try:
         customer = Customer.objects.get(user__id=customer_id)
     except Customer.DoesNotExist:
@@ -144,7 +143,49 @@ def get_place_detail_admin(request, place_id):
     try:
         # Получаем место по ID
         place = Place.objects.get(id=place_id)
+        customer_name = place.customer.company_name
+        user_id = place.customer.user_id
         serializer = PlaceSerializer(place)
-        return Response(serializer.data, status=status.HTTP_200_OK)
+        return Response({
+            "customer_name": customer_name,
+            "user_id": user_id,
+            "place": serializer.data,
+
+        }, status=status.HTTP_200_OK)
     except Place.DoesNotExist:
         return Response({"error": "Place not found"}, status=status.HTTP_404_NOT_FOUND)
+
+
+@api_view(['GET'])
+@permission_classes([IsAdminUser])
+def get_photo_reports_admin(request, place_id):
+    try:
+        photos = PhotoReport.objects.filter(order__place__id=place_id)
+        serializer = PhotoReportSerializer(photos, many=True)
+        return Response(serializer.data, status=status.HTTP_200_OK)
+    except Exception as e:
+        return Response({"error": str(e)}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+
+@api_view(['GET'])
+@permission_classes([IsAdminUser])
+def get_all_photo_reports_admin(request, customer_id):
+    try:
+        photos = PhotoReport.objects.filter(order__user__id=customer_id)
+        serializer = PhotoReportSerializer(photos, many=True)
+        return Response(serializer.data, status=status.HTTP_200_OK)
+    except Exception as e:
+        return Response({"error": str(e)}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+
+@api_view(['GET'])
+@permission_classes([IsAdminUser])
+def get_user_orders_admin(request, customer_id):
+    try:
+        orders = Order.objects.filter(user__id=customer_id)
+        serializer = GetOrderSerializer(orders, many=True)
+        return Response({
+            "user_id": customer_id,
+            "orders": serializer.data,
+
+        }, status=status.HTTP_200_OK)
+    except Exception as e:
+        return Response({"error": str(e)}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)

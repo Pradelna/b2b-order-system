@@ -8,12 +8,12 @@ import {
     faCartPlus,
     faPowerOff,
     faCircleCheck,
-    faStopwatch, faFileInvoiceDollar
+    faStopwatch, faFileInvoiceDollar, faChevronLeft
 } from "@fortawesome/free-solid-svg-icons";
 import HeaderAdmin from "./HeaderAdmin";
 import FooterAccount from "../FooterAccount";
 import OrderHistory from "../order/OrderHistory";
-import OrderSuccess from "../order/OrderSuccess";
+import OrderHistoryAdmin from "./OrderHistoryAdmin";
 import { fetchWithAuth } from "../account/auth";
 import DarkTooltip from "@/components/utils/DarkTooltip";
 import NavButtons from "@/components/account/NavButtons";
@@ -60,6 +60,8 @@ const PlaceDetailAdmin: React.FC = () => {
 
     const [place, setPlace] = useState<Place | null>(null);
     const [customerId, setCustomerId] = useState<Customer | null>(null);
+    const [customerName, setCustomerName] = useState<Customer | null>(null);
+    const [userId, setUserId] = useState<Customer | null>(null);
     const [loading, setLoading] = useState<boolean>(true);
     const [showEditForm, setShowEditForm] = useState<boolean>(false);
     const [showOrderForm, setShowOrderForm] = useState<boolean>(false);
@@ -125,68 +127,6 @@ const PlaceDetailAdmin: React.FC = () => {
         }
     };
 
-    // delete place, but only add "deleted"=True
-    const handleDelete = async () => {
-        // deleting of the place
-        if (window.confirm("Are you sure you want to delete this place?")) {
-            try {
-                const response = await fetchWithAuth(
-                    `${BASE_URL}/place/edit/${place.id}/`,
-                    {
-                        method: "PUT",
-                        headers: {
-                            "Content-Type": "application/json",
-                        },
-                        body: JSON.stringify({ "deleted": true }),
-                    }
-                );
-                if (response.ok) {
-                    navigate("/account", {
-                        state: { successMessage: "Place deleted successfully!" },
-                    });
-                } else {
-                    console.error("Failed to delete place.");
-                }
-            } catch (error) {
-                console.error("Error deleting place:", error);
-            }
-        }
-    };
-
-    const handleStopOrder = async (orderId: number) => {
-        // stop repeat order
-        if (window.confirm(currentData?.messages?.sure_cancel_order || "Opravdu si přejete zrušit tuto objednávku?")) {
-            try {
-                const response = await fetchWithAuth(`${BASE_URL}/order/update/${orderId}/`, {
-                    method: "PUT",
-                    headers: {
-                        "Content-Type": "application/json",
-                    },
-                    body: JSON.stringify({ canceled: true, rp_status: 10, rp_customer_note: "storno" }),
-                });
-
-                if (response.ok) {
-                    const updatedOrder = await response.json();
-                    setCurrentOrder(null); // del current order
-                    setStopedOrder(updatedOrder);
-                    setOrderHistory((prevOrders) => {
-                        // add ex current order
-                        if (prevOrders.some((order) => order.id === updatedOrder.id)) {
-                            return prevOrders;
-                        }
-                        return [updatedOrder, ...prevOrders];
-                    });
-                    setSuccessMessage(currentData?.messages?.order_suc_canceled || "Objednávka byla úspěšně zrušena!");
-                    setTimeout(() => setSuccessMessage(""), 10000);
-                } else {
-                    console.error("Failed to stop order.");
-                }
-            } catch (error) {
-                console.error("Error stopping order:", error);
-            }
-        }
-    };
-
     const toggleExpand = () => {
         setExpandedDates(!expandedDates);
     };
@@ -204,8 +144,10 @@ const PlaceDetailAdmin: React.FC = () => {
                 );
                 if (response.ok) {
                     const data = await response.json();
-                    setPlace(data);
-                    setCustomerId(data.customer);
+                    setPlace(data.place);
+                    setCustomerId(data.place.customer);
+                    setCustomerName(data.customer_name);
+                    setUserId(data.user_id);
                     if (data.data_sent === false) {
                         setNotActivePlace(true)
                     } else {
@@ -234,36 +176,6 @@ const PlaceDetailAdmin: React.FC = () => {
         return () => clearTimeout(timer); // Cleanup
     }, [id]);
 
-    // check if order is old then 30 minut
-    useEffect(() => {
-        if (!currentOrder) return; // Если заказа нет, не запускаем таймер
-
-        const timer = setInterval(() => {
-            if (checkTimeElapsed(currentOrder)) {
-                setCancelableOrders(true);
-                clearInterval(timer); // Останавливаем таймер после установки true
-            }
-        }, 60000); // Проверяем каждую минуту
-
-        return () => clearInterval(timer); // Очищаем таймер при размонтировании компонента
-    }, [currentOrder]); // Зависимость — currentOrder
-
-    useEffect(() => {
-        if (showOrderForm) {
-            // Добавляем класс
-            document.body.classList.add("no-scroll");
-        } else {
-            // Убираем класс
-            document.body.classList.remove("no-scroll");
-        }
-
-        // Очистка при размонтировании компонента:
-        return () => {
-            document.body.classList.remove("no-scroll");
-        };
-    }, [showOrderForm]);
-
-
     if (!place) return <p>Place not found.</p>;
 
     return (
@@ -273,7 +185,12 @@ const PlaceDetailAdmin: React.FC = () => {
             <div className="container margin-top-90 wrapper place-detail-page">
                 <div className="row message-block-76">
                     <div className="col-xl-1 col-lg-3 col-sm-2 back-button">
-                        <NavButtons />
+                        <Link to={`/admin/customer-detail/${userId}`} className="text-decoration-none">
+                            <p className="back-link">
+                                <FontAwesomeIcon icon={faChevronLeft} className="icon" />
+                                <span className="ms-2"><strong>{currentData?.buttons.back || "Zpět"}</strong></span>
+                            </p>
+                        </Link>
                     </div>
                     <div className="col-xl-7 col-lg-10 col-12">
                         {successMessage && (
@@ -310,44 +227,20 @@ const PlaceDetailAdmin: React.FC = () => {
                             </div>
                         ) : (
                             <div className="card place-details">
-                                {!showEditForm ? (
-                                    <>
-                                        {currentOrder ? (
-                                            <DarkTooltip title={currentData?.place?.no_edit_place || "Nemůžete změnit místo, dokud jsou nedokončené objednávky"} placement="top" arrow>
-                                                <FontAwesomeIcon
-                                                    icon={faPenToSquare}
-                                                    className="settings"
-                                                    style={{ cursor: "pointer" }}
-                                                />
-                                            </DarkTooltip>
-                                        ) : (
-                                            <DarkTooltip title={currentData?.place.edit_place || "Upravit místo"} placement="top" arrow>
-                                                <FontAwesomeIcon
-                                                    icon={faPenToSquare}
-                                                    className="settings"
-                                                    style={{ cursor: "pointer" }}
-                                                    onClick={() => setShowEditForm(true)}
-                                                />
-                                            </DarkTooltip>
-                                        )}
-                                    </>
-                                ) : (
-                                    <DarkTooltip title={currentData?.form.close || "Zavřít"} placement="top" arrow>
-                                        <FontAwesomeIcon
-                                            icon={faSquareXmark}
-                                            className="settings"
-                                            style={{ cursor: "pointer" }}
-                                            onClick={() => setShowEditForm(false)}
-                                        />
-                                    </DarkTooltip>
-                                )}
                                 <h1>{currentData?.place.detail_title || "Podrobnosti o místě"}</h1>
-                                {!showEditForm ? (
+
                                     <div className="place-info">
                                         <div className="row mb-2">
                                             <div className="col-12">
                                                 <div className="form-control">
                                                     <strong>{currentData?.form.place_name || "Název místa"}:</strong> {place.place_name}
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div className="row mb-2">
+                                            <div className="col-12">
+                                                <div className="form-control">
+                                                    <strong>Název firmy:</strong> {customerName}
                                                 </div>
                                             </div>
                                         </div>
@@ -372,23 +265,9 @@ const PlaceDetailAdmin: React.FC = () => {
                                                 </div>
                                             </div>
                                         </div>
-                                        <button
-                                            className="btn-submit mt-3"
-                                            onClick={() => setShowOrderForm(true)}
-                                            disabled={notActivePlace}
-                                        >
-                                            <FontAwesomeIcon icon={faCartPlus} className="icon" />
-                                            <span className="ms-3">{currentData?.buttons.new_order || "Nová objednávka"}</span>
-                                        </button>
+
                                     </div>
-                                ) : (
-                                    <PlaceEdit
-                                        place={place}
-                                        onClose={() => setShowEditForm(false)}
-                                        onPlaceUpdated={setPlace}
-                                        onDelete={handleDelete}
-                                    />
-                                )}
+
                             </div>
                         )}
 
@@ -403,7 +282,11 @@ const PlaceDetailAdmin: React.FC = () => {
                             <div className="col-xl-8 col-lg-10 col-12">
                                 <div className="card current-order">
 
-                                    <h3>{currentData?.order.current_order || "Current Order"} #{currentOrder.id}</h3>
+                                    <h3>Aktuální objednávka #{currentOrder.id} {" "}
+                                        {currentOrder?.active ? (
+                                            currentOrder?.rp_contract_external_id
+                                        ) : ("havn't sent yet")}
+                                        </h3>
                                     <div className="order-details">
 
                                         <div className="form-control mb-2">
@@ -434,22 +317,22 @@ const PlaceDetailAdmin: React.FC = () => {
 
                                         </div>
                                         <div className="form-control mb-2">
-                                            <strong>{currentData?.order.status || "Status" }:</strong>
-                                            {currentOrder.rp_status === 20 && (" Nová")}
-                                            {currentOrder.rp_status === 0 && (" Nová")}
-                                            {currentOrder.rp_status === 1 && (" In progress 1")}
-                                            {currentOrder.rp_status === 2 && (" Přiřazeno")}
-                                            {currentOrder.rp_status === 3 && (" V procesu")}
-                                            {currentOrder.rp_status === 4 && (" Dokončeno")}
-                                            {currentOrder.rp_status === 5 && (" Complited 5")}
-                                            {currentOrder.rp_status === 6 && (" Ověřeno")}
-                                            {currentOrder.rp_status === 7 && (" Odmítnuto")}
-                                            {currentOrder.rp_status === 8 && (" Neznámý status")}
-                                            {currentOrder.rp_status === 9 && (" Odloženo")}
-                                            {currentOrder.rp_status === 10 && (" Storno")}
-                                            {currentOrder.rp_status === 11 && (" K fakturaci")}
-                                            {currentOrder.rp_status === 12 && (" Čeká na díl")}
-                                            {currentOrder.rp_status === 13 && (" Marný výjezd")}
+                                            <strong>{currentData?.order.status || "Status" }: </strong>
+                                            {currentOrder.rp_status === 20 && (currentData?.status?.status_20 || "Nová")}
+                                            {currentOrder.rp_status === 0 && (currentData?.status?.status_0 || "Nová")}
+                                            {currentOrder.rp_status === 1 && (currentData?.status?.status_1 || "Nová")}
+                                            {currentOrder.rp_status === 2 && (currentData?.status?.status_2 || "Přijato")}
+                                            {currentOrder.rp_status === 3 && (currentData?.status?.status_3 || "Na cestě")}
+                                            {currentOrder.rp_status === 4 && (currentData?.status?.status_4 || "Dokončeno")}
+                                            {currentOrder.rp_status === 5 && (currentData?.status?.status_5 || "Complited")}
+                                            {currentOrder.rp_status === 6 && (currentData?.status?.status_6 || "Ověřeno")}
+                                            {currentOrder.rp_status === 7 && (currentData?.status?.status_7 || "Odmítnuto")}
+                                            {currentOrder.rp_status === 8 && (currentData?.status?.status_8 || "Neznámý status")}
+                                            {currentOrder.rp_status === 9 && (currentData?.status?.status_9 || "Odloženo")}
+                                            {currentOrder.rp_status === 10 && (currentData?.status?.status_10 || "Storno")}
+                                            {currentOrder.rp_status === 11 && (currentData?.status?.status_11 || "K fakturaci")}
+                                            {currentOrder.rp_status === 12 && (currentData?.status?.status_12 || "Čeká na díl")}
+                                            {currentOrder.rp_status === 13 && (currentData?.status?.status_13 || "Marný výjezd")}
                                         </div>
                                         <div className="form-control mb-2">
                                             <strong>{currentData?.form.type_ship || "Typ závozu" }:</strong>
@@ -504,17 +387,6 @@ const PlaceDetailAdmin: React.FC = () => {
 
                                     </div>
 
-                                    {!cancelableOrders && (
-                                        <button
-                                            className="btn-link mt-2"
-                                            onClick={() => handleStopOrder(currentOrder!.id)}
-                                        >
-                                            <FontAwesomeIcon icon={faPowerOff} className="icon" />
-                                            <span className="ms-2">{currentData?.buttons.cancel || "Stornovat"}</span>
-                                        </button>
-                                    )}
-
-
                                 </div>
                             </div>
                         </div>
@@ -523,7 +395,7 @@ const PlaceDetailAdmin: React.FC = () => {
 
                 <div className="row mt-4">
                     <div className="col-xl-8 col-lg-10 col-12">
-                        <OrderHistory
+                        <OrderHistoryAdmin
                             placeId={place.id}
                             hasMoreOrders={false}
                             orders={orderHistory}
@@ -533,32 +405,6 @@ const PlaceDetailAdmin: React.FC = () => {
                     </div>
                 </div>
 
-                {showOrderForm && (
-                    <OrderForm
-                        placeId={place.id}
-                        onClose={() => setShowOrderForm(false)}
-                        onSuccess={(newOrder) => {
-                            // add a new order to the list
-                            setOrderHistory((prevOrders) => [newOrder, ...prevOrders]);
-                            // Обновляем текущий заказ, если он активный
-                            if (newOrder.every_week && !newOrder.end_order) {
-                                setCurrentOrder(newOrder);
-                            }
-                            setSuccessMessage(
-                                currentData?.messages.order_created || "Objednávka úspěšně vytvořená"
-                            );
-                            setTimeout(() => setSuccessMessage(""), 10000);
-                            setShowOrderForm(false);
-                            setSuccessOrderMessage(newOrder);
-                            // Обновляем данные из API
-                            fetchOrders();
-                        }}
-                    />
-                )}
-
-                {successOrderMessage && (
-                    <OrderSuccess newOrder={successOrderMessage} onClose={() => setSuccessOrderMessage(null)} />
-                )}
             </div>
             <FooterAccount />
         </>

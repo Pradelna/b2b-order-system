@@ -16,8 +16,6 @@ const NavButtons: React.FC = () => {
                 <FontAwesomeIcon icon={faChevronLeft} className="icon" />
                 <span className="ms-2"><strong>{currentData?.buttons["back"] || "Zpět"}</strong></span>
             </p>
-
-            {/*</div>*/}
         </Link>
     );
 };

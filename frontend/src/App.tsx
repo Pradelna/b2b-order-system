@@ -30,6 +30,7 @@ import Dashboard from "./components/admin/Dashboard";
 import AdminRoute from "./components/admin/AdminRoute";
 import CustomerDetailAdmin from "./components/admin/CustomerDetailAdmin";
 import PlaceDetailAdmin from "./components/admin/PlaceDetailAdmin";
+import AllHistoryAdmin from "./components/admin/AllHistoryAdmin";
 
 // Define the shape of the language data
 interface LanguageData {
@@ -180,6 +181,15 @@ const App: React.FC = () => {
                   </AdminRoute>
               }
           />
+
+              <Route
+                  path="/admin/user-history/:customerId"
+                  element={
+                      <AdminRoute>
+                          <AllHistoryAdmin />
+                      </AdminRoute>
+                  }
+              />
 
             {/* Fallback for unknown routes */}
             <Route path="*" element={<Navigate to="/" />} />

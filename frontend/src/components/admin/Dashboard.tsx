@@ -13,9 +13,9 @@ interface CustomerData {
 }
 
 function Dashboard(): JSX.Element {
-    const [customerId, setCustomerId] = useState<number | false>(false);
-    const [loading, setLoading] = useState<boolean>(true);
-    const BASE_URL = import.meta.env.VITE_API_URL;
+    // const [customerId, setCustomerId] = useState<number | false>(false);
+    // const [loading, setLoading] = useState<boolean>(true);
+    // const BASE_URL = import.meta.env.VITE_API_URL;
 
 
     return (

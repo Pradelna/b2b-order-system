@@ -431,22 +431,22 @@ const PlaceDetails: React.FC = () => {
 
                                         </div>
                                         <div className="form-control mb-2">
-                                            <strong>{currentData?.order.status || "Status" }:</strong>
-                                            {currentOrder.rp_status === 20 && (" Nová")}
-                                            {currentOrder.rp_status === 0 && (" Nová")}
-                                            {currentOrder.rp_status === 1 && (" In progress 1")}
-                                            {currentOrder.rp_status === 2 && (" Přiřazeno")}
-                                            {currentOrder.rp_status === 3 && (" V procesu")}
-                                            {currentOrder.rp_status === 4 && (" Dokončeno")}
-                                            {currentOrder.rp_status === 5 && (" Complited 5")}
-                                            {currentOrder.rp_status === 6 && (" Ověřeno")}
-                                            {currentOrder.rp_status === 7 && (" Odmítnuto")}
-                                            {currentOrder.rp_status === 8 && (" Neznámý status")}
-                                            {currentOrder.rp_status === 9 && (" Odloženo")}
-                                            {currentOrder.rp_status === 10 && (" Storno")}
-                                            {currentOrder.rp_status === 11 && (" K fakturaci")}
-                                            {currentOrder.rp_status === 12 && (" Čeká na díl")}
-                                            {currentOrder.rp_status === 13 && (" Marný výjezd")}
+                                            <strong>{currentData?.order.status || "Status" }: </strong>
+                                            {currentOrder.rp_status === 20 && (currentData?.status?.status_20 || "Nová")}
+                                            {currentOrder.rp_status === 0 && (currentData?.status?.status_0 || "Nová")}
+                                            {currentOrder.rp_status === 1 && (currentData?.status?.status_1 || "Nová")}
+                                            {currentOrder.rp_status === 2 && (currentData?.status?.status_2 || "Přijato")}
+                                            {currentOrder.rp_status === 3 && (currentData?.status?.status_3 || "Na cestě")}
+                                            {currentOrder.rp_status === 4 && (currentData?.status?.status_4 || "Dokončeno")}
+                                            {currentOrder.rp_status === 5 && (currentData?.status?.status_5 || "Complited")}
+                                            {currentOrder.rp_status === 6 && (currentData?.status?.status_6 || "Ověřeno")}
+                                            {currentOrder.rp_status === 7 && (currentData?.status?.status_7 || "Odmítnuto")}
+                                            {currentOrder.rp_status === 8 && (currentData?.status?.status_8 || "Neznámý status")}
+                                            {currentOrder.rp_status === 9 && (currentData?.status?.status_9 || "Odloženo")}
+                                            {currentOrder.rp_status === 10 && (currentData?.status?.status_10 || "Storno")}
+                                            {currentOrder.rp_status === 11 && (currentData?.status?.status_11 || "K fakturaci")}
+                                            {currentOrder.rp_status === 12 && (currentData?.status?.status_12 || "Čeká na díl")}
+                                            {currentOrder.rp_status === 13 && (currentData?.status?.status_13 || "Marný výjezd")}
                                         </div>
                                         <div className="form-control mb-2">
                                             <strong>{currentData?.form.type_ship || "Typ závozu" }:</strong>
