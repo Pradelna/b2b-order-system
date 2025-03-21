@@ -2102,3 +2102,13 @@ p.back-link {
   height: 55px;
   border-radius: 27px;
 }
+
+.upload-invoice {
+  /*position: absolute;*/
+  top: 20px;
+  right: 20px;
+}
+.report-card .card {
+  height: 300px;
+  margin-bottom: 15px;
+}

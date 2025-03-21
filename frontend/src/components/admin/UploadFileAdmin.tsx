@@ -60,8 +60,6 @@ const UploadFileAdmin: React.FC<UploadFileAdminProps> = ({ onUploadSuccess, cust
                 method: 'POST',
                 body: formData,
             });
-            // const responseText = await response.text();
-            // console.log("Response text:", responseText);
             const responseData = await response.json();
             if (response.status === 201) {
                 setSuccess('File uploaded successfully');

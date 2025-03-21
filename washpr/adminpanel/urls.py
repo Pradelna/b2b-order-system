@@ -18,4 +18,9 @@ urlpatterns = [
     path('order/photos/<int:place_id>/', get_photo_reports_admin, name='get_photo_reports_admin'),
     path('all-photos/<int:customer_id>/', get_all_photo_reports_admin, name='get_all_photo_reports_admin'),
     path('user-orders/<int:customer_id>/', get_user_orders_admin, name='get_user_orders_admin'),
+    path('user/reports/<int:customer_id>/', get_user_report_admin, name='get_user_invoices'),
+    path('user/report/<int:report_id>/upload/', upload_report_file, name='upload_report_file'),
+    path('user/report/<int:report_id>/delete-file/<int:file_id>/',
+         delete_report_file,
+         name='delete_report_file'),
 ]

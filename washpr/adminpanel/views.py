@@ -1,14 +1,18 @@
+import os
+
 from celery.worker.control import active
+from django.contrib.auth.mixins import LoginRequiredMixin
 from django.http import JsonResponse
 from django.contrib.auth.decorators import login_required, user_passes_test
 
 from customer.models import Customer
 from order.models import Order
-from rest_framework import status
-from rest_framework.decorators import api_view, permission_classes
+from rest_framework import status, generics, permissions
+from rest_framework.decorators import api_view, permission_classes, parser_classes
 from rest_framework.generics import get_object_or_404
 from rest_framework.permissions import IsAdminUser
 from rest_framework.response import Response
+from rest_framework.parsers import MultiPartParser
 
 from customer.serializers import CustomerGetSerializer
 from place.models import Place
@@ -20,6 +24,10 @@ from customer.serializers import DocumentForCustomerSerializer
 from order.models import PhotoReport
 from order.serializers import PhotoReportSerializer
 from order.serializers import GetOrderSerializer
+from order.models import OrderReport
+from order.serializers import OrderReportSerializer
+from order.models import ReportFile
+from order.serializers import ReportFileSerializer
 
 
 @login_required
@@ -189,3 +197,45 @@ def get_user_orders_admin(request, customer_id):
         }, status=status.HTTP_200_OK)
     except Exception as e:
         return Response({"error": str(e)}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+
+@api_view(['GET'])
+@permission_classes([IsAdminUser])
+def get_user_report_admin(request, customer_id):
+    try:
+        reports = OrderReport.objects.filter(customer__user__id=customer_id).order_by("-report_month")
+        serializer = OrderReportSerializer(reports, many=True)
+        return Response(serializer.data, status=status.HTTP_200_OK)
+    except Exception as e:
+        return Response({"error": str(e)}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+
+
+@api_view(['POST'])
+@permission_classes([IsAdminUser])
+@parser_classes([MultiPartParser])
+def upload_report_file(request, report_id):
+    report = OrderReport.objects.get(id=report_id)
+    file = request.FILES.get('file')
+
+    if not file:
+        return Response({'error': 'No file provided'}, status=400)
+
+    report_file = ReportFile.objects.create(report=report, file=file)
+    serializer = ReportFileSerializer(report_file)
+
+    return Response(serializer.data)
+
+
+@api_view(['DELETE'])
+@permission_classes([IsAdminUser])
+def delete_report_file(request, report_id, file_id):
+    try:
+        report_file = ReportFile.objects.get(report_id=report_id, id=file_id)
+        file_path = report_file.file.path
+
+        if os.path.exists(file_path):
+            os.remove(file_path)
+
+        report_file.delete()
+        return Response({'success': True})
+    except ReportFile.DoesNotExist:
+        return Response({'error': 'File not found'}, status=404)
