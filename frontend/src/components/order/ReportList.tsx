@@ -124,7 +124,7 @@ const ReportList: React.FC = () => {
                                                             key={file.id}
                                                             href={file.file}
                                                             download
-                                                            className="btn btn-download"
+                                                            className="btn btn-download me-3"
                                                             target="_blank"
                                                         >
                                                             <DarkTooltip title="Download invoie" placement="top" arrow>
@@ -132,7 +132,7 @@ const ReportList: React.FC = () => {
                                                                     icon={faFileArrowDown}
                                                                     style={{ cursor: "pointer" }}
                                                                 />
-                                                            </DarkTooltip><span className="download-invoice-span"> Download</span>
+                                                            </DarkTooltip>
                                                         </a>
                                                     ))
                                                 ) : (

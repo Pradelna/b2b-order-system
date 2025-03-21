@@ -1,14 +1,13 @@
-import React, {useState, useEffect, useContext} from "react";
+import {useState, useEffect, useContext, useRef} from "react";
 import { fetchWithAuth } from "../account/auth";
-import {Link, useParams} from "react-router-dom";
+import {useParams, Link} from "react-router-dom";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import {
     faFileInvoiceDollar,
-    faFileArrowDown
+    faFilePdf, faChevronLeft
 } from "@fortawesome/free-solid-svg-icons";
-import HeaderAccount from "../HeaderAccount";
+import HeaderAdmin from "./HeaderAdmin";
 import FooterAccount from "../FooterAccount";
-import NavButtons from "../account/NavButtons";
 import {Skeleton} from "@mui/material";
 import DarkTooltip from "../utils/DarkTooltip";
 import { LanguageContext } from "../../context/LanguageContext";
@@ -27,10 +26,12 @@ interface ReportFile {
 }
 
 const Invoices: React.FC = () => {
+    const fileInputRefs = useRef<{ [key: number]: HTMLInputElement | null }>({});
     const [reports, setReports] = useState<Report[]>([]);
     const [loading, setLoading] = useState<boolean>(true);
     const { customerId } = useParams<{ customerId: string }>();
     const [forceWait, setForceWait] = useState<boolean>(true);
+    const [isUploading, setIsUploading] = useState<{ [key: number]: boolean }>({});
     const BASE_URL = import.meta.env.VITE_API_URL;
     const { currentData } = useContext(LanguageContext);
 
@@ -40,6 +41,7 @@ const Invoices: React.FC = () => {
 
         const formData = new FormData();
         formData.append('file', file);
+        setIsUploading(prev => ({ ...prev, [reportId]: true }));
 
         try {
             const response = await fetchWithAuth(
@@ -54,7 +56,7 @@ const Invoices: React.FC = () => {
                 const newFile: ReportFile = await response.json();
                 setReports(prevReports => prevReports.map(report => {
                     if (report.id === reportId) {
-                        return {...report, files: [...report.files, newFile]};
+                        return { ...report, files: [...report.files, newFile] };
                     }
                     return report;
                 }));
@@ -63,6 +65,8 @@ const Invoices: React.FC = () => {
             }
         } catch (error) {
             console.error("Error uploading file:", error);
+        } finally {
+            setIsUploading(prev => ({ ...prev, [reportId]: false }));
         }
     };
 
@@ -97,6 +101,11 @@ const Invoices: React.FC = () => {
         }
     };
 
+    // Open file picker
+    const handleButtonClick = (reportId: number) => {
+        fileInputRefs.current[reportId]?.click();
+    };
+
     useEffect(() => {
         const fetchReports = async () => {
             try {
@@ -121,11 +130,16 @@ const Invoices: React.FC = () => {
 
     return (
         <>
-            <HeaderAccount customerId={customerId} />
+            <HeaderAdmin />
             <div className="container margin-top-90 wrapper invoices-page">
                 <div className="row message-block-76">
                     <div className="col-3 back-button">
-                        <NavButtons />
+                        <Link to={`/admin/customer-detail/${customerId}`} className="text-decoration-none">
+                            <p className="back-link">
+                                <FontAwesomeIcon icon={faChevronLeft} className="icon" />
+                                <span className="ms-2"><strong>{currentData?.buttons.back || "Zpět"}</strong></span>
+                            </p>
+                        </Link>
                     </div>
 
                 </div>
@@ -173,21 +187,35 @@ const Invoices: React.FC = () => {
                                                     />
                                                 </div>
                                                 <p><strong>{new Date(report.report_month).toLocaleString("en-US", { month: "long", year: "numeric" })}</strong></p>
-                                                <p className="mb-1">Orders: {report.orders_count}</p>
+                                                <p className="mb-1">Orders: {report.orders_count} {report.orders.join(', ')}</p>
                                             </div>
-                                            <div className="download-invoice">
+                                            <div className="row">
+                                                <div className="col-md-3 col-sm-4 col-6 mb-3">
+                                                    <input
+                                                        type="file"
+                                                        id={`file-upload-${report.id}`}
+                                                        ref={el => fileInputRefs.current[report.id] = el}
+                                                        style={{ display: 'none' }}
+                                                        onChange={(e) => handleFileUpload(e, report.id)}
+                                                    />
+                                                    <button className="btn-upload" onClick={() => handleButtonClick(report.id)} disabled={isUploading[report.id]}>
+                                                        {isUploading[report.id] ? 'Uploading...' : 'Upload'}
+                                                    </button>
+                                                </div>
+                                            </div>
+                                            <div style={{ margin: '0 1px' }} className="row">
                                                 {report.files.length > 0 ? (
                                                     report.files.map((file) => (
-                                                        <div key={file.id} className="invoice-file-item" style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
-                                                            <a href={`${BASE_URL.replace('/api', '')}${file.file}`} download className="btn btn-download" target="_blank">
-                                                                <DarkTooltip title="Download invoice" placement="top" arrow>
-                                                                    <FontAwesomeIcon icon={faFileArrowDown} style={{ cursor: "pointer" }} />
-                                                                </DarkTooltip>
-                                                                <span className="download-invoice-span"> Download</span>
+                                                        <div key={file.id} className="col-12 form-control mb-1" style={{ display: 'flex' }}>
+                                                            <a href={`${BASE_URL.replace('/api', '')}${file.file}`} target="_blank" rel="noopener noreferrer">
+                                                                <FontAwesomeIcon icon={faFilePdf} className="file-uploaded" />
+                                                                <span style={{ marginLeft: '5px' }}>{file.file.split('/').pop()}</span>
                                                             </a>
 
-                                                            <button className="btn btn-delete" onClick={() => handleFileDelete(report.id, file.id)}>
-                                                                Delete
+                                                            <button onClick={() => handleFileDelete(report.id, file.id)}
+                                                                    style={{ marginLeft: 'auto', fontSize: '10px', color: 'red' }}
+                                                            >
+                                                                ❌
                                                             </button>
                                                         </div>
                                                     ))
@@ -195,9 +223,7 @@ const Invoices: React.FC = () => {
                                                     <span className="text-muted">No files available</span>
                                                 )}
                                             </div>
-                                            <div className="upload-invoice mt-2">
-                                                <input type="file" id={`file-upload-${report.id}`} onChange={(e) => handleFileUpload(e, report.id)}/>
-                                            </div>
+
                                         </div>
                                     ))}
                                 </div>

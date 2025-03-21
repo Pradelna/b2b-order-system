@@ -1482,7 +1482,7 @@ svg.loader{
 .download-invoice {
   position: absolute;
   top: 20px;
-  right: 20px;
+  right: 5px;
 }
 
 .download-invoice svg{
@@ -1492,7 +1492,7 @@ svg.loader{
 .btn-download {
   background-color: #e1f6f8;
   height: 50px;
-  width: 150px;
+  width: 50px;
   padding: 14px;
 }
 
@@ -2109,6 +2109,11 @@ p.back-link {
   right: 20px;
 }
 .report-card .card {
-  height: 300px;
+  height: auto;
   margin-bottom: 15px;
+  padding: 20px 30px 20px 90px;
+}
+
+.report-card .download-invoice {
+  position: relative;
 }
