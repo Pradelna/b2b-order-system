@@ -1,12 +1,10 @@
-import React, {useContext, useState, useEffect} from "react";
+import React, {useState} from "react";
 import { useNavigate } from "react-router-dom";
 import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
 import {
     faDashboard,
     faHouse,
     faUser,
-    faMobileScreen,
-    faEnvelope,
     faEarthAmerica,
     faFileInvoiceDollar, faClockRotateLeft
 } from "@fortawesome/free-solid-svg-icons";
@@ -40,23 +38,10 @@ const HeaderAdmin: React.FC = () => {
                                 </Link>
                             )}
 
-                            <a href="/account" className="mail">
+                            <a href="/" className="mail">
                                 <FontAwesomeIcon icon={faHouse} className="icon"/>
-                                <span>hhh</span>
+                                <span>Webstranka</span>
                             </a>
-                            <Link to="/invoices">
-                                <div className="mail">
-                                    <FontAwesomeIcon icon={faFileInvoiceDollar} className="icon"/>
-                                    <span>hh</span>
-                                </div>
-                            </Link>
-
-                            <Link to={`/customer`}>
-                                <div className="mail">
-                                    <FontAwesomeIcon icon={faUser} className="icon"/>
-                                    <span>hhh</span>
-                                </div>
-                            </Link>
                         </div>
 
                         <div className="to-website">

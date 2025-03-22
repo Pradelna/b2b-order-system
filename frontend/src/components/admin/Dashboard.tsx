@@ -1,5 +1,4 @@
-import React, {useState, useEffect, JSX} from "react";
-import { fetchWithAuth } from "../account/auth";
+import React, {JSX} from "react";
 import FooterAccount from "../FooterAccount";
 import HeaderAdmin from "./HeaderAdmin";
 import TotalCustomers from "./TotalCustomers";
@@ -26,7 +25,7 @@ function Dashboard(): JSX.Element {
                     </div>
                 </div>
 
-                <div className="row">
+                <div className="row total-data">
 
                     <TotalCustomers />
 

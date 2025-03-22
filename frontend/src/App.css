@@ -2053,6 +2053,12 @@ p.back-link {
   height: 90px;
   padding: 34px 90px;
 }
+.total-data .user-card {
+  padding: 30px 90px;
+}
+.total-data .user-card p {
+  font-size: 20px;
+}
 .user-card .users-icon {
   position: absolute;
 }
