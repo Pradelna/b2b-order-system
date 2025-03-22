@@ -17,10 +17,11 @@ const DocumentsBlock: React.FC = () => {
     // Fetch the list of uploaded files
     const fetchUploadedFiles = async () => {
         try {
-            const response = await fetchWithAuth(`${BASE_URL}/customer/documents/for-customer/`);
+            const response = await fetchWithAuth(`${BASE_URL}/customer/documents/`);
             if (!response.ok) throw new Error('Failed to fetch files');
             const data: FileData[] = await response.json();
             setFiles(data);
+            console.log(files);
         } catch (error) {
             console.error('Error loading files:', error);
         }

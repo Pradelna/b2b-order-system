@@ -1,5 +1,6 @@
 import os
 
+from django.contrib.auth.decorators import login_required
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.core.exceptions import PermissionDenied
 from django.db.models import Q
@@ -13,7 +14,7 @@ from rest_framework import status, permissions, generics
 from place.models import Place
 from rest_framework.views import APIView
 
-from .models import Order, OrderReport, PhotoReport
+from .models import Order, OrderReport, PhotoReport, ReportFile
 from .serializers import OrderSerializer, GetOrderSerializer, OrderReportSerializer, CurrentOrderSerializer, \
     PhotoReportSerializer
 from datetime import datetime

@@ -218,7 +218,7 @@ const Account: React.FC<AccountProps> = ({ customerData, setCustomerData }) => {
 
                         {customerData && !customerData.error && (
                             <>
-                                {loading || forceWait ? (
+                                {(customerData && (loading || forceWait)) ? (
                                     [...Array(3)].map((_, index) => (
                                         <div className="col-lg-4 col-xl-2 col-4 mb-4" key={index}>
                                             <div className="card dashboard-button">
@@ -241,40 +241,59 @@ const Account: React.FC<AccountProps> = ({ customerData, setCustomerData }) => {
                                     ))
                                 ) : (
                                     <>
-
-                                        <div className="col-lg-4 col-xl-2 col-4 mb-4">
-                                            <Link to="/all-orders" className="text-decoration-none">
+                                        {!customerData?.active ? (
+                                            <div className="col-lg-4 col-xl-6 col-4 mb-4">
                                                 <div className="card dashboard-button">
                                                     <div className="card-body button-history">
-                                                        <FontAwesomeIcon icon={faClockRotateLeft} className="icon" />
-                                                        <p className="text-history">
-                                                            {currentData.buttons["all_history"] || "Historie objednávek"}
+                                                        <p style={{margin:"0"}}>
+                                                            1. Přidejte svá místa
+                                                        </p>
+                                                        <p style={{margin:"0"}}>
+                                                            2. Správce Vám vytvoří ceník
+                                                        </p>
+                                                        <p style={{margin:"0"}}>
+                                                            3. Počkejte na e-mail o aktivaci účtu
                                                         </p>
                                                     </div>
                                                 </div>
-                                            </Link>
-                                        </div>
+                                            </div>
+                                        ) : (<>
+                                            <div className="col-lg-4 col-xl-2 col-4 mb-4">
+                                                <Link to="/all-orders" className="text-decoration-none">
+                                                    <div className="card dashboard-button">
+                                                        <div className="card-body button-history">
+                                                            <FontAwesomeIcon icon={faClockRotateLeft} className="icon" />
+                                                            <p className="text-history">
+                                                                {currentData.buttons["all_history"] || "Historie objednávek"}
+                                                            </p>
+                                                        </div>
+                                                    </div>
+                                                </Link>
+                                            </div>
 
-                                        <div className="col-lg-4 col-xl-2 col-4">
-                                            <Link to="/invoices" className="text-decoration-none">
-                                                <div className="card dashboard-button">
+                                            <div className="col-lg-4 col-xl-2 col-4">
+                                                <Link to="/invoices" className="text-decoration-none">
+                                                    <div className="card dashboard-button">
+                                                        <div className="card-body">
+                                                            <FontAwesomeIcon icon={faFileInvoiceDollar} className="icon" />
+                                                            <p className="text-history">{currentData.buttons["invoices"] || "Faktury"}</p>
+                                                        </div>
+                                                    </div>
+                                                </Link>
+                                            </div>
+
+                                            <div className="col-lg-4 col-xl-2 col-4">
+                                                {/* New Order Button */}
+                                                <div className="card dashboard-button" onClick={handleCreateOrder}>
                                                     <div className="card-body">
-                                                        <FontAwesomeIcon icon={faFileInvoiceDollar} className="icon" />
-                                                        <p className="text-history">{currentData.buttons["invoices"] || "Faktury"}</p>
+                                                        <FontAwesomeIcon icon={faCartPlus} className="icon" />
+                                                        <p className="text-history">{currentData.buttons["new_order"] || "Nová objednávka"}</p>
                                                     </div>
                                                 </div>
-                                            </Link>
-                                        </div>
-
-                                        <div className="col-lg-4 col-xl-2 col-4">
-                                            {/* New Order Button */}
-                                            <div className="card dashboard-button" onClick={handleCreateOrder}>
-                                                <div className="card-body">
-                                                    <FontAwesomeIcon icon={faCartPlus} className="icon" />
-                                                    <p className="text-history">{currentData.buttons["new_order"] || "Nová objednávka"}</p>
-                                                </div>
                                             </div>
-                                        </div>
+                                        </>)}
+
+
 
                                     </>
                                 )}
@@ -307,7 +326,7 @@ const Account: React.FC<AccountProps> = ({ customerData, setCustomerData }) => {
                         )}
 
                         <div className="col-lg-3 col-md-4 col-sm-5 col-6 text-left place-desktop-button">
-                            {loading || forceWait ? (
+                            {(customerData && (loading || forceWait)) ? (
                                 <Skeleton
                                     variant="rectangular"
                                     width={200} height={55}
@@ -331,7 +350,7 @@ const Account: React.FC<AccountProps> = ({ customerData, setCustomerData }) => {
                     </div>
 
                     <div className="row mt-4 mb-4">
-                        {loading || forceWait ? (
+                        {(customerData && (loading || forceWait)) ? (
                             [...Array(2)].map((_, index) => (
                                 <div className="col-12 dashboard" key={index}>
                                     <div className="card place-card">

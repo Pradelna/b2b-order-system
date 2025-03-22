@@ -33,6 +33,9 @@ class CustomerSerializer(serializers.ModelSerializer):
 
 class CustomerGetSerializer(serializers.ModelSerializer):
     user_id = serializers.IntegerField(source='user.id', read_only=True)
+    date_joined = serializers.DateTimeField(source='user.date_joined', format='%d-%m-%Y', read_only=True)
+    class Meta:
+        model = Customer
     class Meta:
         model = Customer
         fields = [
@@ -44,14 +47,16 @@ class CustomerGetSerializer(serializers.ModelSerializer):
             'company_name',
             'company_address',
             'company_ico',
+            'company_dic',
             'company_phone',
             'company_email',
             'company_person',
             'active',
-            'change_data'
-            'weekend_able'
+            'change_data',
+            'weekend_able',
+            'date_joined'
         ]
-        read_only_fields = ['user']  # Поле user заполняется автоматически
+        read_only_fields = ['user_id', 'date_joined']
 
 
 class CustomerDocumentSerializer(serializers.ModelSerializer):

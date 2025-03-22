@@ -47,6 +47,7 @@ INSTALLED_APPS = [
     'rest_framework_simplejwt',
     'corsheaders',
     'integration',
+    'adminpanel'
 ]
 
 MIDDLEWARE = [

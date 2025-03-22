@@ -1,10 +1,10 @@
 import {useState, useEffect, JSX} from "react";
+import { useNavigate } from "react-router-dom";
 import { fetchWithAuth } from "./auth";
 import HeaderAccount from "../HeaderAccount";
 import Header from "../Header";
 import Account from "./Account";
 import FooterAccount from "../FooterAccount";
-// import {useParams} from "react-router-dom";
 
 // Define the shape of the customer data
 interface CustomerData {
@@ -16,8 +16,10 @@ function AccountPage(): JSX.Element {
     const [customerData, setCustomerData] = useState<CustomerData | null>(null);
     const [ customerId, setCustomerId ] = useState<{ customerId: any }>();
     const [loading, setLoading] = useState<boolean>(true);
+    const [isAdmin, setIsAdmin] = useState<boolean>(false);
     const BASE_URL = import.meta.env.VITE_API_URL;
     const [formCustomer, setFormCustomer] = useState<boolean>(true);
+    const navigate = useNavigate();
 
     useEffect(() => {
         const fetchCustomerData = async () => {
@@ -50,6 +52,34 @@ function AccountPage(): JSX.Element {
 
         fetchCustomerData();
     }, []);
+
+    useEffect(() => {
+        const checkAdminStatus = async () => {
+            if (!customerData) {
+                try {
+                    const response = await fetchWithAuth(`${BASE_URL}/admin/adminpanel/is-admin/`, {
+                        method: "GET",
+                    });
+
+                    if (!response.ok) {
+                        throw new Error(`HTTP error! Status: ${response.status}`);
+                    }
+
+                    const data = await response.json();
+
+                    setIsAdmin(data.is_admin);
+                    if (data.is_admin) {
+                        setFormCustomer(false);
+                        navigate('/admin/dashboard');
+                    }
+                } catch (error) {
+                    console.error("Error checking admin status:", error);
+                }
+            }
+        };
+
+        checkAdminStatus();
+    }, [customerData, BASE_URL]);
 
     return (
         <>
