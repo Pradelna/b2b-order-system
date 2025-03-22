@@ -27,7 +27,7 @@ class Customer(models.Model):
     new_company_dic = models.CharField("NEW Company DIC", max_length=20, null=True, blank=True)
     phone_regex = RegexValidator(
         regex=r'^\+?(\d){6,18}$',
-        message="Phone number must be entered in the format: '+420234567890' or 01234567890"
+        message="Číslo telefonu musí být zadáno ve formátu: +420234567890 nebo 01234567890"
     )
     company_phone = models.CharField("Company phone", null=True, blank=True, validators=[phone_regex], max_length=17)
     company_email = models.CharField("Company email", max_length=100, null=True, blank=True)

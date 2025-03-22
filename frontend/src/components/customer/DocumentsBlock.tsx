@@ -21,7 +21,7 @@ const DocumentsBlock: React.FC = () => {
             if (!response.ok) throw new Error('Failed to fetch files');
             const data: FileData[] = await response.json();
             setFiles(data);
-            console.log(files);
+            // console.log(files);
         } catch (error) {
             console.error('Error loading files:', error);
         }

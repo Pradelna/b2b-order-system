@@ -4,7 +4,8 @@ import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faFilePdf } from "@fortawesome/free-solid-svg-icons";
 
 interface CustomerFormProps {
-  onSubmit: (formData: FormData) => void;
+  onSubmit: (formData: Partial<CustomerData>) => void;
+  errors?: { [key: string]: string[] };
 }
 
 interface FormData {
@@ -19,8 +20,9 @@ interface FormData {
   gdpr: boolean;
 }
 
-const CustomerForm: React.FC<CustomerFormProps> = ({ onSubmit }) => {
+const CustomerForm: React.FC<CustomerFormProps> = ({ onSubmit, errors }) => {
   const { currentData } = useContext(LanguageContext);
+  const [formErrors, setFormErrors] = useState<{ [key: string]: string[] }>({});
   const [formData, setFormData] = useState<FormData>({
     new_company_name: "",
     new_company_address: "",
@@ -138,6 +140,9 @@ const CustomerForm: React.FC<CustomerFormProps> = ({ onSubmit }) => {
                   onChange={handleChange}
                   required
               />
+              {errors?.company_phone && (
+                  <small className="text-danger">{errors.company_phone[0]}</small>
+              )}
             </div>
           </div>
 

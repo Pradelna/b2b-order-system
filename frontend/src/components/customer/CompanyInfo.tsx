@@ -48,6 +48,7 @@ const CompanyInfo: React.FC<CompanyInfoProps> = ({
     const location = useLocation();
     const isDetailPage = location.pathname.includes("/customer/");
     const customerId = customerData?.user_id || userId;
+    const [formErrors, setFormErrors] = useState<{ [key: string]: string[] }>({});
 
     const handleFormSubmit = (formData: Partial<CustomerData>) => {
         fetchWithAuth(`${BASE_URL}/customer/data/`, {
@@ -57,14 +58,24 @@ const CompanyInfo: React.FC<CompanyInfoProps> = ({
             },
             body: JSON.stringify(formData),
         })
-            .then((response) => response.json())
+            .then(async (response) => {
+                const data = await response.json();
+                if (!response.ok) {
+                    if (response.status === 400 && data) {
+                        setFormErrors(data); // передаём все ошибки
+                    }
+                    throw new Error(data.detail || "Failed to submit form");
+                }
+                setFormErrors({}); // очищаем ошибки при успехе
+                return data;
+            })
             .then((data: CustomerData) => {
                 setCustomerData(data);
                 setSuccessMessage("Customer data successfully added!");
                 setTimeout(() => setSuccessMessage(""), 5000);
             })
             .catch((error) => {
-                console.error("Error submitting customer data:", error);
+                console.error("Error submitting customer data:", error.message);
             });
     };
 
@@ -116,7 +127,7 @@ const CompanyInfo: React.FC<CompanyInfoProps> = ({
         return (
             <div>
                 <p className="alert alert-danger">Add Customer Information</p>
-                <CustomerForm onSubmit={handleFormSubmit} />
+                <CustomerForm onSubmit={handleFormSubmit} errors={formErrors} />
             </div>
         );
     }

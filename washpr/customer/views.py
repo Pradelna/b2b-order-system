@@ -12,10 +12,8 @@ User = get_user_model()
 
 @api_view(['GET', 'POST', 'PUT'])
 @permission_classes([IsAuthenticated])
-# @permission_classes([AllowAny])
 def customer_view(request):
     if request.method == 'GET':
-        # print(request.user.email)
         try:
             # Получаем клиента, связанного с текущим пользователем
             customer = Customer.objects.get(user=request.user)
@@ -27,6 +25,7 @@ def customer_view(request):
 
     elif request.method == 'POST':
         serializer = CustomerSerializer(data=request.data)
+        print(serializer)
         if serializer.is_valid():
             serializer.save(user=request.user, company_email=request.user.email)  # Связываем клиента с пользователем
             return Response(serializer.data)
