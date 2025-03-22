@@ -211,6 +211,14 @@ class LandingPageSerializer(serializers.ModelSerializer):
             'have_current_order': obj.message_have_current_order,
             'show_next_days': obj.message_show_next_days,
             'hide_next_days': obj.message_hide_next_days,
+            'add_inform': obj.message_add_inform,
+            'place_del': obj.message_place_del,
+            'sure_del_place': obj.message_sure_del_place,
+            'filed_del_place': obj.message_filed_del_place,
+            'error_del_place': obj.message_error_del_place,
+            'filed_form': obj.message_filed_form,
+            'customer_success': obj.message_customer_success,
+            'customer_error': obj.message_customer_error,
         }
 
     def get_order(self, obj):

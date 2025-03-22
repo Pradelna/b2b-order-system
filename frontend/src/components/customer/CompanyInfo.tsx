@@ -1,4 +1,5 @@
-import React, { useState, useEffect } from "react";
+import React, {useState, useEffect, useContext} from "react";
+import { LanguageContext } from "../../context/LanguageContext";
 import CustomerForm from "./CustomerForm";
 import { Link, useLocation } from "react-router-dom";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
@@ -49,6 +50,7 @@ const CompanyInfo: React.FC<CompanyInfoProps> = ({
     const isDetailPage = location.pathname.includes("/customer/");
     const customerId = customerData?.user_id || userId;
     const [formErrors, setFormErrors] = useState<{ [key: string]: string[] }>({});
+    const { currentData } = useContext(LanguageContext);
 
     const handleFormSubmit = (formData: Partial<CustomerData>) => {
         fetchWithAuth(`${BASE_URL}/customer/data/`, {
@@ -64,18 +66,24 @@ const CompanyInfo: React.FC<CompanyInfoProps> = ({
                     if (response.status === 400 && data) {
                         setFormErrors(data); // передаём все ошибки
                     }
-                    throw new Error(data.detail || "Failed to submit form");
+                    throw new Error(
+                        data.detail ||
+                        currentData?.messages?.filed_form ||
+                        "Nepodařilo se odeslat formulář"
+                    );
                 }
                 setFormErrors({}); // очищаем ошибки при успехе
                 return data;
             })
             .then((data: CustomerData) => {
                 setCustomerData(data);
-                setSuccessMessage("Customer data successfully added!");
+                setSuccessMessage(currentData?.messages?.customer_success || "Data zákazníka byla úspěšně přidána!");
                 setTimeout(() => setSuccessMessage(""), 5000);
             })
             .catch((error) => {
-                console.error("Error submitting customer data:", error.message);
+                console.error(
+                    currentData?.messages?.customer_error || "Chyba při odesílání údajů zákazníka:", error.message
+                );
             });
     };
 
@@ -126,7 +134,7 @@ const CompanyInfo: React.FC<CompanyInfoProps> = ({
     if (!customerData || customerData.error === "Customer not found") {
         return (
             <div>
-                <p className="alert alert-warning">Add Customer Information</p>
+                <p className="alert alert-warning">{currentData?.messages?.add_info || "Přidat informace o zákazníkovi"}</p>
                 <CustomerForm onSubmit={handleFormSubmit} errors={formErrors} />
             </div>
         );

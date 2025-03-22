@@ -171,6 +171,14 @@ class LandingPage(models.Model):
     )
     message_show_next_days = models.CharField("Show next days", max_length=150, blank=True, null=True)
     message_hide_next_days = models.CharField("Hide next days", max_length=150, blank=True, null=True)
+    message_add_inform = models.CharField("Add Customer Information", max_length=150, blank=True, null=True)
+    message_filed_form = models.CharField("Filed form", max_length=150, blank=True, null=True)
+    message_customer_success = models.CharField("Customer Success", max_length=150, blank=True, null=True)
+    message_customer_error = models.CharField("Customer Failure", max_length=150, blank=True, null=True)
+    message_place_del = models.CharField("Place deleted", max_length=150, blank=True, null=True)
+    message_sure_del_place = models.CharField("Place sure delete?", max_length=150, blank=True, null=True)
+    message_filed_del_place = models.CharField("Filed del place", max_length=150, blank=True, null=True)
+    message_error_del_place = models.CharField("Filed del place", max_length=150, blank=True, null=True)
 
     # order
     order_type_sipping_clear_for_dirty = models.CharField("Order type sipping clear for dirty", max_length=100,

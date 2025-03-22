@@ -130,7 +130,7 @@ const PlaceDetails: React.FC = () => {
     // delete place, but only add "deleted"=True
     const handleDelete = async () => {
         // deleting of the place
-        if (window.confirm("Are you sure you want to delete this place?")) {
+        if (window.confirm(currentData?.messages?.sure_del_place || "Jste si jisti, že chcete toto místo smazat?")) {
             try {
                 const response = await fetchWithAuth(
                     `${BASE_URL}/place/edit/${place.id}/`,
@@ -144,7 +144,7 @@ const PlaceDetails: React.FC = () => {
                 );
                 if (response.ok) {
                     navigate("/account", {
-                        state: { successMessage: "Place deleted successfully!" },
+                        state: { successMessage: currentData?.messages?.place_del || "Místo smazáno úspěšně!" },
                     });
                 } else {
                     console.error("Failed to delete place.");
