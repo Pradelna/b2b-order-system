@@ -1840,13 +1840,24 @@ p.back-link {
   z-index: 1;
   left: 2000px;
 }
-
+.login-margin-top-90 {
+  margin-top: 90px;
+}
 .form-login {
   width: 400px;
   margin: 5rem auto;
 }
 #detail-page label.checkbox-label-edit-form {
   padding-left: 50px !important;
+}
+@media (min-width: 992px) and (max-width: 1199px) {
+  .form-login {
+    width: 400px;
+    margin: 0 auto;
+  }
+  .login-margin-top-90 {
+    margin-top: 70px;
+  }
 }
 @media (max-width: 430px) {
   .form-login {

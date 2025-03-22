@@ -126,7 +126,7 @@ const CompanyInfo: React.FC<CompanyInfoProps> = ({
     if (!customerData || customerData.error === "Customer not found") {
         return (
             <div>
-                <p className="alert alert-danger">Add Customer Information</p>
+                <p className="alert alert-warning">Add Customer Information</p>
                 <CustomerForm onSubmit={handleFormSubmit} errors={formErrors} />
             </div>
         );

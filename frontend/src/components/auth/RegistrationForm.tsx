@@ -73,7 +73,7 @@ const RegistrationForm: React.FC = () => {
       <>
         <Header />
 
-        <div className="container margin-top-130 wrapper">
+        <div className="container login-margin-top-90 wrapper">
           <div className="form-login">
             {message && (
                 <p
