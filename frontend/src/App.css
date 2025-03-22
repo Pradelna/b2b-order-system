@@ -2119,3 +2119,27 @@ p.back-link {
 .report-card .download-invoice {
   position: relative;
 }
+.btn-primary {
+  margin: 0 5px;
+  background-color: #00aab7;
+  border-color: #00aab7;
+  min-width: 36px;
+}
+.btn-primary:hover {
+  background-color: #fff;
+  border-color: #00aab7;
+  color: #202020;
+}
+.btn-prev-next,
+.btn-light {
+  margin: 0 5px;
+  background-color: #fff;
+  border-color: #00aab7;
+  min-width: 36px;
+}
+.btn-prev-next:hover,
+.btn-light:hover {
+  background-color: #00aab7;
+  border-color: #00aab7;
+  color: #fff;
+}

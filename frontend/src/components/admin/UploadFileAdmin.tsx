@@ -124,17 +124,14 @@ const UploadFileAdmin: React.FC<UploadFileAdminProps> = ({ onUploadSuccess, cust
                 <div className="card">
                     <div className="row">
                         <div className="col-md-3 col-sm-4 col-6">
-                            {files.map((file, index) => (
                                 <input
-                                    key={file.id}
                                     type="file"
-                                    id={`file-upload-${file.id}`}
-                                    ref={el => fileInputRefs.current[file.id] = el}
+                                    id={`file-upload`}
+                                    ref={(el) => fileInputRefs.current[customer_id] = el}
                                     style={{ display: 'none' }}
                                     onChange={(e) => handleFileChange(e)}
                                 />
-                            ))}
-                            <button className="btn-upload" onClick={() => handleButtonClick(file.id)} disabled={isUploading}>
+                            <button className="btn-upload" onClick={() => handleButtonClick(customer_id)} disabled={isUploading}>
                                 {isUploading
                                     ? 'Uploading...'
                                     : 'Upload'}

@@ -71,7 +71,7 @@ function AllCustomers() {
                     <div className="col-8 mb-4">
                         <div className="pagination d-flex justify-content-center">
                             <button
-                                className="btn"
+                                className="btn btn-prev-next"
                                 onClick={() => setCurrentPage((prev) => Math.max(prev - 1, 1))}
                                 disabled={currentPage === 1}
                             >
@@ -90,7 +90,7 @@ function AllCustomers() {
                                 );
                             })}
                             <button
-                                className="btn"
+                                className="btn btn-prev-next"
                                 onClick={() => setCurrentPage((prev) => Math.min(prev + 1, totalPages))}
                                 disabled={currentPage === totalPages}
                             >
