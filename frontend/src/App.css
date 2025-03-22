@@ -2143,3 +2143,19 @@ p.back-link {
   border-color: #00aab7;
   color: #fff;
 }
+.list-group-item:first-child {
+  border-top-left-radius: 12px;
+  border-top-right-radius: 12px;
+}
+
+.list-group-item:last-child {
+  border-bottom-left-radius: 12px;
+  border-bottom-right-radius: 12px;
+}
+.customer-search .form-control {
+  border-radius: 12px;
+}
+.customer-search .btn-primary {
+  border-top-right-radius: 12px;
+  border-bottom-right-radius: 12px;
+}

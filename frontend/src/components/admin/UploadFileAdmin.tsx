@@ -2,6 +2,7 @@ import React, { useRef, useState, useEffect, useContext } from 'react';
 import { fetchWithAuth } from "../account/auth";
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import {faFilePdf, faSpinner} from "@fortawesome/free-solid-svg-icons";
+import {Skeleton} from "@mui/material";
 
 interface FileData {
     id: number;
@@ -20,6 +21,8 @@ const UploadFileAdmin: React.FC<UploadFileAdminProps> = ({ onUploadSuccess, cust
     const [success, setSuccess] = useState<string>('');
     const [isUploading, setIsUploading] = useState<boolean>(false); // State for upload animation
     const BASE_URL = import.meta.env.VITE_API_URL;
+    const [loading, setLoading] = useState<boolean>(true);
+    const [forceWait, setForceWait] = useState<boolean>(true);
 
     // Fetch the list of uploaded files
     const fetchUploadedFiles = async () => {
@@ -32,6 +35,7 @@ const UploadFileAdmin: React.FC<UploadFileAdminProps> = ({ onUploadSuccess, cust
             console.error('Error loading files:', error);
             setError('Failed to load files');
         }
+        setLoading(false);
     };
 
     // Open file picker
@@ -113,6 +117,9 @@ const UploadFileAdmin: React.FC<UploadFileAdminProps> = ({ onUploadSuccess, cust
     useEffect(() => {
         if (!customer_id) return;
         fetchUploadedFiles();
+        // Ensure skeleton is shown for at least 2 seconds
+        const timer = setTimeout(() => setForceWait(false), 1000);
+        return () => clearTimeout(timer); // Cleanup
     }, [customer_id]);
 
     return (
@@ -121,6 +128,29 @@ const UploadFileAdmin: React.FC<UploadFileAdminProps> = ({ onUploadSuccess, cust
                 {error && <p className="alert alert-danger mt-3">{error}</p>}
                 {success && <p className="alert alert-success mt-3">{success}</p>}
 
+                {((loading || forceWait)) ? (
+                    <>
+                        <div className="card dashboard-button">
+                            <div className="card-body button-history">
+                                <Skeleton
+                                    variant="rectangular"
+                                    width={150} height={36}
+                                    sx={{ borderRadius: "18px", marginBottom: 2 }}
+                                />
+                                <Skeleton
+                                    variant="rectangular"
+                                    width={"100%"} height={35}
+                                    sx={{ borderRadius: "16px", marginBottom: 1 }}
+                                />
+                                <Skeleton
+                                    variant="rectangular"
+                                    width={"100%"} height={35}
+                                    sx={{ borderRadius: "16px", marginBottom: 1 }}
+                                />
+                            </div>
+                        </div>
+                    </>
+                ) : ( <>
                 <div className="card">
                     <div className="row">
                         <div className="col-md-3 col-sm-4 col-6">
@@ -164,6 +194,7 @@ const UploadFileAdmin: React.FC<UploadFileAdminProps> = ({ onUploadSuccess, cust
                         ))}
                     </div>
                 </div>
+                </>)}
             </div>
         </div>
     );

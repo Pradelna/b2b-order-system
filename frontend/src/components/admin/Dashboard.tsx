@@ -6,6 +6,7 @@ import TotalCustomers from "./TotalCustomers";
 import TotalOrders from "./TotalOrders";
 import NewCustomers from "./NewCustomers";
 import AllCustomers from "./AllCustomers";
+import CustomerSearch from "./CustomerSearch";
 
 // Define the shape of the customer data
 interface CustomerData {
@@ -14,10 +15,6 @@ interface CustomerData {
 }
 
 function Dashboard(): JSX.Element {
-    // const [customerId, setCustomerId] = useState<number | false>(false);
-    // const [loading, setLoading] = useState<boolean>(true);
-    // const BASE_URL = import.meta.env.VITE_API_URL;
-
 
     return (
         <>
@@ -37,6 +34,7 @@ function Dashboard(): JSX.Element {
 
                 </div>
 
+                <CustomerSearch />
 
                 <NewCustomers />
 

@@ -15,6 +15,7 @@ function AllCustomers() {
     const [customers, setCustomers] = useState<Customer[]>([]);
     const [currentPage, setCurrentPage] = useState(1);
     const [totalPages, setTotalPages] = useState(1);
+    const [totalCustomers, setTotalCustomers] = useState<Customer[]>([]);
     const [loading, setLoading] = useState(false);
     const BASE_URL = import.meta.env.VITE_API_URL;
 
@@ -25,7 +26,7 @@ function AllCustomers() {
                 const response = await fetchWithAuth(`${BASE_URL}/admin/adminpanel/customers/?page=${currentPage}`);
                 if (response.ok) {
                     const data = await response.json();
-                    console.log(data);
+                    setTotalCustomers(data.count);
                     setCustomers(data.results);
                     setTotalPages(data.total_pages);
                 } else {
@@ -43,7 +44,7 @@ function AllCustomers() {
 
     return (
         <div className="row all-customers">
-            <h3>All Customers</h3>
+            <h3>All Customers {totalCustomers}</h3>
 
             {loading ? (
                 <div>Loading...</div>

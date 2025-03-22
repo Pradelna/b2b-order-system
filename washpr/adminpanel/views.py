@@ -2,6 +2,7 @@ import os
 
 from celery.worker.control import active
 from django.contrib.auth.mixins import LoginRequiredMixin
+from django.db.models import Q
 from django.http import JsonResponse
 from django.contrib.auth.decorators import login_required, user_passes_test
 
@@ -262,3 +263,21 @@ def all_customers(request):
     result_page = paginator.paginate_queryset(customers, request)
     serializer = CustomerGetSerializer(result_page, many=True)
     return paginator.get_paginated_response(serializer.data)
+
+@api_view(['GET'])
+@permission_classes([IsAdminUser])
+def search_customers(request):
+    query = request.GET.get('q', '').strip()
+    if not query:
+        return Response({"results": []})
+
+    customers = Customer.objects.filter(
+        Q(company_name__icontains=query) |
+        Q(company_address__icontains=query) |
+        Q(company_ico__icontains=query) |
+        Q(company_phone__icontains=query) |
+        Q(company_email__icontains=query) |
+        Q(company_person__icontains=query)
+    ).order_by('-user__date_joined')[:20]  # Ограничим, например, до 20 результатов
+    serializer = CustomerSerializer(customers, many=True)
+    return Response({"results": serializer.data})

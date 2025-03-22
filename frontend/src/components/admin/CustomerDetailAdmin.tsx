@@ -9,7 +9,7 @@ import {
     faHouse,
     faFileInvoiceDollar,
     faCircleCheck,
-    faStopwatch
+    faStopwatch, faChevronLeft
 } from "@fortawesome/free-solid-svg-icons";
 import {Skeleton} from "@mui/material";
 import HeaderAdmin from "./HeaderAdmin";
@@ -75,26 +75,11 @@ const CustomerDetailAdmin: React.FC = () => {
         setSelectedPlaceId(placeId); // Устанавливаем ID выбранного места
     };
 
-    const handleSuccess = (newPlace: Place) => {
-        setSuccessMessage(`Place "${newPlace.place_name}" created successfully!`);
-        setPlaces((prevPlaces) => [...prevPlaces, newPlace]); // Добавляем новое место в список
-        setTimeout(() => setSuccessMessage(""), 10000);
-        setShowPlaceForm(false); // Скрыть форму после успешного создания
-    };
-
-
-
-    const handleCreateOrder = () => {
-        setShowOrderForm(true); // Показываем форму создания заказа
-    };
-
-    const handleOrderSuccess = (data: number | null) => {
-        setShowOrderForm(false); // Закрываем форму
-        setCurrentPlaceId(null); // обнуляем номер
-        setSuccessMessage("Order created successfully!");
-        setTimeout(() => setSuccessMessage(""), 10000);
-    };
-
+    useEffect(() => {
+        // Ensure skeleton is shown for at least 2 seconds
+        const timer = setTimeout(() => setForceWait(false), 1000);
+        return () => clearTimeout(timer); // Cleanup
+    }, [customerId]);
 
     useEffect(() => {
         if (location.state?.successMessage) {
@@ -190,7 +175,15 @@ const CustomerDetailAdmin: React.FC = () => {
         <HeaderAdmin />
         <div className="container margin-top-90 wrapper account-page">
             <div className="row message-block-76">
-                <div className="col-xl-9 col-lg-8 col-12">
+                <div className="col-3 col-lg-2 back-button">
+                    <Link to="/admin/dashboard" className="text-decoration-none">
+                        <p className="back-link">
+                            <FontAwesomeIcon icon={faChevronLeft} className="icon" />
+                            <span className="ms-2"><strong>Zpět</strong></span>
+                        </p>
+                    </Link>
+                </div>
+                <div className="col-xl-8 col-lg-6 col-12">
                     {successMessage && (
                         <p className="alert alert-success">{successMessage}</p>
                     )}
@@ -213,7 +206,42 @@ const CustomerDetailAdmin: React.FC = () => {
                                         <Skeleton
                                             variant="rectangular"
                                             width={180} height={20}
-                                            sx={{ borderRadius: "6px", marginBottom: 0 }}
+                                            sx={{ borderRadius: "6px", marginBottom: 1 }}
+                                        />
+                                        <Skeleton
+                                            variant="rectangular"
+                                            width={180} height={20}
+                                            sx={{ borderRadius: "6px", marginBottom: 1 }}
+                                        />
+                                        <Skeleton
+                                            variant="rectangular"
+                                            width={180} height={20}
+                                            sx={{ borderRadius: "6px", marginBottom: 1 }}
+                                        />
+                                        <Skeleton
+                                            variant="rectangular"
+                                            width={180} height={20}
+                                            sx={{ borderRadius: "6px", marginBottom: 1 }}
+                                        />
+                                        <Skeleton
+                                            variant="rectangular"
+                                            width={180} height={20}
+                                            sx={{ borderRadius: "6px", marginBottom: 1 }}
+                                        />
+                                        <Skeleton
+                                            variant="rectangular"
+                                            width={180} height={20}
+                                            sx={{ borderRadius: "6px", marginBottom: 1 }}
+                                        />
+                                        <Skeleton
+                                            variant="rectangular"
+                                            width={180} height={20}
+                                            sx={{ borderRadius: "6px", marginBottom: 1 }}
+                                        />
+                                        <Skeleton
+                                            variant="rectangular"
+                                            width={180} height={20}
+                                            sx={{ borderRadius: "6px", marginBottom: 1 }}
                                         />
                                     </div>
                                 </div>
@@ -249,7 +277,7 @@ const CustomerDetailAdmin: React.FC = () => {
                                     {(customerData && (loading || forceWait)) ? (
                                         [...Array(2)].map((_, index) => (
                                             <div className="col-lg-4 col-xl-7 col-4 mb-4" key={index}>
-                                                <div className="card dashboard-button">
+                                                <div className="card dashboard-button" style={{height:'146px'}}>
                                                     <div className="card-body button-history">
                                                         <Skeleton
                                                             variant="rectangular"

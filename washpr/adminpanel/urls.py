@@ -24,4 +24,5 @@ urlpatterns = [
          delete_report_file,
          name='delete_report_file'),
     path('customers/', all_customers, name='all_customers'),
+    path('customers/search/', search_customers, name='search_customers'),
 ]
