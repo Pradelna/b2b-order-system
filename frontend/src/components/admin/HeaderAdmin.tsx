@@ -44,10 +44,10 @@ const HeaderAdmin: React.FC = () => {
                                 </Link>
                             )}
 
-                            <a href="/" className="mail">
-                                <FontAwesomeIcon icon={faHouse} className="icon"/>
+                            <Link to="/" className="mail ms-4">
+                                <FontAwesomeIcon icon={faEarthAmerica} className="icon"/>
                                 <span>Web stránka</span>
-                            </a>
+                            </Link>
                             <Link to="/" className="mail ms-4" onClick={handleLogout}>
                                 <FontAwesomeIcon icon={faRightFromBracket} className="icon"/>
                                 <span>Log out</span>
