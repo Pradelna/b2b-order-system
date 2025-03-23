@@ -896,3 +896,22 @@ def send_email_change_customer_task(rp_client_external_id, company_name):
     except:
         return f"Error sending email: {company_name} changed data"
     return f"Email sent: {company_name} changed data"
+
+
+@shared_task(
+    autoretry_for=(requests.exceptions.RequestException,),
+    retry_kwargs={"max_retries": 5, "countdown": 180}
+)
+def send_new_customer_task(company_name):
+    subject = "Nový zákazník"
+    message = (
+        f"Nový zákazník {company_name}\n\n"
+        f"Prosím, věnujte pozornost."
+    )
+    from_email = settings.DEFAULT_FROM_EMAIL
+    recipient_list = ["admin@sokov.eu"]
+    try:
+        send_mail(subject, message, from_email, recipient_list)
+    except:
+        return f"Error sending email: {company_name} changed data"
+    return f"Email sent: {company_name} changed data"

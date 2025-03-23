@@ -3,7 +3,7 @@ from django.db import models
 from django.core.validators import RegexValidator
 import os
 
-from integration.tasks import create_client_task, send_email_change_customer_task
+from integration.tasks import create_client_task, send_email_change_customer_task, send_new_customer_task
 from rest_framework.exceptions import ValidationError
 
 User = get_user_model()
@@ -60,6 +60,7 @@ class Customer(models.Model):
                 'company_ico',
                 'company_dic',
             ])
+            send_new_customer_task.delay(self.company_address)
             return
         else:
             # Если объект уже существует, но rp_client_external_id не заполнено, устанавливаем его
