@@ -314,7 +314,7 @@ const CustomerDetailAdmin: React.FC = () => {
                                             <div className="col-lg-6 col-xl-7 col-4">
                                                 <Link to={`/admin/user-invoices/${customerId}`} className="text-decoration-none">
                                                     <div className="card dashboard-button" style={{height:'145px'}}>
-                                                        <div className="card-body">
+                                                        <div className="card-body button-history">
                                                             <FontAwesomeIcon icon={faFileInvoiceDollar} className="icon" />
                                                             <p className="text-history">Faktury</p>
                                                         </div>

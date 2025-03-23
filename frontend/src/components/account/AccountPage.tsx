@@ -1,5 +1,6 @@
-import {useState, useEffect, JSX} from "react";
+import {useState, useEffect, JSX, useContext} from "react";
 import { useNavigate } from "react-router-dom";
+import { LanguageContext } from "../../context/LanguageContext";
 import { fetchWithAuth } from "./auth";
 import HeaderAccount from "../HeaderAccount";
 import Header from "../Header";
@@ -20,6 +21,7 @@ function AccountPage(): JSX.Element {
     const BASE_URL = import.meta.env.VITE_API_URL;
     const [formCustomer, setFormCustomer] = useState<boolean>(true);
     const navigate = useNavigate();
+    const { currentData } = useContext(LanguageContext);
 
     useEffect(() => {
         const fetchCustomerData = async () => {
@@ -30,7 +32,7 @@ function AccountPage(): JSX.Element {
 
                 if (!response.ok) {
                     if (response.status === 401) {
-                        throw new Error("Unauthorized. Please log in again.");
+                        throw new Error(currentData?.auth?.login_again || "Neautorizováno. Prosím, přihlaste se znovu.");
                     }
                     throw new Error(`HTTP error! Status: ${response.status}`);
                 }

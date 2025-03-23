@@ -2108,6 +2108,12 @@ p.back-link {
 #company-top-admin .company-info {
   font-size: 16px;
 }
+#company-top-admin p.text-history {
+  font-size: 20px;
+}
+#company-top-admin .button-history svg {
+  height: 30px;
+}
 #company-top-admin .details-place-button {
   position: absolute;
   top: 20%;

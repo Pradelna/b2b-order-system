@@ -103,6 +103,7 @@ class LandingPage(models.Model):
     auth_network_error = models.CharField("Network error", max_length=50, blank=True, null=True)
     auth_new_pass = models.CharField("New password", max_length=100, blank=True, null=True)
     auth_confirm_new_pass = models.CharField("Confirm new password", max_length=100, blank=True, null=True)
+    auth_login_again = models.CharField("Unauthorized. Please log in again.", max_length=100, blank=True, null=True)
     # customer info
     customer_full_name = models.CharField("Name and surname", max_length=200, blank=True, null=True)
     customer_company_name = models.CharField("Company name", max_length=200, blank=True, null=True)
@@ -177,8 +178,7 @@ class LandingPage(models.Model):
     message_customer_error = models.CharField("Customer Failure", max_length=150, blank=True, null=True)
     message_place_del = models.CharField("Place deleted", max_length=150, blank=True, null=True)
     message_sure_del_place = models.CharField("Place sure delete?", max_length=150, blank=True, null=True)
-    message_filed_del_place = models.CharField("Filed del place", max_length=150, blank=True, null=True)
-    message_error_del_place = models.CharField("Filed del place", max_length=150, blank=True, null=True)
+    message_place_add_success = models.CharField("Place add success", max_length=150, blank=True, null=True)
 
     # order
     order_type_sipping_clear_for_dirty = models.CharField("Order type sipping clear for dirty", max_length=100,

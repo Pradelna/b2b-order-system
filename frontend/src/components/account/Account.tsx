@@ -82,7 +82,7 @@ const Account: React.FC<AccountProps> = ({ customerData, setCustomerData }) => {
     };
 
     const handleSuccess = (newPlace: Place) => {
-        setSuccessMessage(`Place "${newPlace.place_name}" created successfully!`);
+        setSuccessMessage(` "${newPlace.place_name}" created successfully!`);
         setPlaces((prevPlaces) => [...prevPlaces, newPlace]); // Добавляем новое место в список
         setTimeout(() => setSuccessMessage(""), 10000);
         setShowPlaceForm(false); // Скрыть форму после успешного создания
@@ -97,7 +97,7 @@ const Account: React.FC<AccountProps> = ({ customerData, setCustomerData }) => {
     const handleOrderSuccess = (data: number | null) => {
         setShowOrderForm(false); // Закрываем форму
         setCurrentPlaceId(null); // обнуляем номер
-        setSuccessMessage("Order created successfully!");
+        setSuccessMessage(currentData?.messages?.order_created || "Objednávka byla úspěšně vytvořena!");
         setTimeout(() => setSuccessMessage(""), 10000);
     };
 

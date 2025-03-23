@@ -152,6 +152,7 @@ class LandingPageSerializer(serializers.ModelSerializer):
             'logout': obj.auth_logout,
             'pass_reset': obj.auth_pass_reset,
             'log_data': obj.auth_log_data,
+            'login_again': obj.auth_login_again,
         }
 
     def get_customer(self, obj):
@@ -214,11 +215,10 @@ class LandingPageSerializer(serializers.ModelSerializer):
             'add_inform': obj.message_add_inform,
             'place_del': obj.message_place_del,
             'sure_del_place': obj.message_sure_del_place,
-            'filed_del_place': obj.message_filed_del_place,
-            'error_del_place': obj.message_error_del_place,
             'filed_form': obj.message_filed_form,
             'customer_success': obj.message_customer_success,
             'customer_error': obj.message_customer_error,
+            'place_add_success': obj.message_place_add_success,
         }
 
     def get_order(self, obj):

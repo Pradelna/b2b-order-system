@@ -49,7 +49,7 @@ const UploadFileAdmin: React.FC<UploadFileAdminProps> = ({ onUploadSuccess, cust
         if (!file) return;
 
         if (file.size > 2 * 1024 * 1024) { // 2MB limit
-            setError("File size exceeds 2MB");
+            setError("Velikost souboru přesahuje 2 MB");
             setSuccess('');
             return;
         }
@@ -66,7 +66,7 @@ const UploadFileAdmin: React.FC<UploadFileAdminProps> = ({ onUploadSuccess, cust
             });
             const responseData = await response.json();
             if (response.status === 201) {
-                setSuccess('File uploaded successfully');
+                setSuccess('Soubor byl úspěšně nahrán.');
                 setTimeout(() => setSuccess(''), 3000);
                 setError('');
                 onUploadSuccess?.();
@@ -80,7 +80,7 @@ const UploadFileAdmin: React.FC<UploadFileAdminProps> = ({ onUploadSuccess, cust
                 setSuccess('');
             }
         } catch (error) {
-            setError('An error occurred. Please try again.');
+            setError('Došlo k chybě. Zkuste to prosím znovu.');
             console.error('Upload error:', error);
         } finally {
             setIsUploading(false);
