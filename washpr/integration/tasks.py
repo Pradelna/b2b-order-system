@@ -147,8 +147,12 @@ def create_client_task(customer_id):
         subject = "Váš účet byl aktivován"
         message = (
             f"Dobrý den, {customer.company_person or customer.company_name}!\n\n"
-            f"Váš účet je aktivní a úspěšně vytvořen ve.\n"
-            f"Vaš ID: {client_id}"
+            f"Váš účet byl úspěšně schválen.\n"
+            f"S aktivací vašeho účtu souhlasíte s cenou, která Vám byla vyměřena.\n"
+            f"Ceny najdete v administračním kabinetu v bloku dokumentů.\n"
+            f"Těšíme se na spolupráci!\n\n"
+            f"S pozdravem\n"
+            f"Tým prádelna no.1\n"
         )
         from_email = settings.DEFAULT_FROM_EMAIL
         recipient_list = [customer.user.email]

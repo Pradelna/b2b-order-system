@@ -47,9 +47,9 @@ def send_activation_email(user):
 
     subject = "Activate your account"
     message = (
-        f"Hi {user.email},\n\n"
-        f"Please click the link below to activate your account:\n{activation_link}\n\n"
-        f"Thank you!"
+        f"Dobrý den.\n\n"
+        f"Prosím, klikněte na odkaz níže pro aktivaci vašeho účtu:\n{activation_link}\n\n"
+        f"Děkuji vám"
     )
 
     # Отправка письма
