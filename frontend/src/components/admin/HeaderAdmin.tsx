@@ -6,13 +6,19 @@ import {
     faHouse,
     faUser,
     faEarthAmerica,
-    faFileInvoiceDollar, faClockRotateLeft
+    faRightFromBracket
 } from "@fortawesome/free-solid-svg-icons";
 import {Link} from "react-router-dom";
 
 const HeaderAdmin: React.FC = () => {
     const [loading, setLoading] = useState(true);
     const navigate = useNavigate();
+
+    const handleLogout = () => {
+        localStorage.removeItem("accessToken");
+        alert("You have been logged out.");
+        window.location.href = "/account/login";
+    };
 
 
     return (
@@ -42,6 +48,10 @@ const HeaderAdmin: React.FC = () => {
                                 <FontAwesomeIcon icon={faHouse} className="icon"/>
                                 <span>Web stránka</span>
                             </a>
+                            <Link to="/" className="mail ms-4" onClick={handleLogout}>
+                                <FontAwesomeIcon icon={faRightFromBracket} className="icon"/>
+                                <span>Log out</span>
+                            </Link>
                         </div>
 
                         <div className="to-website">
@@ -59,6 +69,10 @@ const HeaderAdmin: React.FC = () => {
                             <Link to="/" className="mail ms-4">
                                 <FontAwesomeIcon icon={faEarthAmerica} className="icon"/>
                                 <span>Web stránka</span>
+                            </Link>
+                            <Link to="/" className="mail ms-4" onClick={handleLogout}>
+                                <FontAwesomeIcon icon={faRightFromBracket} className="icon"/>
+                                <span>Log out</span>
                             </Link>
                         </div>
 
