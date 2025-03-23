@@ -82,7 +82,9 @@ const Account: React.FC<AccountProps> = ({ customerData, setCustomerData }) => {
     };
 
     const handleSuccess = (newPlace: Place) => {
-        setSuccessMessage(` "${newPlace.place_name}" created successfully!`);
+        setSuccessMessage(
+            `"${newPlace.place_name} " ${currentData?.messages?.place_add_success || "úspěšně vytvořeno!"}`
+        );
         setPlaces((prevPlaces) => [...prevPlaces, newPlace]); // Добавляем новое место в список
         setTimeout(() => setSuccessMessage(""), 10000);
         setShowPlaceForm(false); // Скрыть форму после успешного создания

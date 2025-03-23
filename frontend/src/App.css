@@ -1494,6 +1494,13 @@ svg.loader{
   height: 50px;
   width: 50px;
   padding: 14px;
+  transition: transform 0.3s ease;
+}
+.btn-download:hover {
+  background-color: #87d6de;
+  height: 50px;
+  width: 50px;
+  padding: 14px;
 }
 
 .receipt-icon {
