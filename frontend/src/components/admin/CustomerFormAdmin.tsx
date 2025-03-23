@@ -202,7 +202,7 @@ const CustomerFormAdmin: React.FC<CustomerFormAdminProps> = ({
                                     value={formData.company_ico}
                                     onChange={handleChange}
                                     className="form-control"
-                                    style={formData.new_company_ico !== formData.company_ico ? { color: "red" } : {}}
+
                                 />
                             </div>
                         </div>
@@ -219,7 +219,7 @@ const CustomerFormAdmin: React.FC<CustomerFormAdminProps> = ({
                                     value={formData.new_company_ico}
                                     onChange={handleChange}
                                     className="form-control"
-
+                                    style={formData.new_company_ico !== formData.company_ico ? { color: "red" } : {}}
                                 />
                             </div>
                         </div>
@@ -257,7 +257,7 @@ const CustomerFormAdmin: React.FC<CustomerFormAdminProps> = ({
                                     value={formData.new_company_dic}
                                     onChange={handleChange}
                                     className="form-control"
-
+                                    style={formData.new_company_dic !== formData.company_dic ? { color: "red" } : {}}
                                 />
                             </div>
                         </div>
