@@ -37,8 +37,8 @@ const CustomerSearch: React.FC = () => {
     };
 
     return (
-        <div className="row customer-search mt-4">
-            <div className="col-lg-8">
+        <div className="row customer-search">
+            <div className="col-lg-8 col-12">
                 <div className="input-group mb-3">
                     <input
                         type="text"

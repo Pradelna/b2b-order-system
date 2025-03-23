@@ -301,7 +301,7 @@ const CustomerFormAdmin: React.FC<CustomerFormAdminProps> = ({
                     </div>
                 </div>
 
-                <div className="row">
+                <div className="row label-row">
 
                     <div className="form-customer-edit checkbox-wrapper-19">
                         <input
@@ -322,7 +322,7 @@ const CustomerFormAdmin: React.FC<CustomerFormAdminProps> = ({
 
                 </div>
 
-                <div className="row">
+                <div className="row label-row">
 
                     <div className="form-customer-edit checkbox-wrapper-19">
                         <input
@@ -343,7 +343,7 @@ const CustomerFormAdmin: React.FC<CustomerFormAdminProps> = ({
 
                 </div>
 
-                <div className="row">
+                <div className="row label-row">
 
                     <div className="form-customer-edit checkbox-wrapper-19">
                         <input
@@ -364,7 +364,7 @@ const CustomerFormAdmin: React.FC<CustomerFormAdminProps> = ({
 
                 </div>
 
-                <div className="row">
+                <div className="row mt-3">
                     <button type="submit" className="btn-submit">
                         Submit
                     </button>

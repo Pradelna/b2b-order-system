@@ -270,13 +270,13 @@ const CustomerDetailAdmin: React.FC = () => {
 
                     {customerData && !customerData.error && (
                         <>
-                            <div className="col-xl-5 col-lg-8 col-12">
+                            <div className="col-xl-5 col-lg-4 col-12">
                             <div className="row">
 
 
                                     {(customerData && (loading || forceWait)) ? (
                                         [...Array(2)].map((_, index) => (
-                                            <div className="col-lg-4 col-xl-7 col-4 mb-4" key={index}>
+                                            <div className="col-lg-12 col-xl-7 col-6 mb-4" key={index}>
                                                 <div className="card dashboard-button" style={{height:'146px'}}>
                                                     <div className="card-body button-history">
                                                         <Skeleton
@@ -298,7 +298,7 @@ const CustomerDetailAdmin: React.FC = () => {
                                     ) : (
                                         <>
 
-                                            <div className="col-lg-6 col-xl-7 col-4 mb-4">
+                                            <div className="col-lg-12 col-xl-7 col-6 mb-4">
                                                 <Link to={`/admin/user-history/${customerId}`} className="text-decoration-none">
                                                     <div className="card dashboard-button" style={{height:'146px'}}>
                                                         <div className="card-body button-history">
@@ -311,7 +311,7 @@ const CustomerDetailAdmin: React.FC = () => {
                                                 </Link>
                                             </div>
 
-                                            <div className="col-lg-6 col-xl-7 col-4">
+                                            <div className="col-lg-12 col-xl-7 col-6">
                                                 <Link to={`/admin/user-invoices/${customerId}`} className="text-decoration-none">
                                                     <div className="card dashboard-button" style={{height:'145px'}}>
                                                         <div className="card-body button-history">

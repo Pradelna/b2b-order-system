@@ -45,7 +45,7 @@ function NewCustomers() {
             <h3>Recent Customers</h3>
             <div className="row">
                 {customers.map((customer) => (
-                    <div key={customer.user_id} className="col-8 mb-3">
+                    <div key={customer.user_id} className="col-lg-8 col-12 mb-3">
                         <Link to={`/admin/customer-detail/${customer.user_id}`}>
                         <div className="card dashboard-button user-card">
                             <div className="users-icon">

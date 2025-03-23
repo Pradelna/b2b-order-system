@@ -18,7 +18,7 @@ const HeaderAdmin: React.FC = () => {
     return (
         <header className="header">
             {/* Top Header */}
-            <div className="header__top">
+            <div id="admin" className="header__top">
                 <div className="container">
                     <div className="header__top__wrap">
 
@@ -40,12 +40,23 @@ const HeaderAdmin: React.FC = () => {
 
                             <a href="/" className="mail">
                                 <FontAwesomeIcon icon={faHouse} className="icon"/>
-                                <span>Webstranka</span>
+                                <span>Web stránka</span>
                             </a>
                         </div>
 
                         <div className="to-website">
-                            <Link to="/" className="mail">
+                            {location.pathname === "admin/dashboard/" ? (
+                                <>
+                                    <FontAwesomeIcon icon={faDashboard} className="icon"/>
+                                    <span>Dashboard</span>
+                                </>
+                            ) : (
+                                <Link to="/admin/dashboard/" className="mail">
+                                    <FontAwesomeIcon icon={faDashboard} className="icon"/>
+                                    <span>Dashboard</span>
+                                </Link>
+                            )}
+                            <Link to="/" className="mail ms-4">
                                 <FontAwesomeIcon icon={faEarthAmerica} className="icon"/>
                                 <span>Web stránka</span>
                             </Link>

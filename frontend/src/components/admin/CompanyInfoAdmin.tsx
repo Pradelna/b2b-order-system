@@ -113,7 +113,7 @@ const CompanyInfoAdmin: React.FC<CompanyInfoAdminProps> = ({
                     <h5 className="company-name">
                         <FontAwesomeIcon icon={faBuilding} className="icon" />{" "}
                         <span className="ms-1">{customerData?.company_name || "empty"}</span>
-                        {customerData?.change_data && <span style={{color: "red"}}> NEEDS CHANGES</span>}
+                        {customerData?.change_data && <span className="needs-changes"> NEEDS CHANGES</span>}
                     </h5>
                     <p className="company-info">
                         <FontAwesomeIcon icon={faLocationDot} className="icon" />{" "}
