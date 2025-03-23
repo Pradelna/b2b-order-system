@@ -244,7 +244,7 @@ const Account: React.FC<AccountProps> = ({ customerData, setCustomerData }) => {
                                 ) : (
                                     <>
                                         {!customerData?.active ? (
-                                            <div className="instruction col-lg-4 col-xl-6 col-4 mb-4">
+                                            <div className="instruction col-xl-6 col-12 mb-4">
                                                 <div className="card dashboard-button">
                                                     <div className="card-body button-history">
                                                         <p style={{margin:"0"}}>
