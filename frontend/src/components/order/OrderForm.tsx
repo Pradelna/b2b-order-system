@@ -415,7 +415,7 @@ const OrderForm: React.FC<OrderFormProps> = ({ placeId, onClose, onSuccess }) =>
     const formattedData = {
       ...formData,
       place: placeId || formData.place,
-      date_pickup: displayedDatePickup,  // Используем дату, отображаемую в браузере
+      date_pickup: displayedDatePickup,
       date_delivery: displayedDateDelivery,
       date_start_day: displayedDateStartDay,
     };

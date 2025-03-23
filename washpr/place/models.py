@@ -1,6 +1,6 @@
 from django.db import models
 from customer.models import Customer
-from integration.tasks import create_place_task, update_place_task
+from integration.tasks import create_place_task, update_place_task, send_email_deleted_place_task
 
 
 class Place(models.Model):
@@ -36,7 +36,8 @@ class Place(models.Model):
                 self.rp_external_id = f"place_{self.pk}"
             super().save(update_fields=[
                 'rp_client_external_id',
-                'rp_client_name', 'rp_title',
+                'rp_client_name',
+                'rp_title',
                 'rp_external_id',
                 'rp_client_id'
             ])
@@ -54,6 +55,15 @@ class Place(models.Model):
             return
         if self.rp_id:
             update_place_task.delay(place_id=self.pk)
+        if self.deleted:
+            super().save(*args, **kwargs)
+            send_email_deleted_place_task.delay(
+                place_id=self.pk,
+                place_name=self.place_name,
+                place_external_id=self.rp_external_id,
+                customer=self.customer.company_name,
+            )
+            return
         super().save(*args, **kwargs)
 
     def __str__(self):

@@ -52,7 +52,7 @@ function AllCustomers() {
                 <>
 
                         {customers.map((customer) => (
-                            <div key={customer.user_id} className="col-8 mb-3">
+                            <div key={customer.user_id} className="col-lg-8 col-12 mb-3">
                                 <Link to={`/admin/customer-detail/${customer.user_id}`}>
                                     <div className="card dashboard-button user-card">
                                         <div className="users-icon">
@@ -69,7 +69,7 @@ function AllCustomers() {
                             </div>
                         ))}
 
-                    <div className="col-8 mb-4">
+                    <div className="col-lg-8 col-12 mb-4">
                         <div className="pagination d-flex justify-content-center">
                             <button
                                 className="btn btn-prev-next"

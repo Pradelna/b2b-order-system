@@ -50,7 +50,7 @@ def total_orders(request):
 @api_view(['GET'])
 @permission_classes([IsAdminUser])
 def new_customers(request):
-    recent = Customer.objects.filter(active=False).order_by('-user__date_joined')
+    recent = Customer.objects.filter(active=False, data_sent=False).order_by('-user__date_joined')
     serializer = CustomerGetSerializer(recent, many=True)
     return Response({"customers": serializer.data})
 
@@ -66,10 +66,6 @@ def customer_details(request, customer_id):
 def customers_places(request, customer_id):
     customer = get_object_or_404(Customer, user__id=customer_id)
     places = Place.objects.filter(customer=customer)
-    places_all = Place.objects.all()
-    # for place in places_all:
-    #     if customer == place.customer:
-    #         print(f"this place is {place} for {place.customer}")
     serializer = PlaceSerializer(places, many=True)
     return Response({"places": serializer.data})
 

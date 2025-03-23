@@ -961,8 +961,8 @@ p.text-history {
   transition: height 0.3s ease, top 0.3s ease, opacity 0.3s ease, box-shadow 0.3s;
   overflow: hidden;
   padding: 0;
-  max-height: calc(100vh - 50px); /* Ограничивает высоту окна до видимой области */
-  overflow-y: auto; /* Добавляет прокрутку, если контент превышает высоту */
+  max-height: calc(70vh - 50px);
+  overflow-y: auto;
   position: relative;
 }
 
@@ -973,14 +973,10 @@ p.text-history {
 }
 
 #card-history .card-history {
-  overflow-y: auto;       /* Включаем прокрутку */
-  height: 100%;           /* Или фиксированная/автоматическая высота */
-
-  /* Важное место: благодаря отступам справа,
-     реальная полоса прокрутки будет "на 12px левее",
-     чем край внешнего контейнера */
+  overflow-y: auto;
+  height: 100%;
   padding-right: 16px;
-  box-sizing: content-box; /* Чтобы padding не сжимал контент */
+  box-sizing: content-box;
 }
 
 #card-history .card-body {
@@ -1491,6 +1487,13 @@ svg.loader{
 
 .btn-download {
   background-color: #e1f6f8;
+  height: 50px;
+  width: 50px;
+  padding: 14px;
+  transition: transform 0.3s ease;
+}
+.btn-download:hover {
+  background-color: #87d6de;
   height: 50px;
   width: 50px;
   padding: 14px;
@@ -2064,11 +2067,17 @@ p.back-link {
   height: 90px;
   padding: 34px 90px;
 }
+.user-card p {
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
 .total-data .user-card {
   padding: 30px 90px;
 }
 .total-data .user-card p {
   font-size: 20px;
+  margin-bottom: 0;
 }
 .user-card .users-icon {
   position: absolute;
@@ -2095,7 +2104,7 @@ p.back-link {
 }
 .all-customers .user-card,
 .recent-customers .user-card {
-  padding: 20px 90px;
+  padding: 20px 20px 20px 90px;
 }
 .all-customers .user-card p,
 .recent-customers .user-card p {
@@ -2107,6 +2116,12 @@ p.back-link {
 }
 #company-top-admin .company-info {
   font-size: 16px;
+}
+#company-top-admin p.text-history {
+  font-size: 20px;
+}
+#company-top-admin .button-history svg {
+  height: 30px;
 }
 #company-top-admin .details-place-button {
   position: absolute;
@@ -2121,7 +2136,9 @@ p.back-link {
   height: 55px;
   border-radius: 27px;
 }
-
+#company-top-admin .place {
+  padding: 20px 20px 20px 90px;
+}
 .upload-invoice {
   /*position: absolute;*/
   top: 20px;
@@ -2169,10 +2186,83 @@ p.back-link {
   border-bottom-left-radius: 12px;
   border-bottom-right-radius: 12px;
 }
+.customer-search {
+  margin-top: 1.5rem;
+}
 .customer-search .form-control {
   border-radius: 12px;
 }
 .customer-search .btn-primary {
   border-top-right-radius: 12px;
   border-bottom-right-radius: 12px;
+}
+.instruction .card {
+  background-color: #fff3cd;
+}
+
+@media (min-width: 992px) and (max-width: 1199px) {
+  .total-data .user-card p {
+    font-size: 18px;
+  }
+  .total-data .user-card {
+    padding: 20px 20px 20px 90px;
+  }
+}
+@media (max-width: 991px) {
+  #company-top-admin .place {
+    padding: 20px 20px 20px 90px !important;
+  }
+  #company-top-admin .details-place-button {
+    position: absolute;
+    top: 0;
+    right: 0 !important;
+    height: 100%;
+    width: 100%;
+  }
+}
+@media (min-width: 768px) and (max-width: 991px) {
+  .total-data .user-card p {
+    font-size: 18px;
+  }
+  .total-data .user-card {
+    padding: 20px 20px 20px 90px;
+  }
+  .order-admin-icon,
+  .users-icon {
+    /*display: none;*/
+  }
+  #admin .container {
+    max-width: 720px;
+  }
+
+}
+@media (max-width: 575px) {
+  .total-data .users-icon,
+  .total-data .order-admin-icon {
+    display: none;
+  }
+  .total-data .user-card {
+    padding: 30px 20px;
+  }
+  #company-top-admin .place {
+    padding: 20px !important;
+  }
+  #company-top-admin.row {
+    margin-right: -35px;
+  }
+  #company-top-admin .needs-changes {
+    font-size: 14px;
+  }
+  .label-row {
+    margin-top: 15px;
+  }
+
+}
+@media (max-width: 530px) {
+  .invoices-page .report-card .card {
+    padding: 20px;
+  }
+}
+.needs-changes {
+  color: red;
 }

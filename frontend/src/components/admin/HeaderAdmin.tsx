@@ -18,7 +18,7 @@ const HeaderAdmin: React.FC = () => {
     return (
         <header className="header">
             {/* Top Header */}
-            <div className="header__top">
+            <div id="admin" className="header__top">
                 <div className="container">
                     <div className="header__top__wrap">
 
@@ -40,31 +40,42 @@ const HeaderAdmin: React.FC = () => {
 
                             <a href="/" className="mail">
                                 <FontAwesomeIcon icon={faHouse} className="icon"/>
-                                <span>Webstranka</span>
+                                <span>Web stránka</span>
                             </a>
                         </div>
 
                         <div className="to-website">
-                            <Link to="/" className="mail">
+                            {location.pathname === "admin/dashboard/" ? (
+                                <>
+                                    <FontAwesomeIcon icon={faDashboard} className="icon"/>
+                                    <span>Dashboard</span>
+                                </>
+                            ) : (
+                                <Link to="/admin/dashboard/" className="mail">
+                                    <FontAwesomeIcon icon={faDashboard} className="icon"/>
+                                    <span>Dashboard</span>
+                                </Link>
+                            )}
+                            <Link to="/" className="mail ms-4">
                                 <FontAwesomeIcon icon={faEarthAmerica} className="icon"/>
                                 <span>Web stránka</span>
                             </Link>
                         </div>
 
-                        <nav className="navbar-bottom">
-                            <Link to={`/customer`}>
-                                <FontAwesomeIcon icon={faUser} className="icon"/>
-                            </Link>
-                            <Link to="/all-orders">
-                                <FontAwesomeIcon icon={faClockRotateLeft} className="icon" />
-                            </Link>
-                            <Link to="/invoices">
-                                <FontAwesomeIcon icon={faFileInvoiceDollar} className="icon" />
-                            </Link>
-                            <Link to="/account">
-                                <FontAwesomeIcon icon={faHouse} className="icon" />
-                            </Link>
-                        </nav>
+                        {/*<nav className="navbar-bottom">*/}
+                        {/*    <Link to={`/customer`}>*/}
+                        {/*        <FontAwesomeIcon icon={faUser} className="icon"/>*/}
+                        {/*    </Link>*/}
+                        {/*    <Link to="/all-orders">*/}
+                        {/*        <FontAwesomeIcon icon={faClockRotateLeft} className="icon" />*/}
+                        {/*    </Link>*/}
+                        {/*    <Link to="/invoices">*/}
+                        {/*        <FontAwesomeIcon icon={faFileInvoiceDollar} className="icon" />*/}
+                        {/*    </Link>*/}
+                        {/*    <Link to="/account">*/}
+                        {/*        <FontAwesomeIcon icon={faHouse} className="icon" />*/}
+                        {/*    </Link>*/}
+                        {/*</nav>*/}
                     </div>
                 </div>
             </div>

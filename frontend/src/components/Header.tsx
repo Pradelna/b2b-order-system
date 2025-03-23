@@ -122,11 +122,11 @@ const Header: React.FC = ({formCustomer}) => {
                 <div className="header__mobile__contacts__wrap">
                   <a href="tel:+420734246834" className="tel">
                     <FontAwesomeIcon icon={faMobileScreen} className="icon" />
-                    <span> +420 734 246 834</span>
+                    <span className="ms-2"> +420 734 246 834</span>
                   </a>
                   <a href="mailto:office@pradelna1.com" className="mail">
                     <FontAwesomeIcon icon={faEnvelope} className="icon" />
-                    <span> office@pradelna1.com</span>
+                    <span className="ms-2"> office@pradelna1.com</span>
                   </a>
                 </div>
               </div>

@@ -25,7 +25,6 @@ def customer_view(request):
 
     elif request.method == 'POST':
         serializer = CustomerSerializer(data=request.data)
-        print(serializer)
         if serializer.is_valid():
             serializer.save(user=request.user, company_email=request.user.email)  # Связываем клиента с пользователем
             return Response(serializer.data)

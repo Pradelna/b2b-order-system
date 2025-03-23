@@ -1,11 +1,10 @@
 from django.contrib.auth import get_user_model
 from django.db import models
 from django.core.validators import RegexValidator
-from django.core.exceptions import ValidationError
 import os
 
-from integration.tasks import create_client_task
-
+from integration.tasks import create_client_task, send_email_change_customer_task
+from rest_framework.exceptions import ValidationError
 
 User = get_user_model()
 
@@ -71,6 +70,11 @@ class Customer(models.Model):
         if self.active and not self.data_sent:
             super().save(*args, **kwargs)
             create_client_task.delay(self.pk)
+            return
+
+        if self.change_data:
+            super().save(*args, **kwargs)
+            send_email_change_customer_task.delay(self.rp_client_external_id, self.company_name)
             return
 
         super().save(*args, **kwargs)

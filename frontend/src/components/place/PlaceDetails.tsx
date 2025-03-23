@@ -130,7 +130,7 @@ const PlaceDetails: React.FC = () => {
     // delete place, but only add "deleted"=True
     const handleDelete = async () => {
         // deleting of the place
-        if (window.confirm("Are you sure you want to delete this place?")) {
+        if (window.confirm(currentData?.messages?.sure_del_place || "Jste si jisti, že chcete toto místo smazat?")) {
             try {
                 const response = await fetchWithAuth(
                     `${BASE_URL}/place/edit/${place.id}/`,
@@ -144,7 +144,7 @@ const PlaceDetails: React.FC = () => {
                 );
                 if (response.ok) {
                     navigate("/account", {
-                        state: { successMessage: "Place deleted successfully!" },
+                        state: { successMessage: currentData?.messages?.place_del || "Místo smazáno úspěšně!" },
                     });
                 } else {
                     console.error("Failed to delete place.");
@@ -275,6 +275,11 @@ const PlaceDetails: React.FC = () => {
                     <div className="col-xl-7 col-lg-10 col-12">
                         {successMessage && (
                             <p className="alert alert-success">{successMessage}</p>
+                        )}
+                        {!place.data_sent && (
+                            <p className="alert alert-warning">
+                                Ještě nemůžete vytvořit objednávku. Počkejte, až je místo zpracováno systémem. To může trvat od 20 do 30 minut.
+                            </p>
                         )}
                     </div>
                 </div>

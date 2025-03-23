@@ -8,7 +8,7 @@ import {
     faCartPlus,
     faPowerOff,
     faCircleCheck,
-    faStopwatch, faFileInvoiceDollar, faChevronLeft
+    faStopwatch, faFileInvoiceDollar, faChevronLeft, faBan
 } from "@fortawesome/free-solid-svg-icons";
 import HeaderAdmin from "./HeaderAdmin";
 import FooterAccount from "../FooterAccount";
@@ -230,6 +230,16 @@ const PlaceDetailAdmin: React.FC = () => {
                                 <h1>{currentData?.place.detail_title || "Podrobnosti o místě"}</h1>
 
                                     <div className="place-info">
+                                        {place.deleted && (
+                                            <div className="row mb-2">
+                                                <div className="col-12">
+                                                    <div className="form-control">
+                                                        <FontAwesomeIcon icon={faBan} style={{ color: "red", height: "18px" }}/>
+                                                        <strong className="ms-2 me-2">Smazáno</strong>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                            )}
                                         <div className="row mb-2">
                                             <div className="col-12">
                                                 <div className="form-control">

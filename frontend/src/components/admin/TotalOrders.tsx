@@ -33,7 +33,7 @@ function TotalOrders({ apiUrl }: TotalCustomersProps) {
     }, [endpoint]);
 
     return (
-        <div className="col-4">
+        <div className="col-lg-4 col-md-6">
             {(total && (loading)) ? (
                 <>
                     <div className="card dashboard-button">
