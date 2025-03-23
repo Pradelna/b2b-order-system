@@ -276,6 +276,11 @@ const PlaceDetails: React.FC = () => {
                         {successMessage && (
                             <p className="alert alert-success">{successMessage}</p>
                         )}
+                        {!place.data_sent && (
+                            <p className="alert alert-warning">
+                                Ještě nemůžete vytvořit objednávku. Počkejte, až je místo zpracováno systémem. To může trvat od 20 do 30 minut.
+                            </p>
+                        )}
                     </div>
                 </div>
                 <div className="row other-card">

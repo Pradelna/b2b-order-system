@@ -961,8 +961,8 @@ p.text-history {
   transition: height 0.3s ease, top 0.3s ease, opacity 0.3s ease, box-shadow 0.3s;
   overflow: hidden;
   padding: 0;
-  max-height: calc(100vh - 50px); /* Ограничивает высоту окна до видимой области */
-  overflow-y: auto; /* Добавляет прокрутку, если контент превышает высоту */
+  max-height: calc(70vh - 50px);
+  overflow-y: auto;
   position: relative;
 }
 
@@ -973,14 +973,10 @@ p.text-history {
 }
 
 #card-history .card-history {
-  overflow-y: auto;       /* Включаем прокрутку */
-  height: 100%;           /* Или фиксированная/автоматическая высота */
-
-  /* Важное место: благодаря отступам справа,
-     реальная полоса прокрутки будет "на 12px левее",
-     чем край внешнего контейнера */
+  overflow-y: auto;
+  height: 100%;
   padding-right: 16px;
-  box-sizing: content-box; /* Чтобы padding не сжимал контент */
+  box-sizing: content-box;
 }
 
 #card-history .card-body {
@@ -2134,7 +2130,9 @@ p.back-link {
   height: 55px;
   border-radius: 27px;
 }
-
+#company-top-admin .place {
+  padding: 20px 20px 20px 90px;
+}
 .upload-invoice {
   /*position: absolute;*/
   top: 20px;
@@ -2188,4 +2186,7 @@ p.back-link {
 .customer-search .btn-primary {
   border-top-right-radius: 12px;
   border-bottom-right-radius: 12px;
+}
+.instruction .card {
+  background-color: #fff3cd;
 }

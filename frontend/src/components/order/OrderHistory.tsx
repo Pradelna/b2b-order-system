@@ -263,15 +263,18 @@ const OrderHistory: React.FC<OrderHistoryProps> = ({ placeId, orders = [], setOr
                                             )}
                                         </p>
 
-                                        {order.rp_contract_external_id ? (
+                                        {order.rp_contract_external_id  ? (
                                             <p>
                                                 <strong>{currentData?.history?.order_number || "Číslo objednávky"}:</strong> {order.rp_contract_external_id}
                                             </p>
-                                        ) : (
-                                            <p>
-                                                <strong>{currentData?.history?.wait_processing || "Objednávka čeká na zpracování"}</strong>
-                                            </p>
-                                        )}
+                                        ) : (<>
+                                            {!order.canceled ? (
+                                                <p>
+                                                    <strong>{currentData?.history?.wait_processing || "Objednávka čeká na zpracování"}</strong>
+                                                </p>
+                                            ) : null}
+
+                                        </>)}
 
                                         {/* Дополнительная информация показывается только если карточка развернута */}
                                         {expandedOrders[order.id] && (

@@ -50,7 +50,7 @@ def total_orders(request):
 @api_view(['GET'])
 @permission_classes([IsAdminUser])
 def new_customers(request):
-    recent = Customer.objects.filter(active=False).order_by('-user__date_joined')
+    recent = Customer.objects.filter(active=False, data_sent=False).order_by('-user__date_joined')
     serializer = CustomerGetSerializer(recent, many=True)
     return Response({"customers": serializer.data})
 

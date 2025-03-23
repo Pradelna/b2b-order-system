@@ -9,7 +9,7 @@ import {
     faHouse,
     faFileInvoiceDollar,
     faCircleCheck,
-    faStopwatch, faChevronLeft
+    faStopwatch, faChevronLeft, faBan
 } from "@fortawesome/free-solid-svg-icons";
 import {Skeleton} from "@mui/material";
 import HeaderAdmin from "./HeaderAdmin";
@@ -380,7 +380,13 @@ const CustomerDetailAdmin: React.FC = () => {
                                                 <div className="place-icon">
                                                     <FontAwesomeIcon icon={faHouse} className="s" />
                                                 </div>
-                                                <h5 className="place-card-name">{place.place_name}</h5>
+                                                <h5 className="place-card-name">
+                                                {place.deleted && (
+                                                        <>
+                                                            <FontAwesomeIcon icon={faBan} style={{ color: "red", height: "18px" }}/>
+                                                            <strong className="ms-2 me-2">Smazáno -</strong>
+                                                        </>)}
+                                                    <strong>{place.place_name}</strong></h5>
                                                 <p className="card-text">
                                                     {place.rp_street} {place.rp_number}, {place.rp_city}, {place.rp_zip}
                                                 </p>

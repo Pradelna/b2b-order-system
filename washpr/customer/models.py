@@ -1,7 +1,6 @@
 from django.contrib.auth import get_user_model
 from django.db import models
 from django.core.validators import RegexValidator
-from django.core.exceptions import ValidationError
 import os
 
 from integration.tasks import create_client_task

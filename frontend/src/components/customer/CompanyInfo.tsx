@@ -64,7 +64,7 @@ const CompanyInfo: React.FC<CompanyInfoProps> = ({
                 const data = await response.json();
                 if (!response.ok) {
                     if (response.status === 400 && data) {
-                        setFormErrors(data); // передаём все ошибки
+                        setFormErrors(data);
                     }
                     throw new Error(
                         data.detail ||
