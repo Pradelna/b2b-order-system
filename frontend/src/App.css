@@ -2248,7 +2248,8 @@ p.back-link {
     padding: 20px !important;
   }
   #company-top-admin.row {
-    margin-left: 10px;
+    /*margin-left: 10px;*/
+    margin-right: -35px;
   }
   #company-top-admin .needs-changes {
     font-size: 14px;

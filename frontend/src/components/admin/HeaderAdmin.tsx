@@ -62,20 +62,20 @@ const HeaderAdmin: React.FC = () => {
                             </Link>
                         </div>
 
-                        <nav className="navbar-bottom">
-                            <Link to={`/customer`}>
-                                <FontAwesomeIcon icon={faUser} className="icon"/>
-                            </Link>
-                            <Link to="/all-orders">
-                                <FontAwesomeIcon icon={faClockRotateLeft} className="icon" />
-                            </Link>
-                            <Link to="/invoices">
-                                <FontAwesomeIcon icon={faFileInvoiceDollar} className="icon" />
-                            </Link>
-                            <Link to="/account">
-                                <FontAwesomeIcon icon={faHouse} className="icon" />
-                            </Link>
-                        </nav>
+                        {/*<nav className="navbar-bottom">*/}
+                        {/*    <Link to={`/customer`}>*/}
+                        {/*        <FontAwesomeIcon icon={faUser} className="icon"/>*/}
+                        {/*    </Link>*/}
+                        {/*    <Link to="/all-orders">*/}
+                        {/*        <FontAwesomeIcon icon={faClockRotateLeft} className="icon" />*/}
+                        {/*    </Link>*/}
+                        {/*    <Link to="/invoices">*/}
+                        {/*        <FontAwesomeIcon icon={faFileInvoiceDollar} className="icon" />*/}
+                        {/*    </Link>*/}
+                        {/*    <Link to="/account">*/}
+                        {/*        <FontAwesomeIcon icon={faHouse} className="icon" />*/}
+                        {/*    </Link>*/}
+                        {/*</nav>*/}
                     </div>
                 </div>
             </div>
