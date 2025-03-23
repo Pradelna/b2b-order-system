@@ -56,13 +56,14 @@ class Place(models.Model):
         if self.rp_id:
             update_place_task.delay(place_id=self.pk)
         if self.deleted:
+            super().save(*args, **kwargs)
             send_email_deleted_place_task.delay(
                 place_id=self.pk,
                 place_name=self.place_name,
                 place_external_id=self.rp_external_id,
                 customer=self.customer.company_name,
             )
-            print("creat task")
+            return
         super().save(*args, **kwargs)
 
     def __str__(self):

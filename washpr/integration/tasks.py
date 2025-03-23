@@ -876,3 +876,23 @@ def send_email_deleted_place_task(place_id, place_name, place_external_id, custo
         send_mail(subject, message, from_email, recipient_list)
         print(f"Place delete {place_name} email is sent")
     return "Place didn't have actual orders"
+
+
+@shared_task(
+    autoretry_for=(requests.exceptions.RequestException,),
+    retry_kwargs={"max_retries": 5, "countdown": 180}
+)
+def send_email_change_customer_task(rp_client_external_id, company_name):
+    subject = "Je zapotřebí účast administrátora"
+    message = (
+        f"Zakaznik {company_name} chce změnit údaje\n\n"
+        f"Extarnal id - {rp_client_external_id}\n"
+        f"Prosím, věnujte pozornost."
+    )
+    from_email = settings.DEFAULT_FROM_EMAIL
+    recipient_list = ["admin@sokov.eu"]
+    try:
+        send_mail(subject, message, from_email, recipient_list)
+    except:
+        return f"Error sending email: {company_name} changed data"
+    return f"Email sent: {company_name} changed data"

@@ -52,10 +52,10 @@ function NewCustomers() {
                                 <FontAwesomeIcon icon={faUser} className="icon" />
                             </div>
                             <p className="">
-                                user id {customer.user_id}  Joined on {new Date(customer.date_joined).toLocaleDateString('en-GB')}
+                                id {customer.user_id} - <strong>{customer.new_company_name}</strong>
                             </p>
                             <p className="">
-                                {customer.new_company_name} {customer.company_address}
+                                {customer.company_address}
                             </p>
                         </div>
                         </Link>
