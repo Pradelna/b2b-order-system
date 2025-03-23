@@ -60,7 +60,7 @@ class Customer(models.Model):
                 'company_ico',
                 'company_dic',
             ])
-            send_new_customer_task.delay(self.company_address)
+            send_new_customer_task.delay(self.company_name)
             return
         else:
             # Если объект уже существует, но rp_client_external_id не заполнено, устанавливаем его
