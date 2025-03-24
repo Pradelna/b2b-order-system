@@ -180,7 +180,8 @@ const UploadFileAdmin: React.FC<UploadFileAdminProps> = ({ onUploadSuccess, cust
                     <div style={{ margin: '0 1px' }} className="row">
                         {files.map((file, index) => (
                             <div className="col-12 form-control mb-2" style={{ display: 'flex' }} key={index}>
-                                <a href={`http://localhost:8000${file.file}`} target="_blank" rel="noopener noreferrer">
+                                <a href={`https://django.raketaweb.eu${file.file}`} target="_blank" rel="noopener noreferrer">
+                                {/*<a href={`http://localhost:8000${file.file}`} target="_blank" rel="noopener noreferrer">*/}
                                     <FontAwesomeIcon icon={faFilePdf} className="file-uploaded" />
                                     <span style={{ marginLeft: '5px' }}>{file.file.split('/').pop()}</span>
                                 </a>
