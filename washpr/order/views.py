@@ -224,7 +224,7 @@ class UserReportListView(generics.ListAPIView, LoginRequiredMixin):
     permission_classes = [permissions.IsAuthenticated]
 
     def get_queryset(self):
-        reports = OrderReport.objects.filter(customer__user=self.request.user).order_by("-report_month")
+        # reports = OrderReport.objects.filter(customer__user=self.request.user).order_by("-report_month")
         # for report in reports:
         #     print(f"Report {report} with id {report.id} - orders: {report.orders.all()}")
         return OrderReport.objects.filter(customer__user=self.request.user).order_by("-report_month")

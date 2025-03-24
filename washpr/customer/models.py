@@ -128,6 +128,10 @@ class CustomerDocuments(models.Model):
     def __str__(self):
         return f"Document for {self.customer.user.email} - {self.file.name}"
 
+    class Meta:
+        verbose_name = 'Document for customer'
+        verbose_name_plural = 'Documents for customer'
+
 
 class DocumentsForCustomer(models.Model):
     """ Модель документов для клиента. """
@@ -140,3 +144,7 @@ class DocumentsForCustomer(models.Model):
 
     def __str__(self):
         return f"Document for {self.customer.user.email} - {self.file.name}"
+
+    class Meta:
+        verbose_name = 'No use'
+        verbose_name_plural = 'No use'

@@ -2073,7 +2073,7 @@ p.back-link {
   text-overflow: ellipsis;
 }
 .total-data .user-card {
-  padding: 30px 90px;
+  padding: 30px 20px 30px 90px;
 }
 .total-data .user-card p {
   font-size: 20px;

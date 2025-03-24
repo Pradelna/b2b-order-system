@@ -32,7 +32,29 @@ const ReportList: React.FC = () => {
     const [forceWait, setForceWait] = useState<boolean>(true);
     const BASE_URL = import.meta.env.VITE_API_URL;
     const { currentData } = useContext(LanguageContext);
+    const PUBLIC_DOMAIN = "https://django.raketaweb.eu";
 
+
+    const getFixedUrl = (url: string) => {
+        if (!url) return "";
+
+        // если это localhost или 127.0.0.1
+        if (url.startsWith("http://127.0.0.1") || url.startsWith("http://localhost")) {
+            const parts = url.split("/media");
+            return `${PUBLIC_DOMAIN}/media${parts[1] ? parts[1] : ""}`;
+        }
+
+        // если это относительный /media путь
+        if (url.startsWith("/media")) {
+            return `${PUBLIC_DOMAIN}${url}`;
+        }
+
+        if (url.startsWith("media/")) {
+            return `${PUBLIC_DOMAIN}/${url}`;
+        }
+
+        return url; // валидные внешние оставляем как есть
+    };
 
 
     useEffect(() => {
@@ -122,12 +144,12 @@ const ReportList: React.FC = () => {
                                                     report.files.map((file) => (
                                                         <a
                                                             key={file.id}
-                                                            href={file.file}
+                                                            href={getFixedUrl(file.file)}
                                                             download
                                                             className="btn btn-download me-3"
                                                             target="_blank"
                                                         >
-                                                            <DarkTooltip title="Download invoie" placement="top" arrow>
+                                                            <DarkTooltip title="Download invoice" placement="top" arrow>
                                                                 <FontAwesomeIcon
                                                                     icon={faFileArrowDown}
                                                                     style={{ cursor: "pointer" }}
