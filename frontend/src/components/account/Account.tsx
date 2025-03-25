@@ -107,6 +107,26 @@ const Account: React.FC<AccountProps> = ({ customerData, setCustomerData }) => {
         setShowPlaceForm(true); // Показываем форму создания места
     };
 
+    const langInstruction1 = {
+        cz: "Přidejte svá místa",
+        ru: "Добавьте свои места",
+        en: "Add your places",
+    };
+    const lang = currentData?.lang || "cz";
+    const formInstruction1 = langInstruction1[lang] || langInstruction1.en;
+    const langInstruction2 = {
+        cz: "Správce Vám vytvoří ceník",
+        ru: "Администратор создает вам прайслист",
+        en: "The administrator will create a price list for you",
+    };
+    const formInstruction2 = langInstruction2[lang] || langInstruction2.en;
+    const langInstruction3 = {
+        cz: "Počkejte na e-mail o aktivaci účtu",
+        ru: "Подождите письмо об активации аккаунта",
+        en: "Wait for the email about account activation",
+    };
+    const formInstruction3 = langInstruction3[lang] || langInstruction3.en;
+
     useEffect(() => {
         if (location.state?.successMessage) {
             setTimeout(() => {
@@ -248,13 +268,13 @@ const Account: React.FC<AccountProps> = ({ customerData, setCustomerData }) => {
                                                 <div className="card dashboard-button">
                                                     <div className="card-body button-history">
                                                         <p style={{margin:"0"}}>
-                                                            1. Přidejte svá místa
+                                                            1. {formInstruction1}
                                                         </p>
                                                         <p style={{margin:"0"}}>
-                                                            2. Správce Vám vytvoří ceník
+                                                            2. {formInstruction2}
                                                         </p>
                                                         <p style={{margin:"0"}}>
-                                                            3. Počkejte na e-mail o aktivaci účtu
+                                                            3. {formInstruction3}
                                                         </p>
                                                     </div>
                                                 </div>

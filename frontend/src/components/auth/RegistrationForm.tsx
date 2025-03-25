@@ -69,6 +69,14 @@ const RegistrationForm: React.FC = () => {
     }
   };
 
+  const langTitle = {
+    cz: "Registrácia",
+    ru: "Регистрация",
+    en: "Registration",
+  };
+  const lang = currentData?.lang || "cz";
+  const formTitle = langTitle[lang] || langTitle.en;
+
   return (
       <>
         <Header />
@@ -95,7 +103,7 @@ const RegistrationForm: React.FC = () => {
                         style={{ maxWidth: "100%", height: "auto" }}
                     />
                   </a>
-                  <h1 className="mt-2">Registrácia</h1>
+                  <h1 className="mt-2">{formTitle}</h1>
                 </div>
                 <form onSubmit={handleSubmit}>
                   <div className="form-group">
