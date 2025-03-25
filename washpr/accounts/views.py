@@ -38,6 +38,7 @@ class RegisterView(APIView):
             user = serializer.save()
             # Отправляем активационное письмо
             try:
+                print(serializer.data)
                 send_activation_email(user)
             except Exception as e:
                 return Response({"detail": str(e)}, status=status.HTTP_400_BAD_REQUEST)

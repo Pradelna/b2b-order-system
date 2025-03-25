@@ -23,6 +23,7 @@ const RegistrationForm: React.FC = () => {
 
 //   const recaptchaTest = false;
 
+  console.log(currentData?.lang);
   const handleSubmit = async (event: FormEvent) => {
     event.preventDefault();
 
@@ -32,6 +33,7 @@ const RegistrationForm: React.FC = () => {
         const token = await recaptchaRef.current.executeAsync();
         recaptchaRef.current.reset();
 
+        let lang = currentData?.lang;
 
         // Make a POST request to your backend
         const response = await fetchWithAuth(`${BASE_URL}/accounts/register/`, {
@@ -43,6 +45,7 @@ const RegistrationForm: React.FC = () => {
             email,
             password,
             captchaToken: token, // Include the reCAPTCHA token
+            "lang": lang,
           }),
         });
 
