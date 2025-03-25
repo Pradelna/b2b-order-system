@@ -20,12 +20,13 @@ const PasswordResetForm: React.FC<PasswordResetFormProps> = ({ customerEmail, on
         e.preventDefault();
         setMessage(null);
         setError(null);
+        let lang = currentData?.lang || "cz";
         try {
             // console.log(formData.email);
             const response = await fetchWithAuth(`${BASE_URL}/accounts/password-reset/`, {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({ email }),
+                body: JSON.stringify({ email, "lang": lang, }),
             });
             const data = await response.json();
             if (response.ok) {

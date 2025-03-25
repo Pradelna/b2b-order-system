@@ -21,9 +21,6 @@ const RegistrationForm: React.FC = () => {
   // Insert your reCAPTCHA site key here
   const RECAPTCHA_SITE_KEY = "6LdWEqkqAAAAAF0sgXktyNzI4PphPZByrrMpzBm_";
 
-//   const recaptchaTest = false;
-
-  console.log(currentData?.lang);
   const handleSubmit = async (event: FormEvent) => {
     event.preventDefault();
 
@@ -33,7 +30,7 @@ const RegistrationForm: React.FC = () => {
         const token = await recaptchaRef.current.executeAsync();
         recaptchaRef.current.reset();
 
-        let lang = currentData?.lang;
+        let lang = currentData?.lang || "cz";
 
         // Make a POST request to your backend
         const response = await fetchWithAuth(`${BASE_URL}/accounts/register/`, {

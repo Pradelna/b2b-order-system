@@ -12,6 +12,7 @@ import {
     faUserCheck,
     faPenToSquare,
     faCalendarWeek,
+    faWeightScale
 } from "@fortawesome/free-solid-svg-icons";
 import { fetchWithAuth } from "../account/auth";
 import { Tooltip as ReactTooltip } from "react-tooltip";
@@ -26,6 +27,7 @@ interface CustomerData {
     company_phone: string;
     company_email?: string;
     company_person: string;
+    monthly_estimate: number;
     change_data: boolean;
     active: boolean;
     weekend_able: boolean;
@@ -138,6 +140,10 @@ const CompanyInfoAdmin: React.FC<CompanyInfoAdminProps> = ({
                     <p className="company-info">
                         <FontAwesomeIcon icon={faUserTie} className="icon" />{" "}
                         <span className="ms-1">{customerData?.company_person || "empty"}</span>
+                    </p>
+                    <p className="company-info">
+                        <FontAwesomeIcon icon={faWeightScale} className="icon" />{" "}
+                        <span className="ms-1">{customerData?.monthly_estimate || 0} kg</span>
                     </p>
                     <p className="company-info">
                         <FontAwesomeIcon icon={faUserCheck} className="icon" />{" "}

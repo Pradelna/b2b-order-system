@@ -243,6 +243,11 @@ const CustomerDetailAdmin: React.FC = () => {
                                             width={180} height={20}
                                             sx={{ borderRadius: "6px", marginBottom: 1 }}
                                         />
+                                        <Skeleton
+                                            variant="rectangular"
+                                            width={180} height={20}
+                                            sx={{ borderRadius: "6px", marginBottom: 1 }}
+                                        />
                                     </div>
                                 </div>
                             </>
@@ -277,7 +282,7 @@ const CustomerDetailAdmin: React.FC = () => {
                                     {(customerData && (loading || forceWait)) ? (
                                         [...Array(2)].map((_, index) => (
                                             <div className="col-lg-12 col-xl-7 col-6 mb-4" key={index}>
-                                                <div className="card dashboard-button" style={{height:'146px'}}>
+                                                <div className="card dashboard-button" style={{height:'162px'}}>
                                                     <div className="card-body button-history">
                                                         <Skeleton
                                                             variant="rectangular"
@@ -300,7 +305,7 @@ const CustomerDetailAdmin: React.FC = () => {
 
                                             <div className="col-lg-12 col-xl-7 col-6 mb-4">
                                                 <Link to={`/admin/user-history/${customerId}`} className="text-decoration-none">
-                                                    <div className="card dashboard-button" style={{height:'146px'}}>
+                                                    <div className="card dashboard-button" style={{height:'162px'}}>
                                                         <div className="card-body button-history">
                                                             <FontAwesomeIcon icon={faClockRotateLeft} className="icon" />
                                                             <p className="text-history">
@@ -313,7 +318,7 @@ const CustomerDetailAdmin: React.FC = () => {
 
                                             <div className="col-lg-12 col-xl-7 col-6">
                                                 <Link to={`/admin/user-invoices/${customerId}`} className="text-decoration-none">
-                                                    <div className="card dashboard-button" style={{height:'145px'}}>
+                                                    <div className="card dashboard-button" style={{height:'162px'}}>
                                                         <div className="card-body button-history">
                                                             <FontAwesomeIcon icon={faFileInvoiceDollar} className="icon" />
                                                             <p className="text-history">Faktury</p>

@@ -20,9 +20,19 @@ const AuthBlock: React.FC<AuthBlockProps> = ({ customerData }) => {
     const BASE_URL = import.meta.env.VITE_API_URL as string;
     const [showForm, setShowForm] = useState(false);
 
+    const logoutMessages = {
+        cz: "Byli jste odhlášeni.",
+        ru: "Вы вышли из аккаунта",
+        en: "You have been logged out.",
+    };
+
     const handleLogout = () => {
         localStorage.removeItem("accessToken");
-        alert("You have been logged out.");
+
+        const lang = currentData?.lang || "cz";
+        const message = logoutMessages[lang] || logoutMessages.en;
+
+        alert(message);
         window.location.href = "/account/login";
     };
 
