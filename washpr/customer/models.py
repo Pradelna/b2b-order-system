@@ -31,6 +31,7 @@ class Customer(models.Model):
     company_phone = models.CharField("Company phone", null=True, blank=True, validators=[phone_regex], max_length=17)
     company_email = models.CharField("Company email", max_length=100, null=True, blank=True)
     company_person = models.CharField("Company person", max_length=100, null=True, blank=True)
+    monthly_estimate = models.IntegerField("Monthly estimate", null=True, blank=True)
     vop = models.BooleanField("Všeobecné obchodní podmínk", default=False)
     terms_of_use = models.BooleanField("Pravidla", default=False)
     gdpr = models.BooleanField("GDPR", default=False)

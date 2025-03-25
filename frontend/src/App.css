@@ -2266,3 +2266,10 @@ p.back-link {
 .needs-changes {
   color: red;
 }
+#company-top-admin .company-card:hover {
+  transform: none;
+}
+
+#company-top-admin .company-card {
+  min-height: 350px;
+}

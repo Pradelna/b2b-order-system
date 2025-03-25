@@ -193,6 +193,14 @@ const PlaceDetails: React.FC = () => {
         setExpandedDates(!expandedDates);
     };
 
+    const langMessage = {
+        cz: "Ještě nemůžete vytvořit objednávku. Počkejte, až je místo zpracováno systémem. Pro více informací zavolejte +420 736 164 797 nebo na email office@pradelna1.com",
+        ru: "Вы ещё не можете создать заказ. Подождите, пока место будет обработано системой. В случае слишком долгого ожидания позвните по телефону +420 736 164 797 или на office@pradelna1.com",
+        en: "You cannot create an order yet. Please wait until the place is processed by the system. For more information, call +420 736 164 797 or email office@pradelna1.com.",
+    };
+    const lang = currentData?.lang || "cz";
+    const messagePlaceWait = langMessage[lang] || langMessage.en;
+
     useEffect(() => {
         // info about place
         const fetchPlace = async () => {
@@ -268,8 +276,11 @@ const PlaceDetails: React.FC = () => {
             <HeaderAccount customerId={customerId} />
 
             <div className="container margin-top-90 wrapper place-detail-page">
-                <div className="row message-block-76">
-                    <div className="col-xl-1 col-lg-3 col-sm-2 back-button">
+                <div
+                    className="row message-block-76"
+                    style={notActivePlace ? { minHeight: "100px" } : {}}
+                >
+                    <div className="col-xl-1 col-lg-3 col-sm-3 back-button">
                         <NavButtons />
                     </div>
                     <div className="col-xl-7 col-lg-10 col-12">
@@ -278,7 +289,7 @@ const PlaceDetails: React.FC = () => {
                         )}
                         {!place.data_sent && (
                             <p className="alert alert-warning">
-                                Ještě nemůžete vytvořit objednávku. Počkejte, až je místo zpracováno systémem. To může trvat od 20 do 30 minut.
+                                {messagePlaceWait}
                             </p>
                         )}
                     </div>

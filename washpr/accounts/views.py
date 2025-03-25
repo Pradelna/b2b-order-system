@@ -39,7 +39,7 @@ class RegisterView(APIView):
             # Отправляем активационное письмо
             try:
                 print(serializer.data)
-                send_activation_email(user)
+                send_activation_email(user, serializer.data["lang"])
             except Exception as e:
                 return Response({"detail": str(e)}, status=status.HTTP_400_BAD_REQUEST)
             return Response({"message": "User created. Check your email for activation link."},
@@ -96,17 +96,30 @@ def api_password_reset(request):
     """
     # Для неавторизованных пользователей лучше брать email из request.data:
     email = request.data.get("email")
+    lang = request.data.get("lang")
+    print(f"lang: {lang}")
     if not email:
         return Response({"error": "Email is required."}, status=status.HTTP_400_BAD_REQUEST)
-
+    if lang == 'cz':
+        email_template_name='registration/password_reset_email.txt',
+        subject_template_name='registration/password_reset_subject.txt',
+        html_email_template_name='registration/password_reset_email.html',
+    elif lang == 'ru':
+        email_template_name='registration/ru_password_reset_email.txt',
+        subject_template_name='registration/ru_password_reset_subject.txt',
+        html_email_template_name='registration/ru_password_reset_email.html',
+    else:
+        email_template_name='registration/en_password_reset_email.txt',
+        subject_template_name='registration/en_password_reset_subject.txt',
+        html_email_template_name='registration/en_password_reset_email.html',
     form = PasswordResetForm({"email": email})
     if form.is_valid():
         form.save(
             request=request,
             use_https=request.is_secure(),
-            email_template_name='registration/password_reset_email.txt',
-            subject_template_name='registration/password_reset_subject.txt',
-            html_email_template_name='registration/password_reset_email.html',
+            email_template_name=email_template_name,
+            subject_template_name=subject_template_name,
+            html_email_template_name=html_email_template_name,
             from_email=settings.DEFAULT_FROM_EMAIL,
         )
         return Response({"detail": "Password reset email sent."}, status=status.HTTP_200_OK)
