@@ -1,7 +1,7 @@
 import React, { useState, useRef, useContext, FormEvent } from "react";
-import { LanguageContext } from "../../context/LanguageContext.js";
+import { LanguageContext } from "../../context/LanguageContext";
 import ReCAPTCHA from "react-google-recaptcha";
-import { fetchWithAuth } from "../account/auth.ts";
+import { fetchWithAuth } from "../account/auth";
 import Header from "../Header";
 import Footer from "../Footer";
 
