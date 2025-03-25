@@ -199,7 +199,7 @@ const CustomerForm: React.FC<CustomerFormProps> = ({ onSubmit, errors }) => {
 
           {/* VOP Checkbox */}
           <div className="row row-form">
-            <div className="col-12 col-4 col-md-5 col-lg-6 label-form">
+            <div className="col-12 col-4 col-md-5 col-lg-6 col-xl-4 label-form">
               <div className="form-check">
                 <input
                     className="form-check-input"
@@ -212,7 +212,7 @@ const CustomerForm: React.FC<CustomerFormProps> = ({ onSubmit, errors }) => {
                 <label className="form-check-label">{currentData.customer.vop_check}*</label>
               </div>
             </div>
-            <div className="col-12 col-8 col-md-7 col-lg-6">
+            <div className="col-12 col-8 col-md-7 col-lg-6 col-xl-8">
               <div className="form-control">
                 <a href="#" target="_blank" rel="noopener noreferrer">
                   <FontAwesomeIcon icon={faFilePdf} className="file-uploaded" />
@@ -224,7 +224,7 @@ const CustomerForm: React.FC<CustomerFormProps> = ({ onSubmit, errors }) => {
 
           {/* Terms of Use Checkbox */}
           <div className="row row-form">
-            <div className="col-12 col-4 col-md-5 col-lg-6 label-form">
+            <div className="col-12 col-4 col-md-5 col-lg-6 col-xl-4 label-form">
               <div className="form-check">
                 <input
                     className="form-check-input"
@@ -237,7 +237,7 @@ const CustomerForm: React.FC<CustomerFormProps> = ({ onSubmit, errors }) => {
                 <label className="form-check-label">{currentData.customer.terms_use_check}*</label>
               </div>
             </div>
-            <div className="col-12 col-8 col-md-7 col-lg-6">
+            <div className="col-12 col-8 col-md-7 col-lg-6 col-xl-8">
               <div className="form-control">
                 <a href="#" target="_blank" rel="noopener noreferrer">
                   <FontAwesomeIcon icon={faFilePdf} className="file-uploaded" />
@@ -249,7 +249,7 @@ const CustomerForm: React.FC<CustomerFormProps> = ({ onSubmit, errors }) => {
 
           {/* GDPR Checkbox */}
           <div className="row row-form">
-            <div className="col-12 col-4 col-md-5 col-lg-6 label-form">
+            <div className="col-12 col-4 col-md-5 col-lg-6 col-xl-4 label-form">
               <div className="form-check">
                 <input
                     className="form-check-input"
@@ -262,7 +262,7 @@ const CustomerForm: React.FC<CustomerFormProps> = ({ onSubmit, errors }) => {
                 <label className="form-check-label">{currentData.customer.gdpr_check}*</label>
               </div>
             </div>
-            <div className="col-12 col-8 col-md-7 col-lg-6">
+            <div className="col-12 col-8 col-md-7 col-lg-6 col-xl-8">
               <div className="form-control">
                 <a href="#" target="_blank" rel="noopener noreferrer">
                   <FontAwesomeIcon icon={faFilePdf} className="file-uploaded" />
