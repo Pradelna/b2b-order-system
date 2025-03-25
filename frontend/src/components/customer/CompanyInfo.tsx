@@ -134,7 +134,7 @@ const CompanyInfo: React.FC<CompanyInfoProps> = ({
     if (!customerData || customerData.error === "Customer not found") {
         return (
             <div>
-                <p className="alert alert-warning">{currentData?.messages?.add_info || "Přidat informace o zákazníkovi"}</p>
+                <p className="alert alert-warning">{currentData?.messages?.add_inform || "Přidat informace o zákazníkovi"}</p>
                 <CustomerForm onSubmit={handleFormSubmit} errors={formErrors} />
             </div>
         );
