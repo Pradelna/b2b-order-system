@@ -95,6 +95,7 @@ const RegistrationForm: React.FC = () => {
                         style={{ maxWidth: "100%", height: "auto" }}
                     />
                   </a>
+                  <h1 className="mt-2">Registrácia</h1>
                 </div>
                 <form onSubmit={handleSubmit}>
                   <div className="form-group">

@@ -45,10 +45,10 @@ def send_activation_email(user):
     # activation_link = f"http://127.0.0.1:5173/activate/{uid}/{token}"
     activation_link = f"https://laundry.raketaweb.eu/activate/{uid}/{token}"
 
-    subject = "Activate your account"
+    subject = "Potvrďte svoji emailovou adresu"
     message = (
         f"Dobrý den.\n\n"
-        f"Prosím, klikněte na odkaz níže pro aktivaci vašeho účtu:\n{activation_link}\n\n"
+        f"Prosím, potvrďte svoji emailovou adresu:\n{activation_link}\n\n"
         f"Děkuji vám"
     )
 
