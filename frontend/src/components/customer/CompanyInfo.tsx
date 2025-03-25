@@ -77,7 +77,7 @@ const CompanyInfo: React.FC<CompanyInfoProps> = ({
             })
             .then((data: CustomerData) => {
                 setCustomerData(data);
-                setSuccessMessage(currentData?.messages?.customer_success || "Data zákazníka byla úspěšně přidána!");
+                setSuccessMessage(currentData?.messages?.customer_success || "Údaje byly úspěšně přidány!");
                 setTimeout(() => setSuccessMessage(""), 5000);
             })
             .catch((error) => {
