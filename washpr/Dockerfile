@@ -14,7 +14,7 @@ RUN pip install --no-cache-dir -r requirements.txt
 COPY . .
 
 # Выполняем миграции базы данных
-RUN python manage.py migrate
+# RUN python manage.py migrate
 
 # Открываем порт для сервера Django
 EXPOSE 8000
