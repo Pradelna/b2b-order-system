@@ -10,7 +10,8 @@ services:
     environment:
       - PYTHONUNBUFFERED=1
     command: >
-      sh -c "python manage.py migrate &&
+      sh -c "python manage.py makemigrations &&
+             python manage.py migrate &&
              python manage.py loaddata landing.json &&
              python manage.py runserver 0.0.0.0:8000"
 

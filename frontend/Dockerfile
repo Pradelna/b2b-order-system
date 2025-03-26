@@ -1,4 +1,4 @@
-# Dockerfile for React
+# docker-compose.prod.yml for React
 FROM node:20
 
 WORKDIR /app

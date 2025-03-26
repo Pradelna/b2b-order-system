@@ -21,12 +21,12 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 # See https://docs.djangoproject.com/en/5.0/howto/deployment/checklist/
 
 # SECURITY WARNING: keep the secret key used in production secret!
-SECRET_KEY = 'django-insecure-t)su=n@*^knlz_u8v&psm^muyyu+0%yo5%a%3s$quovs6++(1k'
+SECRET_KEY = os.getenv('DJANGO_SECRET_KEY', '!!!_dev_only_fallback_!!!')
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = True
+DEBUG = os.getenv('DJANGO_DEBUG', 'False') == 'True'
 
-ALLOWED_HOSTS = ['*', 'localhost', '127.0.0.1', 'django.raketaweb.eu']
+ALLOWED_HOSTS = os.getenv('DJANGO_ALLOWED_HOSTS', 'localhost,127.0.0.1').split(',')
 
 
 # Application definition
@@ -67,18 +67,18 @@ REST_FRAMEWORK = {
         'rest_framework_simplejwt.authentication.JWTAuthentication',
     ],
     'DEFAULT_PERMISSION_CLASSES': [
-        # 'rest_framework.permissions.AllowAny',
         'rest_framework_simplejwt.authentication.JWTAuthentication',
     ],
     'EXCEPTION_HANDLER': 'accounts.utils.custom_exception_handler',
 }
 
-CORS_ALLOW_CREDENTIALS = True
+# CORS_ALLOW_CREDENTIALS = True
 
-CORS_ALLOWED_ORIGINS = [
+CORS_ALLOWED_ORIGINS = os.getenv("DJANGO_CORS_ALLOWED_ORIGINS", "").split(",") if not DEBUG else [
     "http://localhost:5173",
     "http://127.0.0.1:5173",
 ]
+CORS_ALLOW_ALL_ORIGINS = DEBUG
 
 ROOT_URLCONF = 'washpr.urls'
 
@@ -111,6 +111,16 @@ DATABASES = {
     }
 }
 
+# DATABASES = {
+#     'default': {
+#         'ENGINE': 'django.db.backends.sqlite3' if os.getenv("USE_SQLITE", "True") == "True" else 'django.db.backends.postgresql',
+#         'NAME': os.getenv('POSTGRES_DB', BASE_DIR / 'db.sqlite3'),
+#         'USER': os.getenv('POSTGRES_USER', ''),
+#         'PASSWORD': os.getenv('POSTGRES_PASSWORD', ''),
+#         'HOST': os.getenv('POSTGRES_HOST', 'localhost'),
+#         'PORT': os.getenv('POSTGRES_PORT', '5432'),
+#     }
+# }
 
 # Password validation
 # https://docs.djangoproject.com/en/5.0/ref/settings/#auth-password-validators
@@ -163,25 +173,24 @@ CELERY_RESULT_BACKEND = 'redis://localhost:6379/0'
 CELERY_ACCEPT_CONTENT = ['json']
 CELERY_TASK_SERIALIZER = 'json'
 
-REACT_FRONTEND_URL = "http://localhost:5173"
+# REACT_FRONTEND_URL = "http://localhost:5173"
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
 AUTH_USER_MODEL = 'accounts.CustomUser'
 
-RECAPTCHA_SECRET_KEY = "6LdWEqkqAAAAAGLHgv9xIAygZZovfqdmGR2wBxQ4"
+RECAPTCHA_SECRET_KEY = os.getenv("RECAPTCHA_SECRET_KEY")
 
-EMAIL_BACKEND = 'django.core.mail.backends.console.EmailBackend'
+EMAIL_BACKEND = os.getenv('EMAIL_BACKEND', 'django.core.mail.backends.console.EmailBackend')
+EMAIL_HOST = os.getenv('EMAIL_HOST')
+EMAIL_PORT = int(os.getenv('EMAIL_PORT', 587))
+EMAIL_USE_SSL = os.getenv('EMAIL_USE_SSL', 'False') == 'False'
+EMAIL_USE_TLS = os.getenv('EMAIL_USE_TLS', 'True') == 'True'
+EMAIL_HOST_USER = os.getenv('EMAIL_HOST_USER')
+EMAIL_HOST_PASSWORD = os.getenv('EMAIL_HOST_PASSWORD')
+DEFAULT_FROM_EMAIL = os.getenv('DEFAULT_FROM_EMAIL')
 
-# EMAIL_BACKEND = 'accounts.utils.UnverifiedSMTPEmailBackend'
-# EMAIL_HOST = 'mail.vzt-klima.sk'
-# EMAIL_PORT = 465
-# EMAIL_USE_SSL = True
-# EMAIL_HOST_USER = 'noreply@vzt-klima.sk'
-# EMAIL_HOST_PASSWORD = 'qQ4tH1uS2a'
-# DEFAULT_FROM_EMAIL = 'noreply@vzt-klima.sk'
-
-EXTERNAL_API_KEY = "839943;31d86128e4b4f2c379ce9a1a4aaed7a81d61ae9407412c0043ea1f12092cf585"
+EXTERNAL_API_KEY = os.getenv("EXTERNAL_API_KEY")
 
 SIMPLE_JWT = {
     'ACCESS_TOKEN_LIFETIME': timedelta(minutes=360),  # Токен будет действовать 360 минут
