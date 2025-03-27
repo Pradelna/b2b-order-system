@@ -270,7 +270,7 @@ const OrderHistory: React.FC<OrderHistoryProps> = ({ placeId, orders = [], setOr
                                         ) : (<>
                                             {!order.canceled ? (
                                                 <p>
-                                                    <strong>{currentData?.history?.wait_processing || "Objednávka čeká na zpracování"}</strong>
+                                                    <strong>{currentData?.history?.wait_approval || "Objednávka čeká na zpracování"}</strong>
                                                 </p>
                                             ) : null}
 

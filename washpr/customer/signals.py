@@ -6,6 +6,7 @@ from .models import Customer
 
 @receiver(post_save, sender=User)
 def create_customer_for_user(sender, instance, created, **kwargs):
+    print("create_customer_for_user")
     if created:
         # Создаем объект Customer при создании User
         Customer.objects.create(

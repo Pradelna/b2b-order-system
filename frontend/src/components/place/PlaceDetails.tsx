@@ -465,10 +465,11 @@ const PlaceDetails: React.FC = () => {
                                             {currentOrder.rp_status === 13 && (currentData?.status?.status_13 || "Marný výjezd")}
                                         </div>
                                         <div className="form-control mb-2">
-                                            <strong>{currentData?.form.type_ship || "Typ závozu" }:</strong>
-                                            {currentOrder.type_ship === "pickup_ship_dif" && (" zber špinavého a dodanie čistého na tretí deň")}
-                                            {currentOrder.type_ship === "pickup_ship_one" && (" čisté prádlo za špinavé")}
-                                            {currentOrder.type_ship === "one_time" && (" One time order")}
+                                            <strong>{currentData?.form.type_ship || "Typ závozu" }: </strong>
+                                            {currentOrder.type_ship === "pickup_ship_dif" && (currentData?.order.type_sipping_1_in_3 || "Vyzvednuti a dodání v rozdilné dny")}
+                                            {currentOrder.type_ship === "pickup_ship_one" && (currentData?.order?.type_sipping_clear_for_dirty || "Výměna čistého prádla za špinavé")}
+                                            {currentOrder.type_ship === "one_time" && (currentData?.order.one_time || "Jednorázová objednávka")}
+                                            {currentOrder.type_ship === "quick_order" && (currentData?.order.quick || "Rychlé doručení")}
                                         </div>
                                         {currentOrder.type_ship != "pickup_ship_dif" && (
                                             <div className="form-control mb-2">

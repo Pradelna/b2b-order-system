@@ -1,6 +1,9 @@
-import { useState, useEffect, useContext } from "react";
+import React, { useState, useEffect, useContext } from "react";
 import { LanguageContext } from "../../context/LanguageContext";
 import { fetchWithAuth } from "../account/auth";
+import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
+import {faFilePdf} from "@fortawesome/free-solid-svg-icons";
+import {Link} from "react-router-dom";
 
 interface OrderFormProps {
   placeId?: string; // Может быть не передан
@@ -822,7 +825,11 @@ const OrderForm: React.FC<OrderFormProps> = ({ placeId, onClose, onSuccess }) =>
                   </div>
                 </div>
                 <div className="col-11">
-                  { currentData.customer["terms_use"] || "Podmínky užití" }
+                  { currentData?.customer.terms_use_check }{" "}
+                  <Link to="/" className="terms">
+                    { currentData?.customer.terms_use || "Podmínky užití" }{" "}
+                    <FontAwesomeIcon icon={faFilePdf} className="file-uploaded" />
+                  </Link>
                   {showError && !formData.terms && (
                       <p className="text-danger mt-1">You must accept the Terms of Use</p>
                   )}
