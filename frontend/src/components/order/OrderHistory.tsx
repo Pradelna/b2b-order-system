@@ -163,6 +163,8 @@ const OrderHistory: React.FC<OrderHistoryProps> = ({ placeId, orders = [], setOr
         return () => clearTimeout(timer); // Cleanup
     }, [placeId]);
 
+    console.log(hasMoreOrders);
+
     return (
         <div className="order-history mb-5">
             <h3 className="account-info">{currentData?.buttons?.all_history || "Historie objednávek"}</h3>

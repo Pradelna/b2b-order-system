@@ -2136,6 +2136,9 @@ p.back-link {
   height: 55px;
   border-radius: 27px;
 }
+#company-top-admin .details-place-button:hover {
+  color: #fff;
+}
 #company-top-admin .place {
   padding: 20px 20px 20px 90px;
 }
