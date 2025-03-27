@@ -86,11 +86,9 @@ const OrderHistory: React.FC<OrderHistoryProps> = ({ placeId, orders = [], setOr
 
     // Load more orders when the user clicks "More"
     const loadMoreOrders = () => {
-        setVisibleOrders((prev) => {
-            const newVisibleCount = prev + 40;
-            setHasMoreOrders(newVisibleCount < orders.length);
-            return newVisibleCount;
-        });
+        const newVisibleCount = visibleOrders + 40;
+        setVisibleOrders(newVisibleCount);
+        setHasMoreOrders(newVisibleCount < orders.length);
     };
 
     const toggleExpand = (orderId: number) => {
@@ -163,7 +161,10 @@ const OrderHistory: React.FC<OrderHistoryProps> = ({ placeId, orders = [], setOr
         return () => clearTimeout(timer); // Cleanup
     }, [placeId]);
 
-    console.log(hasMoreOrders);
+    useEffect(() => {
+        setHasMoreOrders(visibleOrders < orders.length);
+    }, [orders, visibleOrders]);
+
 
     return (
         <div className="order-history mb-5">
