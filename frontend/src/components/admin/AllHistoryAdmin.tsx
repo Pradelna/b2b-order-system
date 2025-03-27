@@ -34,7 +34,7 @@ interface Order {
 const AllHistoryAdmin: React.FC = () => {
     const { customerId } = useParams<{ customerId: string }>();
     const [orders, setOrders] = useState<Order[]>([]);
-    const [visibleOrders, setVisibleOrders] = useState<number>(30);
+    const [visibleOrders, setVisibleOrders] = useState<number>(10);
     const [hasMoreOrders, setHasMoreOrders] = useState<boolean>(false);
     const [loading, setLoading] = useState<boolean>(true);
     const [expandedOrders, setExpandedOrders] = useState<{ [key: number]: boolean }>({});
@@ -67,7 +67,9 @@ const AllHistoryAdmin: React.FC = () => {
 
     //  Load More Orders
     const loadMoreOrders = () => {
-        setVisibleOrders((prev) => prev + 30);
+        const newVisibleCount = visibleOrders + 10;
+        setVisibleOrders(newVisibleCount);
+        setHasMoreOrders(newVisibleCount < orders.length);
     };
 
     //  Toggle Expanded Order
@@ -91,8 +93,8 @@ const AllHistoryAdmin: React.FC = () => {
                 if (response.ok) {
                     const data: Order[] = await response.json();
                     setOrders(data.orders.sort((a, b) => b.id - a.id));
-                    setHasMoreOrders(data.orders.length > visibleOrders);
-                    // setCustomerId(data.user_id);  <-- это лишнее, customerId уже есть
+                    setHasMoreOrders(visibleOrders < sortedOrders.length);
+                    // setHasMoreOrders(data.orders.length > visibleOrders);
                 } else {
                     console.error("Failed to fetch orders");
                 }
@@ -116,10 +118,11 @@ const AllHistoryAdmin: React.FC = () => {
         // console.log("Re-render triggered, ordersPhotos:", orderPhotos);
     }, [orderPhotos]);
 
-    //  Set customerId AFTER orders are fetched
     useEffect(() => {
+        setHasMoreOrders(visibleOrders < orders.length);
         // console.log(orders)
-    }, [orders]); //  Run when `orders` is updated
+    }, [orders, visibleOrders]);
+
 
     return (
         <>

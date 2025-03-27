@@ -31,7 +31,7 @@ interface Order {
 
 const AllOrderHistory: React.FC = () => {
     const [orders, setOrders] = useState<Order[]>([]);
-    const [visibleOrders, setVisibleOrders] = useState<number>(80);
+    const [visibleOrders, setVisibleOrders] = useState<number>(10);
     const [hasMoreOrders, setHasMoreOrders] = useState<boolean>(false);
     const [loading, setLoading] = useState<boolean>(true);
     const [expandedOrders, setExpandedOrders] = useState<{ [key: number]: boolean }>({});
@@ -64,7 +64,7 @@ const AllOrderHistory: React.FC = () => {
 
     //  Load More Orders
     const loadMoreOrders = () => {
-        setVisibleOrders((prev) => prev + 40);
+        setVisibleOrders((prev) => prev + 10);
     };
 
     //  Toggle Expanded Order
@@ -112,7 +112,8 @@ const AllOrderHistory: React.FC = () => {
     //  Set customerId AFTER orders are fetched
     useEffect(() => {
         // console.log(orders)
-    }, [orders]); //  Run when `orders` is updated
+        setHasMoreOrders(visibleOrders < orders.length);
+    }, [orders, visibleOrders]); //  Run when `orders` is updated
 
     return (
         <>
