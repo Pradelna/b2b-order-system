@@ -22,7 +22,6 @@ interface Order {
 
 interface OrderHistoryAdminProps {
     placeId: number; // ID of the place to load orders for
-    hasMoreOrders: boolean;
     orders?: Order[]; // Сделано необязательным для защиты
     setOrders?: (orders: Order[]) => void; // Передача функции для обновления списка заказов
     stopedOrder?: Order;
@@ -53,7 +52,6 @@ const OrderHistoryAdmin: React.FC<OrderHistoryAdminProps> = ({ placeId, orders =
                 if (setOrders) {
                     setOrders(data);
                 }
-                setHasMoreOrders(data.length > 20);
             } else {
                 console.error("Failed to fetch orders");
             }
@@ -108,6 +106,10 @@ const OrderHistoryAdmin: React.FC<OrderHistoryAdminProps> = ({ placeId, orders =
     useEffect(() => {
         // console.log("Re-render triggered, ordersPhotos:", orderPhotos);
     }, [orderPhotos]);
+
+    useEffect(() => {
+        setHasMoreOrders(visibleOrders < orders.length);
+    }, [visibleOrders, orders]);
 
     useEffect(() => {
         if (!placeId) {
