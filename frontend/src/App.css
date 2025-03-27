@@ -2283,3 +2283,6 @@ a.terms {
 a.terms:hover {
   color: #2f69e9;
 }
+.footer .contact a {
+  margin-bottom: 10px;
+}
