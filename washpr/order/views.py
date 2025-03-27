@@ -184,8 +184,8 @@ def download_file_view(request, file_id: int):
     except PhotoReport.DoesNotExist:
         raise Http404("PhotoReport с таким file_id не найден.")
 
-    if photo.order.user != request.user:
-        raise PermissionDenied("User doesn't have permission to download photos.")
+    if not request.user.is_staff and photo.order.user != request.user:
+        return Response({"detail": "User doesn't have permission to download photos."}, status=status.HTTP_403_FORBIDDEN)
 
     # Извлекаем расширение из исходного имени файла
     original_name = photo.name  # например, "020325/7.jpg"
