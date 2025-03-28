@@ -47,7 +47,8 @@ INSTALLED_APPS = [
     'rest_framework_simplejwt',
     'corsheaders',
     'integration',
-    'adminpanel'
+    'adminpanel',
+    'django_celery_beat',
 ]
 
 MIDDLEWARE = [
@@ -72,13 +73,14 @@ REST_FRAMEWORK = {
     'EXCEPTION_HANDLER': 'accounts.utils.custom_exception_handler',
 }
 
-# CORS_ALLOW_CREDENTIALS = True
+CORS_ALLOW_CREDENTIALS = True
 
-CORS_ALLOWED_ORIGINS = list(filter(None, os.getenv("DJANGO_CORS_ALLOWED_ORIGINS", "").split(","))) if not DEBUG else [
-    "http://localhost:5173",
-    "http://127.0.0.1:5173",
-]
-CORS_ALLOW_ALL_ORIGINS = DEBUG
+# CORS_ALLOWED_ORIGINS = list(filter(None, os.getenv("DJANGO_CORS_ALLOWED_ORIGINS", "").split(","))) if not DEBUG else [
+#     "http://localhost:5173",
+#     "http://127.0.0.1:5173",
+# ]
+# CORS_ALLOW_ALL_ORIGINS = DEBUG
+CORS_ALLOW_ALL_ORIGINS = True
 
 ROOT_URLCONF = 'washpr.urls'
 

@@ -18,6 +18,12 @@ from django.db import close_old_connections
 from django.core.mail import send_mail
 from django.utils import timezone
 
+import logging
+
+logger = logging.getLogger(__name__)
+
+COMPLETED_STATUSES = {4, 5, 11}
+
 
 @shared_task(
     autoretry_for=(requests.exceptions.RequestException,),
@@ -482,7 +488,7 @@ def create_orders_task():
         main_order=True,
         created_at__lte=time_threshold,
         place__deleted=False,
-      )
+    )
 
     results = []
 
@@ -631,12 +637,32 @@ def update_orders_task():
                 main_order = None
                 try:
                     order = Order.objects.get(rp_contract_external_id=external_id)
-                    order.rp_problem_description = item["problem_description"]
-                    order.rp_time_realization = item["time_realization"]
-                    order.rp_status = item["status"]
-                    order.save(update_fields=["rp_problem_description", "rp_status", "rp_time_realization"])
-                    success.append(f"order No {order.pk} with {external_id}")
-                    main_order = order
+                    # if order is pickup
+                    if order.id == order.group_pair_id:
+                        # logger.info(f"main external_id: {external_id}")
+                        order.rp_problem_description = item["problem_description"]
+                        order.rp_time_realization = item["time_realization"]
+                        order.rp_status = item["status"]
+                        order.save(update_fields=["rp_problem_description", "rp_status", "rp_time_realization"])
+                        success.append(f"order No {order.pk} with {external_id}")
+                        main_order = order
+                    else:
+                        try:
+                            # if order is delivery
+                            pickup_order = Order.objects.get(id=order.group_pair_id, pickup=True)
+                            # if pickup order is done or cancel
+                            if pickup_order.status in COMPLETED_STATUSES:
+                                order.rp_problem_description = item["problem_description"]
+                                order.rp_time_realization = item["time_realization"]
+                                order.rp_status = item["status"]
+                                order.save(update_fields=["rp_problem_description", "rp_status", "rp_time_realization"])
+                                success.append(f"order No {order.pk} with {external_id}")
+                        except Order.DoesNotExist:
+                            not_success.append(f"order not found for {external_id}")
+                            continue
+                        except Exception as e:
+                            not_success.append(f"order error for {external_id}: {str(e)}")
+                            continue
                 except Order.DoesNotExist:
                     not_success.append(f"order not found for {external_id}")
                     continue
@@ -644,9 +670,10 @@ def update_orders_task():
                     not_success.append(f"order error for {external_id}: {str(e)}")
                     continue
                 # there is only second delivery order in order history and needs to show status if it's main order
-                if main_order and item["status"] not in [4, 5, 11]: # if order is done don't change second order
+                if main_order and item["status"] not in COMPLETED_STATUSES: # if order is done don't change second order
                     try:
                         delivery_order = Order.objects.get(group_pair_id=main_order.group_pair_id, delivery=True)
+                        # logger.info(f"delivery_order: {delivery_order.rp_contract_external_id}")
                         delivery_order.rp_problem_description = item["problem_description"]
                         delivery_order.rp_time_realization = item["time_realization"]
                         delivery_order.rp_status = item["status"]
@@ -780,8 +807,8 @@ def generate_order_report(user, year, month):
     # Конец месяца (последняя секунда)
     end_of_month_dt = (start_of_month_dt + relativedelta(months=1)) - timezone.timedelta(seconds=1)
 
-    print("start_of_month_dt:", start_of_month_dt)
-    print("end_of_month_dt:", end_of_month_dt )
+    # print("start_of_month_dt:", start_of_month_dt)
+    # print("end_of_month_dt:", end_of_month_dt )
     start_of_month = int(start_of_month_dt.timestamp())
     end_of_month = int(end_of_month_dt.timestamp())
 

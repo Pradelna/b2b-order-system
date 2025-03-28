@@ -243,21 +243,21 @@ const OrderHistory: React.FC<OrderHistoryProps> = ({ placeId, orders = [], setOr
                                                         <>
                                                             <FontAwesomeIcon icon={faCheckCircle} style={{ color: "#00aab7", height: "18px" }}/>
                                                             <strong className="ms-2">
-                                                                {order.rp_status === 20 && (currentData?.status?.status_20 || "Nová")}
-                                                                {order.rp_status === 0 && (currentData?.status?.status_0 || "Nová")}
-                                                                {order.rp_status === 1 && (currentData?.status?.status_1 || "Nová")}
-                                                                {order.rp_status === 2 && (currentData?.status?.status_2 || "Přijato")}
-                                                                {order.rp_status === 3 && (currentData?.status?.status_3 || "Na cestě")}
-                                                                {order.rp_status === 4 && (currentData?.status?.status_4 || "Dokončeno")}
-                                                                {order.rp_status === 5 && (currentData?.status?.status_5 || "Complited")}
-                                                                {order.rp_status === 6 && (currentData?.status?.status_6 || "Ověřeno")}
-                                                                {order.rp_status === 7 && (currentData?.status?.status_7 || "Odmítnuto")}
-                                                                {order.rp_status === 8 && (currentData?.status?.status_8 || "Neznámý status")}
-                                                                {order.rp_status === 9 && (currentData?.status?.status_9 || "Odloženo")}
-                                                                {order.rp_status === 10 && (currentData?.status?.status_10 || "Storno")}
-                                                                {order.rp_status === 11 && (currentData?.status?.status_11 || "K fakturaci")}
-                                                                {order.rp_status === 12 && (currentData?.status?.status_12 || "Čeká na díl")}
-                                                                {order.rp_status === 13 && (currentData?.status?.status_13 || "Marný výjezd")}
+                                                                {order.rp_status === 20 ? (currentData?.status?.status_20 || "Nová") : null}
+                                                                {order.rp_status === 0 ? (currentData?.status?.status_0 || "Nová") : null}
+                                                                {order.rp_status === 1 ? (currentData?.status?.status_1 || "Nová") : null}
+                                                                {order.rp_status === 2 ? (currentData?.status?.status_2 || "Přijato") : null}
+                                                                {order.rp_status === 3 ? (currentData?.status?.status_3 || "Na cestě") : null}
+                                                                {order.rp_status === 4 ? (currentData?.status?.status_4 || "Dokončeno") : null}
+                                                                {order.rp_status === 5 ? (currentData?.status?.status_5 || "Complited") : null}
+                                                                {order.rp_status === 6 ? (currentData?.status?.status_6 || "Ověřeno") : null}
+                                                                {order.rp_status === 7 ? (currentData?.status?.status_7 || "Odmítnuto") : null}
+                                                                {order.rp_status === 8 ? (currentData?.status?.status_8 || "Neznámý status") : null}
+                                                                {order.rp_status === 9 ? (currentData?.status?.status_9 || "Odloženo") : null}
+                                                                {order.rp_status === 10 ? (currentData?.status?.status_10 || "Storno") : null}
+                                                                {order.rp_status === 11 ? (currentData?.status?.status_11 || "K fakturaci") : null}
+                                                                {order.rp_status === 12 ? (currentData?.status?.status_12 || "Čeká na díl") : null}
+                                                                {order.rp_status === 13 ? (currentData?.status?.status_13 || "Marný výjezd") : null}
                                                             </strong>
                                                         </>
                                                     )}
@@ -289,47 +289,47 @@ const OrderHistory: React.FC<OrderHistoryProps> = ({ placeId, orders = [], setOr
                                                 </strong></p>
                                                 {/* Type of Shipping */}
                                                 <p><strong>{ currentData?.form?.type_ship || "Typ závozu" }: </strong>
-                                                {order.type_ship === "pickup_ship_one" && (
-                                                    currentData?.order?.type_sipping_clear_for_dirty || "Výměna čistého prádla za špinavé")}
-                                                {order.type_ship === "pickup_ship_dif" && (
+                                                {order.type_ship === "pickup_ship_one" ? (
+                                                    currentData?.order?.type_sipping_clear_for_dirty || "Výměna čistého prádla za špinavé") : null}
+                                                {order.type_ship === "pickup_ship_dif" ? (
                                                     currentData?.order.type_sipping_1_in_3 || "Vyzvednuti a dodání v rozdilné dny"
-                                                )}</p>
+                                                ) : null}</p>
                                                     </>
                                                 ) : (
                                                     <strong>
-                                                        {order.type_ship === "quick_order" && (
-                                                            currentData?.order.quick || "Rychlé doručení")}
-                                                        {order.type_ship === "one_time" && (
-                                                            currentData?.order.one_time || "Jednorázová objednávka")}
+                                                        {order.type_ship === "quick_order" ? (
+                                                            currentData?.order.quick || "Rychlé doručení") : null}
+                                                        {order.type_ship === "one_time" ? (
+                                                            currentData?.order.one_time || "Jednorázová objednávka") : null}
                                                     </strong>
                                                 )}
 
                                                 {(order.rp_status === 20 || order.rp_status === 0 || order.rp_status === 1 || order.rp_status === 7 || order.rp_status === 10)  ? (<>
-                                                    {order.rp_time_planned && (
+                                                    {order.rp_time_planned ? (
                                                         <p>
                                                             <strong>{currentData?.history?.time_planned || "Plánované datum"}: </strong>
                                                             {formatDate(order.rp_time_planned) || " No information"}
                                                         </p>
-                                                    )}
+                                                    ) : null}
                                                 </>) : (<>
                                                 <p><strong>{currentData?.form?.pickup || "Vyzvednutí"}: </strong>
                                                     {formatViceDate(order.date_pickup)}</p>
                                                 <p><strong>{currentData?.form?.delivery || "Dodání"}: </strong>
                                                     {formatViceDate(order.date_delivery)}</p>
                                                 </>)}
-                                                {order.rp_status === 4 && (
-                                                <>
-                                                {order.rp_time_realization && (
-                                                    <p><strong>
-                                                        {currentData?.history?.time_realization || "Datum realizace"}: </strong>
-                                                        {formatDate(order.rp_time_realization) || " No information"}
-                                                    </p>
-                                                )}
-                                                </>
-                                                )}
+                                                {order.rp_status === 4 ? (
+                                                    <>
+                                                        {order.rp_time_realization ? (
+                                                            <p><strong>
+                                                                {currentData?.history?.time_realization || "Datum realizace"}: </strong>
+                                                                {formatDate(order.rp_time_realization) || " No information"}
+                                                            </p>
+                                                        ) : null}
+                                                    </>
+                                                ) : null}
 
                                                 {/* Отображение системы */}
-                                                {(order.system && (order.type_ship !== "one_time" && order.type_ship !== "quick_order")) && (
+                                                {(order.system && (order.type_ship !== "one_time" && order.type_ship !== "quick_order")) ? (
                                                     <p>
                                                         <strong>{ currentData?.form?.system || "Systém" }:{" "}</strong>
                                                         {{
@@ -341,7 +341,7 @@ const OrderHistory: React.FC<OrderHistoryProps> = ({ placeId, orders = [], setOr
                                                         }[order.system] || order.system}
 
                                                         {/* Дни недели, если система "Own" */}
-                                                        {(order.system === "Own") && (
+                                                        {(order.system === "Own") ? (
                                                             <>
                                                                 {" "}
                                                                 {order.monday && (currentData?.form.monday || "Pondělí")}{" "}
@@ -352,14 +352,14 @@ const OrderHistory: React.FC<OrderHistoryProps> = ({ placeId, orders = [], setOr
                                                                 {order.saturday && (currentData?.form.saturday || "Sobota")}{" "}
                                                                 {order.sunday && (currentData?.form.sunday || "Neděle")}
                                                             </>
-                                                        )}
+                                                        ) : null}
                                                     </p>
-                                                )}
+                                                ) : null}
 
                                             </div>
                                         )}
                                         {/* Кнопка отмены заказа (только если заказ можно отменить) */}
-                                        {cancelableOrders[order.id] && !order.canceled && (updatedOrder?.id !== order.id) && (
+                                        {cancelableOrders[order.id] && !order.canceled && (updatedOrder?.id !== order.id) ? (
                                             <button
                                                 className="btn btn-link cancel-order"
                                                 onClick={(e) => {
@@ -369,7 +369,7 @@ const OrderHistory: React.FC<OrderHistoryProps> = ({ placeId, orders = [], setOr
                                             >
                                                 {currentData?.buttons.cancel || "Stornovat"}
                                             </button>
-                                        )}
+                                        ) : null}
 
                                         {((photos.length <= 3 && !isMobileMax530) || !photos.length > 0 || (isMobileMax530 && photos.length < 2)) ? (
                                         <div className="image-icon-container">
@@ -426,7 +426,7 @@ const OrderHistory: React.FC<OrderHistoryProps> = ({ placeId, orders = [], setOr
                                                                 x{photos.length}
                                                             </span>
                                                         </div>
-                                                        {expandedOrders[order.id] && (
+                                                        {expandedOrders[order.id] ? (
                                                         <div style={{ display: 'flex', flexDirection: 'column' }}>
                                                             {photos.map((photo, index) => {
                                                                 const order = orders.find((order) => order.id === photo.order_id);
@@ -444,7 +444,7 @@ const OrderHistory: React.FC<OrderHistoryProps> = ({ placeId, orders = [], setOr
                                                                 );
                                                             })}
                                                         </div>
-                                                        )}
+                                                        ) : null}
 
                                                     </div>
 
@@ -457,11 +457,11 @@ const OrderHistory: React.FC<OrderHistoryProps> = ({ placeId, orders = [], setOr
                                 ) // end return
                             }
                         )}
-                                    {hasMoreOrders && (
+                                    {hasMoreOrders ? (
                                         <button onClick={loadMoreOrders} className="btn btn-history btn-link mt-3 mb-5">
                                             {currentData?.buttons?.more || "More"}
                                         </button>
-                                    )}
+                                    ) : null}
                         </div>
                     ) : (
                         <p>{currentData?.messages?.no_history || "Žádná historie objednávek není k dispozici"}</p>

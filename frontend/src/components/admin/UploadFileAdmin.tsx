@@ -21,6 +21,7 @@ const UploadFileAdmin: React.FC<UploadFileAdminProps> = ({ onUploadSuccess, cust
     const [success, setSuccess] = useState<string>('');
     const [isUploading, setIsUploading] = useState<boolean>(false); // State for upload animation
     const BASE_URL = import.meta.env.VITE_API_URL;
+    const MEDIA_URL = import.meta.env.VITE_MEDIA_URL;
     const [loading, setLoading] = useState<boolean>(true);
     const [forceWait, setForceWait] = useState<boolean>(true);
 
@@ -180,7 +181,7 @@ const UploadFileAdmin: React.FC<UploadFileAdminProps> = ({ onUploadSuccess, cust
                     <div style={{ margin: '0 1px' }} className="row">
                         {files.map((file, index) => (
                             <div className="col-12 form-control mb-2" style={{ display: 'flex' }} key={index}>
-                                <a href={`http://localhost:8000${file.file}`} target="_blank" rel="noopener noreferrer">
+                                <a href={`${MEDIA_URL}${file.file}`} target="_blank" rel="noopener noreferrer">
                                     <FontAwesomeIcon icon={faFilePdf} className="file-uploaded" />
                                     <span style={{ marginLeft: '5px' }}>{file.file.split('/').pop()}</span>
                                 </a>
