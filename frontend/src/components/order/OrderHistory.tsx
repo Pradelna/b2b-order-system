@@ -86,11 +86,9 @@ const OrderHistory: React.FC<OrderHistoryProps> = ({ placeId, orders = [], setOr
 
     // Load more orders when the user clicks "More"
     const loadMoreOrders = () => {
-        setVisibleOrders((prev) => {
-            const newVisibleCount = prev + 40;
-            setHasMoreOrders(newVisibleCount < orders.length);
-            return newVisibleCount;
-        });
+        const newVisibleCount = visibleOrders + 40;
+        setVisibleOrders(newVisibleCount);
+        setHasMoreOrders(newVisibleCount < orders.length);
     };
 
     const toggleExpand = (orderId: number) => {
@@ -162,6 +160,11 @@ const OrderHistory: React.FC<OrderHistoryProps> = ({ placeId, orders = [], setOr
         const timer = setTimeout(() => setForceWait(false), 1000);
         return () => clearTimeout(timer); // Cleanup
     }, [placeId]);
+
+    useEffect(() => {
+        setHasMoreOrders(visibleOrders < orders.length);
+    }, [orders, visibleOrders]);
+
 
     return (
         <div className="order-history mb-5">
@@ -270,7 +273,7 @@ const OrderHistory: React.FC<OrderHistoryProps> = ({ placeId, orders = [], setOr
                                         ) : (<>
                                             {!order.canceled ? (
                                                 <p>
-                                                    <strong>{currentData?.history?.wait_processing || "Objednávka čeká na zpracování"}</strong>
+                                                    <strong>{currentData?.history?.wait_approval || "Objednávka čeká na zpracování"}</strong>
                                                 </p>
                                             ) : null}
 

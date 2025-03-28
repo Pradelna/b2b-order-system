@@ -2136,6 +2136,9 @@ p.back-link {
   height: 55px;
   border-radius: 27px;
 }
+#company-top-admin .details-place-button:hover {
+  color: #fff;
+}
 #company-top-admin .place {
   padding: 20px 20px 20px 90px;
 }
@@ -2272,4 +2275,14 @@ p.back-link {
 
 #company-top-admin .company-card {
   min-height: 350px;
+}
+
+a.terms {
+  color: #28aab7;
+}
+a.terms:hover {
+  color: #2f69e9;
+}
+.footer .contact a {
+  margin-bottom: 10px;
 }

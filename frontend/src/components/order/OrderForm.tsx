@@ -1,6 +1,9 @@
-import { useState, useEffect, useContext } from "react";
+import React, { useState, useEffect, useContext } from "react";
 import { LanguageContext } from "../../context/LanguageContext";
 import { fetchWithAuth } from "../account/auth";
+import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
+import {faFilePdf} from "@fortawesome/free-solid-svg-icons";
+import {Link} from "react-router-dom";
 
 interface OrderFormProps {
   placeId?: string; // Может быть не передан
@@ -194,17 +197,19 @@ const OrderForm: React.FC<OrderFormProps> = ({ placeId, onClose, onSuccess }) =>
     let minDeliveryDate: Date;
 
     if (formData.type_ship === "quick_order") {
-      if (firstStartForm) { // if from open first time
-        minDeliveryDate = addWorkingDays(pickupDate, 1);
+      if (!customerWeekend && pickupDate.getDay() === 5) {
+        const monday = new Date(pickupDate);
+        monday.setDate(pickupDate.getDate() + 3);
+        minDeliveryDate = monday;
       } else {
         minDeliveryDate = addWorkingDays(pickupDate, 1);
       }
-    } else if (formData.type_ship === "one_time") {
-      if (firstStartForm) {
-        console.log("one time first")
-        minDeliveryDate = addWorkingDays(pickupDate, 2);
+    } else if (formData.type_ship === "quick_order") {
+      if (!customerWeekend && pickupDate.getDay() === 5) {
+        const monday = new Date(pickupDate);
+        monday.setDate(pickupDate.getDate() + 3);
+        minDeliveryDate = monday;
       } else {
-        console.log("one time no first")
         minDeliveryDate = addWorkingDays(pickupDate, 2);
       }
     } else {
@@ -440,16 +445,6 @@ const OrderForm: React.FC<OrderFormProps> = ({ placeId, onClose, onSuccess }) =>
     }
   };
 
-  // Обновляем дату доставки при изменении даты самовывоза
-  useEffect(() => {
-    if (formData.type_ship !== "one_time" && formData.type_ship !== "quick_order") {
-      setFormData((prev) => ({
-        ...prev,
-        date_delivery: getAvailableDeliveryDates()[0] || prev.date_delivery,
-      }));
-    }
-  }, [formData.date_pickup]);
-
   // Авто-выбор места, если доступно только одно
   useEffect(() => {
     if (!placeId && places.length === 1) {
@@ -506,6 +501,36 @@ const OrderForm: React.FC<OrderFormProps> = ({ placeId, onClose, onSuccess }) =>
 
     fetchPlaces();
   }, [BASE_URL]);
+
+
+  useEffect(() => {
+    const pickupDate = new Date(formData.date_pickup);
+    let deliveryDate: Date | null = null;
+
+    if (formData.type_ship === "quick_order") {
+      if (!customerWeekend && pickupDate.getDay() === 5) {
+        deliveryDate = new Date(pickupDate);
+        deliveryDate.setDate(pickupDate.getDate() + 3); // Move to Monday
+      } else {
+        deliveryDate = addWorkingDays(pickupDate, 1);
+      }
+    } else if (formData.type_ship === "one_time") {
+      if (!customerWeekend && pickupDate.getDay() === 5) {
+        deliveryDate = new Date(pickupDate);
+        deliveryDate.setDate(pickupDate.getDate() + 3); // Move to Monday
+      } else {
+        deliveryDate = addWorkingDays(pickupDate, 2);
+      }
+    }
+
+    if (deliveryDate) {
+      setFormData((prev) => ({
+        ...prev,
+        date_delivery: deliveryDate.toISOString().split("T")[0],
+      }));
+    }
+  }, [formData.date_pickup, formData.type_ship, customerWeekend]);
+
 
   return (
       <div className="modal-backdrop">
@@ -822,7 +847,11 @@ const OrderForm: React.FC<OrderFormProps> = ({ placeId, onClose, onSuccess }) =>
                   </div>
                 </div>
                 <div className="col-11">
-                  { currentData.customer["terms_use"] || "Podmínky užití" }
+                  { currentData?.customer.terms_use_check }{" "}
+                  <Link to="/" className="terms">
+                    { currentData?.customer.terms_use || "Podmínky užití" }{" "}
+                    <FontAwesomeIcon icon={faFilePdf} className="file-uploaded" />
+                  </Link>
                   {showError && !formData.terms && (
                       <p className="text-danger mt-1">You must accept the Terms of Use</p>
                   )}

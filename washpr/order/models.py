@@ -120,7 +120,10 @@ class Order(models.Model):
                 self.rp_place_phone = self.place.rp_phone
                 self.rp_contract_title = self.place.customer.company_name
                 self.rp_branch_office_id = 2263168
-                self.rp_problem_description = self.rp_customer_note
+                if self.rp_customer_note:
+                    self.rp_problem_description = self.rp_customer_note
+                else:
+                    self.rp_problem_description = "pick up"
                 self.contract_external_id_for_admin = self.pk
             if self.terms:
                 self.main_order = True

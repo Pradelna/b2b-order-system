@@ -1810,11 +1810,6 @@ button {
     -ms-flex-wrap: nowrap;
     flex-wrap: nowrap;
 }
-
-.footer .contact a:first-child {
-    margin-bottom: 12px;
-}
-
 .footer .contact img {
     margin-right: 12px;
 }

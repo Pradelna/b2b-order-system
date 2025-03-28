@@ -61,7 +61,11 @@ const Footer: React.FC = () => {
                 <div className="contact">
                   <a href="tel:+420736164797" className="tel">
                     <FontAwesomeIcon icon={faMobileScreen} className="icon" />
-                    <span>+420 736 164 797</span>
+                    <span>+420 736 164 797 (CZ/EN)</span>
+                  </a>
+                  <a href="tel:+420736164797" className="tel">
+                    <FontAwesomeIcon icon={faMobileScreen} className="icon" />
+                    <span>+420 734 246 834 (RU)</span>
                   </a>
                   <a href="mailto:office@pradelna1.com" className="mail">
                     <FontAwesomeIcon icon={faEnvelope} className="icon" />

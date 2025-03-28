@@ -407,7 +407,6 @@ const PlaceDetailAdmin: React.FC = () => {
                     <div className="col-xl-8 col-lg-10 col-12">
                         <OrderHistoryAdmin
                             placeId={place.id}
-                            hasMoreOrders={false}
                             orders={orderHistory}
                             setOrders={setOrderHistory}
                             stopedOrder={stopedOrder}

@@ -373,22 +373,15 @@ def send_orders_task():
     # Выбираем заказы, не отправленные ранее и созданные более 35 минут назад
     time_threshold = timezone.now() - timedelta(minutes=2)
     orders = Order.objects.filter(active=False, canceled=False, processed=True ,created_at__lte=time_threshold)
-
-    # print(f"Orders after {time_threshold}: {orders}")
     # find out oldest order
     min_order = min(orders, key=lambda order: order.rp_time_planned) if orders else None
     # min time for time slice
     min_time = min_order.rp_time_planned if min_order else 0
-
-    # print(f"220 min_time: {min_time}")
     # dictionary for max external_id {'01-03-2025': 7}
     max_external_number_by_day = defaultdict(int)
-    # print("Orders data from rp", orders_data_from_rp)
-    # print(f"all items: {len(all_items)}")
+
     if all_items:
         for item in all_items:
-            # print(item)
-            # print(item['id'], item['external_id'])
             # get external_id
             external_id = item["external_id"]
             # get the date from externel_id
@@ -398,19 +391,11 @@ def send_orders_task():
                 time_from_order  = datetime.strptime(external_id_date_str, '%d%m%y')
                 time_planned = int(time_from_order.timestamp())
 
-                # time_planned = item["time_planned"]
-                # print(f"time_planned 225: {time_planned}")
-                # use only date from min_time until now
                 if time_planned >= min_time:
-                    # print(f"229 {time_planned} >= {min_time}. External ID: {external_id}")
                     # Преобразуем timestamp в формат DD-MM-YYYY
                     date_str = datetime.utcfromtimestamp(time_planned).strftime('%d%m%y')
-                    # print(f"233 Date: {date_str}")
-                    external_number = 0
-                    # Извлекаем число после "/"
                     try:
                         external_number = int(external_id.split("/")[-1])
-                        # print(f"238 External number: {external_number}")
                     except ValueError:
                         external_number = 0  # Если не удалось извлечь число
 
@@ -419,13 +404,6 @@ def send_orders_task():
             except:
                 pass
 
-    # print(f"397 max_externel: {len(max_external_number_by_day)}")
-    # for key, value in max_external_number_by_day.items():
-    #     print(f"Ключ = {key}/{value}")
-
-    # for key in sorted(max_external_number_by_day):
-        # print(f"{key} / {max_external_number_by_day[key]}")
-
     results = []
 
     if success_get:
@@ -433,7 +411,6 @@ def send_orders_task():
             time_planned = datetime.utcfromtimestamp(order.rp_time_planned).strftime('%d%m%y')
             # check if other orders for this date
             if time_planned in max_external_number_by_day:
-                # print(f"{time_planned} / {max_external_number_by_day[time_planned]} already exist")
                 # number for order
                 next_number_order = max_external_number_by_day[time_planned] + 1
                 # name of contract_external_id
@@ -629,7 +606,7 @@ def update_orders_task():
     url = "https://online.auto-gps.eu/cnt/apiItinerary/contractList"
     params = {
         "show_closed": 0,
-        "last_status_change": 86400,
+        "last_status_change": 2600000,
         "limit": 300,
         "offset": 0,
     }
@@ -646,22 +623,39 @@ def update_orders_task():
         if orders_data_from_rp: # list with data is not empty
             close_old_connections()
             from order.models import Order
-            result = []
             success =[]
             not_success = []
             for item in orders_data_from_rp:
                 external_id = item["external_id"]
+                # for main order and pick up order
+                main_order = None
                 try:
                     order = Order.objects.get(rp_contract_external_id=external_id)
                     order.rp_problem_description = item["problem_description"]
                     order.rp_time_realization = item["time_realization"]
                     order.rp_status = item["status"]
                     order.save(update_fields=["rp_problem_description", "rp_status", "rp_time_realization"])
-                    success.append("order No" + str(order.pk) + " with " + external_id)
-
-                except:
-                    # print(f"Order {external_id} not found.")
-                    not_success.append("order doesn't find " + external_id)
+                    success.append(f"order No {order.pk} with {external_id}")
+                    main_order = order
+                except Order.DoesNotExist:
+                    not_success.append(f"order not found for {external_id}")
+                    continue
+                except Exception as e:
+                    not_success.append(f"order error for {external_id}: {str(e)}")
+                    continue
+                # there is only second delivery order in order history and needs to show status if it's main order
+                if main_order and item["status"] not in [4, 5, 11]: # if order is done don't change second order
+                    try:
+                        delivery_order = Order.objects.get(group_pair_id=main_order.group_pair_id, delivery=True)
+                        delivery_order.rp_problem_description = item["problem_description"]
+                        delivery_order.rp_time_realization = item["time_realization"]
+                        delivery_order.rp_status = item["status"]
+                        delivery_order.save(update_fields=["rp_problem_description", "rp_status", "rp_time_realization"])
+                        success.append(f"delivery order No {delivery_order.pk} with {external_id}")
+                    except Order.DoesNotExist:
+                        not_success.append(f"delivery order not found for group {main_order.group_pair_id}")
+                    except Exception as e:
+                        not_success.append(f"delivery order error for {external_id}: {str(e)}")
 
             return {"success": success, "not_success": not_success}
 

@@ -303,6 +303,7 @@ class LandingPageSerializer(serializers.ModelSerializer):
             'time_realization': obj.history_time_realization,
             'your_invoices': obj.history_your_invoices,
             'no_invoices': obj.history_no_invoices,
+            'wait_approval': obj.history_wait_approval,
         }
 
     def get_status(self, obj):
