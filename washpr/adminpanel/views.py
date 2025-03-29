@@ -15,6 +15,10 @@ from rest_framework.pagination import PageNumberPagination
 from rest_framework.permissions import IsAdminUser
 from rest_framework.response import Response
 from rest_framework.parsers import MultiPartParser
+from django.http import HttpResponse
+from django.conf import settings
+from urllib.parse import urlparse, quote
+import boto3
 
 from customer.serializers import CustomerGetSerializer
 from place.models import Place
@@ -31,6 +35,7 @@ from order.serializers import OrderReportSerializer
 from order.models import ReportFile
 from order.serializers import ReportFileSerializer
 from customer.serializers import CustomerSerializer
+from rest_framework.views import APIView
 
 
 @login_required

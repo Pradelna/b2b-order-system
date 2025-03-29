@@ -115,6 +115,24 @@ const UploadFileAdmin: React.FC<UploadFileAdminProps> = ({ onUploadSuccess, cust
         }
     };
 
+    const downloadFile = async (filename: string) => {
+        try {
+            const response = await fetchWithAuth(`${BASE_URL}/admin/adminpanel/customer/documents/download/${filename}/`);
+            if (!response.ok) throw new Error("Download failed");
+
+            const blob = await response.blob();
+            const url = window.URL.createObjectURL(blob);
+
+            const a = document.createElement("a");
+            a.href = url;
+            a.download = filename;
+            a.click();
+            window.URL.revokeObjectURL(url);
+        } catch (error) {
+            console.error("Download error:", error);
+        }
+    };
+
     useEffect(() => {
         if (!customer_id) return;
         fetchUploadedFiles();
@@ -181,10 +199,13 @@ const UploadFileAdmin: React.FC<UploadFileAdminProps> = ({ onUploadSuccess, cust
                     <div style={{ margin: '0 1px' }} className="row">
                         {files.map((file, index) => (
                             <div className="col-12 form-control mb-2" style={{ display: 'flex' }} key={index}>
-                                <a href={`${MEDIA_URL}${file.file}`} target="_blank" rel="noopener noreferrer">
+                                <span
+                                    style={{ cursor: 'pointer', display: 'flex', alignItems: 'center' }}
+                                    onClick={() => downloadFile(file.file.split('/').pop()?.split('?')[0] || 'document.pdf')}
+                                >
                                     <FontAwesomeIcon icon={faFilePdf} className="file-uploaded" />
-                                    <span style={{ marginLeft: '5px' }}>{file.file.split('/').pop()}</span>
-                                </a>
+                                    <span style={{ marginLeft: '5px' }}>{file.file.split('/').pop()?.split('?')[0]}</span>
+                                </span>
                                 <button
                                     onClick={() => handleDeleteFile(file.id)}
                                     style={{ marginLeft: 'auto', fontSize: '10px', color: 'red' }}

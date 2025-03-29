@@ -27,6 +27,30 @@ const DocumentsBlock: React.FC = () => {
         }
     };
 
+    const downloadFile = async (filename: string) => {
+        try {
+            const response = await fetchWithAuth(`${BASE_URL}/customer/documents/download/${filename}/`, {
+                method: "GET"
+            });
+
+            if (!response.ok) throw new Error("Failed to download file");
+
+            const blob = await response.blob();
+            const url = window.URL.createObjectURL(blob);
+            const a = document.createElement("a");
+            a.href = url;
+            a.download = filename;
+            a.click();
+            window.URL.revokeObjectURL(url);
+        } catch (error) {
+            console.error("Download error:", error);
+        }
+    };
+
+    const cleanFileName = (fullPath: string): string => {
+        return fullPath.split('/').pop()?.split('?')[0] || 'document.pdf';
+    };
+
     useEffect(() => {
         fetchUploadedFiles();
     }, []);
@@ -45,14 +69,21 @@ const DocumentsBlock: React.FC = () => {
 
                     {/* Display uploaded files */}
                     <div style={{ margin: "0 1px" }} className="row">
-                        {files.map((file, index) => (
-                            <div className="col-12 form-control mb-2" style={{ display: 'flex' }} key={index}>
-                                <a href={`http://localhost:8000${file.file}`} target="_blank" rel="noopener noreferrer">
+                        {files.map((file, index) => {
+                            const fileName = cleanFileName(file.file);
+                            return (
+                                <div
+                                    key={index}
+                                    className="col-12 form-control mb-2"
+                                    style={{ cursor: 'pointer' }}
+                                    onClick={() => downloadFile(fileName)}
+                                >
                                     <FontAwesomeIcon icon={faFilePdf} className="file-uploaded" />
-                                    <span style={{ marginLeft: "5px" }}>{file.file.split('/').pop()}</span>
-                                </a>
-                            </div>
-                        ))}
+                                    <span style={{ marginLeft: "5px" }}>{fileName}</span>
+                                </div>
+                            );
+                        }
+                            )}
                     </div>
 
                     {/* Static links for important documents */}

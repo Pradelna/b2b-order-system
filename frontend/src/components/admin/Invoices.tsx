@@ -1,4 +1,4 @@
-import {useState, useEffect, useContext, useRef} from "react";
+import {useState, useEffect, useContext, useRef, useCallback} from "react";
 import { fetchWithAuth } from "../account/auth";
 import {useParams, Link} from "react-router-dom";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
@@ -106,6 +106,25 @@ const Invoices: React.FC = () => {
         fileInputRefs.current[reportId]?.click();
     };
 
+    const downloadFile = useCallback(async (filename: string) => {
+        try {
+            const cleanName = filename.split('/').pop()?.split('?')[0] || 'document.pdf';
+            const response = await fetchWithAuth(`${BASE_URL}/admin/adminpanel/customer/documents/download/${cleanName}/`);
+            if (!response.ok) throw new Error("Download failed");
+
+            const blob = await response.blob();
+            const url = window.URL.createObjectURL(blob);
+
+            const a = document.createElement("a");
+            a.href = url;
+            a.download = cleanName;
+            a.click();
+            window.URL.revokeObjectURL(url);
+        } catch (error) {
+            console.error("Download error:", error);
+        }
+    }, []);
+
     useEffect(() => {
         const fetchReports = async () => {
             try {
@@ -207,10 +226,10 @@ const Invoices: React.FC = () => {
                                                 {report.files.length > 0 ? (
                                                     report.files.map((file) => (
                                                         <div key={file.id} className="col-12 form-control mb-1" style={{ display: 'flex' }}>
-                                                            <a href={`${BASE_URL.replace('/api', '')}${file.file}`} target="_blank" rel="noopener noreferrer">
+                                                            <span style={{ cursor: 'pointer', display: 'flex', alignItems: 'center' }} onClick={() => downloadFile(file.file)}>
                                                                 <FontAwesomeIcon icon={faFilePdf} className="file-uploaded" />
-                                                                <span style={{ marginLeft: '5px' }}>{file.file.split('/').pop()}</span>
-                                                            </a>
+                                                                <span style={{ marginLeft: '5px' }}>{file.file.split('/').pop()?.split('?')[0]}</span>
+                                                            </span>
 
                                                             <button onClick={() => handleFileDelete(report.id, file.id)}
                                                                     style={{ marginLeft: 'auto', fontSize: '10px', color: 'red' }}

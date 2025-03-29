@@ -1,4 +1,4 @@
-import React, {useState, useEffect, useContext} from "react";
+import React, {useState, useEffect, useContext, useCallback} from "react";
 import { fetchWithAuth } from "../account/auth";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import {
@@ -33,7 +33,24 @@ const ReportList: React.FC = () => {
     const BASE_URL = import.meta.env.VITE_API_URL;
     const { currentData } = useContext(LanguageContext);
 
+    const downloadFile = useCallback(async (filename: string) => {
+        try {
+            const cleanName = filename.split('/').pop()?.split('?')[0] || 'document.pdf';
+            const response = await fetchWithAuth(`${BASE_URL}/admin/adminpanel/customer/documents/download/${cleanName}/`);
+            if (!response.ok) throw new Error("Download failed");
 
+            const blob = await response.blob();
+            const url = window.URL.createObjectURL(blob);
+
+            const a = document.createElement("a");
+            a.href = url;
+            a.download = cleanName;
+            a.click();
+            window.URL.revokeObjectURL(url);
+        } catch (error) {
+            console.error("Download error:", error);
+        }
+    }, []);
 
     useEffect(() => {
         const fetchReports = async () => {
@@ -71,7 +88,7 @@ const ReportList: React.FC = () => {
                     </div>
 
                 </div>
-                <h3 style={{fontSize:"24px"}}>{currentData?.history?.your_invoices || "Vaše faktury"}</h3>
+                <h3 style={{fontSize:"24px"}}>{currentData?.history?.your_invoices || "Vaše faktury"} апва</h3>
                 <div className="row">
 
                     {loading || forceWait ? (
@@ -120,20 +137,18 @@ const ReportList: React.FC = () => {
                                             <div className="download-invoice">
                                                 {report.files.length > 0 ? (
                                                     report.files.map((file) => (
-                                                        <a
+                                                        <button
                                                             key={file.id}
-                                                            href={file.file}
-                                                            download
                                                             className="btn btn-download me-3"
-                                                            target="_blank"
+                                                            onClick={() => downloadFile(file.file)}
                                                         >
-                                                            <DarkTooltip title="Download invoie" placement="top" arrow>
+                                                            <DarkTooltip title="Download invoice" placement="top" arrow>
                                                                 <FontAwesomeIcon
                                                                     icon={faFileArrowDown}
                                                                     style={{ cursor: "pointer" }}
                                                                 />
                                                             </DarkTooltip>
-                                                        </a>
+                                                        </button>
                                                     ))
                                                 ) : (
                                                     <span className="text-muted">No files available</span>

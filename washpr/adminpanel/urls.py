@@ -1,5 +1,6 @@
 from django.urls import path
 from .views import *
+from customer.views import DownloadAnyDocumentView
 
 
 urlpatterns = [
@@ -25,4 +26,9 @@ urlpatterns = [
          name='delete_report_file'),
     path('customers/', all_customers, name='all_customers'),
     path('customers/search/', search_customers, name='search_customers'),
+    path(
+        "customer/documents/download/<str:filename>/",
+        DownloadAnyDocumentView.as_view(),
+        name="admin-document-download"
+    ),
 ]
