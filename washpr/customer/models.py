@@ -5,6 +5,7 @@ import os
 
 from integration.tasks import create_client_task, send_email_change_customer_task, send_new_customer_task
 from rest_framework.exceptions import ValidationError
+from utils.storageminio import MinioMediaStorage
 
 User = get_user_model()
 
@@ -121,6 +122,7 @@ class CustomerDocuments(models.Model):
     """ Модель документов клиента. """
     customer = models.ForeignKey(Customer, on_delete=models.CASCADE, related_name='documents')
     file = models.FileField(
+        storage=MinioMediaStorage(),
         upload_to=customer_document_upload_path,
         validators=[validate_file_size, validate_file_extension]
     )
@@ -134,6 +136,7 @@ class DocumentsForCustomer(models.Model):
     """ Модель документов для клиента. """
     customer = models.ForeignKey(Customer, on_delete=models.CASCADE, related_name='documents_for_customer')
     file = models.FileField(
+        storage=MinioMediaStorage(),
         upload_to=document_for_customer_upload_path,
         validators=[validate_file_size, validate_file_extension]
     )

@@ -36,3 +36,5 @@ urllib3==2.3.0
 vine==5.1.0
 wcwidth==0.2.13
 psycopg2-binary>=2.9
+boto3>=1.26.0
+django-storages>=1.13.2

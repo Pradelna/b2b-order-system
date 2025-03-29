@@ -4,7 +4,7 @@ from django.contrib.auth import get_user_model
 from django.db import models
 from customer.models import Customer
 from place.models import Place
-
+from utils.storageminio import MinioMediaStorage
 
 User = get_user_model()
 
@@ -183,7 +183,7 @@ class OrderReport(models.Model):
 
 class ReportFile(models.Model):
     report = models.ForeignKey(OrderReport, on_delete=models.CASCADE, related_name="files")
-    file = models.FileField(upload_to=report_file_path)
+    file = models.FileField(storage=MinioMediaStorage(), upload_to=report_file_path)
     uploaded_at = models.DateTimeField(auto_now_add=True)
 
     def __str__(self):
