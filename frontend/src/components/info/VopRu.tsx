@@ -1,24 +1,12 @@
 import Header from "@/components/Header";
 import Footer from "@/components/Footer";
 import {useContext} from "react";
-// import { useNavigate, useLocation } from "react-router-dom";
 import { faFilePdf } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { LanguageContext } from "../../context/LanguageContext";
 
 const VopRu: React.FC = () => {
     const { currentData } = useContext(LanguageContext);
-    // const navigate = useNavigate();
-    // const location = useLocation();
-    //
-    // useEffect(() => {
-    //     if (!currentData?.lang) return;
-    //
-    //     const expectedPath = `/info/vop-${currentData.lang}`;
-    //     if (location.pathname !== expectedPath) {
-    //         navigate(expectedPath);
-    //     }
-    // }, [currentData?.lang, navigate, location.pathname]);
 
     return (
         <>

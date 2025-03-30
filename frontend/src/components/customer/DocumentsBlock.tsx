@@ -97,16 +97,16 @@ const DocumentsBlock: React.FC = () => {
                             </div>
                         </div>
                     </div>
-                    <div className="row mb-2">
-                        <div className="col-12">
-                            <div className="form-control">
-                                <a href="#" target="_blank" rel="noopener noreferrer">
-                                    <FontAwesomeIcon icon={faFilePdf} className="file-uploaded" />
-                                    <span style={{ marginLeft: "5px" }}>{currentData.customer.terms_use}</span>
-                                </a>
-                            </div>
-                        </div>
-                    </div>
+                    {/*<div className="row mb-2">*/}
+                    {/*    <div className="col-12">*/}
+                    {/*        <div className="form-control">*/}
+                    {/*            <a href="#" target="_blank" rel="noopener noreferrer">*/}
+                    {/*                <FontAwesomeIcon icon={faFilePdf} className="file-uploaded" />*/}
+                    {/*                <span style={{ marginLeft: "5px" }}>{currentData.customer.terms_use}</span>*/}
+                    {/*            </a>*/}
+                    {/*        </div>*/}
+                    {/*    </div>*/}
+                    {/*</div>*/}
                     <div className="row">
                         <div className="col-12">
                             <div className="form-control">
