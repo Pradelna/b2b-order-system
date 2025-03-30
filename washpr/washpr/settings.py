@@ -21,12 +21,12 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 # See https://docs.djangoproject.com/en/5.0/howto/deployment/checklist/
 
 # SECURITY WARNING: keep the secret key used in production secret!
-SECRET_KEY = 'django-insecure-t)su=n@*^knlz_u8v&psm^muyyu+0%yo5%a%3s$quovs6++(1k'
+SECRET_KEY = os.getenv('DJANGO_SECRET_KEY', '!!!_dev_only_fallback_!!!')
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = True
+DEBUG = os.getenv('DJANGO_DEBUG', 'False') == 'True'
 
-ALLOWED_HOSTS = ['*', 'localhost', '127.0.0.1', 'django.raketaweb.eu']
+ALLOWED_HOSTS = os.getenv('DJANGO_ALLOWED_HOSTS', 'localhost,127.0.0.1').split(',')
 
 
 # Application definition
@@ -74,12 +74,13 @@ REST_FRAMEWORK = {
     'EXCEPTION_HANDLER': 'accounts.utils.custom_exception_handler',
 }
 
-CORS_ALLOW_CREDENTIALS = True
+# CORS_ALLOW_CREDENTIALS = True
 
-# CORS_ALLOWED_ORIGINS = [
-#     "http://localhost:5175",
-#     "http://127.0.0.1:5175",
+# CORS_ALLOWED_ORIGINS = list(filter(None, os.getenv("DJANGO_CORS_ALLOWED_ORIGINS", "").split(","))) if not DEBUG else [
+#     "http://localhost:5173",
+#     "http://127.0.0.1:5173",
 # ]
+# CORS_ALLOW_ALL_ORIGINS = DEBUG
 
 CORS_ALLOW_ALL_ORIGINS = True
 
@@ -107,24 +108,17 @@ WSGI_APPLICATION = 'washpr.wsgi.application'
 # Database
 # https://docs.djangoproject.com/en/5.0/ref/settings/#databases
 
-# DATABASES = {
-#     'default': {
-#         'ENGINE': 'django.db.backends.sqlite3',
-#         'NAME': BASE_DIR / 'db.sqlite3',
-#     }
-# }
 
 DATABASES = {
     'default': {
-        'ENGINE': 'django.db.backends.postgresql',
-        'NAME': os.getenv("POSTGRES_DB", "washservice"),
-        'USER': os.getenv("POSTGRES_USER", "washadmin"),
-        'PASSWORD': os.getenv("POSTGRES_PASSWORD", "secret123"),
-        'HOST': 'postgres',
-        'PORT': 5432,
+        'ENGINE': 'django.db.backends.sqlite3' if os.getenv("USE_SQLITE", "True") == "True" else 'django.db.backends.postgresql',
+        'NAME': os.getenv('POSTGRES_DB', BASE_DIR / 'db.sqlite3'),
+        'USER': os.getenv('POSTGRES_USER', ''),
+        'PASSWORD': os.getenv('POSTGRES_PASSWORD', ''),
+        'HOST': os.getenv('POSTGRES_HOST', 'localhost'),
+        'PORT': os.getenv('POSTGRES_PORT', '5432'),
     }
 }
-
 
 # Password validation
 # https://docs.djangoproject.com/en/5.0/ref/settings/#auth-password-validators
@@ -172,8 +166,8 @@ MEDIA_ROOT = os.path.join(BASE_DIR, 'media/')
 # Default primary key field type
 # https://docs.djangoproject.com/en/5.0/ref/settings/#default-auto-field
 
-CELERY_BROKER_URL = 'redis://redis:6379/0'
-CELERY_RESULT_BACKEND = 'redis://redis:6379/0'
+CELERY_BROKER_URL = 'redis://localhost:6379/0'
+CELERY_RESULT_BACKEND = 'redis://localhost:6379/0'
 CELERY_ACCEPT_CONTENT = ['json']
 CELERY_TASK_SERIALIZER = 'json'
 
@@ -183,21 +177,18 @@ DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
 AUTH_USER_MODEL = 'accounts.CustomUser'
 
-RECAPTCHA_SECRET_KEY = "6LdWEqkqAAAAAGLHgv9xIAygZZovfqdmGR2wBxQ4"
+RECAPTCHA_SECRET_KEY = os.getenv("RECAPTCHA_SECRET_KEY")
 
-EMAIL_BACKEND = 'django.core.mail.backends.console.EmailBackend'
+EMAIL_BACKEND = os.getenv('EMAIL_BACKEND', 'django.core.mail.backends.console.EmailBackend')
+EMAIL_HOST = os.getenv('EMAIL_HOST')
+EMAIL_PORT = int(os.getenv('EMAIL_PORT', 587))
+EMAIL_USE_SSL = os.getenv('EMAIL_USE_SSL', 'False') == 'False'
+EMAIL_USE_TLS = os.getenv('EMAIL_USE_TLS', 'True') == 'True'
+EMAIL_HOST_USER = os.getenv('EMAIL_HOST_USER')
+EMAIL_HOST_PASSWORD = os.getenv('EMAIL_HOST_PASSWORD')
+DEFAULT_FROM_EMAIL = os.getenv('DEFAULT_FROM_EMAIL')
 
-# EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
-
-EMAIL_HOST = 'smtp.gmail.com'
-EMAIL_PORT = 587
-EMAIL_USE_TLS = True
-EMAIL_USE_SSL = False
-EMAIL_HOST_USER = 'noreply@pradelna1.com'
-EMAIL_HOST_PASSWORD = 'ztyr yiiq opsm cxve'
-DEFAULT_FROM_EMAIL = 'noreply@pradelna1.com'
-
-EXTERNAL_API_KEY = "839943;31d86128e4b4f2c379ce9a1a4aaed7a81d61ae9407412c0043ea1f12092cf585"
+EXTERNAL_API_KEY = os.getenv("EXTERNAL_API_KEY")
 
 SIMPLE_JWT = {
     'ACCESS_TOKEN_LIFETIME': timedelta(minutes=360),  # Токен будет действовать 360 минут
@@ -222,11 +213,11 @@ LOGGING = {
 
 DEFAULT_FILE_STORAGE = "storages.backends.s3boto3.S3Boto3Storage"
 
-AWS_ACCESS_KEY_ID = "minioadmin"
-AWS_SECRET_ACCESS_KEY = "minioadmin123"
-AWS_STORAGE_BUCKET_NAME = "washservice"
-AWS_S3_ENDPOINT_URL = "http://minio:9000"
-AWS_S3_REGION_NAME = "us-east-1"  # фиктивный, MinIO требует
+AWS_ACCESS_KEY_ID = os.getenv("AWS_ACCESS_KEY_ID")
+AWS_SECRET_ACCESS_KEY = os.getenv("AWS_SECRET_ACCESS_KEY")
+AWS_STORAGE_BUCKET_NAME = os.getenv("AWS_STORAGE_BUCKET_NAME", "washservice")
+AWS_S3_ENDPOINT_URL = os.getenv("AWS_S3_ENDPOINT_URL", "http://minio:9000")
+AWS_S3_REGION_NAME = os.getenv("AWS_S3_REGION_NAME", "us-east-1")
 
 AWS_S3_FILE_OVERWRITE = False
 AWS_DEFAULT_ACL = None
