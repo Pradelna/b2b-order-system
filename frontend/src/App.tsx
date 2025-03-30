@@ -32,6 +32,7 @@ import CustomerDetailAdmin from "./components/admin/CustomerDetailAdmin";
 import PlaceDetailAdmin from "./components/admin/PlaceDetailAdmin";
 import AllHistoryAdmin from "./components/admin/AllHistoryAdmin";
 import Invoices from "./components/admin/Invoices";
+import Vop from "./components/info/Vop";
 
 // Define the shape of the language data
 interface LanguageData {
@@ -99,6 +100,9 @@ const App: React.FC = () => {
                 }
             />
 
+              <Route path="/info/vop" element={<Vop />} />
+              {/*<Route path="/info/vop-ru" element={<VopRu />} />*/}
+              {/*<Route path="/ru/info/vop-ru" element={<VopRu />} />*/}
             {/* Registration page */}
             <Route path="/account/auth" element={<RegistrationForm />} />
 

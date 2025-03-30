@@ -140,7 +140,8 @@ class LandingPage(models.Model):
     button_show_pass = models.CharField("Button show pass", max_length=100, blank=True, null=True)
     button_hide_pass = models.CharField("Button hide pass", max_length=100, blank=True, null=True)
     button_delete_place = models.CharField("Button delete place", max_length=100, blank=True, null=True)
-    button_cancel_order = models.CharField("Button cancel order", max_length=100, blank=True, null=True)
+    button_cancel_order = models.CharField("Button cancel order", max_length=50, blank=True, null=True)
+    button_download = models.CharField("Button Download", max_length=50, blank=True, null=True)
 
     button_open_file = models.CharField("Button open file", max_length=100, blank=True, null=True)
     button_more = models.CharField("Button more", max_length=100, blank=True, null=True)

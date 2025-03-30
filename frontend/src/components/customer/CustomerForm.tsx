@@ -128,7 +128,7 @@ const CustomerForm: React.FC<CustomerFormProps> = ({ onSubmit, errors }) => {
           {/* Company dic */}
           <div className="row mb-1">
             <div className="col-12 col-md-4 col-lg-3 label-form">
-              <label htmlFor="new_company_dic">{currentData.customer.vat_number}*</label>
+              <label htmlFor="new_company_dic">{currentData.customer.vat_number}</label>
             </div>
             <div className="col-12 col-md-8 col-lg-9">
               <input
@@ -137,7 +137,6 @@ const CustomerForm: React.FC<CustomerFormProps> = ({ onSubmit, errors }) => {
                   name="new_company_dic"
                   value={formData.new_company_dic}
                   onChange={handleChange}
-                  required
               />
             </div>
           </div>
@@ -214,7 +213,7 @@ const CustomerForm: React.FC<CustomerFormProps> = ({ onSubmit, errors }) => {
             </div>
             <div className="col-12 col-8 col-md-7 col-lg-6 col-xl-8">
               <div className="form-control">
-                <a href="#" target="_blank" rel="noopener noreferrer">
+                <a href="/info/vop" target="_blank" rel="noopener noreferrer">
                   <FontAwesomeIcon icon={faFilePdf} className="file-uploaded" />
                   {currentData.customer.vop}
                 </a>
@@ -223,29 +222,28 @@ const CustomerForm: React.FC<CustomerFormProps> = ({ onSubmit, errors }) => {
           </div>
 
           {/* Terms of Use Checkbox */}
-          <div className="row row-form">
-            <div className="col-12 col-4 col-md-5 col-lg-6 col-xl-4 label-form">
-              <div className="form-check">
-                <input
-                    className="form-check-input"
-                    type="checkbox"
-                    name="terms_of_use"
-                    checked={formData.terms_of_use}
-                    onChange={handleChange}
-                    required
-                />
-                <label className="form-check-label">{currentData.customer.terms_use_check}*</label>
-              </div>
-            </div>
-            <div className="col-12 col-8 col-md-7 col-lg-6 col-xl-8">
-              <div className="form-control">
-                <a href="#" target="_blank" rel="noopener noreferrer">
-                  <FontAwesomeIcon icon={faFilePdf} className="file-uploaded" />
-                  {currentData.customer.terms_use}
-                </a>
-              </div>
-            </div>
-          </div>
+          {/*<div className="row row-form">*/}
+          {/*  <div className="col-12 col-4 col-md-5 col-lg-6 col-xl-4 label-form">*/}
+          {/*    <div className="form-check">*/}
+          {/*      <input*/}
+          {/*          className="form-check-input"*/}
+          {/*          type="checkbox"*/}
+          {/*          name="terms_of_use"*/}
+          {/*          checked={formData.terms_of_use}*/}
+          {/*          onChange={handleChange}*/}
+          {/*      />*/}
+          {/*      <label className="form-check-label">{currentData.customer.terms_use_check}*</label>*/}
+          {/*    </div>*/}
+          {/*  </div>*/}
+          {/*  <div className="col-12 col-8 col-md-7 col-lg-6 col-xl-8">*/}
+          {/*    <div className="form-control">*/}
+          {/*      <a href="#" target="_blank" rel="noopener noreferrer">*/}
+          {/*        <FontAwesomeIcon icon={faFilePdf} className="file-uploaded" />*/}
+          {/*        {currentData.customer.terms_use}*/}
+          {/*      </a>*/}
+          {/*    </div>*/}
+          {/*  </div>*/}
+          {/*</div>*/}
 
           {/* GDPR Checkbox */}
           <div className="row row-form">

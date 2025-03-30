@@ -193,6 +193,7 @@ class LandingPageSerializer(serializers.ModelSerializer):
             'details': obj.button_details,
             'back': obj.button_back,
             'delete_place': obj.button_delete_place,
+            'download': obj.button_download,
         }
 
     def get_messages(self, obj):

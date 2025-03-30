@@ -1,5 +1,5 @@
 import { useRef, useState, useEffect, useContext } from 'react';
-import { LanguageContext } from "../../context/LanguageContext.js";
+import { LanguageContext } from "../../context/LanguageContext";
 import { fetchWithAuth } from "../account/auth.ts";
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faFilePdf } from "@fortawesome/free-solid-svg-icons";
@@ -90,7 +90,7 @@ const DocumentsBlock: React.FC = () => {
                     <div className="row mb-2">
                         <div className="col-12">
                             <div className="form-control">
-                                <a href="#" target="_blank" rel="noopener noreferrer">
+                                <a href="/info/vop" target="_blank" rel="noopener noreferrer">
                                     <FontAwesomeIcon icon={faFilePdf} className="file-uploaded" />
                                     <span style={{ marginLeft: "5px" }}>{currentData.customer.vop}</span>
                                 </a>

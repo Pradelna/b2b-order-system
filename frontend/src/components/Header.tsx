@@ -17,7 +17,7 @@ interface HeaderProps {
   formCustomer: boolean
 }
 
-const Header: React.FC = ({formCustomer}) => {
+const Header: React.FC<HeaderProps> = ({ formCustomer }) => {
   const { language, handleLanguageChange, languageData } = useContext(LanguageContext);
   const [loading, setLoading] = useState<boolean>(true);
   const navigate = useNavigate();
@@ -149,7 +149,11 @@ interface DynamicMenuProps {
 const DynamicMenu: React.FC<DynamicMenuProps> = ({ menuData }) => {
   const location = useLocation();
 
-  if (location.pathname.startsWith("/account") || location.pathname === "/forgot-password") {
+  if (
+    location.pathname.startsWith("/account") ||
+    location.pathname === "/forgot-password" ||
+    location.pathname.startsWith("/info")
+  ) {
     return <AccountMenuComponent menuData={menuData} />;
   }
   return <MenuComponent menuData={menuData} />;
