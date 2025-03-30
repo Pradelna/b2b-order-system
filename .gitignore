@@ -167,7 +167,7 @@ washpr/customer/migrations
 washpr/order/migrations
 washpr/place/migrations
 washpr/landing/migrations
-!washpr/landing/migrations/0001_initial.py
+washpr/landing/migrations/0001_initial.py
 washpr/landing/static
 washpr/static
 washpr/media
