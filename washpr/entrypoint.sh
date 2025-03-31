@@ -1,5 +1,8 @@
 #!/bin/sh
 
+echo "Apply database make migrations"
+python manage.py makemigrations
+
 echo "Apply database migrations"
 python manage.py migrate --noinput
 

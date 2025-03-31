@@ -7,7 +7,5 @@ COPY ./ .
 ENV VITE_API_URL=$VITE_API_URL
 RUN npm run build
 
-
-FROM nginx:alpine
-COPY --from=build /app/dist /usr/share/nginx/html
-EXPOSE 80
+CMD cp -r build result_build
+# RUN mkdir -p /result_build && cp -r build/* /result_build/
