@@ -98,7 +98,7 @@ services:
       args:
         VITE_API_URL: http://localhost:8000/api
     volumes:
-      - ./frontend/result_build:/result
+      - frontend_result:/result
 
   nginx:
     image: nginx:alpine
@@ -109,7 +109,7 @@ services:
       - ./nginx/conf.d:/etc/nginx/conf.d
       - static_volume:/app/static
       - media_volume:/app/media
-      - ./frontend/result/html:/app/result_build/html
+      - frontend_result:/app/result_build
     depends_on:
       - backend
       - frontend
@@ -117,6 +117,6 @@ services:
 volumes:
   static_volume:
   media_volume:
-  frontend_build:
   postgres_data:
   minio_data:
+  frontend_result:
