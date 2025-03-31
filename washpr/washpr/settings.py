@@ -111,7 +111,7 @@ WSGI_APPLICATION = 'washpr.wsgi.application'
 
 DATABASES = {
     'default': {
-        'ENGINE': 'django.db.backends.sqlite3' if os.getenv("USE_SQLITE", "True") == "True" else 'django.db.backends.postgresql',
+        'ENGINE': 'django.db.backends.postgresql',
         'NAME': os.getenv('POSTGRES_DB', BASE_DIR / 'db.sqlite3'),
         'USER': os.getenv('POSTGRES_USER', ''),
         'PASSWORD': os.getenv('POSTGRES_PASSWORD', ''),

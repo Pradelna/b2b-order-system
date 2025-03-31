@@ -96,7 +96,7 @@ services:
       dockerfile: Dockerfile.prod
       target: export
       args:
-        VITE_API_URL: http://localhost:8000/api
+        VITE_API_URL: http://api.localhost/api
     volumes:
       - frontend_result:/result
 
