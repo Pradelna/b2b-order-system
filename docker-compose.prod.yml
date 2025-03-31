@@ -94,8 +94,11 @@ services:
     build:
       context: ./frontend
       dockerfile: Dockerfile.prod
+      target: export
       args:
         VITE_API_URL: http://localhost:8000/api
+    volumes:
+      - ./frontend/result_build:/result
 
   nginx:
     image: nginx:alpine
@@ -106,7 +109,7 @@ services:
       - ./nginx/conf.d:/etc/nginx/conf.d
       - static_volume:/app/static
       - media_volume:/app/media
-      - frontend_build:/app/result_build/html
+      - ./frontend/result/html:/app/result_build/html
     depends_on:
       - backend
       - frontend
