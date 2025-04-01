@@ -97,8 +97,6 @@ services:
       context: ./frontend
       dockerfile: Dockerfile.prod
       target: export
-      args:
-        VITE_API_URL: ${VITE_API_URL}
     env_file:
       - .env
     volumes:

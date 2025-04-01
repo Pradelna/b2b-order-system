@@ -2,30 +2,15 @@ FROM node:20-alpine AS build
 
 WORKDIR /app
 
-ARG VITE_API_URL
-# ENV VITE_API_URL=$VITE_API_URL
-ENV VITE_API_URL=${VITE_API_URL}
-
-# export VITE_API_URL=http://api.localhost/api
-
 COPY ./package*.json ./
 RUN npm install
 
 COPY ./ .
 
-# RUN echo "VITE_API_URL=\"$VITE_API_URL\"" > .env
-RUN echo "VITE_API_URL=${VITE_API_URL}" > .env.production
-
-# Логируем, чтобы убедиться, что она передалась
-RUN echo "Building with VITE_API_URL=$VITE_API_URL"
-
 RUN echo $VITE_API_URL
-
-RUN cat .env.production
 
 RUN npm run build
 
 FROM alpine AS export
 WORKDIR /result
 COPY --from=build /app/dist ./html
-COPY --from=build /app/.env.production ./env.production
