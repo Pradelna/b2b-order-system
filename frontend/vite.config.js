@@ -6,7 +6,7 @@ import { visualizer } from 'rollup-plugin-visualizer';
 export default defineConfig({
   base: '/',
   define: {
-    'import.meta.env.VITE_API_URL': JSON.stringify(process.env.VITE_API_URL || 'http://api.localhost/api'),
+    'import.meta.env.VITE_API_URL': JSON.stringify(process.env.VITE_API_URL || 'http://api.sokov.eu/api'),
   },
   plugins: [
     react(),

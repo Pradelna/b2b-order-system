@@ -1,6 +1,5 @@
 import React, { useState, useEffect, ReactNode } from "react";
-import { LanguageContext } from "./LanguageContext.js";
-import { api } from "../api/axios";
+import { LanguageContext } from "./LanguageContext";
 
 interface LanguageProviderProps {
     children: ReactNode;
