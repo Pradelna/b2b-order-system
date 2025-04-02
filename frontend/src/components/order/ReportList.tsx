@@ -1,12 +1,16 @@
-import React, { useState, useEffect } from "react";
-import { Link } from "react-router-dom";
+import React, {useState, useEffect, useContext, useCallback} from "react";
 import { fetchWithAuth } from "../account/auth";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import {faFilePdf, faDownload, faSpinner, faFileInvoiceDollar} from "@fortawesome/free-solid-svg-icons";
+import {
+    faFileInvoiceDollar,
+    faFileArrowDown
+} from "@fortawesome/free-solid-svg-icons";
 import HeaderAccount from "../HeaderAccount";
-import Footer from "../Footer";
+import FooterAccount from "../FooterAccount";
 import NavButtons from "../account/NavButtons";
 import {Skeleton} from "@mui/material";
+import DarkTooltip from "../utils/DarkTooltip";
+import { LanguageContext } from "../../context/LanguageContext";
 
 interface Report {
     id: number;
@@ -27,6 +31,26 @@ const ReportList: React.FC = () => {
     const [customerId, setCustomerId] = useState<Customer | null>(null);
     const [forceWait, setForceWait] = useState<boolean>(true);
     const BASE_URL = import.meta.env.VITE_API_URL;
+    const { currentData } = useContext(LanguageContext);
+
+    const downloadFile = useCallback(async (filename: string) => {
+        try {
+            const cleanName = filename.split('/').pop()?.split('?')[0] || 'document.pdf';
+            const response = await fetchWithAuth(`${BASE_URL}/admin/adminpanel/customer/documents/download/${cleanName}/`);
+            if (!response.ok) throw new Error("Download failed");
+
+            const blob = await response.blob();
+            const url = window.URL.createObjectURL(blob);
+
+            const a = document.createElement("a");
+            a.href = url;
+            a.download = cleanName;
+            a.click();
+            window.URL.revokeObjectURL(url);
+        } catch (error) {
+            console.error("Download error:", error);
+        }
+    }, []);
 
     useEffect(() => {
         const fetchReports = async () => {
@@ -34,10 +58,11 @@ const ReportList: React.FC = () => {
                 const response = await fetchWithAuth(`${BASE_URL}/order/reports/`);
                 if (response.ok) {
                     const data: Report[] = await response.json();
+                    // console.log(data);
                     setReports(data.reports);
                     // console.log(data);
                     setCustomerId(data.user_id);
-                    // console.log(data[0].user);
+                    // console.log(data[0].customer);
                 } else {
                     console.error("Failed to fetch reports");
                 }
@@ -58,12 +83,12 @@ const ReportList: React.FC = () => {
             <HeaderAccount customerId={customerId} />
             <div className="container margin-top-90 wrapper invoices-page">
                 <div className="row message-block-76">
-                    <div className="col-1 back-button">
+                    <div className="col-3 back-button">
                         <NavButtons />
                     </div>
 
                 </div>
-                <h3 style={{fontSize:"24px"}}>Your Invoices</h3>
+                <h3 style={{fontSize:"24px"}}>{currentData?.history?.your_invoices || "Vaše faktury"} апва</h3>
                 <div className="row">
 
                     {loading || forceWait ? (
@@ -112,15 +137,18 @@ const ReportList: React.FC = () => {
                                             <div className="download-invoice">
                                                 {report.files.length > 0 ? (
                                                     report.files.map((file) => (
-                                                        <a
+                                                        <button
                                                             key={file.id}
-                                                            href={file.file}
-                                                            download
-                                                            className="btn btn-download"
-                                                            target="_blank"
+                                                            className="btn btn-download me-3"
+                                                            onClick={() => downloadFile(file.file)}
                                                         >
-                                                            <FontAwesomeIcon icon={faDownload} /> Download
-                                                        </a>
+                                                            <DarkTooltip title="Download invoice" placement="top" arrow>
+                                                                <FontAwesomeIcon
+                                                                    icon={faFileArrowDown}
+                                                                    style={{ cursor: "pointer" }}
+                                                                />
+                                                            </DarkTooltip>
+                                                        </button>
                                                     ))
                                                 ) : (
                                                     <span className="text-muted">No files available</span>
@@ -130,12 +158,12 @@ const ReportList: React.FC = () => {
                                     ))}
                                 </div>
                             ) : (
-                                <p>No reports available.</p>
+                                <p>{currentData?.history?.no_invoices || "V momentální chvíli nemáte žádné faktury k zobrazení"}</p>
                             )}
                         </>)}
                 </div>
             </div>
-            <Footer />
+            <FooterAccount />
         </>
     );
 };

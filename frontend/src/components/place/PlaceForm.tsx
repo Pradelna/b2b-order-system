@@ -1,5 +1,6 @@
-import { useState, ChangeEvent, FormEvent } from "react";
+import React, {useState, ChangeEvent, FormEvent, useContext} from "react";
 import { fetchWithAuth } from "../account/auth.ts";
+import { LanguageContext } from "../../context/LanguageContext";
 
 interface PlaceFormProps {
     onClose: () => void;
@@ -28,8 +29,9 @@ const PlaceForm: React.FC<PlaceFormProps> = ({ onClose, onSuccess }) => {
         rp_phone: "",
         rp_email: "",
     });
-
+    const { currentData } = useContext(LanguageContext);
     const BASE_URL = import.meta.env.VITE_API_URL;
+    const [formErrors, setFormErrors] = useState<{ [key: string]: string[] }>({});
 
     const handleChange = (e: ChangeEvent<HTMLInputElement>) => {
         const { name, value } = e.target;
@@ -37,22 +39,47 @@ const PlaceForm: React.FC<PlaceFormProps> = ({ onClose, onSuccess }) => {
     };
 
     const handleSubmit = async (e: FormEvent) => {
-        e.preventDefault(); // Prevent form submission from refreshing the page
+        e.preventDefault();
+        setFormErrors({}); // очистим прошлые ошибки
+
+        const errors: { [key: string]: string[] } = {};
+
+        // Простая проверка email
+        if (formData.rp_email && !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(formData.rp_email)) {
+            errors.email = ["Neplatný formát e-mailu"];
+        }
+
+        // Можно добавить проверки на другие поля (например, phone)
+        if (formData.rp_phone && !/^\+?(\d){6,18}$/.test(formData.rp_phone)) {
+            errors.phone = ["Číslo telefonu musí být zadáno ve formátu: +420234567890 nebo 01234567890"];
+        }
+
+        // Если есть ошибки - не отправляем запрос
+        if (Object.keys(errors).length > 0) {
+            setFormErrors(errors);
+            return;
+        }
+
+        // Если валидация прошла
         try {
             const response = await fetchWithAuth(`${BASE_URL}/place/create/`, {
                 method: "POST",
-                headers: {
-                    "Content-Type": "application/json",
-                },
+                headers: { "Content-Type": "application/json" },
                 body: JSON.stringify(formData),
             });
+
             if (response.ok) {
                 const data = await response.json();
-                onSuccess(data); // Pass the newly created place data to the parent component
-                onClose(); // Close the modal
+                onSuccess(data);
+                onClose();
+            } else if (response.status === 400) {
+                const data = await response.json();
+                setFormErrors(data);
             } else {
-                const errorData = await response.json();
-                alert("Failed to create place: " + JSON.stringify(errorData));
+                const data = await response.json();
+                throw new Error(
+                    data.detail || currentData?.messages?.filed_form || "Nepodařilo se odeslat formulář"
+                );
             }
         } catch (error) {
             console.error("Error submitting form:", error);
@@ -63,37 +90,40 @@ const PlaceForm: React.FC<PlaceFormProps> = ({ onClose, onSuccess }) => {
         <div className="modal-backdrop">
             <div className="modal-wrapper">
                 <div className="modal-content">
-                    <h3>Add New Place</h3>
+                    <h3>{ currentData.form["add_place"] || "Add New Place" }</h3>
                     <form onSubmit={handleSubmit}>
                         {Object.entries(formData).map(([key, value]) => (
                             <div className="row mb-3" key={key}>
-                                <div className="col-3 label-form">
+                                <div className="col-sm-4 col-12 label-form">
                                     <label htmlFor={key}>
-                                        {key.replace("rp_", "").replace("_", " ").toUpperCase()}
+                                        {(currentData.form[key])}
                                     </label>
                                 </div>
-                                <div className="col-9">
+                                <div className="col-sm-8 col-12">
                                     <input
                                         className="form-control"
                                         type="text"
                                         name={key}
                                         value={value}
                                         onChange={handleChange}
-                                        required={
-                                            key !== "rp_person" && key !== "rp_phone" && key !== "rp_email"
-                                        }
+                                        required
                                     />
                                 </div>
                             </div>
                         ))}
+                        {Object.entries(formErrors).map(([field, messages]) => (
+                            <p key={field} className="alert alert-danger">
+                                {field}: {Array.isArray(messages) ? messages.join(', ') : messages}
+                            </p>
+                        ))}
 
                         {/* Submit and Close Buttons */}
                         <div className="row mt-3">
-                            <button className="btn-submit me-2" type="submit">
-                                Submit
-                            </button>
                             <button className="btn-link" type="button" onClick={onClose}>
-                                Cancel
+                                { currentData.buttons["cancel"] || "Zrušit" }
+                            </button>
+                            <button className="btn-submit" type="submit">
+                                { currentData.buttons["submit"] || "Uložit" }
                             </button>
                         </div>
                     </form>

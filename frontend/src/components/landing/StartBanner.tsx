@@ -29,7 +29,7 @@ const StartBanner: React.FC = () => {
               {/* Logo */}
               <a href="#" className="logo">
                 <img
-                    src="/assets/img/logo.png" // Ensure the path to the logo is correct
+                    src="/wp-content/themes/praska/assets/img/logo.png"
                     alt="Laundry Logo"
                 />
               </a>

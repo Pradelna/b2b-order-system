@@ -1,12 +1,15 @@
 import React, {useState, useEffect, useContext} from "react";
 import { LanguageContext } from "../../context/LanguageContext";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { faTruck, faFileLines, faCheckCircle, faBan } from "@fortawesome/free-solid-svg-icons";
+import { faTruck, faFileLines, faCheckCircle, faBan, faFileImage, faFileArrowDown, faFilePdf } from "@fortawesome/free-solid-svg-icons";
 import { fetchWithAuth } from "../account/auth.ts";
-import { Tooltip as ReactTooltip } from "react-tooltip";
 import {Form} from "react-router-dom";
 import {Skeleton} from "@mui/material";
 import { formatDate } from "@/components/utils/FormatDate";
+import {formatViceDate} from "@/components/utils/FormatViceDate";
+import FileDownloadIcon from "@/components/order/FileDownloadIcon";
+import UseMediaQuery from "@/hooks/UseMediaQuery";
+import DarkTooltip from "@/components/utils/DarkTooltip";
 
 interface Order {
     id: number;
@@ -24,7 +27,7 @@ interface OrderHistoryProps {
 }
 
 const OrderHistory: React.FC<OrderHistoryProps> = ({ placeId, orders = [], setOrders, stopedOrder}) => {
-    const [visibleOrders, setVisibleOrders] = useState<number>(10);
+    const [visibleOrders, setVisibleOrders] = useState<number>(80);
     const [hasMoreOrders, setHasMoreOrders] = useState<boolean>(false);
     const [loading, setLoading] = useState<boolean>(true);
     const [expandedOrders, setExpandedOrders] = useState<{ [key: number]: boolean }>({});
@@ -34,6 +37,9 @@ const OrderHistory: React.FC<OrderHistoryProps> = ({ placeId, orders = [], setOr
     const [forceWait, setForceWait] = useState<boolean>(true);
     const BASE_URL = import.meta.env.VITE_API_URL;
     const { currentData } = useContext(LanguageContext);
+    const [orderPhotos, setOrderPhotos] = useState<OrderPhoto[]>([]);
+    const [expandedPhoto, setExpandedPhoto] = useState(false); // for expend photo if theya are many
+    const isMobileMax530 = UseMediaQuery('(max-width: 530px)');
 
     // Fetch orders from the API
     const fetchOrders = async () => {
@@ -45,7 +51,7 @@ const OrderHistory: React.FC<OrderHistoryProps> = ({ placeId, orders = [], setOr
                 if (setOrders) {
                     setOrders(data);
                 }
-                setHasMoreOrders(data.length > 10);
+                setHasMoreOrders(data.length > 40);
             } else {
                 console.error("Failed to fetch orders");
             }
@@ -56,14 +62,31 @@ const OrderHistory: React.FC<OrderHistoryProps> = ({ placeId, orders = [], setOr
         }
     };
 
+    // get photo for orders
+    const fetchOrderPhotos = async () => {
+        try {
+            // console.log("Fetching orders for place ID", placeId);
+            const response = await fetchWithAuth(`${BASE_URL}/order/photos/`);
+
+            if (response.ok) {
+                const data = await response.json();
+                setOrderPhotos(data);
+            } else {
+                console.error("Failed to fetch photos");
+            }
+        } catch (error) {
+            console.error("Error fetching photos:", error);
+        } finally {
+            setLoading(false);
+        }
+    };
+
 
     // Load more orders when the user clicks "More"
     const loadMoreOrders = () => {
-        setVisibleOrders((prev) => {
-            const newVisibleCount = prev + 10;
-            setHasMoreOrders(newVisibleCount < orders.length);
-            return newVisibleCount;
-        });
+        const newVisibleCount = visibleOrders + 40;
+        setVisibleOrders(newVisibleCount);
+        setHasMoreOrders(newVisibleCount < orders.length);
     };
 
     const toggleExpand = (orderId: number) => {
@@ -73,22 +96,22 @@ const OrderHistory: React.FC<OrderHistoryProps> = ({ placeId, orders = [], setOr
         }));
     };
 
-
+    // cancel order
     const handleCancelOrder = async (orderId: number) => {
-        if (window.confirm("Are you sure you want to cancel this order?")) {
+        if (window.confirm(currentData?.messages?.sure_cancel_order || "Opravdu si přejete zrušit tuto objednávku?")) {
             try {
                 const response = await fetchWithAuth(`${BASE_URL}/order/update/${orderId}/`, {
                     method: "PUT",
                     headers: {
                         "Content-Type": "application/json",
                     },
-                    body: JSON.stringify({ canceled: true }),
+                    body: JSON.stringify({ canceled: true, rp_status: 10, rp_customer_note: "storno chybna objednavka" }),
                 });
 
                 if (response.ok) {
                     const dataUpdatedOrder = await response.json();
                     setUpdatedOrder(dataUpdatedOrder)
-                    setSuccessMessage("Order successfully canceled!.");
+                    setSuccessMessage(currentData?.messages?.order_suc_canceled || "Objednávka byla úspěšně zrušena!");
                     setTimeout(() => setSuccessMessage(""), 10000);
                 } else {
                     console.error("Failed to stop order.");
@@ -99,6 +122,7 @@ const OrderHistory: React.FC<OrderHistoryProps> = ({ placeId, orders = [], setOr
         }
     };
 
+    // check if order is old then 30 minut
     useEffect(() => {
         const checkCancelableOrders = () => {
             const now = new Date().getTime();
@@ -117,8 +141,16 @@ const OrderHistory: React.FC<OrderHistoryProps> = ({ placeId, orders = [], setOr
     }, [orders]);
 
     useEffect(() => {
+        fetchOrderPhotos();
+    }, []);
+
+    useEffect(() => {
+        // console.log("Re-render triggered, ordersPhotos:", orderPhotos);
+    }, [orderPhotos]);
+
+    useEffect(() => {
         if (!placeId) {
-            console.error("Invalid placeId:", placeId);
+            // console.error("Invalid placeId:", placeId);
             return;
         }
         fetchOrders();
@@ -127,10 +159,14 @@ const OrderHistory: React.FC<OrderHistoryProps> = ({ placeId, orders = [], setOr
         return () => clearTimeout(timer); // Cleanup
     }, [placeId]);
 
+    useEffect(() => {
+        setHasMoreOrders(visibleOrders < orders.length);
+    }, [orders, visibleOrders]);
+
 
     return (
         <div className="order-history mb-5">
-            <h3 className="account-info">Order History</h3>
+            <h3 className="account-info">{currentData?.buttons?.all_history || "Historie objednávek"}</h3>
             <h3 className="detail-info">{orders.length > 0 ? orders[0].place_name : ""}</h3>
             {successMessage && (
                 <p className="alert alert-success mb-3">{successMessage}</p>
@@ -160,104 +196,168 @@ const OrderHistory: React.FC<OrderHistoryProps> = ({ placeId, orders = [], setOr
                 ))
             ) : (
                 <>
-
                     {orders.length > 0 ? (
                         <div>
                             {orders.slice(0, visibleOrders)
-                                // .sort((a, b) => b.id - a.id)
-                                .map((order) => (
+                                .map((order) => {
+                                    // Получаем фотографии для данного заказа
+                                    const photos = orderPhotos.filter((photo) => photo.group_pair_id === order.group_pair_id);
+                                    // Если файлов больше 3 – вычисляем высоту контейнера с иконками,
+                                    // иначе высота задаётся классом "expanded" (из CSS)
+
+                                    const dynamicHeight = ((photos.length > 3 || isMobileMax530) && !photos.length == 0)
+                                        ? `${photos.length * 72 + 90}px` : '220px';
+
+                                return (
                                     <div
                                         key={order.id}
                                         className={`card ${expandedOrders[order.id] ? "expanded" : ""}`}
                                         onClick={() => toggleExpand(order.id)}
+                                        style={{ display: (order.rp_status === 0 && order.every_week) || (
+                                            order.id === order.group_pair_id &&
+                                                order.rp_status !== 20 &&
+                                                order.rp_status !== 10) ? "none" : "block",
+                                            '--card-height': dynamicHeight,} as React.CSSProperties}
                                     >
+                                        {(order.id !== order.group_pair_id || (order.rp_status === 20 || order.rp_status === 10)) && (<>
                                         <div className="history-icon">
                                             <FontAwesomeIcon icon={faTruck} />
                                         </div>
 
-                                        <div className="receipt-icon">
-                                            <FontAwesomeIcon
-                                                icon={faFileLines}
-                                                data-tooltip-id="receipt-tooltip"
-                                                style={{ cursor: "pointer" }}
-                                            />
-                                            <ReactTooltip
-                                                id="receipt-tooltip"
-                                                place="top"
-                                                content="Download dodaci list"
-                                                effect="solid"
-                                                className="custom-tooltip"
-                                            />
-                                        </div>
                                         <p>
                                             {order.canceled || (updatedOrder?.id === order.id) ? (
                                                 <>
                                                     <FontAwesomeIcon icon={faBan} style={{ color: "red", height: "18px" }}/>
-                                                    <strong className="ms-2">Canceled</strong>
+                                                    <strong className="ms-2">{currentData?.status?.status_10 || "Storno"}</strong>
                                                 </>
                                             ) : (
                                                 <>
                                                     {cancelableOrders[order.id] && !order.canceled ? (
                                                         <>
                                                             <FontAwesomeIcon icon={faCheckCircle} style={{ color: "#00aab7", height: "18px" }}/>
-                                                            <strong className="ms-2">New</strong>
+                                                            <strong className="ms-2">{currentData?.status?.status_0 || "Nová"}</strong>
                                                         </>
                                                     ) : (
                                                         <>
                                                             <FontAwesomeIcon icon={faCheckCircle} style={{ color: "#00aab7", height: "18px" }}/>
-                                                            <strong className="ms-2">Completed</strong>
+                                                            <strong className="ms-2">
+                                                                {order.rp_status === 20 ? (currentData?.status?.status_20 || "Nová") : null}
+                                                                {order.rp_status === 0 ? (currentData?.status?.status_0 || "Nová") : null}
+                                                                {order.rp_status === 1 ? (currentData?.status?.status_1 || "Nová") : null}
+                                                                {order.rp_status === 2 ? (currentData?.status?.status_2 || "Přijato") : null}
+                                                                {order.rp_status === 3 ? (currentData?.status?.status_3 || "Na cestě") : null}
+                                                                {order.rp_status === 4 ? (currentData?.status?.status_4 || "Dokončeno") : null}
+                                                                {order.rp_status === 5 ? (currentData?.status?.status_5 || "Complited") : null}
+                                                                {order.rp_status === 6 ? (currentData?.status?.status_6 || "Ověřeno") : null}
+                                                                {order.rp_status === 7 ? (currentData?.status?.status_7 || "Odmítnuto") : null}
+                                                                {order.rp_status === 8 ? (currentData?.status?.status_8 || "Neznámý status") : null}
+                                                                {order.rp_status === 9 ? (currentData?.status?.status_9 || "Odloženo") : null}
+                                                                {order.rp_status === 10 ? (currentData?.status?.status_10 || "Storno") : null}
+                                                                {order.rp_status === 11 ? (currentData?.status?.status_11 || "K fakturaci") : null}
+                                                                {order.rp_status === 12 ? (currentData?.status?.status_12 || "Čeká na díl") : null}
+                                                                {order.rp_status === 13 ? (currentData?.status?.status_13 || "Marný výjezd") : null}
+                                                            </strong>
                                                         </>
                                                     )}
 
                                                 </>
                                             )}
                                         </p>
-                                        {order.rp_time_realization && (
-                                            <p>
-                                                <strong>Realization Date:</strong> {order.rp_time_realization || " No information"}
-                                            </p>
-                                        )}
 
-                                        <p>
-                                            <strong>Number order:</strong> {order.id}
-                                        </p>
+                                        {order.rp_contract_external_id  ? (
+                                            <p>
+                                                <strong>{currentData?.history?.order_number || "Číslo objednávky"}:</strong> {order.rp_contract_external_id}
+                                            </p>
+                                        ) : (<>
+                                            {!order.canceled ? (
+                                                <p>
+                                                    <strong>{currentData?.history?.wait_approval || "Objednávka čeká na zpracování"}</strong>
+                                                </p>
+                                            ) : null}
+
+                                        </>)}
+
                                         {/* Дополнительная информация показывается только если карточка развернута */}
                                         {expandedOrders[order.id] && (
                                             <div className="expanded-content">
                                                 {/* if order is repeating */}
-                                                {order.every_week ? (
-                                                    <>
-                                                        <p><strong>Regular repeating order</strong></p>
-                                                        {/* Type of Shipping */}
-                                                        <p><strong>Type of Shipping: </strong>
-                                                            {order.type_ship === "quick_order" && (<>
-                                                                {currentData.order?.quick}
-                                                            </>)}
-                                                            {order.type_ship === "pickup_ship_one" && (<>
-                                                                {currentData.order?.type_sipping_clear_for_dirty}
-                                                            </>)}
-                                                            {order.type_ship === "pickup_ship_dif" && (<>
-                                                                {currentData.order?.type_sipping_1_in_3}
-                                                            </>)}</p>
+                                                {order.every_week ? (<>
+                                                <p><strong>
+                                                    {currentData?.history?.repeated_order || "Pravidelná opakující se objednávka"}
+                                                </strong></p>
+                                                {/* Type of Shipping */}
+                                                <p><strong>{ currentData?.form?.type_ship || "Typ závozu" }: </strong>
+                                                {order.type_ship === "pickup_ship_one" ? (
+                                                    currentData?.order?.type_sipping_clear_for_dirty || "Výměna čistého prádla za špinavé") : null}
+                                                {order.type_ship === "pickup_ship_dif" ? (
+                                                    currentData?.order.type_sipping_1_in_3 || "Vyzvednuti a dodání v rozdilné dny"
+                                                ) : null}</p>
                                                     </>
                                                 ) : (
-                                                    <>
-                                                        {/* if order is one time */}
-                                                        {order.type_ship === "quick_order" ? (<>
-                                                            {currentData.order?.quick}
-                                                        </>) : (
-                                                            <>
-                                                                {currentData.order?.one_time || "one time order"}
-                                                            </>
-                                                        )}
-                                                    </>
+                                                    <strong>
+                                                        {order.type_ship === "quick_order" ? (
+                                                            currentData?.order.quick || "Rychlé doručení") : null}
+                                                        {order.type_ship === "one_time" ? (
+                                                            currentData?.order.one_time || "Jednorázová objednávka") : null}
+                                                    </strong>
                                                 )}
-                                                <p><strong>Pickup Date:</strong> {formatDate(order.rp_time_from)}</p>
-                                                <p><strong>Delivery Date:</strong> {formatDate(order.rp_time_to)}</p>
+
+                                                {(order.rp_status === 20 || order.rp_status === 0 || order.rp_status === 1 || order.rp_status === 7 || order.rp_status === 10)  ? (<>
+                                                    {order.rp_time_planned ? (
+                                                        <p>
+                                                            <strong>{currentData?.history?.time_planned || "Plánované datum"}: </strong>
+                                                            {formatDate(order.rp_time_planned) || " No information"}
+                                                        </p>
+                                                    ) : null}
+                                                </>) : (<>
+                                                <p><strong>{currentData?.form?.pickup || "Vyzvednutí"}: </strong>
+                                                    {formatViceDate(order.date_pickup)}</p>
+                                                <p><strong>{currentData?.form?.delivery || "Dodání"}: </strong>
+                                                    {formatViceDate(order.date_delivery)}</p>
+                                                </>)}
+                                                {order.rp_status === 4 ? (
+                                                    <>
+                                                        {order.rp_time_realization ? (
+                                                            <p><strong>
+                                                                {currentData?.history?.time_realization || "Datum realizace"}: </strong>
+                                                                {formatDate(order.rp_time_realization) || " No information"}
+                                                            </p>
+                                                        ) : null}
+                                                    </>
+                                                ) : null}
+
+                                                {/* Отображение системы */}
+                                                {(order.system && (order.type_ship !== "one_time" && order.type_ship !== "quick_order")) ? (
+                                                    <p>
+                                                        <strong>{ currentData?.form?.system || "Systém" }:{" "}</strong>
+                                                        {{
+                                                            "Tue_Thu": currentData?.order.tue_thu || "Úterý čtvrte",
+                                                            "Mon_Wed_Fri": currentData?.order.mon_wed_fri || "Pondělí středa pátek",
+                                                            "Every_day": currentData?.order.every_day || "Každý pracovní den",
+                                                            "Every_day_with_weekend": currentData?.order.every_day_with_weekend || "Každý den a na víkend",
+                                                            "Own": currentData?.order.own_system || "Vlastní systém",
+                                                        }[order.system] || order.system}
+
+                                                        {/* Дни недели, если система "Own" */}
+                                                        {(order.system === "Own") ? (
+                                                            <>
+                                                                {" "}
+                                                                {order.monday && (currentData?.form.monday || "Pondělí")}{" "}
+                                                                {order.tuesday && (currentData?.form.tuesday || "Úterý")}{" "}
+                                                                {order.wednesday && (currentData?.form.wednesday || "Středa")}{" "}
+                                                                {order.thursday && (currentData?.form.thursday || "Čtvrtek")}{" "}
+                                                                {order.friday && (currentData?.form.friday || "Pátek")}{" "}
+                                                                {order.saturday && (currentData?.form.saturday || "Sobota")}{" "}
+                                                                {order.sunday && (currentData?.form.sunday || "Neděle")}
+                                                            </>
+                                                        ) : null}
+                                                    </p>
+                                                ) : null}
+
                                             </div>
                                         )}
                                         {/* Кнопка отмены заказа (только если заказ можно отменить) */}
-                                        {cancelableOrders[order.id] && !order.canceled && (updatedOrder?.id !== order.id) && (
+                                        {cancelableOrders[order.id] && !order.canceled && (updatedOrder?.id !== order.id) ? (
                                             <button
                                                 className="btn btn-link cancel-order"
                                                 onClick={(e) => {
@@ -265,20 +365,104 @@ const OrderHistory: React.FC<OrderHistoryProps> = ({ placeId, orders = [], setOr
                                                     handleCancelOrder(order.id);
                                                 }}
                                             >
-                                                Cancel Order
+                                                {currentData?.buttons.cancel || "Stornovat"}
                                             </button>
-                                        )}
+                                        ) : null}
 
+                                        {((photos.length <= 3 && !isMobileMax530) || !photos.length > 0 || (isMobileMax530 && photos.length < 2)) ? (
+                                        <div className="image-icon-container">
+
+                                            <div className="image-icon-position">
+                                                {photos.map((photo, index) => {
+                                                    const order = orders.find((order) => order.id === photo.order_id);
+                                                    const styleData = { right: `${68 * index}px` };
+                                                    return (
+                                                        <div key={photo.id}>
+                                                            {order && (
+                                                                <FileDownloadIcon
+                                                                    key={photo.id}
+                                                                    photo={photo}
+                                                                    styleData={styleData}
+                                                                />
+                                                            )}
+                                                        </div>
+                                                    );
+                                                })}
+                                            </div>
+
+                                        </div>
+                                        ) : (
+                                            <div className="image-icon-container">
+
+                                                <div className="image-icon-position">
+
+                                                    <div>
+
+                                                        <div
+                                                            className="image-icon"
+                                                            style={{ right: "0" }}
+                                                        >
+                                                            <DarkTooltip title={currentData?.buttons?.open_file || "Otevřít soubory"} placement="top" arrow>
+                                                                <FontAwesomeIcon
+                                                                    icon={faFileArrowDown}
+                                                                    style={{ cursor: "pointer" }}
+
+                                                                />
+                                                            </DarkTooltip>
+                                                            <span
+                                                                style={{
+                                                                    position: 'absolute',
+                                                                    top: '-8px',
+                                                                    right: '-13px',
+                                                                    background: '#28aab7',
+                                                                    color: 'white',
+                                                                    borderRadius: '50%',
+                                                                    padding: '2px 6px',
+                                                                    fontSize: '12px'
+                                                                }}
+                                                            >
+                                                                x{photos.length}
+                                                            </span>
+                                                        </div>
+                                                        {expandedOrders[order.id] ? (
+                                                        <div style={{ display: 'flex', flexDirection: 'column' }}>
+                                                            {photos.map((photo, index) => {
+                                                                const order = orders.find((order) => order.id === photo.order_id);
+                                                                const styleData = { right: "0", top: `${72 * (index + 1)}px` };
+                                                                return (
+                                                                    <div key={photo.id}>
+                                                                        {order && (
+                                                                            <FileDownloadIcon
+                                                                                key={photo.id}
+                                                                                photo={photo}
+                                                                                styleData={styleData}
+                                                                            />
+                                                                        )}
+                                                                    </div>
+                                                                );
+                                                            })}
+                                                        </div>
+                                                        ) : null}
+
+                                                    </div>
+
+                                                </div>
+
+                                            </div>
+                                            )}
+                                        </>)}
                                     </div>
-                                ))}
-                            {hasMoreOrders && (
-                                <button onClick={loadMoreOrders} className="btn btn-history btn-link mt-3 mb-5">
-                                    More
-                                </button>
-                            )}
+                                ) // end return
+                            }
+                        )}
+                                    {hasMoreOrders ? (
+                                        <button onClick={loadMoreOrders} className="btn btn-history btn-link mt-3 mb-5">
+                                            {currentData?.buttons?.more || "More"}
+                                        </button>
+                                    ) : null}
                         </div>
                     ) : (
-                        <p>No order history available.</p>
+                        <p>{currentData?.messages?.no_history || "Žádná historie objednávek není k dispozici"}</p>
                     )}
 
                 </>)}

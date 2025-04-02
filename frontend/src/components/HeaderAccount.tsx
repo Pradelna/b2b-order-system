@@ -9,7 +9,7 @@ import {
   faMobileScreen,
   faEnvelope,
   faEarthAmerica,
-  faFileInvoiceDollar
+  faFileInvoiceDollar, faClockRotateLeft
 } from "@fortawesome/free-solid-svg-icons";
 import Loader from "@/components/Loader";
 import {Link} from "react-router-dom";
@@ -47,54 +47,54 @@ const HeaderAccount: React.FC = ({customerId}) => {
 
               {/* Contact Information */}
               <div className="contact">
-                <a href="/" className="mail">
+                <Link to="/" className="mail">
                   <FontAwesomeIcon icon={faEarthAmerica} className="icon"/>
-                  <span>Website</span>
-                </a>
+                  <span>{currentData?.auth.button_error}</span>
+                </Link>
                 <a href="/account" className="mail">
                   <FontAwesomeIcon icon={faHouse} className="icon"/>
-                  <span>{menuData.header_dashboard || "Panel"}</span>
+                  <span>{menuData.header_panel || "Domov"}</span>
                 </a>
                 <Link to="/invoices">
                   <div className="mail">
                     <FontAwesomeIcon icon={faFileInvoiceDollar} className="icon"/>
-                    <span>Invoces</span>
+                    <span>{currentData?.buttons.invoices || "Faktury"}</span>
                   </div>
                 </Link>
 
                 <Link to={`/customer/${customerId}`}>
                   <div className="mail">
                     <FontAwesomeIcon icon={faUser} className="icon"/>
-                    <span>{menuData.header_account}</span>
+                    <span>{menuData?.header_account || "Můj účet"}</span>
                   </div>
                 </Link>
               </div>
 
-              {/* Burger Menu */}
-              <button className="burg">
-                <span></span>
-                <span></span>
-                <span></span>
-              </button>
+              <div className="to-website">
+                <Link to="/" className="mail">
+                  <FontAwesomeIcon icon={faEarthAmerica} className="icon"/>
+                  <span>{currentData?.auth.button_error || "Web stránka"}</span>
+                </Link>
+              </div>
+
+              <nav className="navbar-bottom">
+                <Link to={`/customer/${customerId}`}>
+                  <FontAwesomeIcon icon={faUser} className="icon"/>
+                </Link>
+                <Link to="/all-orders">
+                  <FontAwesomeIcon icon={faClockRotateLeft} className="icon" />
+                </Link>
+                <Link to="/invoices">
+                  <FontAwesomeIcon icon={faFileInvoiceDollar} className="icon" />
+                </Link>
+                <Link to="/account">
+                  <FontAwesomeIcon icon={faHouse} className="icon" />
+                </Link>
+              </nav>
             </div>
           </div>
         </div>
 
-        {/* Mobile Contacts */}
-        <div className="header__mobile__contacts">
-          <div className="container">
-            <div className="header__mobile__contacts__wrap">
-              <a href="tel:+420734246834" className="tel">
-                <FontAwesomeIcon icon={faMobileScreen} className="icon"/>
-                <span>+420 734 246 834</span>
-              </a>
-              <a href="mailto:pradelna1cz@gmail.com" className="mail">
-                <FontAwesomeIcon icon={faEnvelope} className="icon"/>
-                <span>pradelna1cz@gmail.com</span>
-              </a>
-            </div>
-          </div>
-        </div>
       </header>
   );
 };

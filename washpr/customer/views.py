@@ -1,18 +1,27 @@
-from rest_framework import status
+from django.contrib.auth import get_user_model
+from django.http import HttpResponse, Http404
+from rest_framework import status, permissions
 from rest_framework.decorators import api_view, permission_classes
 from rest_framework.permissions import IsAuthenticated, AllowAny
 from rest_framework.response import Response
+from rest_framework.views import APIView
+import boto3
+from urllib.parse import quote
+from django.conf import settings
+from urllib.parse import urlparse
+
 from .models import Customer, CustomerDocuments, DocumentsForCustomer
 from .serializers import CustomerSerializer, CustomerGetSerializer, CustomerDocumentSerializer, \
     DocumentForCustomerSerializer
+from order.models import ReportFile
+
+User = get_user_model()
 
 
 @api_view(['GET', 'POST', 'PUT'])
 @permission_classes([IsAuthenticated])
-# @permission_classes([AllowAny])
 def customer_view(request):
     if request.method == 'GET':
-        # print(request.user.email)
         try:
             # Получаем клиента, связанного с текущим пользователем
             customer = Customer.objects.get(user=request.user)
@@ -111,3 +120,87 @@ def list_documents_for_customer(request):
     documents = DocumentsForCustomer.objects.filter(customer=customer)
     serializer = DocumentForCustomerSerializer(documents, many=True)
     return Response(serializer.data)
+
+
+class DownloadDocumentView(APIView):
+    permission_classes = [IsAuthenticated]
+
+    def get(self, request, filename):
+        try:
+            filename = urlparse(filename).path.split('/')[-1]
+            # Находим документ
+            document = CustomerDocuments.objects.get(file__icontains=filename)
+            download_name = document.file.name.split("/")[-1]
+
+            # Проверка прав: владелец или админ
+            if document.customer.user != request.user and not request.user.is_staff:
+                return HttpResponse(status=403)
+
+            # Получение из minio
+            s3 = boto3.client(
+                "s3",
+                endpoint_url=settings.AWS_S3_ENDPOINT_URL,
+                aws_access_key_id=settings.AWS_ACCESS_KEY_ID,
+                aws_secret_access_key=settings.AWS_SECRET_ACCESS_KEY,
+                region_name=settings.AWS_S3_REGION_NAME,
+            )
+            print("document.file.name:", document.file.name)
+            key = document.file.name  # это путь к файлу в MinIO
+            obj = s3.get_object(Bucket=settings.AWS_STORAGE_BUCKET_NAME, Key=key)
+            response = HttpResponse(obj["Body"].read(), content_type=obj["ContentType"])
+            response["Content-Disposition"] = f'attachment; filename="{quote(download_name)}"; filename*=UTF-8\'\'{quote(download_name)}'
+            return response
+
+        except CustomerDocuments.DoesNotExist:
+            raise Http404("Document not found")
+        except Exception as e:
+            import traceback
+            traceback.print_exc()
+            return Response({"error": str(e)}, status=500)
+
+
+class DownloadAnyDocumentView(APIView):
+    permission_classes = [permissions.IsAuthenticated]
+
+    def get(self, request, filename):
+        from urllib.parse import urlparse
+        filename = urlparse(filename).path.split('/')[-1]
+
+        try:
+            # Попробовать найти файл среди customer documents
+            document = CustomerDocuments.objects.filter(file__icontains=filename).first()
+            if not document:
+                # Попробовать найти файл среди report files
+                document = ReportFile.objects.filter(file__icontains=filename).first()
+                if not document:
+                    return Response({"error": "File not found"}, status=404)
+
+            # Проверка доступа
+            if isinstance(document, CustomerDocuments):
+                is_owner = document.customer.user == request.user
+            else:  # ReportFile
+                is_owner = document.report.customer.user == request.user
+
+            if not is_owner and not request.user.is_staff:
+                return Response({"error": "Forbidden"}, status=403)
+
+            key = document.file.name
+            download_name = getattr(document, 'original_name', None) or key.split("/")[-1]
+
+            s3 = boto3.client(
+                "s3",
+                endpoint_url=settings.AWS_S3_ENDPOINT_URL,
+                aws_access_key_id=settings.AWS_ACCESS_KEY_ID,
+                aws_secret_access_key=settings.AWS_SECRET_ACCESS_KEY,
+                region_name=settings.AWS_S3_REGION_NAME,
+            )
+
+            obj = s3.get_object(Bucket=settings.AWS_STORAGE_BUCKET_NAME, Key=key)
+            response = HttpResponse(obj["Body"].read(), content_type=obj["ContentType"])
+            response["Content-Disposition"] = f'attachment; filename="{quote(download_name)}"; filename*=UTF-8\'\'{quote(download_name)}'
+            return response
+
+        except Exception as e:
+            import traceback
+            traceback.print_exc()
+            return Response({"error": str(e)}, status=500)

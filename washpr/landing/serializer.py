@@ -17,12 +17,18 @@ class LandingPageSerializer(serializers.ModelSerializer):
     buttons = serializers.SerializerMethodField()
     messages = serializers.SerializerMethodField()
     order = serializers.SerializerMethodField()
+    form = serializers.SerializerMethodField()
+    place = serializers.SerializerMethodField()
+    success = serializers.SerializerMethodField()
+    history = serializers.SerializerMethodField()
+    status = serializers.SerializerMethodField()
 
     class Meta:
         model = LandingPage
         fields = [
-            'lang', 'prefix', 'menu', 'start_banner', 'about_us', 'service', 'messages',
-            'technologies', 'price', 'contacts', 'footer', 'auth', 'customer', 'buttons', 'order'
+            'lang', 'prefix', 'menu', 'start_banner', 'about_us', 'service', 'messages', 'form',
+            'technologies', 'price', 'contacts', 'footer', 'auth', 'customer', 'buttons', 'order',
+            'place', 'success', 'history', 'status'
         ]
 
     def get_menu(self, obj):
@@ -39,6 +45,7 @@ class LandingPageSerializer(serializers.ModelSerializer):
             'header_login': obj.header_login,
             'header_logout': obj.header_logout,
             'header_account': obj.header_account,
+            'header_panel': obj.header_panel,
         }
 
     def get_start_banner(self, obj):
@@ -47,6 +54,7 @@ class LandingPageSerializer(serializers.ModelSerializer):
             'description': obj.start_banner_description,
             'button_request_call': obj.start_banner_button_request_call,
             'button_two': obj.start_banner_button_two,
+
         }
 
     def get_about_us(self, obj):
@@ -141,6 +149,10 @@ class LandingPageSerializer(serializers.ModelSerializer):
             'author_error': obj.auth_author_error,
             'unknown_error': obj.auth_unknown_error,
             'network_error': obj.auth_network_error,
+            'logout': obj.auth_logout,
+            'pass_reset': obj.auth_pass_reset,
+            'log_data': obj.auth_log_data,
+            'login_again': obj.auth_login_again,
         }
 
     def get_customer(self, obj):
@@ -161,13 +173,27 @@ class LandingPageSerializer(serializers.ModelSerializer):
             'important_files': obj.customer_important_files,
             'send_to_check': obj.customer_send_to_check,
             'wait_for_active': obj.customer_wait_for_active,
+            'your_places': obj.customer_your_places,
+            'you_dont_have_place': obj.customer_you_dont_have_place,
+            'new_data_change': obj.new_data_change,
+            'new_data_wait': obj.new_data_wait,
+            'new_data_faktur': obj.new_data_faktur,
         }
 
     def get_buttons(self, obj):
         return {
             'submit': obj.button_submit,
+            'cancel': obj.button_cancel,
             'upload': obj.button_upload,
             'uploading': obj.button_uploading,
+            'add_place': obj.button_add_place,
+            'all_history': obj.button_all_history,
+            'invoices': obj.button_invoices,
+            'new_order': obj.button_new_order,
+            'details': obj.button_details,
+            'back': obj.button_back,
+            'delete_place': obj.button_delete_place,
+            'download': obj.button_download,
         }
 
     def get_messages(self, obj):
@@ -180,6 +206,20 @@ class LandingPageSerializer(serializers.ModelSerializer):
             'file_failed_delete': obj.message_file_failed_delete,
             'file_failed_while_deleting': obj.message_file_failed_while_deleting,
             'file_size': obj.message_file_size,
+            'order_created': obj.message_order_created,
+            'sure_cancel_order': obj.message_sure_cancel_order,
+            'order_suc_canceled': obj.message_order_suc_canceled,
+            'no_history': obj.message_no_history,
+            'have_current_order': obj.message_have_current_order,
+            'show_next_days': obj.message_show_next_days,
+            'hide_next_days': obj.message_hide_next_days,
+            'add_inform': obj.message_add_inform,
+            'place_del': obj.message_place_del,
+            'sure_del_place': obj.message_sure_del_place,
+            'filed_form': obj.message_filed_form,
+            'customer_success': obj.message_customer_success,
+            'customer_error': obj.message_customer_error,
+            'place_add_success': obj.message_place_add_success,
         }
 
     def get_order(self, obj):
@@ -188,4 +228,100 @@ class LandingPageSerializer(serializers.ModelSerializer):
             'type_sipping_1_in_3': obj.order_type_sipping_1_in_3,
             'one_time': obj.order_one_time,
             'quick': obj.order_quick,
+            'note_sh_cl_dr': obj.order_note_sh_cl_dr,
+            'note_sh_1_3': obj.order_note_sh_1_3,
+            'note_one_time': obj.order_note_one_time,
+            'note_quick': obj.order_note_quick,
+            'note_every_week': obj.order_note_every_week,
+            'mon_wed_fri': obj.order_mon_wed_fri,
+            'tue_thu': obj.order_tue_thu,
+            'every_day': obj.order_every_day,
+            'every_day_with_weekend': obj.order_every_day_with_weekend,
+            'own_system': obj.order_own_system,
+            'day_next_visit': obj.order_day_next_visit,
+            'info_waiting': obj.order_info_waiting,
+            'status': obj.order_status,
+            'current_order': obj.order_current_order,
+            'days': obj.order_days,
+        }
+
+    def get_form(self, obj):
+        return {
+            'add_place': obj.form_add_place,
+            'place_name': obj.form_place_name,
+            'rp_city': obj.form_rp_city,
+            'rp_street': obj.form_rp_street,
+            'rp_zip': obj.form_rp_zip,
+            'rp_number': obj.form_rp_number,
+            'rp_person': obj.form_rp_person,
+            'rp_email': obj.form_rp_email,
+            'rp_phone': obj.form_rp_phone,
+            'create_order': obj.form_create_order,
+            'place': obj.form_place,
+            'type_ship': obj.form_type_ship,
+            'system': obj.form_system,
+            'start_day': obj.form_start_day,
+            'note': obj.form_note,
+            'type_note': obj.form_type_note,
+            'select_place': obj.form_select_place,
+            'select_type': obj.form_select_type,
+            'select_system': obj.form_select_system,
+            'close': obj.form_close,
+            'monday': obj.form_monday,
+            'tuesday': obj.form_tuesday,
+            'wednesday': obj.form_wednesday,
+            'thursday': obj.form_thursday,
+            'friday': obj.form_friday,
+            'saturday': obj.form_saturday,
+            'sunday': obj.form_sunday,
+            'pickup': obj.form_pickup,
+            'delivery': obj.form_delivery,
+        }
+
+    def get_success(self, obj):
+        return {
+            'success': obj.success_success,
+            'message_mistake_1': obj.success_message_mistake_1,
+            'message_mistake_2': obj.success_message_mistake_2,
+            'message_mistake_3': obj.success_message_mistake_3,
+            'message_mate_30': obj.success_message_mate_30,
+            'order_success': obj.success_order_success,
+        }
+
+    def get_place(self, obj):
+        return {
+            'detail_title': obj.place_detail_title,
+            'address': obj.place_address,
+            'edit_place': obj.place_edit_place,
+            'no_edit_place': obj.place_no_edit_place,
+        }
+
+    def get_history(self, obj):
+        return {
+            'order_number': obj.history_order_number,
+            'repeated_order': obj.history_repeated_order,
+            'time_planned': obj.history_time_planned,
+            'time_realization': obj.history_time_realization,
+            'your_invoices': obj.history_your_invoices,
+            'no_invoices': obj.history_no_invoices,
+            'wait_approval': obj.history_wait_approval,
+        }
+
+    def get_status(self, obj):
+        return {
+            'status_0': obj.status_0,
+            'status_1': obj.status_1,
+            'status_2': obj.status_2,
+            'status_3': obj.status_3,
+            'status_4': obj.status_4,
+            'status_5': obj.status_5,
+            'status_6': obj.status_6,
+            'status_7': obj.status_7,
+            'status_8': obj.status_8,
+            'status_9': obj.status_9,
+            'status_10': obj.status_10,
+            'status_11': obj.status_11,
+            'status_12': obj.status_12,
+            'status_13': obj.status_13,
+            'status_20': obj.status_20,
         }

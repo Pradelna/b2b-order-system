@@ -1,3 +1,6 @@
+import ForgotPas from "./components/auth/ForgotPas";
+import ScrollToTop from "./components/utils/ScrollToTop";
+
 const BASE_URL = import.meta.env.VITE_API_URL;
 import { useState, useEffect } from "react";
 import {
@@ -17,10 +20,19 @@ import AccountPage from "./components/account/AccountPage";
 import CustomerDetailPage from "./components/customer/CustomerDetailPage";
 import LoaderTestPage from "./components/LoaderTestPage";
 import PlaceDetails from "./components/place/PlaceDetails";
+import ResetPasswordConfirm from "./components/auth/ResetPasswordConfirm";
+import ResetPasswordComplete from "./components/auth/ResetPasswordComplete";
 
 import "./App.css";
 import ReportList from "./components/order/ReportList";
 import AllOrderHistory from "./components/order/AllOrderHistory";
+import Dashboard from "./components/admin/Dashboard";
+import AdminRoute from "./components/admin/AdminRoute";
+import CustomerDetailAdmin from "./components/admin/CustomerDetailAdmin";
+import PlaceDetailAdmin from "./components/admin/PlaceDetailAdmin";
+import AllHistoryAdmin from "./components/admin/AllHistoryAdmin";
+import Invoices from "./components/admin/Invoices";
+import Vop from "./components/info/Vop";
 
 // Define the shape of the language data
 interface LanguageData {
@@ -70,6 +82,7 @@ const App: React.FC = () => {
   return (
       <BrowserRouter>
         <div className="App">
+          <ScrollToTop />
           <Routes>
             {/* Main page without prefix */}
             <Route path="/" element={<MainPage />} />
@@ -87,6 +100,9 @@ const App: React.FC = () => {
                 }
             />
 
+              <Route path="/info/vop" element={<Vop />} />
+              {/*<Route path="/info/vop-ru" element={<VopRu />} />*/}
+              {/*<Route path="/ru/info/vop-ru" element={<VopRu />} />*/}
             {/* Registration page */}
             <Route path="/account/auth" element={<RegistrationForm />} />
 
@@ -143,8 +159,62 @@ const App: React.FC = () => {
                 }
             />
 
+          {/* admin */}
+          <Route
+              path="/admin/dashboard"
+              element={
+                  <AdminRoute>
+                      <Dashboard />
+                  </AdminRoute>
+              }
+          />
+
+          <Route
+              path="/admin/customer-detail/:customerId"
+              element={
+                  <AdminRoute>
+                      <CustomerDetailAdmin />
+                  </AdminRoute>
+                  }
+          />
+
+          <Route
+              path="/admin/place-detail/:id"
+              element={
+                  <AdminRoute>
+                      <PlaceDetailAdmin />
+                  </AdminRoute>
+              }
+          />
+
+              <Route
+                  path="/admin/user-history/:customerId"
+                  element={
+                      <AdminRoute>
+                          <AllHistoryAdmin />
+                      </AdminRoute>
+                  }
+              />
+
+              <Route
+                  path="/admin/user-invoices/:customerId"
+                  element={
+                      <AdminRoute>
+                          <Invoices />
+                      </AdminRoute>
+                  }
+              />
+
             {/* Fallback for unknown routes */}
             <Route path="*" element={<Navigate to="/" />} />
+
+              {/* Страница для ввода нового пароля (переход по ссылке из email) */}
+              <Route path="/reset-password/:uidb64/:token" element={<ResetPasswordConfirm />} />
+
+              {/* Страница после успешного сброса пароля */}
+              <Route path="/reset-password/done" element={<ResetPasswordComplete />} />
+
+              <Route path="/forgot-password" element={<ForgotPas />} />
           </Routes>
         </div>
       </BrowserRouter>

@@ -30,7 +30,7 @@ def verify_recaptcha(token: str) -> bool:
         return False
 
 
-def send_activation_email(user):
+def send_activation_email(user, lang):
     """
     Генерирует активационный токен и отправляет письмо пользователю.
     """
@@ -45,12 +45,29 @@ def send_activation_email(user):
     # activation_link = f"http://127.0.0.1:5173/activate/{uid}/{token}"
     activation_link = f"https://laundry.raketaweb.eu/activate/{uid}/{token}"
 
-    subject = "Activate your account"
-    message = (
-        f"Hi {user.email},\n\n"
-        f"Please click the link below to activate your account:\n{activation_link}\n\n"
-        f"Thank you!"
-    )
+    if lang == 'cz':
+        subject = "Potvrďte svoji emailovou adresu"
+        message = (
+            f"Dobrý den.\n\n"
+            f"Prosím, potvrďte svoji emailovou adresu, olízněte odkaz:\n{activation_link}\n\n"
+            f"Děkuji vám"
+        )
+    elif lang == 'ru':
+        subject = "Подтверждение email адреса"
+        message = (
+            f"Добрый день.\n\n"
+            f"Пожалуйста подтвердите адрес электронной почты, перейдите по ссылке:\n{activation_link}\n\n"
+            f"Спасибо.\n\n"
+            f"Pradelna no.1"
+        )
+    else:
+        subject = "Please confirm your email address"
+        message = (
+            f"Hello.\n\n"
+            f"Please confirm your email address, click the link:\n{activation_link}\n\n"
+            f"Thank you.\n\n"
+            f"Pradelna no.1"
+        )
 
     # Отправка письма
     try:

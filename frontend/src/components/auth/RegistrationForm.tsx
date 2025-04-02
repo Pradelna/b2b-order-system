@@ -1,9 +1,9 @@
 import React, { useState, useRef, useContext, FormEvent } from "react";
-import { LanguageContext } from "../../context/LanguageContext.js";
+import { LanguageContext } from "../../context/LanguageContext";
 import ReCAPTCHA from "react-google-recaptcha";
-import { fetchWithAuth } from "../account/auth.ts";
-import Header from "../Header.js";
-import Footer from "../Footer.tsx";
+import { fetchWithAuth } from "../account/auth";
+import Header from "../Header";
+import Footer from "../Footer";
 
 const RegistrationForm: React.FC = () => {
   const [email, setEmail] = useState<string>("");
@@ -21,8 +21,6 @@ const RegistrationForm: React.FC = () => {
   // Insert your reCAPTCHA site key here
   const RECAPTCHA_SITE_KEY = "6LdWEqkqAAAAAF0sgXktyNzI4PphPZByrrMpzBm_";
 
-//   const recaptchaTest = false;
-
   const handleSubmit = async (event: FormEvent) => {
     event.preventDefault();
 
@@ -32,6 +30,7 @@ const RegistrationForm: React.FC = () => {
         const token = await recaptchaRef.current.executeAsync();
         recaptchaRef.current.reset();
 
+        let lang = currentData?.lang || "cz";
 
         // Make a POST request to your backend
         const response = await fetchWithAuth(`${BASE_URL}/accounts/register/`, {
@@ -43,6 +42,7 @@ const RegistrationForm: React.FC = () => {
             email,
             password,
             captchaToken: token, // Include the reCAPTCHA token
+            "lang": lang,
           }),
         });
 
@@ -69,12 +69,20 @@ const RegistrationForm: React.FC = () => {
     }
   };
 
+  const langTitle = {
+    cz: "Registrácia",
+    ru: "Регистрация",
+    en: "Registration",
+  };
+  const lang = currentData?.lang || "cz";
+  const formTitle = langTitle[lang] || langTitle.en;
+
   return (
       <>
         <Header />
 
-        <div className="container margin-top-130 wrapper">
-          <div style={{ width: "400px", margin: "5rem auto" }}>
+        <div className="container login-margin-top-90 wrapper">
+          <div className="form-login">
             {message && (
                 <p
                     className={`mt-3 alert ${
@@ -95,6 +103,7 @@ const RegistrationForm: React.FC = () => {
                         style={{ maxWidth: "100%", height: "auto" }}
                     />
                   </a>
+                  <h1 className="mt-2">{formTitle}</h1>
                 </div>
                 <form onSubmit={handleSubmit}>
                   <div className="form-group">

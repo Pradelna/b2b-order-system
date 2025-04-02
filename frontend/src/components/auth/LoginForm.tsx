@@ -1,9 +1,11 @@
-import { useState, useContext, FormEvent } from "react";
+import React, { useState, useContext, FormEvent } from "react";
 import { LanguageContext } from "../../context/LanguageContext.js";
 import { useNavigate } from "react-router-dom";
 import Header from "../Header.js";
 import Footer from "../Footer.tsx";
 import { fetchWithAuth } from "../account/auth.ts";
+import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
+import {faSquareXmark} from "@fortawesome/free-solid-svg-icons";
 
 const LoginForm: React.FC = () => {
     const [email, setEmail] = useState<string>("");
@@ -16,7 +18,7 @@ const LoginForm: React.FC = () => {
     if (!currentData || !currentData.auth) {
         return <div>Loading...</div>;
     }
-    const messageData = currentData.auth;
+    const messageData = currentData?.auth;
 
     // Handle login form submission
     const handleLogin = async (e: FormEvent<HTMLFormElement>) => {
@@ -62,8 +64,8 @@ const LoginForm: React.FC = () => {
         <>
             <Header />
 
-            <div className="container margin-top-130 wrapper">
-                <div style={{ width: "400px", margin: "5rem auto" }}>
+            <div className="container login-margin-top-90 wrapper">
+                <div className="form-login">
                     {errorMessage && (
                         <p className="alert alert-danger">{errorMessage}</p>
                     )}
@@ -111,7 +113,7 @@ const LoginForm: React.FC = () => {
                                     </button>
                                 </div>
                                 <div className="mt-3 mb-3">
-                                    <a className="btn-link">{messageData.forgot_password}</a>
+                                    <a href="/forgot-password" className="btn-link">{messageData.forgot_password}</a>
                                 </div>
                                 <div className="text-center">
                                     {messageData.no_account}?<br />

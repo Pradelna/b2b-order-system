@@ -167,10 +167,12 @@ washpr/customer/migrations
 washpr/order/migrations
 washpr/place/migrations
 washpr/landing/migrations
-!washpr/landing/migrations/0001_initial.py
+washpr/landing/migrations/0001_initial.py
 washpr/landing/static
 washpr/static
 washpr/media
+washpr/washpr/settings_local.py
+washpr/washpr/settings.py
 
 frontend/build
 frontend/node_modules

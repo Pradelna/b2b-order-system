@@ -10,6 +10,10 @@ class CustomerSerializer(serializers.ModelSerializer):
         model = Customer
         fields = [
             'user_id',
+            'new_company_name',
+            'new_company_address',
+            'new_company_ico',
+            'new_company_dic',
             'company_name',
             'company_address',
             'company_ico',
@@ -17,29 +21,44 @@ class CustomerSerializer(serializers.ModelSerializer):
             'company_phone',
             'company_person',
             'company_email',
+            'monthly_estimate',
             'vop',
             'terms_of_use',
             'gdpr',
-            'active'
+            'active',
+            'change_data',
+            'weekend_able'
         ]
-        read_only_fields = ['user', 'user_id', 'company_email']  # Поле user остаётся только для чтения
+        read_only_fields = ['user', 'user_id', 'company_email']  # Поля остаётся только для чтения
 
 
 class CustomerGetSerializer(serializers.ModelSerializer):
     user_id = serializers.IntegerField(source='user.id', read_only=True)
+    date_joined = serializers.DateTimeField(source='user.date_joined', format='%d-%m-%Y', read_only=True)
+    class Meta:
+        model = Customer
     class Meta:
         model = Customer
         fields = [
             'user_id',
+            'new_company_name',
+            'new_company_address',
+            'new_company_ico',
+            'new_company_dic',
             'company_name',
             'company_address',
             'company_ico',
+            'company_dic',
             'company_phone',
             'company_email',
             'company_person',
-            'active'
+            'monthly_estimate',
+            'active',
+            'change_data',
+            'weekend_able',
+            'date_joined'
         ]
-        read_only_fields = ['user']  # Поле user заполняется автоматически
+        read_only_fields = ['user_id', 'date_joined']
 
 
 class CustomerDocumentSerializer(serializers.ModelSerializer):

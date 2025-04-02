@@ -1,10 +1,4 @@
-/*
-Theme Name: Praska № 1
-Version: 1.1
-Author: Nikita Tarasenko
-Author URI: https://nt-web-dev.ru
 
-*/
 
 @charset "UTF-8";
 
@@ -148,24 +142,6 @@ button {
     display: block !important;
 }
 
-.header {
-    width: 100%;
-    position: absolute;
-    left: 0;
-    top: 0;
-}
-
-.header .header__mobile__contacts {
-    display: none;
-    background-color: #00aab7;
-}
-
-@media (max-width: 730px) {
-    .header .header__mobile__contacts {
-        display: block;
-    }
-}
-
 .header .header__mobile__contacts .header__mobile__contacts__wrap {
     width: 100%;
     padding: 11px 0;
@@ -247,121 +223,6 @@ button {
     .header .header__mobile__contacts .header__mobile__contacts__wrap img {
         margin-right: 4px;
     }
-}
-
-.header .header__top {
-    width: 100%;
-    background-color: #e1f6f8;
-}
-
-.header .header__top__wrap {
-    width: 100%;
-    padding: 17px 0;
-    display: -webkit-box;
-    display: -ms-flexbox;
-    display: flex;
-    -webkit-box-orient: horizontal;
-    -webkit-box-direction: normal;
-    -ms-flex-direction: row;
-    flex-direction: row;
-    -webkit-box-align: center;
-    -ms-flex-align: center;
-    align-items: center;
-    -webkit-box-pack: justify;
-    -ms-flex-pack: justify;
-    justify-content: space-between;
-    -ms-flex-wrap: nowrap;
-    flex-wrap: nowrap;
-}
-
-@media (max-width: 970px) {
-    .header .header__top__wrap {
-        padding-right: 50px;
-        position: relative;
-    }
-}
-
-.header .lang {
-    list-style-type: none;
-    font-size: 16px;
-    font-weight: 500;
-    color: #414141;
-    text-transform: capitalize;
-}
-
-.header .lang > li {
-    position: relative;
-    display: -webkit-box;
-    display: -ms-flexbox;
-    display: flex;
-    -webkit-box-orient: horizontal;
-    -webkit-box-direction: normal;
-    -ms-flex-direction: row;
-    flex-direction: row;
-    -webkit-box-align: center;
-    -ms-flex-align: center;
-    align-items: center;
-    -webkit-box-pack: start;
-    -ms-flex-pack: start;
-    justify-content: flex-start;
-    -ms-flex-wrap: nowrap;
-    flex-wrap: nowrap;
-    position: relative;
-    cursor: pointer;
-}
-
-.header .lang > li > img:first-child{
-    width: 20px !important;
-    height: 20px !important;
-    -o-object-fit: contain;
-    object-fit: contain;
-    margin-right: 11px;
-}
-
-.header .lang > li span {
-    margin-right: 9px;
-}
-
-.language-switcher {
-    position: relative;
-    display: inline-block;
-}
-
-.header .lang .sub__lang {
-    position: absolute;
-    left: 24px;
-    top: 36px;
-    background-color: #e1f6f8;
-    list-style-type: none;
-    padding: 10px;
-    white-space: nowrap;
-    width: 136px;
-    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
-    z-index: 9999;
-    border-radius: 10px;
-}
-
-.header .lang .sub__lang li {
-    margin-bottom: 8px;
-    cursor: pointer;
-}
-.header .lang .sub__lang li a{
-    display: flex;
-    align-items: center;
-}
-.header .lang .sub__lang li img{
-    margin-right: 7px;
-    width: 20px !important;
-    height: auto;
-}
-
-.header .lang.open .sub__lang {
-    display: block;
-}
-
-.header .lang.open .arr {
-    -webkit-transform: rotateX(180deg);
-    transform: rotateX(180deg);
 }
 
 .header .contact {
@@ -1949,11 +1810,6 @@ button {
     -ms-flex-wrap: nowrap;
     flex-wrap: nowrap;
 }
-
-.footer .contact a:first-child {
-    margin-bottom: 12px;
-}
-
 .footer .contact img {
     margin-right: 12px;
 }

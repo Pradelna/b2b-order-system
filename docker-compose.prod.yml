@@ -1,0 +1,124 @@
+services:
+  postgres:
+    image: postgres:15
+    container_name: postgres
+    restart: always
+    env_file:
+      - .env.prod
+    volumes:
+      - postgres_data:/var/lib/postgresql/data/
+    expose:
+      - "5432"
+
+  redis:
+    image: redis:7
+    container_name: redis
+    expose:
+      - "6379"
+
+  minio:
+    image: minio/minio:latest
+    container_name: minio
+    command: server --console-address ":9001" /data
+    ports:
+      - "9000:9000"
+      - "9001:9001"
+    volumes:
+      - minio_data:/data
+    env_file:
+      - .env.prod
+
+  backend:
+    build:
+      context: ./washpr
+      dockerfile: Dockerfile.prod
+    container_name: backend
+    restart: always
+    expose:
+      - "8000"
+    env_file:
+      - .env.prod
+    volumes:
+      - static_volume:/app/static
+      - media_volume:/app/media
+    depends_on:
+      - postgres
+      - redis
+      - minio
+
+  celery:
+    build:
+      context: ./washpr
+      dockerfile: Dockerfile
+    container_name: celery
+    command: celery -A washpr worker --loglevel=info
+    volumes:
+      - ./washpr:/app
+    depends_on:
+      - backend
+      - redis
+    environment:
+      - CELERY_BROKER_URL=redis://redis:6379/0
+      - CELERY_RESULT_BACKEND=redis://redis:6379/0
+
+  celery-beat:
+    build:
+      context: ./washpr
+      dockerfile: Dockerfile
+    container_name: celery-beat
+    command: celery -A washpr beat --loglevel=info
+    volumes:
+      - ./washpr:/app
+    depends_on:
+      - backend
+      - redis
+    environment:
+      - CELERY_BROKER_URL=redis://redis:6379/0
+      - CELERY_RESULT_BACKEND=redis://redis:6379/0
+
+  minio-client:
+    image: minio/mc
+    depends_on:
+      - minio
+    restart: on-failure
+    entrypoint: >
+      /bin/sh -c "
+        sleep 10;
+        mc alias set myminio $${AWS_S3_ENDPOINT_URL} $${AWS_ACCESS_KEY_ID} $${AWS_SECRET_ACCESS_KEY};
+        mc mb -p myminio/$${AWS_STORAGE_BUCKET_NAME} || true;
+        mc policy set public myminio/$${AWS_STORAGE_BUCKET_NAME};
+        exit 0;
+      "
+    env_file:
+      - .env.prod
+
+  frontend:
+    build:
+      context: ./frontend
+      dockerfile: Dockerfile.prod
+      target: export
+    env_file:
+      - .env
+    volumes:
+      - frontend_result:/result
+
+  nginx:
+    image: nginx:alpine
+    container_name: nginx
+    ports:
+      - "80:80"
+    volumes:
+      - ./nginx/conf.d:/etc/nginx/conf.d
+      - static_volume:/app/static
+      - media_volume:/app/media
+      - frontend_result:/app/result_build
+    depends_on:
+      - backend
+      - frontend
+
+volumes:
+  static_volume:
+  media_volume:
+  postgres_data:
+  minio_data:
+  frontend_result:

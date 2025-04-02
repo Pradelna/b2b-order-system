@@ -1,15 +1,16 @@
 import React, { useState, useEffect, useContext } from "react";
 import { LanguageContext } from "../../context/LanguageContext";
 import { useParams } from "react-router-dom";
-import CustomerEdit from "./CustomerEdit.js";
+import CustomerEdit from "./CustomerEdit";
 import CompanyInfo from "./CompanyInfo";
-import HeaderAccount from "../HeaderAccount.js";
-import Footer from "../Footer.tsx";
-import { fetchWithAuth } from "../account/auth.ts";
-import UploadFile from "./UploadFile.js";
-import DocumentsBlock from "./DocumentsBlock.js";
-import NavButtons from "@/components/account/NavButtons.js";
+import HeaderAccount from "../HeaderAccount";
+import FooterAccount from "../FooterAccount";
+import { fetchWithAuth } from "../account/auth";
+import UploadFile from "./UploadFile";
+import DocumentsBlock from "./DocumentsBlock";
+import NavButtons from "@/components/account/NavButtons";
 import {Skeleton} from "@mui/material";
+import AuthBlock from "@/components/customer/AuthBlock";
 
 interface CustomerData {
     company_name: string;
@@ -31,12 +32,6 @@ const CustomerDetailPage: React.FC = () => {
     const [loading, setLoading] = useState<boolean>(true);
     const [forceWait, setForceWait] = useState<boolean>(true);
     const BASE_URL = import.meta.env.VITE_API_URL;
-
-    const handleLogout = () => {
-        localStorage.removeItem("accessToken");
-        alert("You have been logged out.");
-        window.location.href = "/account/login";
-    };
 
     const fetchCustomerData = async () => {
         const token = localStorage.getItem("accessToken");
@@ -78,12 +73,14 @@ const CustomerDetailPage: React.FC = () => {
     return (
         <>
             <HeaderAccount customerId={customerId} />
+            <div id="detail-page">
             <div className="container margin-top-90 wrapper">
                 <div className="row message-block-76">
-                    <div className="col-1 back-button">
+                    <div className="col-xl-1 col-sm-2 back-button">
                         <NavButtons />
                     </div>
-                    <div className="col-lg-7 col-md-9 col-11">
+
+                    <div className="col-xl-7 col-12">
                         {successMessage && (
                             <p className="alert alert-success">{successMessage}</p>
                         )}
@@ -118,7 +115,6 @@ const CustomerDetailPage: React.FC = () => {
                                         customerData={customerData}
                                         setCustomerData={setCustomerData}
                                         setSuccessMessage={setSuccessMessage}
-                                        onLogout={handleLogout}
                                         setIsEditing={setIsEditing}
                                     />
                                 ) : (
@@ -185,23 +181,19 @@ const CustomerDetailPage: React.FC = () => {
                         </>) : (<>
 
 
-                            <UploadFile />
+                            {/*<UploadFile />*/}
 
                             <DocumentsBlock />
 
-                            <div className="row mt-3 mb-5">
-                                {/* Logout Button */}
-                                <button className="btn-red" onClick={handleLogout}>
-                                    Log Out
-                                </button>
-                            </div>
+                            <AuthBlock customerData={customerData} />
 
                         </>)}
 
                     </div>
                 </div>
             </div>
-            <Footer />
+            </div>
+            <FooterAccount />
         </>
     );
 };

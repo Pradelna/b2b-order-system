@@ -14,7 +14,7 @@ class RegisterSerializer(serializers.ModelSerializer):
     class Meta:
         model = User
         # Если у вас кастомная модель, где нет username, то укажите поля, доступные для заполнения
-        fields = ('email', 'password',)
+        fields = ('email', 'password', 'lang')
 
     def create(self, validated_data):
         # Хешируем пароль (или используем user.set_password())

@@ -1,5 +1,6 @@
-import React, { useState, ChangeEvent, FormEvent } from "react";
+import React, {useState, ChangeEvent, FormEvent, useContext} from "react";
 import { fetchWithAuth } from "../account/auth.ts";
+import { LanguageContext } from "../../context/LanguageContext";
 
 interface PlaceEditProps {
   place: Place;
@@ -36,18 +37,7 @@ const PlaceEdit: React.FC<PlaceEditProps> = ({
     rp_phone: place?.rp_phone || "",
     rp_email: place?.rp_email || "",
   });
-
-  const fieldLabels: Record<keyof Place, string> = {
-    place_name: "Place Name",
-    rp_city: "City",
-    rp_street: "Street",
-    rp_number: "Number",
-    rp_zip: "ZIP Code",
-    rp_person: "Contact Person",
-    rp_phone: "Phone",
-    rp_email: "Email",
-  };
-
+  const { currentData } = useContext(LanguageContext);
   const BASE_URL = import.meta.env.VITE_API_URL;
 
   const handleChange = (e: ChangeEvent<HTMLInputElement>) => {
@@ -68,7 +58,6 @@ const PlaceEdit: React.FC<PlaceEditProps> = ({
             body: JSON.stringify(formData),
           }
       );
-      console.log(formData);
       if (response.ok) {
         const updatedPlace = await response.json();
         onPlaceUpdated(updatedPlace);
@@ -87,7 +76,7 @@ const PlaceEdit: React.FC<PlaceEditProps> = ({
         {Object.entries(formData).map(([key, value]) => (
             <div className="mb-3" key={key}>
               <label className="form-label">
-                {fieldLabels[key as keyof Place] || key.replace("rp_", "").toUpperCase()}
+                {(currentData.form[key])}
               </label>
               <input
                   className="form-control"
@@ -102,20 +91,19 @@ const PlaceEdit: React.FC<PlaceEditProps> = ({
             </div>
         ))}
         <div className="row">
-          <div className="col-6">
-            <button type="submit" className="btn btn-submit">
-              Save Changes
-            </button>
-          </div>
-          <div className="col-6">
-            <button
-                type="button"
-                className="btn btn-link"
-                onClick={onDelete}
-            >
-              Delete Place
-            </button>
-          </div>
+
+          <button
+              type="button"
+              className="btn btn-link"
+              onClick={onDelete}
+          >
+            { currentData.buttons["delete_place"] || "Smazat místo" }
+          </button>
+
+          <button type="submit" className="btn btn-submit">
+            { currentData.buttons["submit"] || "Uložit" }
+          </button>
+
         </div>
       </form>
   );

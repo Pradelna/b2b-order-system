@@ -1,4 +1,5 @@
-import React, { useState, useEffect } from "react";
+import React, {useState, useEffect, useContext} from "react";
+import { LanguageContext } from "../../context/LanguageContext";
 import CustomerForm from "./CustomerForm";
 import { Link, useLocation } from "react-router-dom";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
@@ -15,6 +16,7 @@ import {
 import { fetchWithAuth } from "../account/auth.ts";
 import { Tooltip as ReactTooltip } from "react-tooltip";
 import {Skeleton} from "@mui/material";
+import DarkTooltip from "@/components/utils/DarkTooltip";
 
 interface CustomerData {
     company_name: string;
@@ -47,6 +49,8 @@ const CompanyInfo: React.FC<CompanyInfoProps> = ({
     const location = useLocation();
     const isDetailPage = location.pathname.includes("/customer/");
     const customerId = customerData?.user_id || userId;
+    const [formErrors, setFormErrors] = useState<{ [key: string]: string[] }>({});
+    const { currentData } = useContext(LanguageContext);
 
     const handleFormSubmit = (formData: Partial<CustomerData>) => {
         fetchWithAuth(`${BASE_URL}/customer/data/`, {
@@ -56,14 +60,30 @@ const CompanyInfo: React.FC<CompanyInfoProps> = ({
             },
             body: JSON.stringify(formData),
         })
-            .then((response) => response.json())
+            .then(async (response) => {
+                const data = await response.json();
+                if (!response.ok) {
+                    if (response.status === 400 && data) {
+                        setFormErrors(data);
+                    }
+                    throw new Error(
+                        data.detail ||
+                        currentData?.messages?.filed_form ||
+                        "Nepodařilo se odeslat formulář"
+                    );
+                }
+                setFormErrors({}); // очищаем ошибки при успехе
+                return data;
+            })
             .then((data: CustomerData) => {
                 setCustomerData(data);
-                setSuccessMessage("Customer data successfully added!");
+                setSuccessMessage(currentData?.messages?.customer_success || "Údaje byly úspěšně přidány!");
                 setTimeout(() => setSuccessMessage(""), 5000);
             })
             .catch((error) => {
-                console.error("Error submitting customer data:", error);
+                console.error(
+                    currentData?.messages?.customer_error || "Chyba při odesílání údajů zákazníka:", error.message
+                );
             });
     };
 
@@ -114,8 +134,8 @@ const CompanyInfo: React.FC<CompanyInfoProps> = ({
     if (!customerData || customerData.error === "Customer not found") {
         return (
             <div>
-                <p className="alert alert-danger">Add Customer Information</p>
-                <CustomerForm onSubmit={handleFormSubmit} />
+                <p className="alert alert-warning">{currentData?.messages?.add_inform || "Přidat informace o zákazníkovi"}</p>
+                <CustomerForm onSubmit={handleFormSubmit} errors={formErrors} />
             </div>
         );
     }
@@ -124,13 +144,14 @@ const CompanyInfo: React.FC<CompanyInfoProps> = ({
         <div className="card company-card">
             {/* Conditional icon display based on the page */}
             {isDetailPage ? (
-                <FontAwesomeIcon
-                    icon={faPenToSquare}
-                    className="settings"
-                    style={{ cursor: "pointer" }}
-                    onClick={() => setIsEditing && setIsEditing(true)}
-                    data-tooltip-id="edit-tooltip"
-                />
+                <DarkTooltip title="Edit Customer Information" placement="top" arrow>
+                    <FontAwesomeIcon
+                        icon={faPenToSquare}
+                        className="settings"
+                        style={{ cursor: "pointer" }}
+                        onClick={() => setIsEditing && setIsEditing(true)}
+                    />
+                </DarkTooltip>
             ) : customerId ? (
                 <Link to={`/customer/${customerId}`}>
                     <FontAwesomeIcon
@@ -151,12 +172,6 @@ const CompanyInfo: React.FC<CompanyInfoProps> = ({
                 id="settings-tooltip"
                 place="top"
                 content="Account settings"
-                className="custom-tooltip"
-            />
-            <ReactTooltip
-                id="edit-tooltip"
-                place="top"
-                content="Edit Customer Information"
                 className="custom-tooltip"
             />
 

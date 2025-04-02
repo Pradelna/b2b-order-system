@@ -1,5 +1,5 @@
 from rest_framework import serializers
-from .models import Order, ReportFile, OrderReport
+from .models import Order, ReportFile, OrderReport, PhotoReport
 
 
 class OrderSerializer(serializers.ModelSerializer):
@@ -7,8 +7,9 @@ class OrderSerializer(serializers.ModelSerializer):
         model = Order
         fields = [
             'place', 'rp_place_title', 'type_ship', 'system', 'monday', 'tuesday', 'wednesday', 'thursday',
-            'friday', 'date_pickup', 'date_delivery', 'every_week', 'rp_customer_note', 'terms', 'active',
-            'end_order', 'rp_status', 'date_start_day', 'created_at', 'canceled', 'id'
+            'friday', 'saturday', 'sunday', 'date_pickup', 'date_delivery', 'every_week', 'rp_customer_note', 'terms',
+            'active', 'end_order', 'rp_status', 'date_start_day', 'created_at', 'canceled', 'id',
+            'rp_problem_description', 'rp_contract_external_id'
         ]
         extra_kwargs = {
             'terms': {'required': True},
@@ -21,7 +22,7 @@ class OrderSerializer(serializers.ModelSerializer):
     def validate(self, data):
         # Дополнительная валидация
         if not self.partial and data.get('system') is None and not any([data.get(day) for day in [
-            'monday', 'tuesday', 'wednesday', 'thursday', 'friday'
+            'monday', 'tuesday', 'wednesday', 'thursday', 'friday' 'saturday', 'sunday'
         ]]):
             raise serializers.ValidationError("Either 'system' or at least one day of the week must be selected.")
         if not self.partial and not data.get('every_week'):
@@ -40,11 +41,26 @@ class GetOrderSerializer(serializers.ModelSerializer):
         model = Order
         fields = [
             'id', 'place', 'user', 'place_name', 'type_ship', 'system', 'monday', 'tuesday', 'date_start_day',
-            'wednesday', 'thursday', 'friday', 'date_pickup', 'date_delivery', 'created_at', 'rp_status',
-            'every_week', 'terms', 'end_order', 'rp_customer_note', 'rp_problem_description', 'date_start_day',
-            'canceled', 'rp_time_from', 'rp_time_to', 'rp_time_realization'
+            'wednesday', 'thursday', 'friday', 'saturday', 'sunday', 'date_pickup', 'date_delivery', 'created_at',
+            'every_week', 'terms', 'end_order', 'rp_customer_note', 'rp_problem_description', 'group_pair_id',
+            'canceled', 'rp_time_from', 'rp_time_to', 'rp_time_realization', 'rp_time_planned', 'rp_problem_description',
+            'rp_status', 'rp_contract_external_id'
         ]
-        read_only_fields = ['id', 'user', 'place', 'created_at']
+        read_only_fields = ['id', 'user', 'place', 'created_at', 'rp_contract_external_id']
+
+
+class PhotoReportSerializer(serializers.ModelSerializer):
+    order_id = serializers.IntegerField(source='order.id', read_only=True)
+    group_pair_id = serializers.IntegerField(source='order.group_pair_id', read_only=True)
+    class Meta:
+        model = PhotoReport
+        fields = ["id", "order_id", "file_id", "group_pair_id", "mime", "uploaded_at"]
+
+
+class DownloadPhotoReportSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = PhotoReport
+        fields = ["file_id", "name", "mime"]
 
 
 class ReportFileSerializer(serializers.ModelSerializer):
@@ -58,8 +74,8 @@ class OrderReportSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = OrderReport
-        fields = ["id", "report_month", "created_at", "orders", "orders_count", "files", "user"]
-        read_only_fields = ['user']
+        fields = ["id", "report_month", "created_at", "orders", "orders_count", "files", "customer"]
+        read_only_fields = ['customer']
 
     def get_orders_count(self, obj):
         return obj.orders.count()
@@ -69,4 +85,4 @@ class CurrentOrderSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = Order
-        fields = ["id"]
+        fields = ["id","place", "rp_time_planned"]

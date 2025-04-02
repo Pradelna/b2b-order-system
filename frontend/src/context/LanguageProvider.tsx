@@ -1,6 +1,5 @@
 import React, { useState, useEffect, ReactNode } from "react";
-import { LanguageContext } from "./LanguageContext.js";
-import { api } from "../api/axios";
+import { LanguageContext } from "./LanguageContext";
 
 interface LanguageProviderProps {
     children: ReactNode;
@@ -39,6 +38,8 @@ export const LanguageProvider: React.FC<LanguageProviderProps> = ({ children }) 
     };
 
     const currentData = languageData?.find((item) => item.lang === language) || null;
+
+    console.log("API URL:", import.meta.env.VITE_API_URL);
 
     if (!loading && !currentData) {
         console.error("No data found for the current language.");
