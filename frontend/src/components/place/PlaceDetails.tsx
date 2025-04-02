@@ -7,8 +7,6 @@ import {
     faSquareXmark,
     faCartPlus,
     faPowerOff,
-    faCircleCheck,
-    faStopwatch, faFileInvoiceDollar
 } from "@fortawesome/free-solid-svg-icons";
 import HeaderAccount from "../HeaderAccount";
 import FooterAccount from "../FooterAccount";
@@ -521,7 +519,15 @@ const PlaceDetails: React.FC = () => {
                                     {!cancelableOrders && (
                                         <button
                                             className="btn-link mt-2"
-                                            onClick={() => handleStopOrder(currentOrder!.id)}
+                                            onClick={async () => {
+                                                if (currentOrder) {
+                                                    try {
+                                                        await handleStopOrder(currentOrder.id);
+                                                    } catch (error) {
+                                                        console.error("Failed to stop order:", error);
+                                                    }
+                                                }
+                                            }}
                                         >
                                             <FontAwesomeIcon icon={faPowerOff} className="icon" />
                                             <span className="ms-2">{currentData?.buttons.cancel || "Stornovat"}</span>
