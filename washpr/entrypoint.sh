@@ -1,6 +1,12 @@
 #!/bin/sh
 
 echo "Apply database make migrations"
+python manage.py makemigrations accounts
+python manage.py migrate
+python manage.py makemigrations customer
+python manage.py makemigrations place
+python manage.py makemigrations order
+python manage.py makemigrations landing
 python manage.py makemigrations
 
 echo "Apply database migrations"
