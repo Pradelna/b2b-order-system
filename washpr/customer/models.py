@@ -16,7 +16,7 @@ def user_directory_path(instance, filename):
 
 
 class Customer(models.Model):
-    user = models.OneToOneField(User, on_delete=models.CASCADE, related_name="customer")
+    user = models.OneToOneField(User, on_delete=models.CASCADE, related_name="customer", primary_key=True)
     company_name = models.CharField("Company name", max_length=200, null=True, blank=True)
     company_address = models.CharField("Company address", max_length=200, null=True, blank=True)
     company_ico = models.CharField("Company ICO", max_length=20, null=True, blank=True)
