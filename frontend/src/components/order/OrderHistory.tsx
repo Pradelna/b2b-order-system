@@ -3,8 +3,6 @@ import { LanguageContext } from "../../context/LanguageContext";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faTruck, faFileLines, faCheckCircle, faBan, faFileImage, faFileArrowDown, faFilePdf } from "@fortawesome/free-solid-svg-icons";
 import { fetchWithAuth } from "../account/auth.ts";
-import { styled } from '@mui/material/styles';
-import Tooltip, { TooltipProps, tooltipClasses } from '@mui/material/Tooltip';
 import {Form} from "react-router-dom";
 import {Skeleton} from "@mui/material";
 import { formatDate } from "@/components/utils/FormatDate";

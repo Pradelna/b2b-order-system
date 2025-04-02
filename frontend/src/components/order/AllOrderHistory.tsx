@@ -13,8 +13,6 @@ import FooterAccount from "../FooterAccount";
 import {Skeleton} from "@mui/material";
 import { formatDate } from "@/components/utils/FormatDate";
 import { formatViceDate } from "@/components/utils/FormatViceDate";
-import { styled } from '@mui/material/styles';
-import Tooltip, { TooltipProps, tooltipClasses } from '@mui/material/Tooltip';
 import FileDownloadIcon from "@/components/order/FileDownloadIcon";
 import UseMediaQuery from "@/hooks/UseMediaQuery";
 import DarkTooltip from "../utils/DarkTooltip";
@@ -26,7 +24,7 @@ interface Order {
     date_delivery: string;
     system: string;
     type_ship: string;
-    user: number; // ✅ Ensure user ID exists in the API response
+    user: number;
 }
 
 const AllOrderHistory: React.FC = () => {

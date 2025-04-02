@@ -21,8 +21,6 @@ import {Skeleton} from "@mui/material";
 import { formatDate } from "@/components/utils/FormatDate";
 import { formatViceDate } from "@/components/utils/FormatViceDate";
 
-
-
 interface Place {
     rp_number: any;
     id: number;
