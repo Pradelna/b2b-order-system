@@ -59,13 +59,15 @@ const UploadFileAdmin: React.FC<UploadFileAdminProps> = ({ onUploadSuccess, cust
         setError('');
         const formData = new FormData();
         formData.append('file', file);
+        formData.append('customer', customer_id.toString());
 
+        let responseData: any;
         try {
             const response = await fetchWithAuth(`${BASE_URL}/admin/adminpanel/customer/documents/${customer_id}/`, {
                 method: 'POST',
                 body: formData,
             });
-            const responseData = await response.json();
+            responseData = await response.json();
             if (response.status === 201) {
                 setSuccess('Soubor byl úspěšně nahrán.');
                 setTimeout(() => setSuccess(''), 3000);
