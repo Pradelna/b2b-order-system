@@ -42,11 +42,11 @@ def customer_view(request):
         serializer = CustomerSerializer(data=request.data)
         if serializer.is_valid():
             already_exists = Customer.objects.filter(user=request.user).exists()
-            if not already_exists:
-                logger.info(f"New customer being created for user {request.user.id}, sending async task for company {serializer.validated_data.get('company_name')}")
             serializer.save(user=request.user, company_email=request.user.email)
             if not already_exists:
-                transaction.on_commit(lambda: send_new_customer_task.delay(serializer.instance.company_name))
+                company_name = serializer.validated_data.get('new_company_name')
+                logger.info(f"New customer being created for user {request.user.id}, sending async task for company {company_name}")
+                transaction.on_commit(lambda: send_new_customer_task.delay(company_name))
                 logger.info("send_new_customer_task.delay() was scheduled.")
             return Response(serializer.data)
         return Response(serializer.errors, status=400)
