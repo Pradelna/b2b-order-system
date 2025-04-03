@@ -6,4 +6,4 @@ class CustomerConfig(AppConfig):
     name = 'customer'
 
     def ready(self):
-        import customer.signals  # Импортируем файл signals
+        import customer.signals  # noqa
