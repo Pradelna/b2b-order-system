@@ -95,7 +95,7 @@ services:
         mc alias set myminio $${AWS_S3_ENDPOINT_URL} $${AWS_ACCESS_KEY_ID} $${AWS_SECRET_ACCESS_KEY};
         mc mb -p myminio/$${AWS_STORAGE_BUCKET_NAME} || true;
         mc policy set public myminio/$${AWS_STORAGE_BUCKET_NAME};
-        exit 0;
+        tail -f /dev/null
       "
     env_file:
       - .env
