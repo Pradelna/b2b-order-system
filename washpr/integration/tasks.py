@@ -232,7 +232,7 @@ def create_all_place_task(customer_id):
     close_old_connections()
     from place.models import Place  # Предполагается, что модель Place в приложении place
     try:
-        places = Place.objects.filter(customer__id=customer_id, data_sent=False)
+        places = Place.objects.filter(customer=customer_id, data_sent=False)
     except Place.DoesNotExist:
         return f"Place with active=Flase not found."
 
