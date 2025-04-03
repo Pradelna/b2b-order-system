@@ -848,9 +848,8 @@ const OrderForm: React.FC<OrderFormProps> = ({ placeId, onClose, onSuccess }) =>
                 </div>
                 <div className="col-11">
                   { currentData?.customer.terms_use_check }{" "}
-                  <Link to="/" className="terms">
+                  <Link to="/info/vop" className="terms">
                     { currentData?.customer.terms_use || "Podmínky užití" }{" "}
-                    <FontAwesomeIcon icon={faFilePdf} className="file-uploaded" />
                   </Link>
                   {showError && !formData.terms && (
                       <p className="text-danger mt-1">You must accept the Terms of Use</p>

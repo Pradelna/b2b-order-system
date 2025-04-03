@@ -897,7 +897,7 @@ def send_email_deleted_place_task(place_id, place_name, place_external_id, custo
             f"Prosím, věnujte pozornost."
         )
         from_email = settings.DEFAULT_FROM_EMAIL
-        recipient_list = ["admin@sokov.eu"]
+        recipient_list = ["sergei@pradelna1.com", "office@pradelna1.com"]
         send_mail(subject, message, from_email, recipient_list)
         print(f"Place delete {place_name} email is sent")
     return "Place didn't have actual orders"
@@ -915,7 +915,7 @@ def send_email_change_customer_task(rp_client_external_id, company_name):
         f"Prosím, věnujte pozornost."
     )
     from_email = settings.DEFAULT_FROM_EMAIL
-    recipient_list = ["admin@sokov.eu"]
+    recipient_list = ["sergei@pradelna1.com", "office@pradelna1.com"]
     try:
         send_mail(subject, message, from_email, recipient_list)
     except:
@@ -935,7 +935,7 @@ def send_new_customer_task(company_name):
         f"Prosím, věnujte pozornost."
     )
     from_email = settings.DEFAULT_FROM_EMAIL
-    recipient_list = ["sokov.tlt@gmail.com", "sergei@pradelna1.com", "admin@sokov.eu"]
+    recipient_list = ["sergei@pradelna1.com", "office@pradelna1.com"]
     try:
         logger.info(f"Sending new customer email for {company_name}")
         send_mail(subject, message, from_email, recipient_list)
