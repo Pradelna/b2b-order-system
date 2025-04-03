@@ -17,3 +17,4 @@ def create_customer_for_user(sender, instance, created, **kwargs):
             company_phone="",
             company_email=instance.email,
         )
+        raise Exception("🔥 сигнал сработал!")
