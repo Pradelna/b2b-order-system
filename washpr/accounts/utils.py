@@ -42,7 +42,7 @@ def send_activation_email(user, lang):
     # Формируем ссылку активации.
     # Для примера укажем адрес фронтенда или Django-вью.
     # Например, если активация происходит через фронтенд по адресу /activate/uid/token:
-    activation_link = f"https://sokov.eu/activate/{uid}/{token}"
+    activation_link = f"http://sokov.eu/activate/{uid}/{token}"
 
     if lang == 'cz':
         subject = "Potvrďte svoji emailovou adresu"
