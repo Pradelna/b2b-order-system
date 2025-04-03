@@ -91,10 +91,12 @@ services:
     restart: on-failure
     entrypoint: >
       /bin/sh -c "
-        sleep 10;
-        mc alias set myminio $${AWS_S3_ENDPOINT_URL} $${AWS_ACCESS_KEY_ID} $${AWS_SECRET_ACCESS_KEY};
-        mc mb -p myminio/$${AWS_STORAGE_BUCKET_NAME} || true;
-        mc policy set public myminio/$${AWS_STORAGE_BUCKET_NAME};
+        sleep 20;
+        mc alias set myminio http://minio:9000 minioadmin minioadmin;
+        mc mb -p myminio/washservice || true;
+        mc admin user add myminio washuser mysecretpassword || true;
+        mc admin policy attach myminio readwrite --user=washuser || true;
+        echo '[+] MinIO initialized';
         tail -f /dev/null
       "
     env_file:

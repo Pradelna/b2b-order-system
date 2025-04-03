@@ -10,6 +10,7 @@ import boto3
 from urllib.parse import quote
 from django.conf import settings
 from urllib.parse import urlparse
+import logging
 
 from .models import Customer, CustomerDocuments, DocumentsForCustomer
 from .serializers import CustomerSerializer, CustomerGetSerializer, CustomerDocumentSerializer, \
@@ -35,12 +36,18 @@ def customer_view(request):
             return Response({"error": "Customer not found", "user_id": request.user.id}, status=404)
 
     elif request.method == 'POST':
+        import logging
+        logger = logging.getLogger(__name__)
+
         serializer = CustomerSerializer(data=request.data)
         if serializer.is_valid():
             already_exists = Customer.objects.filter(user=request.user).exists()
+            if not already_exists:
+                logger.info(f"New customer being created for user {request.user.id}, sending async task for company {serializer.validated_data.get('company_name')}")
             serializer.save(user=request.user, company_email=request.user.email)
             if not already_exists:
                 transaction.on_commit(lambda: send_new_customer_task.delay(serializer.instance.company_name))
+                logger.info("send_new_customer_task.delay() was scheduled.")
             return Response(serializer.data)
         return Response(serializer.errors, status=400)
 

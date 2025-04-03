@@ -928,6 +928,7 @@ def send_email_change_customer_task(rp_client_external_id, company_name):
     retry_kwargs={"max_retries": 5, "countdown": 180}
 )
 def send_new_customer_task(company_name):
+    logger.info(f"Sart send email for new customer")
     subject = "Nový zákazník"
     message = (
         f"Nový zákazník {company_name}\n\n"
@@ -936,7 +937,10 @@ def send_new_customer_task(company_name):
     from_email = settings.DEFAULT_FROM_EMAIL
     recipient_list = ["admin@sokov.eu"]
     try:
+        logger.info(f"Sending new customer email for {company_name}")
         send_mail(subject, message, from_email, recipient_list)
+        logger.info(f"Email successfully sent to admin for new customer: {company_name}")
     except:
+        logger.error(f"Failed to send new customer email for {company_name}", exc_info=True)
         return f"Error sending email: {company_name} changed data"
     return f"Email sent: {company_name} changed data"

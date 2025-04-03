@@ -44,7 +44,7 @@ class Customer(models.Model):
     change_data = models.BooleanField("Change data", default=False)
 
     def save(self, *args, **kwargs):
-        if not self.pk:
+        if not Customer.objects.filter(pk=self.pk).exists():
             # Если объект новый, сначала сохраняем его, чтобы получить pk
             super().save(*args, **kwargs)
             # Если поле rp_client_external_id ещё не заполнено, формируем его, используя pk
