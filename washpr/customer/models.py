@@ -62,7 +62,7 @@ class Customer(models.Model):
                 'company_ico',
                 'company_dic',
             ])
-            send_new_customer_task.delay(self.company_name)
+            # send_new_customer_task.delay(self.company_name)
             return
         else:
             # Если объект уже существует, но rp_client_external_id не заполнено, устанавливаем его
@@ -70,15 +70,15 @@ class Customer(models.Model):
                 self.rp_client_external_id = "test" + str(self.pk)
 
         # Если клиент активен и данные ещё не отправлены, запускаем задачу
-        if self.active and not self.data_sent:
-            super().save(*args, **kwargs)
-            create_client_task.delay(self.pk)
-            return
+        # if self.active and not self.data_sent:
+        #     super().save(*args, **kwargs)
+        #     create_client_task.delay(self.pk)
+        #     return
 
-        if self.change_data:
-            super().save(*args, **kwargs)
-            send_email_change_customer_task.delay(self.rp_client_external_id, self.company_name)
-            return
+        # if self.change_data:
+        #     super().save(*args, **kwargs)
+        #     send_email_change_customer_task.delay(self.rp_client_external_id, self.company_name)
+        #     return
 
         super().save(*args, **kwargs)
 

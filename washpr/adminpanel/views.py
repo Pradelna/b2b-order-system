@@ -2,6 +2,7 @@ import os
 
 from celery.worker.control import active
 from django.contrib.auth.mixins import LoginRequiredMixin
+from django.db import transaction
 from django.db.models import Q
 from django.http import JsonResponse
 from django.contrib.auth.decorators import login_required, user_passes_test
@@ -36,6 +37,8 @@ from order.models import ReportFile
 from order.serializers import ReportFileSerializer
 from customer.serializers import CustomerSerializer
 from rest_framework.views import APIView
+
+from integration.tasks import create_client_task, send_email_change_customer_task, send_new_customer_task
 
 
 @login_required
@@ -83,6 +86,8 @@ def put_customer(request, customer_id):
             serializer = CustomerGetSerializer(customer, data=request.data, partial=True)
             if serializer.is_valid():
                 serializer.save()
+                if customer.active and not customer.data_sent:
+                    transaction.on_commit(lambda: create_client_task.delay(customer.pk))
                 return Response(serializer.data)
             return Response(serializer.errors, status=400)
         except Customer.DoesNotExist:

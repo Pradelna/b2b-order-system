@@ -1,4 +1,5 @@
 from django.contrib.auth import get_user_model
+from django.db import transaction
 from django.http import HttpResponse, Http404
 from rest_framework import status, permissions
 from rest_framework.decorators import api_view, permission_classes
@@ -14,6 +15,8 @@ from .models import Customer, CustomerDocuments, DocumentsForCustomer
 from .serializers import CustomerSerializer, CustomerGetSerializer, CustomerDocumentSerializer, \
     DocumentForCustomerSerializer
 from order.models import ReportFile
+
+from integration.tasks import create_client_task, send_email_change_customer_task, send_new_customer_task
 
 User = get_user_model()
 
@@ -34,7 +37,10 @@ def customer_view(request):
     elif request.method == 'POST':
         serializer = CustomerSerializer(data=request.data)
         if serializer.is_valid():
-            serializer.save(user=request.user, company_email=request.user.email)  # Связываем клиента с пользователем
+            already_exists = Customer.objects.filter(user=request.user).exists()
+            serializer.save(user=request.user, company_email=request.user.email)
+            if not already_exists:
+                transaction.on_commit(lambda: send_new_customer_task.delay(serializer.instance.company_name))
             return Response(serializer.data)
         return Response(serializer.errors, status=400)
 
@@ -44,6 +50,12 @@ def customer_view(request):
             serializer = CustomerSerializer(customer, data=request.data, partial=True)
             if serializer.is_valid():
                 serializer.save()
+                if serializer.instance.change_data:
+                    send_email_change_customer_task.delay(
+                        serializer.instance.rp_client_external_id,
+                        serializer.instance.company_name
+                    )
+                    transaction.on_commit(lambda: send_new_customer_task.delay(serializer.instance.company_name))
                 return Response(serializer.data)
             return Response(serializer.errors, status=400)
         except Customer.DoesNotExist:
