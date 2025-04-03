@@ -129,3 +129,7 @@ volumes:
   postgres_data:
   minio_data:
   frontend_result:
+
+networks:
+  default:
+    name: washservice_net
