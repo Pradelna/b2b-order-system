@@ -1,4 +1,5 @@
 import os
+import logging
 
 from celery.worker.control import active
 from django.contrib.auth.mixins import LoginRequiredMixin
@@ -99,18 +100,27 @@ def upload_document(request, customer_id):
     try:
         customer = Customer.objects.get(user__id=customer_id)
     except Customer.DoesNotExist:
+        logger.warning(f"Customer with ID {customer_id} not found while uploading file.")
         return Response({"error": "Customer not found"}, status=404)
 
     mutable_data = request.data.copy()
     mutable_data['customer'] = customer.id
     documents = CustomerDocuments.objects.filter(customer=customer)
+
+    import logging
+
+    logger = logging.getLogger(__name__)
+    logger.info(f"Uploading file for customer ID {customer_id}. Total existing files: {documents.count()}")
+
     if len(documents) >= 5:
         return Response({"error": "You can't have more 5 files"}, status=400)
     serializer = CustomerDocumentSerializer(data=mutable_data)
     if serializer.is_valid():
+        logger.info(f"Serializer valid. Saving file for customer ID {customer_id}")
         serializer.save()
         return Response({"message": "File uploaded successfully!"}, status=201)
     else:
+        logger.error(f"Serializer errors for customer ID {customer_id}: {serializer.errors}")
         return Response({"error": "Invalid data", "details": serializer.errors}, status=400)
 
 
