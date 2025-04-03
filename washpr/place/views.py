@@ -19,7 +19,7 @@ def create_place(request):
 
     # Добавляем `customer` в request.data для сохранения связи
     data = request.data.copy()
-    data['customer'] = customer.id
+    data['customer'] = customer.pk
 
     serializer = PlaceSerializer(data=data)
     if serializer.is_valid():
@@ -43,7 +43,7 @@ def edit_place(request, place_id):
         return Response({"error": "Place not found"}, status=status.HTTP_404_NOT_FOUND)
 
     data = request.data.copy()
-    data['customer'] = customer.id
+    data['customer'] = customer.pk
     data['id'] = place.id
     serializer = PlaceSerializer(instance=place, data=data, partial=True)
     if serializer.is_valid():

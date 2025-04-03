@@ -89,7 +89,7 @@ def upload_document(request):
         return Response({"error": "Customer not found"}, status=404)
 
     mutable_data = request.data.copy()
-    mutable_data['customer'] = customer.id
+    mutable_data['customer'] = customer.pk
     documents = CustomerDocuments.objects.filter(customer=customer)
     if len(documents) >= 5:
         return Response({"error": "You can't have more 5 files"}, status=400)
