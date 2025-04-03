@@ -104,7 +104,7 @@ def upload_document(request, customer_id):
         return Response({"error": "Customer not found"}, status=404)
 
     mutable_data = request.data.copy()
-    mutable_data['customer'] = customer.id
+    mutable_data['customer'] = customer.pk
     documents = CustomerDocuments.objects.filter(customer=customer)
 
     import logging
