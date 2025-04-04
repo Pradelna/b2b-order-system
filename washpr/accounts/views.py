@@ -94,7 +94,7 @@ def api_password_reset(request):
     Ожидает JSON с ключом "email".
     Если email корректный и связан с пользователем, отправляет письмо для сброса пароля.
     """
-    domain = request.get_host()
+    domain = request.get_host().split('.')[-2] + '.' + request.get_host().split('.')[-1]
     protocol = 'https' if request.is_secure() else 'http'
     email = request.data.get("email")
     lang = request.data.get("lang")
