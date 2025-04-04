@@ -410,8 +410,11 @@ const OrderForm: React.FC<OrderFormProps> = ({ placeId, onClose, onSuccess }) =>
     const datePickupElement = document.querySelector<HTMLInputElement | HTMLSelectElement>("select[name='date_pickup'], input[name='date_pickup']");
     const displayedDatePickup = datePickupElement ? datePickupElement.value : formData.date_pickup;
     // get curent value from DOM for delivery field
-    const dateDeliveryElement = document.querySelector<HTMLInputElement | HTMLSelectElement>("select[name='date_delivery'], input[name='date_delivery']");
-    const displayedDateDelivery = dateDeliveryElement ? dateDeliveryElement.value : formData.date_delivery;
+    // const dateDeliveryElement = document.querySelector<HTMLInputElement | HTMLSelectElement>("select[name='date_delivery'], input[name='date_delivery']");
+    // new data
+    const rawValue = document.querySelector("select[name='date_delivery'], input[name='date_delivery']")?.value;
+    const displayedDateDelivery = rawValue || formData.date_delivery || getAvailableDeliveryDates()[0];
+    // const displayedDateDelivery = dateDeliveryElement ? dateDeliveryElement.value : formData.date_delivery;
     // get curent value from DOM for start day
     const dateStartDayElement = document.querySelector<HTMLInputElement | HTMLSelectElement>("select[name='date_start_day'], input[name='date_start_day']");
     const displayedDateStartDay = dateStartDayElement ? dateStartDayElement.value : formData.date_start_day;
@@ -425,7 +428,6 @@ const OrderForm: React.FC<OrderFormProps> = ({ placeId, onClose, onSuccess }) =>
       date_start_day: displayedDateStartDay,
     };
 
-    console.log("formattedData.date_delivery:", formattedData.date_delivery);
     try {
       const response = await fetchWithAuth(`${BASE_URL}/order/create/`, {
         method: "POST",
