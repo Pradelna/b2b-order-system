@@ -196,6 +196,8 @@ const OrderForm: React.FC<OrderFormProps> = ({ placeId, onClose, onSuccess }) =>
     const pickupDate = new Date(formData.date_pickup);
     let minDeliveryDate: Date;
 
+    console.log("🧪 Debug Log: firstStartForm =", firstStartForm);
+
     if (formData.type_ship === "quick_order") {
       if (!customerWeekend && pickupDate.getDay() === 5) {
         const monday = new Date(pickupDate);
