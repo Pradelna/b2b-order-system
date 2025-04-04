@@ -848,7 +848,7 @@ const OrderForm: React.FC<OrderFormProps> = ({ placeId, onClose, onSuccess }) =>
                 </div>
                 <div className="col-11">
                   { currentData?.customer.terms_use_check }{" "}
-                  <Link to="/info/vop" className="terms">
+                  <Link to="/info/vop" className="terms" target="_blank">
                     { currentData?.customer.terms_use || "Podmínky užití" }{" "}
                   </Link>
                   {showError && !formData.terms && (
