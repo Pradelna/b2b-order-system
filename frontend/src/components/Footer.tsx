@@ -72,6 +72,10 @@ const Footer: React.FC = () => {
                     <FontAwesomeIcon icon={faEnvelope} className="icon" />
                     <span>office@pradelna1.com</span>
                   </a>
+                  <a href="mailto:office@pradelna1.com" className="mail">
+                    <FontAwesomeIcon icon={faEnvelope} className="icon" />
+                    <span>pradelna1cz@gmail.com (Majitel)</span>
+                  </a>
                 </div>
               </div>
             </div>

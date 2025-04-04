@@ -60,9 +60,9 @@ const CustomerForm: React.FC<CustomerFormProps> = ({ onSubmit, errors }) => {
   const lang = currentData?.lang || "cz";
   const labelMonthlyEstimate = langMonthlyEstimate[lang] || langMonthlyEstimate.en;
   const langKg = {
-    cz: "Kg/raz",
-    ru: "Кг за раз",
-    en: "Kg/pc",
+    cz: "Kg/měsíc",
+    ru: "Кг/месяц",
+    en: "Kg/month",
   };
   const labelKg = langKg[lang] || langKg.en;
 
