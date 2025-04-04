@@ -68,7 +68,7 @@ const Services: React.FC = () => {
                         <img src="/wp-content/uploads/2020/09/services5.png" alt="Service 5" />
                         <div className="services__item__text">
                             <h3>{data.sub_title_5}</h3>
-                            <div dangerouslySetInnerHTML={{ __html: data.description_4 }} />
+                            <div dangerouslySetInnerHTML={{ __html: data.description_5 }} />
                         </div>
                     </div>
                 </div>

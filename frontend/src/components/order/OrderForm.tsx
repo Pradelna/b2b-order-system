@@ -425,6 +425,7 @@ const OrderForm: React.FC<OrderFormProps> = ({ placeId, onClose, onSuccess }) =>
       date_start_day: displayedDateStartDay,
     };
 
+    console.log("formattedData.date_delivery:", formattedData.date_delivery);
     try {
       const response = await fetchWithAuth(`${BASE_URL}/order/create/`, {
         method: "POST",
