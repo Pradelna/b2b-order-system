@@ -73,7 +73,7 @@ services:
       context: ./washpr
       dockerfile: Dockerfile
     container_name: celery-beat
-    command: celery -A washpr beat --loglevel=info
+    command: celery -A washpr beat --loglevel=info --scheduler django_celery_beat.schedulers:DatabaseScheduler
     volumes:
       - ./washpr:/app
     depends_on:
