@@ -208,23 +208,17 @@ const OrderForm: React.FC<OrderFormProps> = ({ placeId, onClose, onSuccess }) =>
       pickupDate.getDay = () => 5;
       if (!customerWeekend && pickupDate.getDay() === 5) {
         const monday = new Date(pickupDate);
-
         if (firstStartForm) { // if from open first time
           console.log("firstStartForm", firstStartForm, "+3");
           monday.setDate(pickupDate.getDate() + 3);
-        } else {
-          // console.log("firstStartForm", firstStartForm, "+3");
-          // monday.setDate(pickupDate.getDate() + 3);
-          console.log("firstEndForm", isFirstRender.current, "pass");
         }
-
-        // monday.setDate(pickupDate.getDate() + 3);
-
         minDeliveryDate = monday;
       } else {
+        if (firstStartForm) { // if from open first time
+          console.log("minDeliveryDate", firstStartForm, "+2");
+          minDeliveryDate = addWorkingDays(pickupDate, 2);
+        }
         minDeliveryDate = addWorkingDays(pickupDate, 1);
-        console.log("minDeliveryDate", minDeliveryDate);
-        console.log("addWorkingDays", addWorkingDays);
       }
     } else if (formData.type_ship === "quick_order") {
       if (!customerWeekend && pickupDate.getDay() === 5) {
