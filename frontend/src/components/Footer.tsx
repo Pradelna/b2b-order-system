@@ -55,6 +55,7 @@ const Footer: React.FC = () => {
                         <a href="#contacts">{menu.contacts}</a>
                       </li>
                     </ul>
+                  <a href="#" id="open_preferences_center">Update cookies preferences</a>
                 )}
 
               </div>

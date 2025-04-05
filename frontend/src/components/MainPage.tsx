@@ -6,6 +6,7 @@ import Technology from "./landing/Technologies.js";
 import Price from "./landing/Price.js";
 import Contacts from "./landing/Contacts.js";
 import Footer from "./Footer";
+import Cookies from "./Cookies";
 import { Helmet } from "react-helmet";
 import { LanguageContext } from "../context/LanguageContext";
 import {useContext} from "react";
@@ -43,6 +44,7 @@ const MainPage: React.FC = () => {
             <Price />
             <Contacts />
             <Footer />
+            <Cookies />
         </>
     );
 };
