@@ -581,6 +581,7 @@ def create_orders_task():
             logger.info(f"Logger date delivery: {pl_date}. And date planned: {int(datetime.combine(pl_date, time()).timestamp())}")
             print(f"Print date delivery: {pl_date}. And date planned: {int(datetime.combine(pl_date, time()).timestamp())}")
             rp_time_planned = int(datetime.combine(pl_date, time()).timestamp()) + 43200
+            print(f"Print rp planned: {rp_time_planned}")
             base_order_data.update({
                 'rp_time_planned': rp_time_planned,
                 'date_start_day': order.date_pickup,
@@ -595,7 +596,7 @@ def create_orders_task():
             new_order = Order(**base_order_data)
             new_order.save()
             results.append(new_order.pk)
-            print(f"success create ONE TIME ORDER {new_order.pk}")
+            print(f"success create ONE TIME ORDER {new_order.pk}, rp planned - {new_order.rp_time_planned}")
         order.processed = True
         order.rp_status = 0
         order.save(update_fields=["processed", "rp_status"])
