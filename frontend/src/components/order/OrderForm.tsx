@@ -191,7 +191,7 @@ const OrderForm: React.FC<OrderFormProps> = ({ placeId, onClose, onSuccess }) =>
     return availableDates;
   }
 
-  // availble delivery days
+  // availble Delivery days
   function getAvailableDeliveryDates() {
     const availableDates: string[] = [];
     // get picupDate from date_pickup field
@@ -233,6 +233,9 @@ const OrderForm: React.FC<OrderFormProps> = ({ placeId, onClose, onSuccess }) =>
         const monday = new Date(pickupDate);
 
         if (firstStartForm) { // if from open first time
+          console.log("firstStartForm", firstStartForm, "+3");
+          monday.setDate(pickupDate.getDate() + 3);
+        } else {
           console.log("firstStartForm", firstStartForm, "+2");
           monday.setDate(pickupDate.getDate() + 2);
         }
