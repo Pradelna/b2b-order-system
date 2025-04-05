@@ -194,6 +194,7 @@ const OrderForm: React.FC<OrderFormProps> = ({ placeId, onClose, onSuccess }) =>
   // availble delivery days
   function getAvailableDeliveryDates() {
     const availableDates: string[] = [];
+    // get picupDate from date_pickup field
     const pickupSelect = document.querySelector("select[name='date_pickup']") as HTMLSelectElement | null;
     const pickupDate = new Date(pickupSelect?.value || formData.date_pickup);
     console.log("pickupDate", pickupDate);
@@ -202,10 +203,12 @@ const OrderForm: React.FC<OrderFormProps> = ({ placeId, onClose, onSuccess }) =>
     console.log("🧪 Debug Log: firstStartForm =", firstStartForm);
 
     if (formData.type_ship === "one_time") {
+      // bottom del
       console.log("ono_time True");
       console.log("DEBUG getDay:", pickupDate.getDay(), pickupDate.toISOString());
       console.log("customerWeekend:", customerWeekend);
       pickupDate.getDay = () => 5;
+      // below delete
       if (!customerWeekend && pickupDate.getDay() === 5) {
         const monday = new Date(pickupDate);
         if (firstStartForm) { // if from open first time
@@ -222,22 +225,25 @@ const OrderForm: React.FC<OrderFormProps> = ({ placeId, onClose, onSuccess }) =>
         }
       }
     } else if (formData.type_ship === "quick_order") {
+      console.log("ono_time True");
+      console.log("DEBUG getDay:", pickupDate.getDay(), pickupDate.toISOString());
+      console.log("customerWeekend:", customerWeekend);
+      pickupDate.getDay = () => 5;
       if (!customerWeekend && pickupDate.getDay() === 5) {
         const monday = new Date(pickupDate);
 
-        if (isFirstRender.current) { // if from open first time
-          console.log("firstStartForm", firstStartForm, "+4");
-          isFirstRender.current = false;
-          monday.setDate(pickupDate.getDate() + 4);
-        } else {
-          console.log("firstStartForm", firstStartForm, "+3");
-          monday.setDate(pickupDate.getDate() + 3);
+        if (firstStartForm) { // if from open first time
+          console.log("firstStartForm", firstStartForm, "+2");
+          monday.setDate(pickupDate.getDate() + 2);
         }
-
-        // monday.setDate(pickupDate.getDate() + 3);
         minDeliveryDate = monday;
       } else {
-        minDeliveryDate = addWorkingDays(pickupDate, 2);
+        if (firstStartForm) { // if from open first time
+          console.log("minDeliveryDate", firstStartForm, "+2");
+          minDeliveryDate = addWorkingDays(pickupDate, 2);
+        } else {
+          minDeliveryDate = addWorkingDays(pickupDate, 1);
+        }
       }
     } else {
       // Для повторяющихся заказов, минимум через 1 рабочий день
