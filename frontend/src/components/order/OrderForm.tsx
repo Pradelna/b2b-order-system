@@ -210,8 +210,8 @@ const OrderForm: React.FC<OrderFormProps> = ({ placeId, onClose, onSuccess }) =>
         const monday = new Date(pickupDate);
 
         if (firstStartForm) { // if from open first time
-          console.log("firstStartForm", firstStartForm, "+4");
-          monday.setDate(pickupDate.getDate() + 4);
+          console.log("firstStartForm", firstStartForm, "+3");
+          monday.setDate(pickupDate.getDate() + 3);
         } else {
           // console.log("firstStartForm", firstStartForm, "+3");
           // monday.setDate(pickupDate.getDate() + 3);
