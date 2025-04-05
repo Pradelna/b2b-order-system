@@ -151,8 +151,7 @@ const OrderForm: React.FC<OrderFormProps> = ({ placeId, onClose, onSuccess }) =>
 
   // only working days for a week if customerWeekend false
   function addWorkingDays(date: Date, days: number): Date {
-    // const result = new Date(date);
-    const result = new Date('2025-04-10T12:00:00'); // четверг
+    const result = new Date(date);
     if (customerWeekend) {
       // Если включены выходные, просто прибавляем количество дней
       result.setDate(result.getDate() + days);
@@ -196,6 +195,7 @@ const OrderForm: React.FC<OrderFormProps> = ({ placeId, onClose, onSuccess }) =>
   function getAvailableDeliveryDates() {
     const availableDates: string[] = [];
     const pickupDate = new Date(formData.date_pickup);
+    console.log("pickupDate", pickupDate);
     let minDeliveryDate: Date;
 
     console.log("🧪 Debug Log: firstStartForm =", firstStartForm);
