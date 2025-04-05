@@ -34,6 +34,7 @@ const OrderForm: React.FC<OrderFormProps> = ({ placeId, onClose, onSuccess }) =>
   const { currentData } = useContext(LanguageContext);
   const [alredyCurrentOrder, setAlredyCurrentOrder] = useState(false);
   const [firstStartForm, setFirstStartForm] = useState(true);
+  const isFirstRender = useRef(true);
   const [everyWeek, setEveryWeek] = useState(false);
   const [customerWeekend, setCustomerWeekend] = useState<boolean>(false)
 
@@ -202,8 +203,9 @@ const OrderForm: React.FC<OrderFormProps> = ({ placeId, onClose, onSuccess }) =>
       if (!customerWeekend && pickupDate.getDay() === 5) {
         const monday = new Date(pickupDate);
 
-        if (firstStartForm) { // if from open first time
-          console.log("firstStartForm", firstStartForm, "+4");
+        if (isFirstRender.current) { // if from open first time
+          console.log("firstStartForm", isFirstRender.current, "+4");
+          isFirstRender.current = false;
           monday.setDate(pickupDate.getDate() + 4);
         } else {
           console.log("firstStartForm", firstStartForm, "+3");
@@ -220,8 +222,9 @@ const OrderForm: React.FC<OrderFormProps> = ({ placeId, onClose, onSuccess }) =>
       if (!customerWeekend && pickupDate.getDay() === 5) {
         const monday = new Date(pickupDate);
 
-        if (firstStartForm) { // if from open first time
+        if (isFirstRender.current) { // if from open first time
           console.log("firstStartForm", firstStartForm, "+4");
+          isFirstRender.current = false;
           monday.setDate(pickupDate.getDate() + 4);
         } else {
           console.log("firstStartForm", firstStartForm, "+3");
