@@ -199,7 +199,18 @@ const OrderForm: React.FC<OrderFormProps> = ({ placeId, onClose, onSuccess }) =>
     if (formData.type_ship === "quick_order") {
       if (!customerWeekend && pickupDate.getDay() === 5) {
         const monday = new Date(pickupDate);
-        monday.setDate(pickupDate.getDate() + 3);
+
+
+        if (firstStartForm) { // if from open first time
+          monday.setDate(pickupDate.getDate() + 4);
+        } else {
+          monday.setDate(pickupDate.getDate() + 3);
+        }
+
+        // monday.setDate(pickupDate.getDate() + 3);
+
+
+
         minDeliveryDate = monday;
       } else {
         minDeliveryDate = addWorkingDays(pickupDate, 1);
@@ -207,7 +218,15 @@ const OrderForm: React.FC<OrderFormProps> = ({ placeId, onClose, onSuccess }) =>
     } else if (formData.type_ship === "quick_order") {
       if (!customerWeekend && pickupDate.getDay() === 5) {
         const monday = new Date(pickupDate);
-        monday.setDate(pickupDate.getDate() + 3);
+
+        if (firstStartForm) { // if from open first time
+          monday.setDate(pickupDate.getDate() + 4);
+        } else {
+          monday.setDate(pickupDate.getDate() + 3);
+        }
+
+
+        // monday.setDate(pickupDate.getDate() + 3);
         minDeliveryDate = monday;
       } else {
         minDeliveryDate = addWorkingDays(pickupDate, 2);
