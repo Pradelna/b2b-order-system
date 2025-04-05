@@ -88,8 +88,7 @@ const OrderForm: React.FC<OrderFormProps> = ({ placeId, onClose, onSuccess }) =>
   // Functions for calculating available start dates
   function getAvailableStartDays() {
     const dateSet = new Set<string>();
-    // const startDate = new Date();
-    const startDate = new Date('2025-04-10T12:00:00'); // четверг
+    const startDate = new Date();
 
     // if repeated order already exist start from next month
     if (alredyCurrentOrder) {
@@ -172,7 +171,8 @@ const OrderForm: React.FC<OrderFormProps> = ({ placeId, onClose, onSuccess }) =>
   // avaliable pickup days
   function getAvailablePickupDates() {
     const availableDates: string[] = [];
-    const startDate = new Date();
+    // const startDate = new Date();
+    const startDate = new Date('2025-04-10T12:00:00'); // четверг
     startDate.setDate(startDate.getDate() + 1);
     for (let i = 0; i < 30; i++) {
       const date = new Date(startDate);
