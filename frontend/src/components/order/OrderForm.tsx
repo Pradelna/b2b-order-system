@@ -194,7 +194,8 @@ const OrderForm: React.FC<OrderFormProps> = ({ placeId, onClose, onSuccess }) =>
   // availble delivery days
   function getAvailableDeliveryDates() {
     const availableDates: string[] = [];
-    const pickupDate = new Date(formData.date_pickup);
+    const pickupSelect = document.querySelector("select[name='date_pickup']") as HTMLSelectElement | null;
+    const pickupDate = new Date(pickupSelect?.value || formData.date_pickup);
     console.log("pickupDate", pickupDate);
     let minDeliveryDate: Date;
 
