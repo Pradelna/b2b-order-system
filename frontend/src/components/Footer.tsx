@@ -77,9 +77,6 @@ const Footer: React.FC = () => {
                   </a>
                 </div>
               </div>
-              <div className="col-12">
-                <a href="#" id="open_preferences_center">Update cookies preferences</a>
-              </div>
             </div>
 
 
