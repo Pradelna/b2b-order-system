@@ -200,16 +200,15 @@ const OrderForm: React.FC<OrderFormProps> = ({ placeId, onClose, onSuccess }) =>
       if (!customerWeekend && pickupDate.getDay() === 5) {
         const monday = new Date(pickupDate);
 
-
         if (firstStartForm) { // if from open first time
+          console.log("firstStartForm", firstStartForm, "+4");
           monday.setDate(pickupDate.getDate() + 4);
         } else {
+          console.log("firstStartForm", firstStartForm, "+3");
           monday.setDate(pickupDate.getDate() + 3);
         }
 
         // monday.setDate(pickupDate.getDate() + 3);
-
-
 
         minDeliveryDate = monday;
       } else {
@@ -220,11 +219,12 @@ const OrderForm: React.FC<OrderFormProps> = ({ placeId, onClose, onSuccess }) =>
         const monday = new Date(pickupDate);
 
         if (firstStartForm) { // if from open first time
+          console.log("firstStartForm", firstStartForm, "+4");
           monday.setDate(pickupDate.getDate() + 4);
         } else {
+          console.log("firstStartForm", firstStartForm, "+3");
           monday.setDate(pickupDate.getDate() + 3);
         }
-
 
         // monday.setDate(pickupDate.getDate() + 3);
         minDeliveryDate = monday;
