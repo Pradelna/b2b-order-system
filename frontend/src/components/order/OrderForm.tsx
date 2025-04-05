@@ -199,7 +199,7 @@ const OrderForm: React.FC<OrderFormProps> = ({ placeId, onClose, onSuccess }) =>
 
     console.log("🧪 Debug Log: firstStartForm =", firstStartForm);
 
-    if (formData.type_ship === "quick_order") {
+    if (formData.type_ship === "one_time") {
       if (!customerWeekend && pickupDate.getDay() === 5) {
         const monday = new Date(pickupDate);
 
