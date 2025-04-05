@@ -171,8 +171,7 @@ const OrderForm: React.FC<OrderFormProps> = ({ placeId, onClose, onSuccess }) =>
   // avaliable pickup days
   function getAvailablePickupDates() {
     const availableDates: string[] = [];
-    // const startDate = new Date();
-    const startDate = new Date('2025-04-11T12:00:00'); // четверг
+    const startDate = new Date();
     startDate.setDate(startDate.getDate() + 1);
     for (let i = 0; i < 30; i++) {
       const date = new Date(startDate);
@@ -197,25 +196,20 @@ const OrderForm: React.FC<OrderFormProps> = ({ placeId, onClose, onSuccess }) =>
     // get picupDate from date_pickup field
     const pickupSelect = document.querySelector("select[name='date_pickup']") as HTMLSelectElement | null;
     const pickupDate = new Date(pickupSelect?.value || formData.date_pickup);
-    console.log("pickupDate", pickupDate);
+
     let minDeliveryDate: Date;
 
-    console.log("🧪 Debug Log: firstStartForm =", firstStartForm);
-
     if (formData.type_ship === "one_time") {
-
       // pickupDate.getDay = () => 5;
       if (!customerWeekend && pickupDate.getDay() === 5) {
         const monday = new Date(pickupDate);
         if (firstStartForm) { // if from open first time
-          console.log("firstStartForm", firstStartForm, "+3");
           monday.setDate(pickupDate.getDate() + 3);
         }
         minDeliveryDate = monday;
       } else {
 
         if (firstStartForm) { // if from open first time
-          console.log("minDeliveryDate", firstStartForm, "+2");
           minDeliveryDate = addWorkingDays(pickupDate, 2);
         } else {
           minDeliveryDate = addWorkingDays(pickupDate, 1);
@@ -228,10 +222,8 @@ const OrderForm: React.FC<OrderFormProps> = ({ placeId, onClose, onSuccess }) =>
         const monday = new Date(pickupDate);
 
         if (firstStartForm) { // if from open first time
-          console.log("firstStartForm", firstStartForm, "+3");
           monday.setDate(pickupDate.getDate() + 3);
         } else {
-          console.log("firstStartForm", firstStartForm, "+1");
           monday.setDate(pickupDate.getDate() + 1);
         }
         minDeliveryDate = monday;
