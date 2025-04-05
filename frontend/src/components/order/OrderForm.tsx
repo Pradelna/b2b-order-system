@@ -1,8 +1,8 @@
 import React, { useState, useEffect, useContext, useRef } from "react";
 import { LanguageContext } from "../../context/LanguageContext";
 import { fetchWithAuth } from "../account/auth";
-import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
-import {faFilePdf} from "@fortawesome/free-solid-svg-icons";
+// import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
+// import {faFilePdf} from "@fortawesome/free-solid-svg-icons";
 import {Link} from "react-router-dom";
 
 interface OrderFormProps {
@@ -36,7 +36,7 @@ const OrderForm: React.FC<OrderFormProps> = ({ placeId, onClose, onSuccess }) =>
   const [firstStartForm, setFirstStartForm] = useState(true);
   const isFirstRender = useRef(true);
   const [everyWeek, setEveryWeek] = useState(false);
-  const [customerWeekend, setCustomerWeekend] = useState<boolean>(false)
+  const [customerWeekend, setCustomerWeekend] = useState<boolean>(false);
 
   const [wholeWeek, setWholeWeek] = useState([
     "monday",
@@ -87,9 +87,9 @@ const OrderForm: React.FC<OrderFormProps> = ({ placeId, onClose, onSuccess }) =>
 
   // Functions for calculating available start dates
   function getAvailableStartDays() {
-    // const availableDates: string[] = [];
     const dateSet = new Set<string>();
-    const startDate = new Date();
+    // const startDate = new Date();
+    const startDate = new Date('2025-04-10T12:00:00'); // четверг
 
     // if repeated order already exist start from next month
     if (alredyCurrentOrder) {
