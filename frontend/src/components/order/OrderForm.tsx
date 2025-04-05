@@ -411,7 +411,7 @@ const OrderForm: React.FC<OrderFormProps> = ({ placeId, onClose, onSuccess }) =>
     const displayedDatePickup = datePickupElement ? datePickupElement.value : formData.date_pickup;
     // get curent value from DOM for delivery field
     // const dateDeliveryElement = document.querySelector<HTMLInputElement | HTMLSelectElement>("select[name='date_delivery'], input[name='date_delivery']");
-    // new data
+    // new date delivery
     const rawValue = document.querySelector("select[name='date_delivery'], input[name='date_delivery']")?.value;
     const displayedDateDelivery = rawValue || formData.date_delivery || getAvailableDeliveryDates()[0];
     // const displayedDateDelivery = dateDeliveryElement ? dateDeliveryElement.value : formData.date_delivery;
