@@ -214,8 +214,9 @@ const OrderForm: React.FC<OrderFormProps> = ({ placeId, onClose, onSuccess }) =>
           isFirstRender.current = false;
           monday.setDate(pickupDate.getDate() + 4);
         } else {
-          console.log("firstStartForm", firstStartForm, "+3");
-          monday.setDate(pickupDate.getDate() + 3);
+          // console.log("firstStartForm", firstStartForm, "+3");
+          // monday.setDate(pickupDate.getDate() + 3);
+          console.log("firstEndForm", isFirstRender.current, "pass");
         }
 
         // monday.setDate(pickupDate.getDate() + 3);
