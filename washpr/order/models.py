@@ -102,7 +102,8 @@ class Order(models.Model):
             if self.type_ship == 'pickup_ship_one' or self.type_ship == 'pickup_ship_dif':
                 self.rp_time_planned = int(datetime.combine(self.date_start_day, time()).timestamp())
             if self.type_ship == 'one_time' or self.type_ship == 'quick_order':
-                self.rp_time_planned = int(datetime.combine(self.date_pickup, time()).timestamp())
+                if not self.rp_time_planned:
+                    self.rp_time_planned = int(datetime.combine(self.date_pickup, time()).timestamp()) + 43200
                 if self.type_ship == 'one_time':
                     self.group_month_id = 1
                 if self.type_ship == 'quick_order':
