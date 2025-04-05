@@ -205,6 +205,7 @@ const OrderForm: React.FC<OrderFormProps> = ({ placeId, onClose, onSuccess }) =>
       console.log("ono_time True");
       console.log("DEBUG getDay:", pickupDate.getDay(), pickupDate.toISOString());
       console.log("customerWeekend:", customerWeekend);
+      pickupDate.getDay = () => 5;
       if (!customerWeekend && pickupDate.getDay() === 5) {
         const monday = new Date(pickupDate);
 
