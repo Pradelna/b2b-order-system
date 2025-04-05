@@ -100,10 +100,12 @@ class Order(models.Model):
             # в views.py тоже есть заполняемые поля
             super().save(*args, **kwargs)
             if self.type_ship == 'pickup_ship_one' or self.type_ship == 'pickup_ship_dif':
-                self.rp_time_planned = int(datetime.combine(self.date_start_day, time()).timestamp())
+                self.rp_time_planned = int(datetime.combine(self.date_start_day, time()).timestamp()) + 43200
             if self.type_ship == 'one_time' or self.type_ship == 'quick_order':
+                print(f"In MODELS before if: {self.rp_time_planned}")
                 if not self.rp_time_planned:
                     self.rp_time_planned = int(datetime.combine(self.date_pickup, time()).timestamp()) + 43200
+                    print(f"In MODELS after new time {self.rp_time_planned}")
                 if self.type_ship == 'one_time':
                     self.group_month_id = 1
                 if self.type_ship == 'quick_order':
