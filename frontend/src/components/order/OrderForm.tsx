@@ -217,8 +217,9 @@ const OrderForm: React.FC<OrderFormProps> = ({ placeId, onClose, onSuccess }) =>
         if (firstStartForm) { // if from open first time
           console.log("minDeliveryDate", firstStartForm, "+2");
           minDeliveryDate = addWorkingDays(pickupDate, 2);
+        } else {
+          minDeliveryDate = addWorkingDays(pickupDate, 1);
         }
-        minDeliveryDate = addWorkingDays(pickupDate, 1);
       }
     } else if (formData.type_ship === "quick_order") {
       if (!customerWeekend && pickupDate.getDay() === 5) {
