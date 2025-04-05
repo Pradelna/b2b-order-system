@@ -209,9 +209,8 @@ const OrderForm: React.FC<OrderFormProps> = ({ placeId, onClose, onSuccess }) =>
       if (!customerWeekend && pickupDate.getDay() === 5) {
         const monday = new Date(pickupDate);
 
-        if (isFirstRender.current) { // if from open first time
-          console.log("firstStartForm", isFirstRender.current, "+4");
-          isFirstRender.current = false;
+        if (firstStartForm) { // if from open first time
+          console.log("firstStartForm", firstStartForm, "+4");
           monday.setDate(pickupDate.getDate() + 4);
         } else {
           // console.log("firstStartForm", firstStartForm, "+3");
