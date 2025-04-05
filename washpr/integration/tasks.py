@@ -577,19 +577,20 @@ def create_orders_task():
                 results.append(new_order.pk)
 
         elif order.type_ship == 'one_time' or order.type_ship == 'quick_order':
-            date = order.date_delivery
-            print(f"date delivery: {date}. And date planned: {int(datetime.combine(date, time()).timestamp())}")
-            rp_time_planned = int(datetime.combine(date, time()).timestamp()) + 43200
+            pl_date = order.date_delivery
+            logger.info(f"date delivery: {pl_date}. And date planned: {int(datetime.combine(pl_date, time()).timestamp())}")
+            rp_time_planned = int(datetime.combine(pl_date, time()).timestamp()) + 43200
             base_order_data.update({
                 'rp_time_planned': rp_time_planned,
                 'date_start_day': order.date_pickup,
                 'date_pickup': order.date_pickup,
-                'date_delivery': date,
+                'date_delivery': pl_date,
                 'delivery': True,
                 'pickup': False,
                 'group_pair_id': order.group_pair_id,
                 'rp_problem_description': "delivery",
             })
+            logger.info(base_order_data)
             new_order = Order(**base_order_data)
             new_order.save()
             print(f"success create ONE TIME ORDER {new_order.pk}")
