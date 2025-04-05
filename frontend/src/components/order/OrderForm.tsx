@@ -200,6 +200,7 @@ const OrderForm: React.FC<OrderFormProps> = ({ placeId, onClose, onSuccess }) =>
     console.log("🧪 Debug Log: firstStartForm =", firstStartForm);
 
     if (formData.type_ship === "one_time") {
+      console.log("ono_time True");
       if (!customerWeekend && pickupDate.getDay() === 5) {
         const monday = new Date(pickupDate);
 
@@ -217,6 +218,8 @@ const OrderForm: React.FC<OrderFormProps> = ({ placeId, onClose, onSuccess }) =>
         minDeliveryDate = monday;
       } else {
         minDeliveryDate = addWorkingDays(pickupDate, 1);
+        console.log("minDeliveryDate", minDeliveryDate);
+        console.log("addWorkingDays", addWorkingDays);
       }
     } else if (formData.type_ship === "quick_order") {
       if (!customerWeekend && pickupDate.getDay() === 5) {
