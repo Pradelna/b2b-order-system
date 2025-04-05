@@ -241,12 +241,7 @@ const OrderForm: React.FC<OrderFormProps> = ({ placeId, onClose, onSuccess }) =>
         }
         minDeliveryDate = monday;
       } else {
-        if (firstStartForm) { // if from open first time
-          console.log("minDeliveryDate", firstStartForm, "+2");
-          minDeliveryDate = addWorkingDays(pickupDate, 2);
-        } else {
-          minDeliveryDate = addWorkingDays(pickupDate, 1);
-        }
+        minDeliveryDate = addWorkingDays(pickupDate, 1);
       }
     } else {
       // Для повторяющихся заказов, минимум через 1 рабочий день
