@@ -172,7 +172,7 @@ const OrderForm: React.FC<OrderFormProps> = ({ placeId, onClose, onSuccess }) =>
   function getAvailablePickupDates() {
     const availableDates: string[] = [];
     // const startDate = new Date();
-    const startDate = new Date('2025-04-10T12:00:00'); // четверг
+    const startDate = new Date('2025-04-11T12:00:00'); // четверг
     startDate.setDate(startDate.getDate() + 1);
     for (let i = 0; i < 30; i++) {
       const date = new Date(startDate);
@@ -203,12 +203,8 @@ const OrderForm: React.FC<OrderFormProps> = ({ placeId, onClose, onSuccess }) =>
     console.log("🧪 Debug Log: firstStartForm =", firstStartForm);
 
     if (formData.type_ship === "one_time") {
-      // bottom del
-      console.log("ono_time True");
-      console.log("DEBUG getDay:", pickupDate.getDay(), pickupDate.toISOString());
-      console.log("customerWeekend:", customerWeekend);
-      pickupDate.getDay = () => 5;
-      // below delete
+
+      // pickupDate.getDay = () => 5;
       if (!customerWeekend && pickupDate.getDay() === 5) {
         const monday = new Date(pickupDate);
         if (firstStartForm) { // if from open first time
@@ -217,18 +213,17 @@ const OrderForm: React.FC<OrderFormProps> = ({ placeId, onClose, onSuccess }) =>
         }
         minDeliveryDate = monday;
       } else {
+
         if (firstStartForm) { // if from open first time
           console.log("minDeliveryDate", firstStartForm, "+2");
           minDeliveryDate = addWorkingDays(pickupDate, 2);
         } else {
           minDeliveryDate = addWorkingDays(pickupDate, 1);
         }
+
       }
     } else if (formData.type_ship === "quick_order") {
-      console.log("ono_time True");
-      console.log("DEBUG getDay:", pickupDate.getDay(), pickupDate.toISOString());
-      console.log("customerWeekend:", customerWeekend);
-      pickupDate.getDay = () => 5;
+
       if (!customerWeekend && pickupDate.getDay() === 5) {
         const monday = new Date(pickupDate);
 
@@ -240,9 +235,11 @@ const OrderForm: React.FC<OrderFormProps> = ({ placeId, onClose, onSuccess }) =>
           monday.setDate(pickupDate.getDate() + 1);
         }
         minDeliveryDate = monday;
+
       } else {
         minDeliveryDate = addWorkingDays(pickupDate, 1);
       }
+
     } else {
       // Для повторяющихся заказов, минимум через 1 рабочий день
       minDeliveryDate = addWorkingDays(pickupDate, 1);
