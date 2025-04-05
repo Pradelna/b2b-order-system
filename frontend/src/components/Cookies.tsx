@@ -12,10 +12,10 @@ const Cookies: React.FC = () => {
             if (window.cookieconsent) {
                 // @ts-ignore
                 window.cookieconsent.run({
-                    notice_banner_type: 'headline',
+                    notice_banner_type: 'simple',
                     consent_type: 'express',
-                    palette: 'dark',
-                    language: 'en',
+                    palette: 'light',
+                    language: 'cs',
                     page_load_consent_levels: ['strictly-necessary'],
                     notice_banner_reject_button_hide: false,
                     preferences_center_close_button_hide: false,

@@ -1,7 +1,8 @@
 import React, { useContext } from "react";
 import { LanguageContext } from "../context/LanguageContext";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import {faHouse, faUser, faMobileScreen, faEnvelope, faEarthAmerica} from "@fortawesome/free-solid-svg-icons";
+import {faMobileScreen, faEnvelope} from "@fortawesome/free-solid-svg-icons";
+import Cookies from "./Cookies";
 
 interface MenuData {
   about_us: string;
@@ -79,7 +80,9 @@ const Footer: React.FC = () => {
               </div>
             </div>
 
-
+            <div className="row text-center">
+              <Cookies />
+            </div>
 
           </div>
         </div>
