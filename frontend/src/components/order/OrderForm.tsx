@@ -236,8 +236,8 @@ const OrderForm: React.FC<OrderFormProps> = ({ placeId, onClose, onSuccess }) =>
           console.log("firstStartForm", firstStartForm, "+3");
           monday.setDate(pickupDate.getDate() + 3);
         } else {
-          console.log("firstStartForm", firstStartForm, "+2");
-          monday.setDate(pickupDate.getDate() + 2);
+          console.log("firstStartForm", firstStartForm, "+1");
+          monday.setDate(pickupDate.getDate() + 1);
         }
         minDeliveryDate = monday;
       } else {
