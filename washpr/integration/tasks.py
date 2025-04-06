@@ -659,9 +659,9 @@ def update_orders_task():
                             # if order is delivery
                             pickup_order = Order.objects.get(id=order.group_pair_id, pickup=True)
                             print(f"!!!!! pickup order {pickup_order.id} AND order delivery {order.id}")
-                            print(f"STATUS pickup order: {pickup_order.status}")
+                            print(f"STATUS pickup order: {pickup_order.rp_status}")
                             # if pickup order is done or cancel
-                            if pickup_order.status in COMPLETED_STATUSES:
+                            if pickup_order.rp_status in COMPLETED_STATUSES:
                                 order.rp_problem_description = item["problem_description"]
                                 order.rp_time_realization = item["time_realization"]
                                 order.rp_status = item["status"]
