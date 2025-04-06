@@ -203,6 +203,8 @@ const OrderHistoryAdmin: React.FC<OrderHistoryAdminProps> = ({ placeId, orders =
                                                                         {order.rp_status === 11 ? (currentData?.status?.status_11 || "K fakturaci") : null}
                                                                         {order.rp_status === 12 ? (currentData?.status?.status_12 || "Čeká na díl") : null}
                                                                         {order.rp_status === 13 ? (currentData?.status?.status_13 || "Marný výjezd") : null}
+                                                                        {order.pickup  ? (currentData?.form?.pickup || "Pickup") : null}
+                                                                        {order.delivery ? (currentData?.form?.delivery || "Delivery") : null}
                                                                     </strong>
                                                                 </>
                                                             )}

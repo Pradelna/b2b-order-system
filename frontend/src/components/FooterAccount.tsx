@@ -1,7 +1,9 @@
 import React, { useContext } from "react";
 import { LanguageContext } from "../context/LanguageContext";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import {faHouse, faUser, faMobileScreen, faEnvelope, faEarthAmerica} from "@fortawesome/free-solid-svg-icons";
+import {faMobileScreen, faEnvelope} from "@fortawesome/free-solid-svg-icons";
+import Cookies from "./Cookies";
+import {Link} from "react-router-dom";
 
 interface MenuData {
     technology: string;
@@ -17,6 +19,14 @@ const FooterAccount: React.FC = () => {
         return null; // If data is not available, the component does not render
     }
     const menu: MenuData = currentData.menu;
+
+    const gdpr = {
+        cz: "Zásady ochrany osobných údajov",
+        ru: "Политика конфиденциальности",
+        en: "Privacy Policy",
+    };
+    const lang = currentData?.lang || "cz";
+    const labelGdpr = gdpr[lang] || gdpr.en;
 
     if (!menu) {
         console.log("Menu is missing in the data:", currentData);
@@ -49,6 +59,14 @@ const FooterAccount: React.FC = () => {
                                 </a>
                             </div>
                         </div>
+                    </div>
+                    <div className="row text-center">
+                        <Cookies />
+                    </div>
+                    <div className="row text-center">
+                        <Link to="/info/gdpr">
+                            {labelGdpr || "Zásady ochrany osobných údajov"}
+                        </Link>
                     </div>
 
 
