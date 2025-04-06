@@ -344,35 +344,35 @@ def send_orders_task():
     orders_data_from_rp = []
     success_get = False
 
-    import requests
+    # import requests
 
-    url = "https://online.auto-gps.eu/cnt/apiItinerary/contractList"
-    offset = 0
-    limit = 1000
-    all_items = []
-    count = 0
-    while True:
-        params = {
-            "show_closed": 0,
-            # "last_status_change": 31536000,
-            "limit": limit,
-            "offset": offset,
-        }
-
-        try:
-            response = api_client.call_api(url, http_method="GET", params=params)
-            # print("API Response:", response)
-            orders_data_from_rp = response
-            if not orders_data_from_rp:  # пустой список, кончились данные
-                break
-            all_items.extend(orders_data_from_rp)
-            offset += limit
-            count += 1
-            print(f"COUNT REQUEST - {count}")
-            success_get = True
-        except requests.exceptions.RequestException as e:
-            print("API Request failed:", e)
-    print(f"NUMBER ORDERS IN REQEST {len(all_items)}")
+    # url = "https://online.auto-gps.eu/cnt/apiItinerary/contractList"
+    # offset = 0
+    # limit = 1000
+    # all_items = []
+    # count = 0
+    # while True:
+    #     params = {
+    #         "show_closed": 0,
+    #         # "last_status_change": 31536000,
+    #         "limit": limit,
+    #         "offset": offset,
+    #     }
+    #
+    #     try:
+    #         response = api_client.call_api(url, http_method="GET", params=params)
+    #         # print("API Response:", response)
+    #         orders_data_from_rp = response
+    #         if not orders_data_from_rp:  # пустой список, кончились данные
+    #             break
+    #         all_items.extend(orders_data_from_rp)
+    #         offset += limit
+    #         count += 1
+    #         print(f"COUNT REQUEST - {count}")
+    #         success_get = True
+    #     except requests.exceptions.RequestException as e:
+    #         print("API Request failed:", e)
+    # print(f"NUMBER ORDERS IN REQEST {len(all_items)}")
     close_old_connections()
     from order.models import Order  # Импортируем модель заказа из приложения order
 
@@ -380,55 +380,59 @@ def send_orders_task():
     time_threshold = timezone.now() - timedelta(minutes=2)
     orders = Order.objects.filter(active=False, canceled=False, processed=True ,created_at__lte=time_threshold)
     # find out oldest order
-    min_order = min(orders, key=lambda order: order.rp_time_planned) if orders else None
-    # min time for time slice
-    min_time = min_order.rp_time_planned if min_order else 0
-    # dictionary for max external_id {'01-03-2025': 7}
-    max_external_number_by_day = defaultdict(int)
-
-    if all_items:
-        for item in all_items:
-            # get external_id
-            external_id = item["external_id"]
-            # get the date from externel_id
-            external_id_date_str = external_id.split("/")[0]  # '170325'
-            # интерпретируем '170325' как день=17, месяц=03, год=25:
-            try:
-                time_from_order  = datetime.strptime(external_id_date_str, '%d%m%y')
-                time_planned = int(time_from_order.timestamp())
-
-                if time_planned >= min_time:
-                    # Преобразуем timestamp в формат DD-MM-YYYY
-                    date_str = datetime.utcfromtimestamp(time_planned).strftime('%d%m%y')
-                    try:
-                        external_number = int(external_id.split("/")[-1])
-                    except ValueError:
-                        external_number = 0  # Если не удалось извлечь число
-
-                    # Обновляем максимум для конкретного дня
-                    max_external_number_by_day[date_str] = max(max_external_number_by_day[date_str], external_number)
-            except:
-                pass
+    # min_order = min(orders, key=lambda order: order.rp_time_planned) if orders else None
+    # # min time for time slice
+    # min_time = min_order.rp_time_planned if min_order else 0
+    # # dictionary for max external_id {'01-03-2025': 7}
+    # max_external_number_by_day = defaultdict(int)
+    #
+    # if all_items:
+    #     for item in all_items:
+    #         # get external_id
+    #         external_id = item["external_id"]
+    #         # get the date from externel_id
+    #         external_id_date_str = external_id.split("/")[0]  # '170325'
+    #         # интерпретируем '170325' как день=17, месяц=03, год=25:
+    #         try:
+    #             time_from_order  = datetime.strptime(external_id_date_str, '%d%m%y')
+    #             time_planned = int(time_from_order.timestamp())
+    #
+    #             if time_planned >= min_time:
+    #                 # Преобразуем timestamp в формат DD-MM-YYYY
+    #                 date_str = datetime.utcfromtimestamp(time_planned).strftime('%d%m%y')
+    #                 try:
+    #                     external_number = int(external_id.split("/")[-1])
+    #                 except ValueError:
+    #                     external_number = 0  # Если не удалось извлечь число
+    #
+    #                 # Обновляем максимум для конкретного дня
+    #                 max_external_number_by_day[date_str] = max(max_external_number_by_day[date_str], external_number)
+    #         except:
+    #             pass
 
     results = []
 
+    success_get = True
     if success_get:
         for order in orders:
             time_planned = datetime.utcfromtimestamp(order.rp_time_planned).strftime('%d%m%y')
             # check if other orders for this date
-            if time_planned in max_external_number_by_day:
-                # number for order
-                next_number_order = max_external_number_by_day[time_planned] + 1
-                # name of contract_external_id
-                contract_external_id = time_planned + f"/{next_number_order}"
-                # print(f"new number -> {contract_external_id}")
-            else:
-                # print(f"{time_planned} -> free")
-                next_number_order = 1
-                contract_external_id = time_planned + f"/{next_number_order}"
-                # print(f"new number -> {contract_external_id}")
-            # add new number to dictionary to check next order
-            max_external_number_by_day[time_planned] = next_number_order
+            # if time_planned in max_external_number_by_day:
+            #     # number for order
+            #     next_number_order = max_external_number_by_day[time_planned] + 1
+            #     # name of contract_external_id
+            #     contract_external_id = time_planned + f"/{next_number_order}"
+            #     # print(f"new number -> {contract_external_id}")
+            # else:
+            #     # print(f"{time_planned} -> free")
+            #     next_number_order = 1
+            #     contract_external_id = time_planned + f"/{next_number_order}"
+            #     # print(f"new number -> {contract_external_id}")
+            # # add new number to dictionary to check next order
+            # max_external_number_by_day[time_planned] = next_number_order
+
+
+            contract_external_id = time_planned + f"/{order.id}"
             # Формируем payload для заказа. Приводим поля к нужному типу,
             # заполняем отсутствующие поля пустыми строками или значениями по умолчанию.
             payload = {
