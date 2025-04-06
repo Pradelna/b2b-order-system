@@ -5,6 +5,7 @@
   "type": "module",
   "scripts": {
     "dev": "vite",
+    "prebuild": "node generate-meta.js",
     "build": "vite build --mode production",
     "lint": "eslint .",
     "preview": "vite preview"
