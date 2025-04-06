@@ -2,9 +2,8 @@ import { defineConfig } from 'vite';
 import react from '@vitejs/plugin-react';
 import path from 'path';
 import { visualizer } from 'rollup-plugin-visualizer';
-import { execSync } from 'child_process';
 
-const version = execSync('git rev-parse --short HEAD').toString().trim();
+const version = process.env.VITE_APP_VERSION || 'dev';
 
 export default defineConfig({
   base: '/',
