@@ -9,7 +9,7 @@ COPY ./package*.json ./
 RUN npm install
 
 COPY ./ .
-
+RUN echo "Checking scripts directory..." && ls -l scripts && echo "Checking public directory..." && ls -l public
 RUN npm run build
 
 FROM alpine AS export
