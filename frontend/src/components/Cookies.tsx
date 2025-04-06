@@ -38,6 +38,7 @@ const Cookies: React.FC = () => {
                     notice_banner_reject_button_hide: false,
                     preferences_center_close_button_hide: false,
                     page_refresh_confirmation_buttons: false,
+                    website_privacy_policy_url:"/info/gdpr",
                 });
             }
         };
