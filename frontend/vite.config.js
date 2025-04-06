@@ -2,11 +2,15 @@ import { defineConfig } from 'vite';
 import react from '@vitejs/plugin-react';
 import path from 'path';
 import { visualizer } from 'rollup-plugin-visualizer';
+import { execSync } from 'child_process';
+
+const version = execSync('git rev-parse --short HEAD').toString().trim();
 
 export default defineConfig({
   base: '/',
   define: {
     'import.meta.env.VITE_API_URL': JSON.stringify(process.env.VITE_API_URL || 'http://api.sokov.eu/api'),
+    __APP_VERSION__: JSON.stringify(version),
   },
   plugins: [
     react(),
