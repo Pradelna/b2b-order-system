@@ -348,13 +348,13 @@ def send_orders_task():
 
     url = "https://online.auto-gps.eu/cnt/apiItinerary/contractList"
     offset = 0
-    limit = 50
+    limit = 1000
     all_items = []
     count = 0
     while True:
         params = {
             "show_closed": 0,
-            "last_status_change": 31536000,
+            # "last_status_change": 31536000,
             "limit": limit,
             "offset": offset,
         }
@@ -368,11 +368,11 @@ def send_orders_task():
             all_items.extend(orders_data_from_rp)
             offset += limit
             count += 1
-            # print(count)
+            print(f"COUNT REQUEST - {count}")
             success_get = True
         except requests.exceptions.RequestException as e:
             print("API Request failed:", e)
-
+    print(f"NUMBER ORDERS IN REQEST {len(all_items)}")
     close_old_connections()
     from order.models import Order  # Импортируем модель заказа из приложения order
 
