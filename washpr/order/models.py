@@ -123,6 +123,8 @@ class Order(models.Model):
                 self.rp_branch_office_id = 2263168
                 if self.rp_customer_note and not self.rp_problem_description:
                     self.rp_problem_description = self.rp_customer_note
+                if not self.rp_customer_note and not self.rp_problem_description:
+                    self.rp_problem_description = "pickup"
                 self.contract_external_id_for_admin = self.pk
             if self.terms:
                 self.main_order = True
