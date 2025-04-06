@@ -6,7 +6,7 @@ import Technology from "./landing/Technologies.js";
 import Price from "./landing/Price.js";
 import Contacts from "./landing/Contacts.js";
 import Footer from "./Footer";
-import { Helmet } from "react-helmet";
+import { Helmet } from "react-helmet-async";
 import { LanguageContext } from "../context/LanguageContext";
 import {useContext} from "react";
 
