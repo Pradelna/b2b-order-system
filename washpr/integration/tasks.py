@@ -658,13 +658,15 @@ def update_orders_task():
                         try:
                             # if order is delivery
                             pickup_order = Order.objects.get(id=order.group_pair_id, pickup=True)
+                            print(f"!!!!! pickup order {pickup_order.id} AND order delivery {order.id}")
+                            print(f"STATUS pickup order: {pickup_order.status}")
                             # if pickup order is done or cancel
                             if pickup_order.status in COMPLETED_STATUSES:
                                 order.rp_problem_description = item["problem_description"]
                                 order.rp_time_realization = item["time_realization"]
                                 order.rp_status = item["status"]
                                 order.save(update_fields=["rp_problem_description", "rp_status", "rp_time_realization"])
-                                success.append(f"order No {order.pk} with {external_id}")
+                                success.append(f"DELIVERY order No {order.pk} with {external_id}")
                         except Order.DoesNotExist:
                             not_success.append(f"order not found for {external_id}")
                             continue
