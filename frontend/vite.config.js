@@ -20,9 +20,6 @@ export default defineConfig({
   build: {
     rollupOptions: {
       output: {
-        entryFileNames: 'assets/[name].[hash].js',
-        chunkFileNames: 'assets/[name].[hash].js',
-        assetFileNames: 'assets/[name].[hash].[ext]',
         manualChunks: {
           react: ['react', 'react-dom'],
           router: ['react-router', 'react-router-dom'],

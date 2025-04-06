@@ -74,20 +74,20 @@ const App: React.FC = () => {
     }
   };
 
-    useEffect(() => {
-        fetch('/version.json', { cache: 'no-store' })
-            .then((res) => res.text())
-            .then((version) => {
-                const CURRENT_VERSION = '1.0.0';
-                if (version.trim() !== CURRENT_VERSION) {
-                    console.log('%c[App] New version detected. Reloading...', 'color: orange; font-weight: bold');
-                    window.location.reload();
-                } else {
-                    console.log(`%c[App] Version ${CURRENT_VERSION} is up-to-date`, 'color: green;');
-                }
-            })
-            .catch((err) => console.error('[App] Version check failed:', err));
-    }, []);
+    // useEffect(() => {
+    //     fetch('/version.json', { cache: 'no-store' })
+    //         .then((res) => res.text())
+    //         .then((version) => {
+    //             const CURRENT_VERSION = '1.0.0';
+    //             if (version.trim() !== CURRENT_VERSION) {
+    //                 console.log('%c[App] New version detected. Reloading...', 'color: orange; font-weight: bold');
+    //                 window.location.reload();
+    //             } else {
+    //                 console.log(`%c[App] Version ${CURRENT_VERSION} is up-to-date`, 'color: green;');
+    //             }
+    //         })
+    //         .catch((err) => console.error('[App] Version check failed:', err));
+    // }, []);
 
   if (error) {
     return <div>Error: {error}</div>;
