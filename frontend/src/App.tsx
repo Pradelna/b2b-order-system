@@ -81,8 +81,10 @@ const App: React.FC = () => {
                 if (version !== __APP_VERSION__) {
                     window.location.reload();
                 }
+                console.log(version);
             });
     }, []);
+
 
   if (error) {
     return <div>Error: {error}</div>;
