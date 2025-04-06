@@ -432,7 +432,7 @@ def send_orders_task():
             # max_external_number_by_day[time_planned] = next_number_order
 
 
-            contract_external_id = time_planned + f"/{order.id}"
+            contract_external_id = time_planned + f"/test-{order.id}"
             # Формируем payload для заказа. Приводим поля к нужному типу,
             # заполняем отсутствующие поля пустыми строками или значениями по умолчанию.
             payload = {
