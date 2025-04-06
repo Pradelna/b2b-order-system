@@ -81,7 +81,7 @@ const Footer: React.FC = () => {
               </div>
             </div>
 
-
+            <Cookies />
 
           </div>
         </div>

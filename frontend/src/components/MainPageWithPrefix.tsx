@@ -10,7 +10,6 @@ import Price from "./landing/Price";
 import Contacts from "./landing/Contacts";
 import Footer from "./Footer";
 import { Helmet } from "react-helmet-async";
-import Cookies from "./Cookies.js";
 
 const MainPageWithPrefix: React.FC = () => {
     const { currentData, language, handleLanguageChange } = useContext(LanguageContext);
@@ -56,7 +55,6 @@ const MainPageWithPrefix: React.FC = () => {
             <Price />
             <Contacts />
             <Footer />
-            <Cookies />
         </>
     );
 };

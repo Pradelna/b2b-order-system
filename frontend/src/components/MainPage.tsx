@@ -9,7 +9,6 @@ import Footer from "./Footer";
 import { Helmet } from "react-helmet-async";
 import { LanguageContext } from "../context/LanguageContext";
 import {useContext} from "react";
-import Cookies from "./Cookies";
 
 const MainPage: React.FC = () => {
     const { currentData } = useContext(LanguageContext);
@@ -44,7 +43,6 @@ const MainPage: React.FC = () => {
             <Price />
             <Contacts />
             <Footer />
-            <Cookies />
         </>
     );
 };
