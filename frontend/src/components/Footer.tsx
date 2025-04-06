@@ -20,6 +20,14 @@ const Footer: React.FC = () => {
   }
   const menu: MenuData = currentData.menu;
 
+  const gdpr = {
+    cz: "Zásady ochrany osobných údajov",
+    ru: "Политика конфиденциальности",
+    en: "Privacy Policy",
+  };
+  const lang = currentData?.lang || "cz";
+  const labelGdpr = gdpr[lang] || gdpr.en;
+
   if (!menu) {
     console.log("Menu is missing in the data:", currentData);
     return null;
@@ -82,6 +90,11 @@ const Footer: React.FC = () => {
 
             <div className="row text-center">
               <Cookies />
+            </div>
+            <div className="row text-center">
+              <Link to="/info/gdpr">
+                {labelGdpr || "Zásady ochrany osobných údajov"}
+              </Link>
             </div>
 
           </div>

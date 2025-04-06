@@ -262,7 +262,7 @@ const CustomerForm: React.FC<CustomerFormProps> = ({ onSubmit, errors }) => {
             </div>
             <div className="col-12 col-8 col-md-7 col-lg-6 col-xl-8">
               <div className="form-control">
-                <a href="#" target="_blank" rel="noopener noreferrer">
+                <a href="/info/gdpr" target="_blank" rel="noopener noreferrer">
                   <FontAwesomeIcon icon={faFilePdf} className="file-uploaded" />
                   {currentData.customer.gdpr}
                 </a>

@@ -5,7 +5,8 @@
   "type": "module",
   "scripts": {
     "dev": "vite",
-    "build": "vite build --mode production",
+    "build": "npm run set-version && vite build --mode production",
+    "set-version": "node scripts/set-version.js",
     "lint": "eslint .",
     "preview": "vite preview"
   },
