@@ -1,6 +1,24 @@
-import { useEffect } from 'react';
+import React, {useContext, useEffect} from 'react';
+import { LanguageContext } from "../context/LanguageContext";
+import {Link} from "react-router-dom";
 
 const Cookies: React.FC = () => {
+    const { currentData } = useContext(LanguageContext);
+    const lang = currentData?.lang || "cz";
+    const cookies = {
+        cz: "Aktualizujte předvolby cookies",
+        ru: "Обновите настройки файлов cookie",
+        en: "Update cookies preferences",
+    };
+    const labelCookies = cookies[lang] || cookies.en;
+
+    const gdpr = {
+        cz: "Zásady ochrany osobných údajov",
+        ru: "Политика конфиденциальности",
+        en: "Privacy Policy",
+    };
+    const labelGdpr = gdpr[lang] || gdpr.en;
+
     useEffect(() => {
         const script = document.createElement('script');
         script.src = '//www.termsfeed.com/public/cookie-consent/4.2.0/cookie-consent.js';
@@ -27,20 +45,18 @@ const Cookies: React.FC = () => {
     }, []);
 
     return (
-        <>
-            <noscript>
-                Free cookie consent management tool by{' '}
-                <a href="https://www.termsfeed.com/" rel="nofollow">
-                    TermsFeed
-                </a>
-            </noscript>
-
+        <div className="cookies">
             <div className="row text-center">
                 <a href="#" id="open_preferences_center">
-                    Update cookies preferences
+                    {labelCookies || "Aktualizujte předvolby cookies"}
                 </a>
             </div>
-        </>
+            <div className="row text-center">
+                <Link to="/info/gdpr">
+                    {labelGdpr || "Zásady ochrany osobných údajov"}
+                </Link>
+            </div>
+        </div>
     );
 };
 

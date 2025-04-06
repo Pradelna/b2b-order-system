@@ -1,14 +1,15 @@
 import Header from "./Header";
 import StartBanner from "./landing/StartBanner";
-import About from "./landing/About.js";
-import Services from "./landing/Services.js";
-import Technology from "./landing/Technologies.js";
-import Price from "./landing/Price.js";
-import Contacts from "./landing/Contacts.js";
+import About from "./landing/About";
+import Services from "./landing/Services";
+import Technology from "./landing/Technologies";
+import Price from "./landing/Price";
+import Contacts from "./landing/Contacts";
 import Footer from "./Footer";
 import { Helmet } from "react-helmet-async";
 import { LanguageContext } from "../context/LanguageContext";
 import {useContext} from "react";
+import Cookies from "./Cookies";
 
 const MainPage: React.FC = () => {
     const { currentData } = useContext(LanguageContext);
@@ -43,6 +44,7 @@ const MainPage: React.FC = () => {
             <Price />
             <Contacts />
             <Footer />
+            <Cookies />
         </>
     );
 };

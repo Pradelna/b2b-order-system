@@ -6,6 +6,7 @@ import HeaderAccount from "../HeaderAccount";
 import Header from "../Header";
 import Account from "./Account";
 import FooterAccount from "../FooterAccount";
+import Cookies from "../Cookies";
 
 // Define the shape of the customer data
 interface CustomerData {
@@ -96,6 +97,7 @@ function AccountPage(): JSX.Element {
                 setCustomerData={setCustomerData}
             />
             <FooterAccount />
+            <Cookies />
         </>
     );
 }
