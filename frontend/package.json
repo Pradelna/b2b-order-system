@@ -6,7 +6,7 @@
   "scripts": {
     "dev": "vite",
     "build": "npm run set-version && vite build --mode production",
-    "set-version": "node scripts/set-version.js",
+    "set-version": "node scripts/set-version.cjs",
     "lint": "eslint .",
     "preview": "vite preview"
   },
