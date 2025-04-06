@@ -88,7 +88,7 @@ const ReportList: React.FC = () => {
                     </div>
 
                 </div>
-                <h3 style={{fontSize:"24px"}}>{currentData?.history?.your_invoices || "Vaše faktury"} апва</h3>
+                <h3 style={{fontSize:"24px"}}>{currentData?.history?.your_invoices || "Vaše faktury"}</h3>
                 <div className="row">
 
                     {loading || forceWait ? (
