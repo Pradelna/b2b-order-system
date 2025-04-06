@@ -46,7 +46,7 @@ const Cookies: React.FC = () => {
     }, []);
 
     return (
-        <div className="cookies">
+        <div>
             <div className="row text-center">
                 <a href="#" id="open_preferences_center">
                     {labelCookies || "Aktualizujte předvolby cookies"}
