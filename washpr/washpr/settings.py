@@ -171,7 +171,7 @@ CELERY_RESULT_BACKEND = 'redis://redis:6379/0'
 CELERY_ACCEPT_CONTENT = ['json']
 CELERY_TASK_SERIALIZER = 'json'
 
-# REACT_FRONTEND_URL = "http://localhost:5173"
+CELERYBEAT_SCHEDULER = "django_celery_beat.schedulers.DatabaseScheduler"
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
