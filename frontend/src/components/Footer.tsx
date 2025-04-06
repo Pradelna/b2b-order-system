@@ -1,5 +1,6 @@
 import React, { useContext } from "react";
 import { LanguageContext } from "../context/LanguageContext";
+import { Link } from 'react-router-dom';
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import {faMobileScreen, faEnvelope} from "@fortawesome/free-solid-svg-icons";
 import Cookies from "./Cookies";
