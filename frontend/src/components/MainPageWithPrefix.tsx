@@ -9,7 +9,7 @@ import Technology from "./landing/Technologies";
 import Price from "./landing/Price";
 import Contacts from "./landing/Contacts";
 import Footer from "./Footer";
-import { Helmet } from "react-helmet";
+import { Helmet } from "react-helmet-async";
 
 const MainPageWithPrefix: React.FC = () => {
     const { currentData, language, handleLanguageChange } = useContext(LanguageContext);

@@ -1,8 +1,8 @@
-import React, { useState, useEffect, useContext } from "react";
+import React, { useState, useEffect, useContext, useRef } from "react";
 import { LanguageContext } from "../../context/LanguageContext";
 import { fetchWithAuth } from "../account/auth";
-import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
-import {faFilePdf} from "@fortawesome/free-solid-svg-icons";
+// import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
+// import {faFilePdf} from "@fortawesome/free-solid-svg-icons";
 import {Link} from "react-router-dom";
 
 interface OrderFormProps {
@@ -34,8 +34,9 @@ const OrderForm: React.FC<OrderFormProps> = ({ placeId, onClose, onSuccess }) =>
   const { currentData } = useContext(LanguageContext);
   const [alredyCurrentOrder, setAlredyCurrentOrder] = useState(false);
   const [firstStartForm, setFirstStartForm] = useState(true);
+  const isFirstRender = useRef(true);
   const [everyWeek, setEveryWeek] = useState(false);
-  const [customerWeekend, setCustomerWeekend] = useState<boolean>(false)
+  const [customerWeekend, setCustomerWeekend] = useState<boolean>(false);
 
   const [wholeWeek, setWholeWeek] = useState([
     "monday",
@@ -86,7 +87,6 @@ const OrderForm: React.FC<OrderFormProps> = ({ placeId, onClose, onSuccess }) =>
 
   // Functions for calculating available start dates
   function getAvailableStartDays() {
-    // const availableDates: string[] = [];
     const dateSet = new Set<string>();
     const startDate = new Date();
 
@@ -190,28 +190,48 @@ const OrderForm: React.FC<OrderFormProps> = ({ placeId, onClose, onSuccess }) =>
     return availableDates;
   }
 
-  // availble delivery days
+  // availble Delivery days
   function getAvailableDeliveryDates() {
     const availableDates: string[] = [];
-    const pickupDate = new Date(formData.date_pickup);
+    // get picupDate from date_pickup field
+    const pickupSelect = document.querySelector("select[name='date_pickup']") as HTMLSelectElement | null;
+    const pickupDate = new Date(pickupSelect?.value || formData.date_pickup);
+
     let minDeliveryDate: Date;
 
-    if (formData.type_ship === "quick_order") {
+    if (formData.type_ship === "one_time") {
+      // pickupDate.getDay = () => 5;
       if (!customerWeekend && pickupDate.getDay() === 5) {
         const monday = new Date(pickupDate);
-        monday.setDate(pickupDate.getDate() + 3);
+        if (firstStartForm) { // if from open first time
+          monday.setDate(pickupDate.getDate() + 3);
+        }
         minDeliveryDate = monday;
+      } else {
+
+        if (firstStartForm) { // if from open first time
+          minDeliveryDate = addWorkingDays(pickupDate, 2);
+        } else {
+          minDeliveryDate = addWorkingDays(pickupDate, 1);
+        }
+
+      }
+    } else if (formData.type_ship === "quick_order") {
+
+      if (!customerWeekend && pickupDate.getDay() === 5) {
+        const monday = new Date(pickupDate);
+
+        if (firstStartForm) { // if from open first time
+          monday.setDate(pickupDate.getDate() + 3);
+        } else {
+          monday.setDate(pickupDate.getDate() + 1);
+        }
+        minDeliveryDate = monday;
+
       } else {
         minDeliveryDate = addWorkingDays(pickupDate, 1);
       }
-    } else if (formData.type_ship === "quick_order") {
-      if (!customerWeekend && pickupDate.getDay() === 5) {
-        const monday = new Date(pickupDate);
-        monday.setDate(pickupDate.getDate() + 3);
-        minDeliveryDate = monday;
-      } else {
-        minDeliveryDate = addWorkingDays(pickupDate, 2);
-      }
+
     } else {
       // Для повторяющихся заказов, минимум через 1 рабочий день
       minDeliveryDate = addWorkingDays(pickupDate, 1);
@@ -410,8 +430,11 @@ const OrderForm: React.FC<OrderFormProps> = ({ placeId, onClose, onSuccess }) =>
     const datePickupElement = document.querySelector<HTMLInputElement | HTMLSelectElement>("select[name='date_pickup'], input[name='date_pickup']");
     const displayedDatePickup = datePickupElement ? datePickupElement.value : formData.date_pickup;
     // get curent value from DOM for delivery field
-    const dateDeliveryElement = document.querySelector<HTMLInputElement | HTMLSelectElement>("select[name='date_delivery'], input[name='date_delivery']");
-    const displayedDateDelivery = dateDeliveryElement ? dateDeliveryElement.value : formData.date_delivery;
+    // const dateDeliveryElement = document.querySelector<HTMLInputElement | HTMLSelectElement>("select[name='date_delivery'], input[name='date_delivery']");
+    // new date delivery
+    const rawValue = document.querySelector("select[name='date_delivery'], input[name='date_delivery']")?.value;
+    const displayedDateDelivery = rawValue || formData.date_delivery || getAvailableDeliveryDates()[0];
+    // const displayedDateDelivery = dateDeliveryElement ? dateDeliveryElement.value : formData.date_delivery;
     // get curent value from DOM for start day
     const dateStartDayElement = document.querySelector<HTMLInputElement | HTMLSelectElement>("select[name='date_start_day'], input[name='date_start_day']");
     const displayedDateStartDay = dateStartDayElement ? dateStartDayElement.value : formData.date_start_day;
@@ -848,7 +871,7 @@ const OrderForm: React.FC<OrderFormProps> = ({ placeId, onClose, onSuccess }) =>
                 </div>
                 <div className="col-11">
                   { currentData?.customer.terms_use_check }{" "}
-                  <Link to="/info/vop" className="terms">
+                  <Link to="/info/vop" className="terms" target="_blank">
                     { currentData?.customer.terms_use || "Podmínky užití" }{" "}
                   </Link>
                   {showError && !formData.terms && (

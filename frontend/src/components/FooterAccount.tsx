@@ -1,7 +1,9 @@
 import React, { useContext } from "react";
 import { LanguageContext } from "../context/LanguageContext";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import {faHouse, faUser, faMobileScreen, faEnvelope, faEarthAmerica} from "@fortawesome/free-solid-svg-icons";
+import {faMobileScreen, faEnvelope} from "@fortawesome/free-solid-svg-icons";
+import Cookies from "./Cookies";
+import {Link} from "react-router-dom";
 
 interface MenuData {
     technology: string;
@@ -50,7 +52,6 @@ const FooterAccount: React.FC = () => {
                             </div>
                         </div>
                     </div>
-
 
 
                 </div>

@@ -3,10 +3,13 @@ import react from '@vitejs/plugin-react';
 import path from 'path';
 import { visualizer } from 'rollup-plugin-visualizer';
 
+const version = process.env.VITE_APP_VERSION || 'dev';
+
 export default defineConfig({
   base: '/',
   define: {
     'import.meta.env.VITE_API_URL': JSON.stringify(process.env.VITE_API_URL || 'http://api.sokov.eu/api'),
+    __APP_VERSION__: JSON.stringify(version),
   },
   plugins: [
     react(),

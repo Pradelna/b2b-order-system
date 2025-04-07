@@ -60,9 +60,9 @@ const CustomerForm: React.FC<CustomerFormProps> = ({ onSubmit, errors }) => {
   const lang = currentData?.lang || "cz";
   const labelMonthlyEstimate = langMonthlyEstimate[lang] || langMonthlyEstimate.en;
   const langKg = {
-    cz: "Kg/raz",
-    ru: "Кг за раз",
-    en: "Kg/pc",
+    cz: "Kg/měsíc",
+    ru: "Кг/месяц",
+    en: "Kg/month",
   };
   const labelKg = langKg[lang] || langKg.en;
 
@@ -262,7 +262,7 @@ const CustomerForm: React.FC<CustomerFormProps> = ({ onSubmit, errors }) => {
             </div>
             <div className="col-12 col-8 col-md-7 col-lg-6 col-xl-8">
               <div className="form-control">
-                <a href="#" target="_blank" rel="noopener noreferrer">
+                <a href="/info/gdpr" target="_blank" rel="noopener noreferrer">
                   <FontAwesomeIcon icon={faFilePdf} className="file-uploaded" />
                   {currentData.customer.gdpr}
                 </a>

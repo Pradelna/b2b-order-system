@@ -1,7 +1,9 @@
 import React, { useContext } from "react";
 import { LanguageContext } from "../context/LanguageContext";
+import { Link } from 'react-router-dom';
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import {faHouse, faUser, faMobileScreen, faEnvelope, faEarthAmerica} from "@fortawesome/free-solid-svg-icons";
+import {faMobileScreen, faEnvelope} from "@fortawesome/free-solid-svg-icons";
+import Cookies from "./Cookies";
 
 interface MenuData {
   about_us: string;
@@ -56,7 +58,6 @@ const Footer: React.FC = () => {
                       </li>
                     </ul>
                 )}
-
               </div>
               <div className="col-lg-3 col-md-4 col-12">
                 <div className="contact">
@@ -72,11 +73,15 @@ const Footer: React.FC = () => {
                     <FontAwesomeIcon icon={faEnvelope} className="icon" />
                     <span>office@pradelna1.com</span>
                   </a>
+                  <a href="mailto:office@pradelna1.com" className="mail">
+                    <FontAwesomeIcon icon={faEnvelope} className="icon" />
+                    <span>pradelna1cz@gmail.com (Majitel)</span>
+                  </a>
                 </div>
               </div>
             </div>
 
-
+            <Cookies />
 
           </div>
         </div>

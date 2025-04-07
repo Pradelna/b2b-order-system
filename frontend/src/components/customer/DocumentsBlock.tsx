@@ -110,7 +110,7 @@ const DocumentsBlock: React.FC = () => {
                     <div className="row">
                         <div className="col-12">
                             <div className="form-control">
-                                <a href="#" target="_blank" rel="noopener noreferrer">
+                                <a href="/info/gdpr" target="_blank" rel="noopener noreferrer">
                                     <FontAwesomeIcon icon={faFilePdf} className="file-uploaded mr-3" />
                                     <span style={{ marginLeft: "5px" }}>{currentData.customer.gdpr}</span>
                                 </a>

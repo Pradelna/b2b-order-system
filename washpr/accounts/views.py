@@ -94,24 +94,25 @@ def api_password_reset(request):
     Ожидает JSON с ключом "email".
     Если email корректный и связан с пользователем, отправляет письмо для сброса пароля.
     """
-    # Для неавторизованных пользователей лучше брать email из request.data:
+    domain = request.get_host().split('.')[-2] + '.' + request.get_host().split('.')[-1]
+    protocol = 'https' if request.is_secure() else 'http'
     email = request.data.get("email")
     lang = request.data.get("lang")
     print(f"lang: {lang}")
     if not email:
         return Response({"error": "Email is required."}, status=status.HTTP_400_BAD_REQUEST)
     if lang == 'cz':
-        email_template_name='registration/password_reset_email.txt',
-        subject_template_name='registration/password_reset_subject.txt',
-        html_email_template_name='registration/password_reset_email.html',
+        email_template_name='registration/password_reset_email.txt'
+        subject_template_name='registration/password_reset_subject.txt'
+        html_email_template_name='registration/password_reset_email.html'
     elif lang == 'ru':
-        email_template_name='registration/ru_password_reset_email.txt',
-        subject_template_name='registration/ru_password_reset_subject.txt',
-        html_email_template_name='registration/ru_password_reset_email.html',
+        email_template_name='registration/ru_password_reset_email.txt'
+        subject_template_name='registration/ru_password_reset_subject.txt'
+        html_email_template_name='registration/ru_password_reset_email.html'
     else:
-        email_template_name='registration/en_password_reset_email.txt',
-        subject_template_name='registration/en_password_reset_subject.txt',
-        html_email_template_name='registration/en_password_reset_email.html',
+        email_template_name='registration/en_password_reset_email.txt'
+        subject_template_name='registration/en_password_reset_subject.txt'
+        html_email_template_name='registration/en_password_reset_email.html'
     form = PasswordResetForm({"email": email})
     if form.is_valid():
         form.save(
@@ -121,6 +122,10 @@ def api_password_reset(request):
             subject_template_name=subject_template_name,
             html_email_template_name=html_email_template_name,
             from_email=settings.DEFAULT_FROM_EMAIL,
+            extra_email_context={
+                'domain': domain,
+                'protocol': protocol,
+            }
         )
         return Response({"detail": "Password reset email sent."}, status=status.HTTP_200_OK)
     else:

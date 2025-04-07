@@ -81,7 +81,7 @@ const PlaceDetails: React.FC = () => {
         const now = new Date().getTime(); // Текущее время
         const orderTime = new Date(order.created_at).getTime(); // Время заказа
         const timeDifference = now - orderTime; // Разница во времени (в миллисекундах)
-        const thirtyMinutes = 30 * 60 * 1000; // 30 минут в миллисекундах
+        const thirtyMinutes = 2 * 60 * 1000; // 30 минут в миллисекундах
         return timeDifference >= thirtyMinutes; // Возвращает true, если прошло 30 минут
     };
 
@@ -412,7 +412,7 @@ const PlaceDetails: React.FC = () => {
                             <div className="col-xl-8 col-lg-10 col-12">
                                 <div className="card current-order">
 
-                                    <h3>{currentData?.order.current_order || "Current Order"} #{currentOrder.id}</h3>
+                                    <h3>{currentData?.order.current_order || "Aktuální objednávka"} #{currentOrder?.rp_contract_external_id || ""}</h3>
                                     <div className="order-details">
 
                                         <div className="form-control mb-2">

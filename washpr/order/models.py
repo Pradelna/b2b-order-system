@@ -100,9 +100,10 @@ class Order(models.Model):
             # в views.py тоже есть заполняемые поля
             super().save(*args, **kwargs)
             if self.type_ship == 'pickup_ship_one' or self.type_ship == 'pickup_ship_dif':
-                self.rp_time_planned = int(datetime.combine(self.date_start_day, time()).timestamp())
+                self.rp_time_planned = int(datetime.combine(self.date_start_day, time()).timestamp()) + 43200
             if self.type_ship == 'one_time' or self.type_ship == 'quick_order':
-                self.rp_time_planned = int(datetime.combine(self.date_pickup, time()).timestamp())
+                if not self.rp_time_planned:
+                    self.rp_time_planned = int(datetime.combine(self.date_pickup, time()).timestamp()) + 43200
                 if self.type_ship == 'one_time':
                     self.group_month_id = 1
                 if self.type_ship == 'quick_order':
@@ -122,6 +123,8 @@ class Order(models.Model):
                 self.rp_branch_office_id = 2263168
                 if self.rp_customer_note and not self.rp_problem_description:
                     self.rp_problem_description = self.rp_customer_note
+                if not self.rp_customer_note and not self.rp_problem_description:
+                    self.rp_problem_description = "pickup"
                 self.contract_external_id_for_admin = self.pk
             if self.terms:
                 self.main_order = True

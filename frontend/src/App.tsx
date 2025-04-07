@@ -33,6 +33,7 @@ import PlaceDetailAdmin from "./components/admin/PlaceDetailAdmin";
 import AllHistoryAdmin from "./components/admin/AllHistoryAdmin";
 import Invoices from "./components/admin/Invoices";
 import Vop from "./components/info/Vop";
+import Gdpr from "./components/info/Gdpr";
 
 // Define the shape of the language data
 interface LanguageData {
@@ -73,6 +74,18 @@ const App: React.FC = () => {
     }
   };
 
+    useEffect(() => {
+        fetch('/meta.json?v=' + Date.now())
+            .then(res => res.json())
+            .then(({ version }) => {
+                if (version !== __APP_VERSION__) {
+                    window.location.reload();
+                }
+                console.log(version);
+            });
+    }, []);
+
+
   if (error) {
     return <div>Error: {error}</div>;
   }
@@ -101,8 +114,8 @@ const App: React.FC = () => {
             />
 
               <Route path="/info/vop" element={<Vop />} />
-              {/*<Route path="/info/vop-ru" element={<VopRu />} />*/}
-              {/*<Route path="/ru/info/vop-ru" element={<VopRu />} />*/}
+              <Route path="/info/gdpr" element={<Gdpr />} />
+
             {/* Registration page */}
             <Route path="/account/auth" element={<RegistrationForm />} />
 
