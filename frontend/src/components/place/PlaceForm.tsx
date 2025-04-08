@@ -44,14 +44,38 @@ const PlaceForm: React.FC<PlaceFormProps> = ({ onClose, onSuccess }) => {
 
         const errors: { [key: string]: string[] } = {};
 
+        const lang = currentData?.lang || "cz";
+
+        const emailError = {
+            cz: "Neplatný formát e-mailu",
+            ru: "Неверный формат e-mail",
+            en: "Invalid e-mail format",
+        };
+        const labelEmailError = emailError[lang] || emailError.cz;
+
         // Простая проверка email
         if (formData.rp_email && !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(formData.rp_email)) {
-            errors.email = ["Neplatný formát e-mailu"];
+            errors.rp_email = [labelEmailError];
         }
 
-        // Можно добавить проверки на другие поля (например, phone)
         if (formData.rp_phone && !/^\+?(\d){6,18}$/.test(formData.rp_phone)) {
-            errors.phone = ["Číslo telefonu musí být zadáno ve formátu: +420234567890 nebo 01234567890"];
+            const phoneError = {
+                cz: "Číslo telefonu musí být zadáno ve formátu: +420234567890 nebo 01234567890",
+                ru: "Номер телефона должен быть введен в формате: +420234567890 или 01234567890",
+                en: "The phone number must be entered in the format: +420234567890 or 01234567890",
+            };
+            const labelPhoneError = phoneError[lang] || phoneError.cz;
+            errors.rp_phone = [labelPhoneError];
+        }
+
+        if (formData.rp_zip && !/^\d{5,9}$/.test(formData.rp_zip)) {
+            const zipError = {
+                cz: "Číslo nesmí obsahovat mezery a jiné znaky kromě číslic",
+                ru: "Номер не должен содержать пробелы и другие символы кроме цифр",
+                en: "The number must not contain spaces or other characters except digits.",
+            };
+            const labelZipError = zipError[lang] || zipError.cz;
+            errors.rp_zip = [labelZipError];
         }
 
         // Если есть ошибки - не отправляем запрос
@@ -111,9 +135,9 @@ const PlaceForm: React.FC<PlaceFormProps> = ({ onClose, onSuccess }) => {
                                 </div>
                             </div>
                         ))}
-                        {Object.entries(formErrors).map(([field, messages]) => (
-                            <p key={field} className="alert alert-danger">
-                                {field}: {Array.isArray(messages) ? messages.join(', ') : messages}
+                        {Object.values(formErrors).flat().map((message, index) => (
+                            <p key={index} className="alert alert-danger">
+                                {message}
                             </p>
                         ))}
 
