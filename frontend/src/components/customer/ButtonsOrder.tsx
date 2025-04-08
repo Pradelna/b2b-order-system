@@ -13,7 +13,29 @@ const ButtonsOrder: React.FC<ButtonsOrderProps> = ({ onCreatePlace, onCreateOrde
 
     // If no data is available, render nothing
     if (!currentData || !currentData.service) {
-        return <div>Loading...</div>;
+        return (
+            <div className="col-3">
+                {/* New Order Button */}
+                <div className="card mini new-order">
+                    <div className="card-body text-center">
+                        <p className="card-title">
+                            <FontAwesomeIcon icon={faCartPlus} className="icon" />
+                        </p>
+                        <p className="card-title">New Order</p>
+                    </div>
+                </div>
+
+                {/* New Place Button */}
+                <div className="card mini">
+                    <div className="card-body text-center">
+                        <p className="card-title">
+                            <FontAwesomeIcon icon={faBuilding} className="icon" />
+                        </p>
+                        <p className="card-title">New Place</p>
+                    </div>
+                </div>
+            </div>
+        );
     }
 
     return (

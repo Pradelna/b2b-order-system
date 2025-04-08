@@ -56,7 +56,7 @@ const DocumentsBlock: React.FC = () => {
     }, []);
 
     if (!currentData) {
-        return <div>language data not faunded</div>; // Render nothing if currentData is unavailable
+        return null; // Render nothing if currentData is unavailable
     }
 
     return (

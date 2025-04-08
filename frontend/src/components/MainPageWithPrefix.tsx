@@ -31,6 +31,9 @@ const MainPageWithPrefix: React.FC = () => {
         description = "Praní a čištění uniforem, oděvů, čištění péřových výrobků, odstranění skvrn, základní ošetření prádla za pomocí strojů na chemické čištění.";
         htmlLang = "cs-CZ";
     }
+    if (!currentData) {
+        return null; // Do not render if language data is unavailable
+    }
 
     useEffect(() => {
         if (lang === "cz") {

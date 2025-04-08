@@ -37,7 +37,7 @@ const AuthBlock: React.FC<AuthBlockProps> = ({ customerData }) => {
     };
 
     if (!currentData) {
-        return <div>Language data not found</div>;
+        return null;
     }
 
     return (

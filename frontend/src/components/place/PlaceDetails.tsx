@@ -265,7 +265,24 @@ const PlaceDetails: React.FC = () => {
         };
     }, [showOrderForm]);
 
-    if (!place) return <p>Place not found.</p>;
+    if (!place) return (
+        <>
+            <HeaderAccount customerId={customerId} />
+            <div className="container margin-top-90 wrapper place-detail-page">
+                <div
+                    className="row message-block-76"
+                >
+                    <div className="col-xl-1 col-lg-3 col-sm-3 back-button">
+                        <NavButtons />
+                    </div>
+                    <div className="col-xl-7 col-lg-10 col-12">
+
+                    </div>
+                </div>
+            </div>
+            <FooterAccount />
+        </>
+    );
 
     return (
         <>

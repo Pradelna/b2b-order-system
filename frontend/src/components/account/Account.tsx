@@ -194,8 +194,63 @@ const Account: React.FC<AccountProps> = ({ customerData, setCustomerData }) => {
         };
     }, [showPlaceForm, showOrderForm]);
 
-    if (!currentData || !currentData.service) {
-        return <div>Loading...</div>; // Если данных нет, компонент ничего не отображает
+    if (!currentData || !currentData.service) {  // Если данных нет, компонент ничего не отображает
+        return (
+
+            <div className="container margin-top-90 wrapper account-page">
+                <div className="row message-block-76">
+                    <div className="col-xl-9 col-lg-8 col-12">
+                    </div>
+                </div>
+                <div className="row">
+                    <div className="col-xl-9 col-lg-8 col-12">
+                        <div id="company-top" className="row">
+
+                            <div className="col-xl-6 col-lg-12 mb-4">
+                                <div className="card dashboard-button">
+                                    <div className="card-body button-history">
+                                        <Skeleton
+                                            variant="rectangular"
+                                            width={36} height={36}
+                                            sx={{ borderRadius: "18px", marginBottom: 2 }}
+                                        />
+                                        <Skeleton
+                                            variant="rectangular"
+                                            width={180} height={20}
+                                            sx={{ borderRadius: "6px", marginBottom: 0 }}
+                                        />
+                                    </div>
+                                </div>
+                            </div>
+
+                            {(!currentData || !currentData.service) ? (
+                                [...Array(3)].map((_, index) => (
+                                    <div className="col-lg-4 col-xl-2 col-4 mb-4" key={index}>
+                                        <div className="card dashboard-button">
+                                            <div className="card-body button-history">
+                                                <Skeleton
+                                                    variant="rectangular"
+                                                    width={36} height={36}
+                                                    className=""
+                                                    sx={{ borderRadius: "18px", marginBottom: 2 }}
+                                                />
+                                                <Skeleton
+                                                    variant="rectangular"
+                                                    width={70} height={20}
+                                                    className=""
+                                                    sx={{ borderRadius: "6px", marginBottom: 0 }}
+                                                />
+                                            </div>
+                                        </div>
+                                    </div>
+                                ))
+                            ) : null }
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+        );
     }
 
     return (

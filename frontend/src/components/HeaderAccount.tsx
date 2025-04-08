@@ -31,7 +31,17 @@ const HeaderAccount: React.FC = ({customerId}) => {
 
   // Если данные еще не загружены или отсутствует customerId, отображаем "Loading..." или пустой элемент
   if (loading || !currentData || !currentData.menu || !customerId) {
-    return <div>Loading...</div>;
+    return (
+        <header className="header">
+          {/* Top Header */}
+          <div className="header__top">
+            <div className="container">
+              <div className="header__top__wrap">
+              </div>
+            </div>
+          </div>
+        </header>
+    );
   }
 
   const menuData = currentData?.menu;

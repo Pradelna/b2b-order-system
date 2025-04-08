@@ -68,7 +68,7 @@ const CustomerForm: React.FC<CustomerFormProps> = ({ onSubmit, errors }) => {
 
   // Prevent rendering if language context data is unavailable
   if (!currentData) {
-    return <div>language data not faunded</div>;
+    return null;
   }
 
   return (

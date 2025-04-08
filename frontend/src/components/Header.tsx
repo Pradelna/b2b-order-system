@@ -37,7 +37,7 @@ const Header: React.FC<HeaderProps> = ({ formCustomer }) => {
 
   // Если languageData не доступен, показываем сообщение
   if (!languageData || !languageData.length) {
-    return <div>No language data available.</div>;
+    return null;
   }
   const currentData = languageData.find((item) => item.lang === language);
   const menuData: MenuData = currentData?.menu || { header_home: "", header_account: "" };

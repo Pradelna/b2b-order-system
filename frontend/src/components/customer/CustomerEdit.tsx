@@ -91,7 +91,7 @@ const CustomerEdit: React.FC<CustomerEditProps> = ({
     const labelEditInfo = editInfo[lang] || editInfo.cz;
 
     if (!currentData) {
-        return <div>loading...</div>; // Avoid rendering if context data is unavailable
+        return null; // Avoid rendering if context data is unavailable
     }
 
     return (
