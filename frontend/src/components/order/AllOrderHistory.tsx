@@ -214,7 +214,7 @@ const AllOrderHistory: React.FC = () => {
                                                     </p>
                                                 ) : (
                                                     <p>
-                                                        <strong>{currentData?.history?.wait_processing || "Objednávka čeká na zpracování"}</strong>
+                                                        <strong>{currentData?.history?.wait_approval || "Objednávka čeká na zpracování"}</strong>
                                                     </p>
                                                 )}
 

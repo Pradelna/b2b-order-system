@@ -216,7 +216,7 @@ const OrderHistoryAdmin: React.FC<OrderHistoryAdminProps> = ({ placeId, orders =
                                                         </p>
                                                     ) : (
                                                         <p>
-                                                            <strong>{currentData?.history?.wait_processing || (`#${order.id} - Objednávka čeká na zpracování`)}</strong>
+                                                            <strong>{currentData?.history?.wait_approval || (`#${order.id} - Objednávka čeká na zpracování`)}</strong>
                                                         </p>
                                                     )}
 
