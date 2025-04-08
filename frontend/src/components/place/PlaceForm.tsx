@@ -70,12 +70,22 @@ const PlaceForm: React.FC<PlaceFormProps> = ({ onClose, onSuccess }) => {
 
         if (formData.rp_zip && !/^\d{5,9}$/.test(formData.rp_zip)) {
             const zipError = {
-                cz: "Číslo nesmí obsahovat mezery a jiné znaky kromě číslic",
-                ru: "Номер не должен содержать пробелы и другие символы кроме цифр",
-                en: "The number must not contain spaces or other characters except digits.",
+                cz: "PSČ nesmí obsahovat mezery a jiné znaky kromě číslic",
+                ru: "Номер PSČ не должен содержать пробелы и другие символы кроме цифр",
+                en: "The ZIP number  must not contain spaces or other characters except digits.",
             };
             const labelZipError = zipError[lang] || zipError.cz;
             errors.rp_zip = [labelZipError];
+        }
+
+        if (formData.rp_number && !/^\d{1,9}$/.test(formData.rp_number)) {
+            const numberError = {
+                cz: "Orientační číslo nesmí obsahovat mezery a jiné znaky kromě číslic",
+                ru: "Номер дома не должен содержать пробелы и другие символы кроме цифр",
+                en: "The building number  must not contain spaces or other characters except digits.",
+            };
+            const labelNumberError = numberError[lang] || numberError.cz;
+            errors.rp_number = [labelNumberError];
         }
 
         // Если есть ошибки - не отправляем запрос
