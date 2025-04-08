@@ -74,12 +74,14 @@ const DocumentsBlock: React.FC = () => {
                             return (
                                 <div
                                     key={index}
-                                    className="col-12 form-control mb-2"
+                                    className="col-12 mb-2"
                                     style={{ cursor: 'pointer' }}
                                     onClick={() => downloadFile(fileName)}
                                 >
-                                    <FontAwesomeIcon icon={faFilePdf} className="file-uploaded" />
-                                    <span style={{ marginLeft: "5px" }}>{fileName}</span>
+                                    <div className="form-control">
+                                        <FontAwesomeIcon icon={faFilePdf} className="file-uploaded" />
+                                        <span style={{ marginLeft: "5px" }}>{fileName}</span>
+                                    </div>
                                 </div>
                             );
                         }
