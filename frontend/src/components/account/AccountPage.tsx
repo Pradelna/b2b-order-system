@@ -57,31 +57,31 @@ function AccountPage(): JSX.Element {
 
     useEffect(() => {
         const checkAdminStatus = async () => {
-            if (!customerData) {
-                try {
-                    const response = await fetchWithAuth(`${BASE_URL}/admin/adminpanel/is-admin/`, {
-                        method: "GET",
-                    });
 
-                    if (!response.ok) {
-                        throw new Error(`HTTP error! Status: ${response.status}`);
-                    }
+            try {
+                const response = await fetchWithAuth(`${BASE_URL}/admin/adminpanel/is-admin/`, {
+                    method: "GET",
+                });
 
-                    const data = await response.json();
-
-                    setIsAdmin(data.is_admin);
-                    if (data.is_admin) {
-                        setFormCustomer(false);
-                        navigate('/admin/dashboard');
-                    }
-                } catch (error) {
-                    console.error("Error checking admin status:", error);
+                if (!response.ok) {
+                    throw new Error(`HTTP error! Status: ${response.status}`);
                 }
+
+                const data = await response.json();
+
+                setIsAdmin(data.is_admin);
+                if (data.is_admin) {
+                    setFormCustomer(false);
+                    navigate('/admin/dashboard');
+                }
+            } catch (error) {
+                console.error("Error checking admin status:", error);
             }
+
         };
 
         checkAdminStatus();
-    }, [customerData, BASE_URL]);
+    }, []);
 
     return (
         <>
