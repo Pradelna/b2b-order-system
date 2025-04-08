@@ -276,6 +276,7 @@ class LandingPageSerializer(serializers.ModelSerializer):
             'sunday': obj.form_sunday,
             'pickup': obj.form_pickup,
             'delivery': obj.form_delivery,
+            'optional': obj.form_optional,
         }
 
     def get_success(self, obj):

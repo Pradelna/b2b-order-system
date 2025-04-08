@@ -1,10 +1,8 @@
-import Header from "@/components/Header";
 import React, {useContext} from "react";
-import {faChevronLeft, faFilePdf} from "@fortawesome/free-solid-svg-icons";
-import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { LanguageContext } from "../../context/LanguageContext";
 import FooterAccount from "../FooterAccount";
-import {Link} from "react-router-dom";
+import ButtonBack from "../utils/ButtonBack";
+import Header from "@/components/Header";
 
 const GdprEn: React.FC = () => {
     const { currentData } = useContext(LanguageContext);
@@ -13,12 +11,8 @@ const GdprEn: React.FC = () => {
         <>
             <Header />
             <div className="container login-margin-top-90 wrapper mb-4">
-                <Link to="/" className="text-decoration-none">
-                    <p className="back-link">
-                        <FontAwesomeIcon icon={faChevronLeft} className="icon" />
-                        <span className="ms-2"><strong>{currentData?.buttons["back"] || "Zpět"}</strong></span>
-                    </p>
-                </Link>
+
+                <ButtonBack />
 
                 <h1>Privacy Policy</h1>
                 <p>Last updated: April 04, 2025</p>

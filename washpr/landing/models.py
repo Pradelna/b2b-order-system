@@ -232,6 +232,7 @@ class LandingPage(models.Model):
     form_sunday = models.CharField("Form sunday", max_length=100, blank=True, null=True)
     form_pickup = models.CharField("Form pickup", max_length=100, blank=True, null=True)
     form_delivery = models.CharField("Form delivery", max_length=100, blank=True, null=True)
+    form_optional = models.CharField("Optional", max_length=20, blank=True, null=True)
 
     success_success = models.CharField("Success!", max_length=100, blank=True, null=True)
     success_message_mistake_1 = models.CharField("If you made a mistake, you can cancel", max_length=100, blank=True, null=True)

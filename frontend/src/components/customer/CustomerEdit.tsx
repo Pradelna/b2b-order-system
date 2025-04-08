@@ -187,7 +187,8 @@ const CustomerEdit: React.FC<CustomerEditProps> = ({
                     <div className="row form-group">
                         <div className="col-12 col-md-4 label-form">
                             <label htmlFor="new_company_dic" className="form-label">
-                                {currentData.customer.vat_number}
+                                {currentData?.customer?.vat_number || "DIČ"}{" "}
+                                {currentData?.form?.optional || "volitelné"}
                             </label>
                         </div>
                         <div className="col-12 col-md-8">
@@ -197,7 +198,6 @@ const CustomerEdit: React.FC<CustomerEditProps> = ({
                                 value={formData.new_company_dic}
                                 onChange={handleChange}
                                 className="form-control"
-                                required
                             />
                             {(customerData.new_company_dic !== customerData.company_dic) && (
                                 <p className="alert alert-danger mt-2">

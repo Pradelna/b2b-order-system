@@ -128,7 +128,9 @@ const CustomerForm: React.FC<CustomerFormProps> = ({ onSubmit, errors }) => {
           {/* Company dic */}
           <div className="row mb-1">
             <div className="col-12 col-md-4 col-lg-3 label-form">
-              <label htmlFor="new_company_dic">{currentData.customer.vat_number}</label>
+              <label htmlFor="new_company_dic">
+                {currentData?.customer?.vat_number || "DIČ"}{" "}
+                {currentData?.form?.optional || "volitelné"}</label>
             </div>
             <div className="col-12 col-md-8 col-lg-9">
               <input
@@ -144,7 +146,7 @@ const CustomerForm: React.FC<CustomerFormProps> = ({ onSubmit, errors }) => {
           {/* Company phone */}
           <div className="row mb-1">
             <div className="col-12 col-md-4 col-lg-3 label-form">
-              <label htmlFor="company_name">{currentData.customer.phone}*</label>
+              <label htmlFor="company_name">{currentData?.customer?.phone}*</label>
             </div>
             <div className="col-12 col-md-8 col-lg-9">
               <input
