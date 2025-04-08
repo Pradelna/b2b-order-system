@@ -68,13 +68,13 @@ const DocumentsBlock: React.FC = () => {
                     </h3>
 
                     {/* Display uploaded files */}
-                    <div style={{ margin: "0 1px" }} className="row">
+                    <div className="row mb-2">
                         {files.map((file, index) => {
                             const fileName = cleanFileName(file.file);
                             return (
                                 <div
                                     key={index}
-                                    className="col-12 mb-2"
+                                    className="col-12"
                                     style={{ cursor: 'pointer' }}
                                     onClick={() => downloadFile(fileName)}
                                 >
