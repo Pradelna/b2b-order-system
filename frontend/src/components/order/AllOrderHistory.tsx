@@ -218,6 +218,12 @@ const AllOrderHistory: React.FC = () => {
                                                     </p>
                                                 )}
 
+                                                {order.place_name ? (
+                                                    <p>
+                                                        <strong>{currentData?.form?.place_name || "Misto"}:</strong> {order.place_name}
+                                                    </p>
+                                                ) : null }
+
                                                 {expandedOrders[order.id] ? (
                                                     <div className="expanded-content">
                                                         {/* if order is repeating */}
