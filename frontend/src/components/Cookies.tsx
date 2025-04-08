@@ -13,7 +13,7 @@ const Cookies: React.FC = () => {
     const labelCookies = cookies[lang] || cookies.en;
 
     const gdpr = {
-        cz: "Zásady ochrany osobných údajov",
+        cz: "Zásady ochrany osobných údajů",
         ru: "Политика конфиденциальности",
         en: "Privacy Policy",
     };

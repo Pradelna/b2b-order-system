@@ -82,22 +82,30 @@ const CustomerEdit: React.FC<CustomerEditProps> = ({
         setIsEditing(false); // Exit editing mode without saving
     };
 
+    const lang = currentData?.lang || "cz";
+    const editInfo = {
+        cz: "Upravit údaje zákazníka",
+        ru: "Редактировать информацию о клинте",
+        en: "Edit Customer Information",
+    };
+    const labelEditInfo = editInfo[lang] || editInfo.cz;
+
     if (!currentData) {
         return <div>loading...</div>; // Avoid rendering if context data is unavailable
     }
 
     return (
         <div className="card company-card card-form">
-            <DarkTooltip title="Close" placement="top" arrow>
-            <FontAwesomeIcon
-                icon={faSquareXmark}
-                className="settings"
-                style={{ cursor: "pointer" }}
-                onClick={handleCancel}
-                data-tooltip-id="cross-tooltip"
-            />
+            <DarkTooltip title={currentData?.form.close || "Zavřít"} placement="top" arrow>
+                <FontAwesomeIcon
+                    icon={faSquareXmark}
+                    className="settings"
+                    style={{ cursor: "pointer" }}
+                    onClick={handleCancel}
+                    data-tooltip-id="cross-tooltip"
+                />
             </DarkTooltip>
-            <h1 className="detail-page mb-3">Edit Customer Information</h1>
+            <h1 className="detail-page mb-3">{labelEditInfo || "Upravit údaje zákazníka"}</h1>
             <form onSubmit={handleSubmit}>
                 <div className="row form-customer-edit">
 

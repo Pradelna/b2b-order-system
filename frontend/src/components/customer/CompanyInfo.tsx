@@ -13,8 +13,7 @@ import {
     faGear,
     faPenToSquare,
 } from "@fortawesome/free-solid-svg-icons";
-import { fetchWithAuth } from "../account/auth.ts";
-import { Tooltip as ReactTooltip } from "react-tooltip";
+import { fetchWithAuth } from "../account/auth";
 import {Skeleton} from "@mui/material";
 import DarkTooltip from "@/components/utils/DarkTooltip";
 
@@ -87,6 +86,21 @@ const CompanyInfo: React.FC<CompanyInfoProps> = ({
             });
     };
 
+    const lang = currentData?.lang || "cz";
+    const editInfo = {
+        cz: "Upravit údaje zákazníka",
+        ru: "Редактировать информацию о клинте",
+        en: "Edit Customer Information",
+    };
+    const labelEditInfo = editInfo[lang] || editInfo.cz;
+
+    const accountSettings = {
+        cz: "Nastavení účtu",
+        ru: "Настройки аккаунта",
+        en: "Account settings",
+    };
+    const labelAccountSettings = accountSettings[lang] || accountSettings.cz;
+
     useEffect(() => {
         if (!customerData || !customerData.company_email) {
             setLoading(true);
@@ -144,7 +158,7 @@ const CompanyInfo: React.FC<CompanyInfoProps> = ({
         <div className="card company-card">
             {/* Conditional icon display based on the page */}
             {isDetailPage ? (
-                <DarkTooltip title="Edit Customer Information" placement="top" arrow>
+                <DarkTooltip title={labelEditInfo || "Upravit údaje zákazníka"} placement="top" arrow>
                     <FontAwesomeIcon
                         icon={faPenToSquare}
                         className="settings"
@@ -154,11 +168,13 @@ const CompanyInfo: React.FC<CompanyInfoProps> = ({
                 </DarkTooltip>
             ) : customerId ? (
                 <Link to={`/customer/${customerId}`}>
-                    <FontAwesomeIcon
-                        icon={faGear}
-                        className="settings"
-                        data-tooltip-id="settings-tooltip"
-                    />
+                    <DarkTooltip title={labelAccountSettings || "Nastavení účtu"} placement="top" arrow>
+                        <FontAwesomeIcon
+                            icon={faGear}
+                            className="settings"
+                            data-tooltip-id="settings-tooltip"
+                        />
+                    </DarkTooltip>
                 </Link>
             ) : (
                 <FontAwesomeIcon
@@ -167,13 +183,6 @@ const CompanyInfo: React.FC<CompanyInfoProps> = ({
                     style={{ opacity: 0.5, cursor: "not-allowed" }}
                 />
             )}
-
-            <ReactTooltip
-                id="settings-tooltip"
-                place="top"
-                content="Account settings"
-                className="custom-tooltip"
-            />
 
             {/* Customer data display */}
             {!isDetailPage ? (

@@ -106,7 +106,7 @@ const OrderSuccess: React.FC<OrderSuccessProps> = ({ newOrder, onClose }) => {
                                     { currentData?.success?.message_mistake_2 || "tatu objednávku" }
                                 </Link>
                             )}
-                            <span> { currentData?.success?.message_mistake_3 || "a vytvořit novú." }</span>
+                            <span> { currentData?.success?.message_mistake_3 || "a vytvořit novou." }</span>
                         </p>
 
                         <FontAwesomeIcon icon={faStopwatch} style={{ height: "30px" }} />

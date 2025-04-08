@@ -48,7 +48,7 @@ def send_activation_email(user, lang):
         subject = "Potvrďte svoji emailovou adresu"
         message = (
             f"Dobrý den.\n\n"
-            f"Prosím, potvrďte svoji emailovou adresu, olízněte odkaz:\n{activation_link}\n\n"
+            f"Prosím, potvrďte svoji emailovou adresu, rozklikněte odkaz:\n{activation_link}\n\n"
             f"Děkuji vám"
         )
     elif lang == 'ru':
