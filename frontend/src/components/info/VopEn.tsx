@@ -1,9 +1,10 @@
 import Header from "@/components/Header";
-import {useContext} from "react";
-import { faFilePdf } from "@fortawesome/free-solid-svg-icons";
+import React, {useContext} from "react";
+import {faChevronLeft, faFilePdf} from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { LanguageContext } from "../../context/LanguageContext";
 import FooterAccount from "../FooterAccount";
+import {Link} from "react-router-dom";
 
 const VopEn: React.FC = () => {
     const { currentData } = useContext(LanguageContext);
@@ -11,6 +12,12 @@ const VopEn: React.FC = () => {
     return (
         <>
             <Header />
+            <Link to="/" className="text-decoration-none">
+                <p className="back-link">
+                    <FontAwesomeIcon icon={faChevronLeft} className="icon" />
+                    <span className="ms-2"><strong>{currentData?.buttons["back"] || "Zpět"}</strong></span>
+                </p>
+            </Link>
             <div className="container login-margin-top-90 wrapper mb-4">
                 <h1>The Terms and Conditions</h1>
                 <h3>1.	Úvodní ustanovení</h3>
