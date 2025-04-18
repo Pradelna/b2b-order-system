@@ -8,7 +8,7 @@ const version = process.env.VITE_APP_VERSION || 'dev';
 export default defineConfig({
   base: '/',
   define: {
-    'import.meta.env.VITE_API_URL': JSON.stringify(process.env.VITE_API_URL || 'http://api.sokov.eu/api'),
+    'import.meta.env.VITE_API_URL': JSON.stringify(process.env.VITE_API_URL || 'http://api.pradelna1.cz/api'),
     __APP_VERSION__: JSON.stringify(version),
   },
   plugins: [
