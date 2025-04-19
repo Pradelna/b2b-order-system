@@ -196,16 +196,37 @@ SIMPLE_JWT = {
 LOGGING = {
     'version': 1,
     'disable_existing_loggers': False,
+    'formatters': {
+        'verbose': {
+            'format': '{asctime} {levelname} {name} {message}',
+            'style': '{',
+        },
+    },
     'handlers': {
         'celery': {
             'level': 'INFO',
             'class': 'logging.FileHandler',
+            'formatter': 'verbose',
             'filename': os.path.join(BASE_DIR, 'logs', 'celery.log'),
+        },
+        'console': {
+            'class': 'logging.StreamHandler',
+            'formatter': 'verbose',
         },
     },
     'loggers': {
+        '': {
+            'handlers': ['celery', 'console'],
+            'level': 'INFO',
+            'propagate': True,
+        },
+        'django': {
+            'handlers': ['celery', 'console'],
+            'level': 'INFO',
+            'propagate': False,
+        },
         'celery': {
-            'handlers': ['celery'],
+            'handlers': ['celery', 'console'],
             'level': 'INFO',
             'propagate': True,
         },
