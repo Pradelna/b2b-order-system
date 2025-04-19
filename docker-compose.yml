@@ -101,14 +101,13 @@ services:
     restart: on-failure
     entrypoint: >
       /bin/sh -c "
-        sleep 20;
-        mc alias set myminio http://minio:9000 $MINIO_ROOT_USER $MINIO_ROOT_PASSWORD;
-        mc mb -p myminio/$AWS_STORAGE_BUCKET_NAME || true;
-        mc admin user add myminio $AWS_ACCESS_KEY_ID $AWS_SECRET_ACCESS_KEY || true;
-        mc admin policy attach myminio readwrite --user=$AWS_ACCESS_KEY_ID || true;
-        echo '[+] MinIO initialized';
-        tail -f /dev/null
-      "
+          sleep 10;
+          mc alias set myminio http://minio:9000 $MINIO_ROOT_USER $MINIO_ROOT_PASSWORD;
+          mc mb -p myminio/$AWS_STORAGE_BUCKET_NAME || true;
+          mc admin user add myminio $AWS_ACCESS_KEY_ID $AWS_SECRET_ACCESS_KEY || true;
+          mc admin policy attach myminio readwrite --user=$AWS_ACCESS_KEY_ID || true;
+          tail -f /dev/null
+        "
     environment:
       MINIO_ROOT_USER: ${MINIO_ROOT_USER}
       MINIO_ROOT_PASSWORD: ${MINIO_ROOT_PASSWORD}
