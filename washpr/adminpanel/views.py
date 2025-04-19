@@ -118,12 +118,12 @@ def upload_document(request, customer_id):
     if len(documents) >= 5:
         return Response({"error": "You can't have more 5 files"}, status=400)
     serializer = CustomerDocumentSerializer(data=mutable_data)
-    if 'file' in serializer.validated_data:
-        file_obj = serializer.validated_data['file']
-        logger.info(f"FILE NAME: {file_obj.name}")
-        logger.info(f"STORAGE CLASS: {file_obj.storage}")
-        logger.info(f"BUCKET: {getattr(file_obj.storage, 'bucket_name', 'not set')}")
     if serializer.is_valid():
+        if 'file' in serializer.validated_data:
+            file_obj = serializer.validated_data['file']
+            logger.info(f"FILE NAME: {file_obj.name}")
+            logger.info(f"STORAGE CLASS: {file_obj.storage}")
+            logger.info(f"BUCKET: {getattr(file_obj.storage, 'bucket_name', 'not set')}")
         logger.info(f"Serializer valid. Saving file for customer ID {customer_id}")
         serializer.save()
         return Response({"message": "File uploaded successfully!"}, status=201)
