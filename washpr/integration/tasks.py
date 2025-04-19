@@ -381,7 +381,7 @@ def send_orders_task():
     from order.models import Order  # Импортируем модель заказа из приложения order
 
     # Выбираем заказы, не отправленные ранее и созданные более 35 минут назад
-    time_threshold = timezone.now() - timedelta(minutes=2)
+    time_threshold = timezone.now() - timedelta(minutes=35)
     orders = Order.objects.filter(active=False, canceled=False, processed=True ,created_at__lte=time_threshold)
 
     results = []
