@@ -96,6 +96,7 @@ def put_customer(request, customer_id):
 
 @api_view(['POST'])
 @permission_classes([IsAdminUser])
+@parser_classes([MultiPartParser])
 def upload_document(request, customer_id):
     try:
         customer = Customer.objects.get(user__id=customer_id)
