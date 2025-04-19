@@ -49,7 +49,7 @@ class Customer(models.Model):
             super().save(*args, **kwargs)
             # Если поле rp_client_external_id ещё не заполнено, формируем его, используя pk
             if not self.rp_client_external_id:
-                self.rp_client_external_id = "zakaznik_" + str(self.pk)
+                self.rp_client_external_id = "ZS-" + str(self.pk)
                 self.company_name = self.new_company_name
                 self.company_address = self.new_company_address
                 self.company_ico = self.new_company_ico

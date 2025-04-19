@@ -390,7 +390,7 @@ def send_orders_task():
     for order in orders:
         time_planned = datetime.utcfromtimestamp(order.rp_time_planned).strftime('%d%m%y')
 
-        contract_external_id = time_planned + f"/test-{order.id}"
+        contract_external_id = time_planned + f"/{order.id}ZS"
         # Формируем payload для заказа. Приводим поля к нужному типу,
         # заполняем отсутствующие поля пустыми строками или значениями по умолчанию.
         payload = {
