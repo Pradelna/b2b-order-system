@@ -112,10 +112,13 @@ def upload_document(request, customer_id):
 
     logger = logging.getLogger(__name__)
     logger.info(f"Uploading file for customer ID {customer_id}. Total existing files: {documents.count()}")
+    logger.info(f"Uploading to bucket: {settings.AWS_STORAGE_BUCKET_NAME}")
+    logger.info(f"AWS_ENDPOINT: {settings.AWS_S3_ENDPOINT_URL}")
 
     if len(documents) >= 5:
         return Response({"error": "You can't have more 5 files"}, status=400)
     serializer = CustomerDocumentSerializer(data=mutable_data)
+    logger.info(f"Storage class: {serializer.fields['file'].storage}")
     if serializer.is_valid():
         logger.info(f"Serializer valid. Saving file for customer ID {customer_id}")
         serializer.save()
