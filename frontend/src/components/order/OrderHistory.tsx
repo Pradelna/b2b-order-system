@@ -129,8 +129,8 @@ const OrderHistory: React.FC<OrderHistoryProps> = ({ placeId, orders = [], setOr
             const updatedCancelableOrders: { [key: number]: boolean } = {};
             orders.forEach((order) => {
                 const createdTime = new Date(order.created_at).getTime();
-                const timeDiff = (now - createdTime) / 60000; // Разница в минутах
-                updatedCancelableOrders[order.id] = timeDiff < 2;
+                const timeDiff = (now - createdTime) / 60000; // diffirent minutes
+                updatedCancelableOrders[order.id] = timeDiff < 30;
             });
             setCancelableOrders(updatedCancelableOrders);
         };
