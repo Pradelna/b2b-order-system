@@ -45,6 +45,7 @@ services:
     volumes:
       - static_volume:/app/static
       - media_volume:/app/media
+      - ./washpr/logs:/app/logs
     depends_on:
       - postgres
       - redis
@@ -58,6 +59,7 @@ services:
     command: celery -A washpr worker --loglevel=info
     volumes:
       - ./washpr:/app
+      - ./washpr/logs:/app/logs
     depends_on:
       - backend
       - redis
@@ -78,6 +80,7 @@ services:
       - .env
     volumes:
       - ./washpr:/app
+      - ./washpr/logs:/app/logs
     depends_on:
       - backend
       - redis
