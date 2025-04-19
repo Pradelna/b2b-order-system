@@ -67,7 +67,7 @@ class Customer(models.Model):
         else:
             # Если объект уже существует, но rp_client_external_id не заполнено, устанавливаем его
             if not self.rp_client_external_id:
-                self.rp_client_external_id = "test" + str(self.pk)
+                self.rp_client_external_id = self.company_name or self.new_company_address
 
         # Если клиент активен и данные ещё не отправлены, запускаем задачу
         # if self.active and not self.data_sent:

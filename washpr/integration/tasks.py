@@ -38,7 +38,7 @@ def send_contact_email_task(subject, message, from_email, recipient_list):
     return "Sending contact email"
 
 
-# Класс для работы с внешним API
+# Class for working with external API Route Plan
 class RestApiClient:
     def __init__(self, api_key):
         self.api_key = api_key
@@ -81,7 +81,7 @@ class RestApiClient:
         print("Client params:", params)
         response = self.call_api(url, http_method="POST", params=params)
         if response:
-            print("Client created successfully:", response)
+            print("Client was created successfully: ", response)
             return response
         else:
             print("Failed to create client.")
@@ -107,13 +107,14 @@ class RestApiClient:
             "lat": lat,
             "lng": lng,
         }
-        print("Place params:", params)
+        # print("Place params: ", params)
         response = self.call_api(url, http_method="POST", params=params)
         if response:
-            print("Place created successfully:", response)
+            # print("Place created successfully:", response)
+            print(f"Place {place_title} created successfully for client {client_external_id}")
             return response
         else:
-            print("Failed to create place.")
+            print(f"Failed to create place {place_title}")
             return None
 
 
@@ -136,11 +137,11 @@ def create_client_task(customer_id):
     api_key = settings.EXTERNAL_API_KEY
     api_client = RestApiClient(api_key)
 
-    client_external_id = customer.rp_client_external_id or f"customer_{customer.pk}"
+    client_external_id = customer.rp_client_external_id or customer.company_name
     client_name = customer.company_name
 
     response = api_client.create_client(client_external_id, client_name)
-    print(f"Create client response: {response}")
+    # print(f"Create client response: {response}")
 
     if response and "id" in response:
         client_id = response["id"]
@@ -153,23 +154,49 @@ def create_client_task(customer_id):
 
         create_all_place_task.delay(customer_id)
 
-        subject = "Váš účet byl aktivován"
-        message = (
-            f"Dobrý den, {customer.company_person or customer.company_name}!\n\n"
-            f"Váš účet byl úspěšně schválen.\n"
-            f"S aktivací vašeho účtu souhlasíte s cenou, která Vám byla vyměřena.\n"
-            f"Ceny najdete v administračním kabinetu v bloku dokumentů.\n"
-            f"Těšíme se na spolupráci!\n\n"
-            f"S pozdravem\n"
-            f"Tým prádelna no.1\n"
-        )
+        if customer.user.lang == 'cz':
+            subject = "Váš účet byl aktivován"
+            message = (
+                f"Dobrý den, {customer.company_person or customer.company_name}!\n\n"
+                f"Váš účet byl úspěšně schválen.\n"
+                f"S aktivací vašeho účtu souhlasíte s cenou, která Vám byla vyměřena.\n"
+                f"Ceny najdete v administračním kabinetu v bloku dokumentů.\n"
+                f"Těšíme se na spolupráci!\n\n"
+                f"S pozdravem\n"
+                f"Tým prádelna no.1\n"
+            )
+        elif customer.user.lang == 'ru':
+            subject = "Ваш аккаунт активирован"
+            message = (
+                f"Здравствуйте, {customer.company_person or customer.company_name}!\n\n"
+                f"Ваша учетная запись была успешно одобрена.\n"
+                f"Активируя свою учетную запись, вы соглашаетесь с ценой, которая была с вас взимана.\n"
+                f"Цены вы можете найти в кабинете администрации в блоке документов.\n"
+                f"Мы с нетерпением ждем сотрудничества с вами!\n\n"
+                f"С уважением\n"
+                f"Команда прачечной №1\n"
+            )
+        else:
+            subject = "Your account has been activated"
+            message = (
+                f"Hello, {customer.company_person or customer.company_name}!\n\n"
+                f"Your account has been successfully approved.\n"
+                f"By activating your account, you agree to the price that has been charged to you.\n"
+                f"You can find the prices in the administration cabinet in the documents block.\n"
+                f"We look forward to working with you!\n\n"
+                f"Best regards\n"
+                f"The laundry no.1 team\n"
+            )
+
         from_email = settings.DEFAULT_FROM_EMAIL
         recipient_list = [customer.user.email]
         send_mail(subject, message, from_email, recipient_list)
         print(f"Confirmation email sent to {customer.user.email}")
-        return f"Client created and email sent for customer {customer_id} with external client id {client_id}."
+        return f"Client created and email sent for customer {customer.company_name} with external client id {customer.rp_client_external_id}."
     else:
-        return f"Failed to create client for customer {customer_id}."
+        print(f"Failed to create client - {customer.company_name}")
+        return f"Failed to create client for customer {customer.company_name}."
+
 
 @shared_task(
     autoretry_for=(requests.exceptions.RequestException,),
@@ -177,14 +204,15 @@ def create_client_task(customer_id):
 )
 def create_place_task(place_id):
     """
-    Задача отправки данных места во внешнюю систему.
-    После успешного ответа (наличие поля "id") обновляет модель Place, сохраняя remote_id.
+    The task of sending location data to an external system. After a successful response (presence of the "id" field),
+    updates the Place model, saving the remote_id.
     """
     close_old_connections()
     from place.models import Place  # Предполагается, что модель Place в приложении place
     try:
         place = Place.objects.get(pk=place_id)
     except Place.DoesNotExist:
+        print(f"Place with id {place_id} not found.")
         return f"Place with id {place_id} not found."
 
     # Предполагается, что у модели Place есть внешний ключ customer
@@ -210,13 +238,15 @@ def create_place_task(place_id):
             lat=None,
             lng=None,
         )
-        print(f"Create place response: {response}")
+        # print(f"Create place response: {response}")
         if response and "id" in response:
             place.rp_id = response["id"]
             place.data_sent = True
             place.save(update_fields=["rp_id", "data_sent"])
+            print(f"Place {place_id} created with remote id {response['id']}.")
             return f"Place {place_id} created with remote id {response['id']}."
         else:
+            print(f"Failed to create place {place_id}.")
             return f"Failed to create place {place_id}."
 
     else:
@@ -229,8 +259,8 @@ def create_place_task(place_id):
 )
 def create_all_place_task(customer_id):
     """
-    Задача отправки данных всех мест во внешнюю систему.
-    После успешного ответа обновляет модель Place, сохраняя remote_id.
+    The task of sending data for all locations to an external system.
+    After a successful response, it updates the Place model, saving the remote_id.
     """
     close_old_connections()
     from place.models import Place  # Предполагается, что модель Place в приложении place
@@ -243,12 +273,10 @@ def create_all_place_task(customer_id):
     api_client = RestApiClient(api_key)
 
     result = []
-
+    fail_result = []
 
     if len(places) != 0:
         for place in places:
-            customer = place.customer
-            client_external_id = customer.rp_client_external_id
             response = api_client.create_client_place(
                 client_external_id=place.customer.rp_client_external_id,
                 place_external_id=place.rp_external_id,
@@ -264,16 +292,19 @@ def create_all_place_task(customer_id):
                 lat=None,
                 lng=None,
             )
-            print(f"Create place response: {response}")
+            # print(f"Create place response: {response}")
             if response and "id" in response:
                 place.rp_id = response["id"]
                 place.data_sent = True
                 place.save(update_fields=["rp_id", "data_sent"])
-                result.append(f"✅ Place {place.place_name} created with remote id {response['id']}.")
+                print(f"✅ Place {place.place_name} created with remote id {response['id']}.")
+                result.append(f"{place.place_name}")
             else:
-                result.append(f"❌ Failed to create place {place.place_name}.")
+                print(f"❌ Failed to create place {place.place_name}.")
+                fail_result.append(f"{place.place_name}.")
 
-    return result
+    print(f"Places created: {result}, Places don't created: {fail_result}")
+    return f"Places created: {result}, Places don't created: {fail_result}"
 
 
 @shared_task(
@@ -282,8 +313,8 @@ def create_all_place_task(customer_id):
 )
 def update_place_task(place_id):
     """
-    Обновляет данные существующего Place (который уже был создан во внешней системе).
-    Для этого у Place должен быть заполнен place.rp_id.
+    Updates the data of an existing Place (which has already been created in an external system).
+    For this, the Place must have place.rp_id filled in.
     """
     close_old_connections()
     from place.models import Place  # Модель Place
@@ -291,6 +322,7 @@ def update_place_task(place_id):
     try:
         place = Place.objects.get(pk=place_id)
     except Place.DoesNotExist:
+        print(f"\033[91m Place with id {place_id} not found.\033[0m")
         return f"Place with id {place_id} not found."
 
     # Проверяем, что у place есть внешний идентификатор (rp_id),
@@ -322,8 +354,10 @@ def update_place_task(place_id):
 
     if response and "id" in response:
         # Если во внешней системе возвращается тот же id или обновлённые данные, можно их сохранить
+        print(f"Place {place_id} updated with remote id {response['id']}.")
         return f"Place {place_id} updated with remote id {response['id']}."
     else:
+        print(f"Failed to update place {place_id}.")
         return f"Failed to update place {place_id}."
 
 
@@ -333,146 +367,66 @@ def update_place_task(place_id):
 )
 def send_orders_task():
     """
-    Задача запускается каждый час и выбирает заказы, которые:
-      - Ещё не были отправлены (reported=False)
-      - Созданы более 35 минут назад
-    Для каждого заказа отправляется запрос на https://online.auto-gps.eu/cnt/apiItinerary/contractAdd.
-    При успешном ответе (наличие поля "id" в ответе) заказ помечается как отправленный (reported=True).
+    The task runs every hour and selects orders that:
+      - Have not yet been sent (reported=False)
+      - Were created more than 35 minutes ago
+      For each order, a request is sent to https://online.auto-gps.eu/cnt/apiItinerary/contractAdd.
+    Upon a successful response (presence of the "id" field in the response), the order is marked as sent (reported=True).
     """
 
     api_key = settings.EXTERNAL_API_KEY
     api_client = RestApiClient(api_key)
-    # get order from route plane
-    # dictionary for order external_id for each date
-    orders_data_from_rp = []
-    success_get = False
 
-    # import requests
-
-    # url = "https://online.auto-gps.eu/cnt/apiItinerary/contractList"
-    # offset = 0
-    # limit = 1000
-    # all_items = []
-    # count = 0
-    # while True:
-    #     params = {
-    #         "show_closed": 0,
-    #         # "last_status_change": 31536000,
-    #         "limit": limit,
-    #         "offset": offset,
-    #     }
-    #
-    #     try:
-    #         response = api_client.call_api(url, http_method="GET", params=params)
-    #         # print("API Response:", response)
-    #         orders_data_from_rp = response
-    #         if not orders_data_from_rp:  # пустой список, кончились данные
-    #             break
-    #         all_items.extend(orders_data_from_rp)
-    #         offset += limit
-    #         count += 1
-    #         print(f"COUNT REQUEST - {count}")
-    #         success_get = True
-    #     except requests.exceptions.RequestException as e:
-    #         print("API Request failed:", e)
-    # print(f"NUMBER ORDERS IN REQEST {len(all_items)}")
     close_old_connections()
     from order.models import Order  # Импортируем модель заказа из приложения order
 
     # Выбираем заказы, не отправленные ранее и созданные более 35 минут назад
     time_threshold = timezone.now() - timedelta(minutes=2)
     orders = Order.objects.filter(active=False, canceled=False, processed=True ,created_at__lte=time_threshold)
-    # find out oldest order
-    # min_order = min(orders, key=lambda order: order.rp_time_planned) if orders else None
-    # # min time for time slice
-    # min_time = min_order.rp_time_planned if min_order else 0
-    # # dictionary for max external_id {'01-03-2025': 7}
-    # max_external_number_by_day = defaultdict(int)
-    #
-    # if all_items:
-    #     for item in all_items:
-    #         # get external_id
-    #         external_id = item["external_id"]
-    #         # get the date from externel_id
-    #         external_id_date_str = external_id.split("/")[0]  # '170325'
-    #         # интерпретируем '170325' как день=17, месяц=03, год=25:
-    #         try:
-    #             time_from_order  = datetime.strptime(external_id_date_str, '%d%m%y')
-    #             time_planned = int(time_from_order.timestamp())
-    #
-    #             if time_planned >= min_time:
-    #                 # Преобразуем timestamp в формат DD-MM-YYYY
-    #                 date_str = datetime.utcfromtimestamp(time_planned).strftime('%d%m%y')
-    #                 try:
-    #                     external_number = int(external_id.split("/")[-1])
-    #                 except ValueError:
-    #                     external_number = 0  # Если не удалось извлечь число
-    #
-    #                 # Обновляем максимум для конкретного дня
-    #                 max_external_number_by_day[date_str] = max(max_external_number_by_day[date_str], external_number)
-    #         except:
-    #             pass
 
     results = []
+    fail_results = []
 
-    success_get = True
-    if success_get:
-        for order in orders:
-            time_planned = datetime.utcfromtimestamp(order.rp_time_planned).strftime('%d%m%y')
-            # check if other orders for this date
-            # if time_planned in max_external_number_by_day:
-            #     # number for order
-            #     next_number_order = max_external_number_by_day[time_planned] + 1
-            #     # name of contract_external_id
-            #     contract_external_id = time_planned + f"/{next_number_order}"
-            #     # print(f"new number -> {contract_external_id}")
-            # else:
-            #     # print(f"{time_planned} -> free")
-            #     next_number_order = 1
-            #     contract_external_id = time_planned + f"/{next_number_order}"
-            #     # print(f"new number -> {contract_external_id}")
-            # # add new number to dictionary to check next order
-            # max_external_number_by_day[time_planned] = next_number_order
+    for order in orders:
+        time_planned = datetime.utcfromtimestamp(order.rp_time_planned).strftime('%d%m%y')
 
+        contract_external_id = time_planned + f"/test-{order.id}"
+        # Формируем payload для заказа. Приводим поля к нужному типу,
+        # заполняем отсутствующие поля пустыми строками или значениями по умолчанию.
+        payload = {
+            "contract_external_id": contract_external_id,
+            "place_external_id": order.rp_place_external_id or order.place.rp_external_id,
+            "contract_title": order.rp_contract_title or None,
+            "time_planned": order.rp_time_planned or None,
+            "customer_note": order.rp_customer_note or None,
+            "client_external_id": order.rp_client_external_id or None,
+            "place_title": order.rp_place_title or None,
+            "place_city": order.rp_place_city or None,
+            "place_street": order.rp_place_street or None,
+            "place_number": order.rp_place_number or None,
+            "place_zip": order.rp_place_zip or None,
+            "place_country": "CZ",
+            "branch_office_id": order.rp_branch_office_id or None,
+            "problem_description": order.rp_problem_description or None,
+        }
+        # URL для отправки заказа
+        url = "https://online.auto-gps.eu/cnt/apiItinerary/serviceOrder"
+        # print(f"Sending order {order.pk} with payload: {payload}")
+        response = api_client.call_api(url, http_method="POST", params=payload)
+        # print(response)
+        if response and "id" in response:
+            order.active = True
+            order.rp_id = response["id"]
+            order.rp_contract_external_id = contract_external_id
+            order.contract_external_id_for_admin = contract_external_id
+            order.save(update_fields=["active", "rp_id", "rp_contract_external_id", "contract_external_id_for_admin"])
+            print(f"Order {order.pk} sent successfully with external id {response['id']}")
+            results.append(f"{order.pk}, external id - {response['id']}.")
+        else:
+            fail_results.append(f"\033[91m❌Failed to send order {order.pk}.\033[0m")
 
-            contract_external_id = time_planned + f"/test-{order.id}"
-            # Формируем payload для заказа. Приводим поля к нужному типу,
-            # заполняем отсутствующие поля пустыми строками или значениями по умолчанию.
-            payload = {
-                "contract_external_id": contract_external_id,
-                "place_external_id": order.rp_place_external_id or order.place.rp_external_id,
-                "contract_title": order.rp_contract_title or None,
-                "time_planned": order.rp_time_planned or None,
-                "customer_note": order.rp_customer_note or None,
-                "client_external_id": order.rp_client_external_id or None,
-                "place_title": order.rp_place_title or None,
-                "place_city": order.rp_place_city or None,
-                "place_street": order.rp_place_street or None,
-                "place_number": order.rp_place_number or None,
-                "place_zip": order.rp_place_zip or None,
-                "place_country": "CZ",
-                "branch_office_id": order.rp_branch_office_id or None,
-                "problem_description": order.rp_problem_description or None,
-            }
-            # URL для отправки заказа
-            url = "https://online.auto-gps.eu/cnt/apiItinerary/serviceOrder"
-            # print(f"Sending order {order.pk} with payload: {payload}")
-            response = api_client.call_api(url, http_method="POST", params=payload)
-            # print(response)
-            # response = False
-            if response and "id" in response:
-                order.active = True
-                order.rp_id = response["id"]
-                order.rp_contract_external_id = contract_external_id
-                order.contract_external_id_for_admin = contract_external_id
-                order.save(update_fields=["active", "rp_id", "rp_contract_external_id", "contract_external_id_for_admin"])
-                results.append(f"Order {order.pk} sent successfully with external id {response['id']}.")
-            else:
-                results.append(f"Failed to send order {order.pk}.")
-    else:
-        print(f"Failed to get orders fro route plane")
-    print(f"Sent {len(results)} orders. Orders: {results}")
-    return results
+    print(f"Sent {len(results)} orders. Orders: {results}. Failed {len(fail_results)} orders")
+    return f"Sent {len(results)} orders. Orders: {results}. Failed {len(fail_results)} orders"
 
 
 @shared_task(
@@ -579,16 +533,16 @@ def create_orders_task():
                     })
                 new_order = Order(**base_order_data)
                 new_order.save()
-                print(f"success create EVERY WEEK {new_order.pk}")
+                print(f"✅ success create EVERY WEEK {new_order.pk}")
                 new_order_pk = new_order.pk
                 results.append(new_order.pk)
 
         elif order.type_ship == 'one_time' or order.type_ship == 'quick_order':
             pl_date = order.date_delivery
             logger.info(f"Logger date delivery: {pl_date}. And date planned: {int(datetime.combine(pl_date, time()).timestamp())}")
-            print(f"Print date delivery: {pl_date}. And date planned: {int(datetime.combine(pl_date, time()).timestamp())}")
+            # print(f"Print date delivery: {pl_date}. And date planned: {int(datetime.combine(pl_date, time()).timestamp())}")
             rp_time_planned = int(datetime.combine(pl_date, time()).timestamp()) + 43200
-            print(f"Print rp planned: {rp_time_planned}")
+            # print(f"Print rp planned: {rp_time_planned}")
             base_order_data.update({
                 'rp_time_planned': rp_time_planned,
                 'date_start_day': order.date_pickup,
@@ -603,11 +557,13 @@ def create_orders_task():
             new_order = Order(**base_order_data)
             new_order.save()
             results.append(new_order.pk)
-            print(f"success create ONE TIME ORDER {new_order.pk}, rp planned - {new_order.rp_time_planned}")
+            print(f"✅ success create ONE TIME ORDER {new_order.pk}, rp planned - {new_order.rp_time_planned}")
         order.processed = True
         order.rp_status = 0
         order.save(update_fields=["processed", "rp_status"])
-    return results
+
+    print(f"Orders was created successfully: {results}")
+    return f"Orders was created successfully: {results}"
 
 
 @shared_task(
@@ -634,7 +590,7 @@ def update_orders_task():
         orders_data_from_rp = response
         success_get = True
     except requests.exceptions.RequestException as e:
-        print("API Request failed:", e)
+        print("\033[91m❌ API Request failed: \033[0m", e)
 
     if success_get: # request is success
         if orders_data_from_rp: # list with data is not empty
@@ -661,47 +617,54 @@ def update_orders_task():
                         try:
                             # if order is delivery
                             pickup_order = Order.objects.get(id=order.group_pair_id, pickup=True)
-                            print(f"!!!!! pickup order {pickup_order.id} AND order delivery {order.id}")
-                            print(f"STATUS pickup order: {pickup_order.rp_status}")
+                            # print(f"pickup order {pickup_order.id} AND order delivery {order.id}")
+                            # print(f"STATUS pickup order: {pickup_order.rp_status}")
                             # if pickup order is done or cancel
                             if pickup_order.rp_status in COMPLETED_STATUSES:
                                 order.rp_problem_description = item["problem_description"]
                                 order.rp_time_realization = item["time_realization"]
                                 order.rp_status = item["status"]
                                 order.save(update_fields=["rp_problem_description", "rp_status", "rp_time_realization"])
-                                success.append(f"DELIVERY order No {order.pk} with {external_id}")
+                                success.append(f"✅ DELIVERY order No {order.pk} with {external_id} was sent")
                         except Order.DoesNotExist:
-                            not_success.append(f"order not found for {external_id}")
+                            print(f"\033[91m❌ order not found for {external_id}.\033[0m")
+                            not_success.append(f"❌ order not found for {external_id}")
                             continue
                         except Exception as e:
+                            print(f"\033[91m❌ order error for {external_id}.\033[0m")
                             not_success.append(f"order error for {external_id}: {str(e)}")
                             continue
                 except Order.DoesNotExist:
+                    print(f"\033[91m❌ order not found for {external_id}.\033[0m")
                     not_success.append(f"order not found for {external_id}")
                     continue
                 except Exception as e:
+                    print(f"\033[91m❌ order error for {external_id}.\033[0m")
                     not_success.append(f"order error for {external_id}: {str(e)}")
                     continue
                 # there is only second delivery order in order history and needs to show status if it's main order
                 if main_order and item["status"] not in COMPLETED_STATUSES: # if order is done don't change second order
                     try:
                         delivery_order = Order.objects.get(group_pair_id=main_order.group_pair_id, delivery=True)
-                        # logger.info(f"delivery_order: {delivery_order.rp_contract_external_id}")
                         delivery_order.rp_problem_description = item["problem_description"]
                         delivery_order.rp_time_realization = item["time_realization"]
                         delivery_order.rp_status = item["status"]
                         delivery_order.save(update_fields=["rp_problem_description", "rp_status", "rp_time_realization"])
+                        print(f"✅ delivery order No {delivery_order.pk} with {external_id} was created")
                         success.append(f"delivery order No {delivery_order.pk} with {external_id}")
                     except Order.DoesNotExist:
                         not_success.append(f"delivery order not found for group {main_order.group_pair_id}")
                     except Exception as e:
                         not_success.append(f"delivery order error for {external_id}: {str(e)}")
 
+            print(f"✅ Success {len(success)} orders, fail {len(not_success)} orders")
             return {"success": success, "not_success": not_success}
 
         else:
+            print(f"\033[91m❌ order_data_from_rp is empty\033[0m")
             return "order_data_from_rp is empty"
     else:
+        print("\033[91m❌ Request doesn't work\033[0m")
         return "Request doesn't work"
 
 
@@ -734,7 +697,7 @@ def check_file_in_orders_task():
         response = api_client.call_api(url, http_method="GET", params=params)
         data_from_rp = response
     except requests.exceptions.RequestException as e:
-        print("API Request failed:", e)
+        print("\033[91m❌ API Request failed:\033[0m", e)
 
     # Если данных нет, возвращаем соответствующее сообщение
     if not data_from_rp:
@@ -746,7 +709,6 @@ def check_file_in_orders_task():
     for item in data_from_rp[0]:
         external_id = item.get("contractId")
         item_id = item.get("id")
-        # Допустим, ещё есть поля name, mime и т.д.
         name = item.get("name")
         mime = item.get("mime")
 
@@ -769,11 +731,12 @@ def check_file_in_orders_task():
                 name=name,
                 mime=mime,
             )
-            print(f"PhotoReport создан: file_id={item_id}")
+            print(f"✅ PhotoReport was created: file_id={item_id}")
             result.append(item_id)
         else:
             pass
 
+    print(f"Files update done. Results: {result}")
     return result
 
 
@@ -783,7 +746,7 @@ def check_file_in_orders_task():
 )
 def download_file_from_external_api(file_id):
     """
-    Запрашивает файл с внешнего API и сохраняет его в базе данных.
+    Requests a file from an external API and saves it in the database.
     """
     url = "https://online.auto-gps.eu/cnt/apiItinerary/document"
     api_key = settings.EXTERNAL_API_KEY
@@ -800,9 +763,11 @@ def download_file_from_external_api(file_id):
         photo_report = PhotoReport.objects.create(file_id=file_id)
         photo_report.file.save(f"{file_id}.jpg", ContentFile(response.content), save=True)
 
+        print(f"✅ File {file_id} downloaded successfully.")
         return f"File {file_id} downloaded successfully."
 
     except requests.exceptions.RequestException as e:
+        print(f"\033[91m❌ Failed to download file {file_id}: {str(e)}.\033[0m")
         return f"Failed to download file {file_id}: {str(e)}"
 
 
@@ -812,8 +777,8 @@ def download_file_from_external_api(file_id):
 )
 def generate_order_report(user, year, month):
     """
-    Создаёт (или обновляет) запись OrderReport за переданный год/месяц для указанного пользователя.
-    Возвращает созданный (или обновлённый) OrderReport.
+    Creates (or updates) an OrderReport entry for the specified year/month for the given user.
+    Returns the created (or updated) OrderReport.
     """
     # Начало месяца (первое число в нужном часовом поясе)
     start_of_month_dt = datetime(year, month, 1, tzinfo=timezone.get_current_timezone())
@@ -833,7 +798,7 @@ def generate_order_report(user, year, month):
         rp_time_planned__range=(start_of_month, end_of_month)
     )
     print(f"User: {user.user}")
-    print(f"user_orders_in_month={user_orders_in_month}")
+    # print(f"user_orders_in_month={user_orders_in_month}")
     orders = Order.objects.filter(user=user.user)
     for order in orders:
         print(f"Time: {order.rp_time_planned}. Start of: {start_of_month}. End of: {end_of_month}")
@@ -853,6 +818,7 @@ def generate_order_report(user, year, month):
     else:
         # Если заказов не было, при желании можно очистить или ничего не делать
         report.orders.clear()
+    print(f"✅ Report was created {report}")
     return report
 
 
@@ -862,9 +828,9 @@ def generate_order_report(user, year, month):
 )
 def generate_monthly_reports_task():
     """
-    Создаётся раз в месяц.
-    Формирует OrderReport для каждого активного пользователя
-    за предыдущий календарный месяц.
+    Created once a month.
+    Forms an OrderReport for each active user
+    for the previous calendar month.
     """
     # Допустим, вызываем задачу 1-го числа каждого месяца.
     # Тогда "предыдущий месяц" - это (текущий месяц - 1).
@@ -878,7 +844,7 @@ def generate_monthly_reports_task():
     # next_month_date = now + relativedelta(months=1)
     # month = next_month_date.month
 
-    # Выбираем всех активных пользователей (стандартное Django-поле is_active)
+    # Выбираем всех активных пользователей
     from customer.models import Customer
     active_users= Customer.objects.filter(data_sent=True, active=True)
 
@@ -886,6 +852,7 @@ def generate_monthly_reports_task():
         print(f"Start for user {user}")
         generate_order_report(user, year, month)
 
+    print(f"✅ Monthly reports created for {active_users.count()} active users for {year}-{month}.")
     return f"Monthly reports created for {active_users.count()} active users for {year}-{month}."
 
 
@@ -912,7 +879,8 @@ def send_email_deleted_place_task(place_id, place_name, place_external_id, custo
         from_email = settings.DEFAULT_FROM_EMAIL
         recipient_list = ["sergei@pradelna1.com", "office@pradelna1.com"]
         send_mail(subject, message, from_email, recipient_list)
-        print(f"Place delete {place_name} email is sent")
+        print(f"✅Place delete {place_name} email is sent")
+    print(f"✅ Place was deleted: {place_name}")
     return "Place didn't have actual orders"
 
 
@@ -931,7 +899,9 @@ def send_email_change_customer_task(rp_client_external_id, company_name):
     recipient_list = ["sergei@pradelna1.com", "office@pradelna1.com"]
     try:
         send_mail(subject, message, from_email, recipient_list)
+        print(f"✅ Email was sent: {company_name} wants change data")
     except:
+        print(f"\033[91m❌ Error sending email: {company_name} changed data.\033[0m")
         return f"Error sending email: {company_name} changed data"
     return f"Email sent: {company_name} changed data"
 
@@ -950,10 +920,10 @@ def send_new_customer_task(company_name):
     from_email = settings.DEFAULT_FROM_EMAIL
     recipient_list = ["sergei@pradelna1.com", "office@pradelna1.com"]
     try:
-        logger.info(f"Sending new customer email for {company_name}")
         send_mail(subject, message, from_email, recipient_list)
-        logger.info(f"Email successfully sent to admin for new customer: {company_name}")
+        print(f"✅ Email successfully sent to admin for new customer: {company_name}")
     except:
-        logger.error(f"Failed to send new customer email for {company_name}", exc_info=True)
+        print(f"\033[91m❌ Failed to send new customer email for {company_name}.\033[0m")
         return f"Error sending email: {company_name} changed data"
+    print(f"✅ Email sent: {company_name} changed data")
     return f"Email sent: {company_name} changed data"
