@@ -21,9 +21,9 @@ def landing_page(request):
 @authentication_classes([])  # Если аутентификация не требуется
 def landing_page_view(request):
     """
-    Функциональное представление для получения данных LandingPage.
-    Принимаются только GET-запросы.
-    Параметр 'lang' можно передать через GET-параметры.
+    Functional representation for obtaining Landingpage data.
+    Only GET queries are accepted.
+    The 'Lang' parameter can be transmitted via GET parameters.
     """
     lang = request.GET.get('lang', None)
     queryset = LandingPage.objects.all()
@@ -39,8 +39,8 @@ def landing_page_view(request):
 @permission_classes([AllowAny])
 def send_contact_email(request):
     """
-    Принимает данные формы контактов и отправляет письмо.
-    Ожидается JSON с ключами: name, email, phone, message, project_name, admin_email, form_subject.
+    Accepts data forms of contacts and sends a letter.
+    Json with keys is expected: name, email, Phone, Message, Project_name, admin_email, form_subject.
     """
     try:
         # Получаем данные из запроса
