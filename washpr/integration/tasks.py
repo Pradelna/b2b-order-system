@@ -924,6 +924,6 @@ def send_new_customer_task(company_name):
         print(f"✅ Email successfully sent to admin for new customer: {company_name}")
     except:
         print(f"\033[91m❌ Failed to send new customer email for {company_name}.\033[0m")
-        return f"Error sending email: {company_name} changed data"
-    print(f"✅ Email sent: {company_name} changed data")
+        return f"Error sending email: new customer {company_name}"
+    print(f"✅ Email sent: new customer {company_name}")
     return f"Email sent: {company_name} changed data"
