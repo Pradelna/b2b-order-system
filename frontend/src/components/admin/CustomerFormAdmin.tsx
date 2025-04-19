@@ -317,7 +317,7 @@ const CustomerFormAdmin: React.FC<CustomerFormAdminProps> = ({
                         <label htmlFor="change_data" className="check-box" />
                     </div>
                     <label className="checkbox-label-edit-form form-label" style={{paddingLeft: "50px"}}>
-                        Data change
+                        Data change (if you made changes - remove it, never check this checkbox)
                     </label>
 
                 </div>
