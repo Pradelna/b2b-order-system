@@ -16,23 +16,22 @@ def landing_page(request):
     return render(request, 'index.html')
 
 
-class LandingPageView(APIView):
-    permission_classes = [permissions.AllowAny]
-
-    def get(self, request):
-        lang = request.GET.get('lang', None)  # Получаем язык из запроса
-        queryset = LandingPage.objects.all()  # Базовый запрос
-
-        # Получаем данные с помощью вспомогательной функции
-        items, error = get_items_by_language(queryset, lang)
-
-        # Если возникла ошибка, возвращаем её
-        if error:
-            return Response(error, status=status.HTTP_404_NOT_FOUND)
-
-        serializer = LandingPageSerializer(queryset, many=True)
-        # print(serializer.data)
-        return Response(serializer.data, status=status.HTTP_200_OK)
+@api_view(['GET'])
+@permission_classes([AllowAny])
+@authentication_classes([])  # Если аутентификация не требуется
+def landing_page_view(request):
+    """
+    Функциональное представление для получения данных LandingPage.
+    Принимаются только GET-запросы.
+    Параметр 'lang' можно передать через GET-параметры.
+    """
+    lang = request.GET.get('lang', None)
+    queryset = LandingPage.objects.all()
+    items, error = get_items_by_language(queryset, lang)
+    if error:
+        return Response(error, status=status.HTTP_404_NOT_FOUND)
+    serializer = LandingPageSerializer(queryset, many=True)
+    return Response(serializer.data, status=status.HTTP_200_OK)
 
 
 @api_view(['POST'])

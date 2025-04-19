@@ -43,23 +43,6 @@ def create_order(request):
         # Добавляем валидацию для других полей через сериализатор
         serializer = OrderSerializer(data=data)
         if serializer.is_valid():
-            # n = 0
-            # limit = 20
-            # while n <= limit:
-            #     n += 1
-            #     order_n = Order(
-            #         user=request.user,
-            #         place=place,
-            #         type_ship='pickup_ship_one',
-            #         system='every_day',
-            #         active=True,
-            #         rp_time_from=1737936000,
-            #         rp_time_to=1738108800,
-            #         rp_place_street=place.rp_street,
-            #         rp_place_number=place.rp_number,
-            #         rp_place_zip=place.rp_zip,
-            #     )
-            #     order_n.save()
             order = serializer.save(
                 rp_place_street=place.rp_street,
                 rp_place_number=place.rp_number,
