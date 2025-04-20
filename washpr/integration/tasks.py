@@ -31,7 +31,7 @@ COMPLETED_STATUSES = {4, 5, 11}
 )
 def send_contact_email_task(subject, message, from_email, recipient_list):
     print(
-        f"Sending contact email: subject - {subject, message}, message - {message}, from - {from_email}",
+        f"✅Sending contact email: subject - {subject, message}, message - {message}, from - {from_email}",
         recipient_list
     )
     send_mail(subject, message, from_email, recipient_list)
@@ -81,7 +81,7 @@ class RestApiClient:
         print("Client params:", params)
         response = self.call_api(url, http_method="POST", params=params)
         if response:
-            print("Client was created successfully: ", response)
+            print("✅Client was created successfully: ", response)
             return response
         else:
             print("Failed to create client.")
@@ -111,7 +111,7 @@ class RestApiClient:
         response = self.call_api(url, http_method="POST", params=params)
         if response:
             # print("Place created successfully:", response)
-            print(f"Place {place_title} created successfully for client {client_external_id}")
+            print(f"✅Place {place_title} created successfully for client {client_external_id}")
             return response
         else:
             print(f"Failed to create place {place_title}")
@@ -191,7 +191,7 @@ def create_client_task(customer_id):
         from_email = settings.DEFAULT_FROM_EMAIL
         recipient_list = [customer.user.email]
         send_mail(subject, message, from_email, recipient_list)
-        print(f"Confirmation email sent to {customer.user.email}")
+        print(f"✅create_client_task Client created and Confirmation email sent to {customer.user.email}")
         return f"Client created and email sent for customer {customer.company_name} with external client id {customer.rp_client_external_id}."
     else:
         print(f"Failed to create client - {customer.company_name}")
@@ -212,7 +212,7 @@ def create_place_task(place_id):
     try:
         place = Place.objects.get(pk=place_id)
     except Place.DoesNotExist:
-        print(f"Place with id {place_id} not found.")
+        print(f"❌ create_place_task Place with id {place_id} not found.")
         return f"Place with id {place_id} not found."
 
     # Предполагается, что у модели Place есть внешний ключ customer
@@ -243,10 +243,10 @@ def create_place_task(place_id):
             place.rp_id = response["id"]
             place.data_sent = True
             place.save(update_fields=["rp_id", "data_sent"])
-            print(f"Place {place_id} created with remote id {response['id']}.")
+            print(f"✅create_place_task Place {place_id} created with remote id {response['id']}.")
             return f"Place {place_id} created with remote id {response['id']}."
         else:
-            print(f"Failed to create place {place_id}.")
+            print(f"❌ Failed to create place {place_id}.")
             return f"Failed to create place {place_id}."
 
     else:
@@ -297,13 +297,13 @@ def create_all_place_task(customer_id):
                 place.rp_id = response["id"]
                 place.data_sent = True
                 place.save(update_fields=["rp_id", "data_sent"])
-                print(f"✅ Place {place.place_name} created with remote id {response['id']}.")
+                print(f"✅create_all_place_task Place {place.place_name} created with remote id {response['id']}.")
                 result.append(f"{place.place_name}")
             else:
-                print(f"❌ Failed to create place {place.place_name}.")
+                print(f"❌create_all_place_task Failed to create place {place.place_name}.")
                 fail_result.append(f"{place.place_name}.")
 
-    print(f"Places created: {result}, Places don't created: {fail_result}")
+    print(f"create_all_place_task Places created: {result}, Places don't created: {fail_result}")
     return f"Places created: {result}, Places don't created: {fail_result}"
 
 
@@ -322,13 +322,13 @@ def update_place_task(place_id):
     try:
         place = Place.objects.get(pk=place_id)
     except Place.DoesNotExist:
-        print(f"\033[91m Place with id {place_id} not found.\033[0m")
+        print(f"\033[91m ❌update_place_task Place with id {place_id} not found.\033[0m")
         return f"Place with id {place_id} not found."
 
     # Проверяем, что у place есть внешний идентификатор (rp_id),
     # иначе нечего обновлять (или сначала нужно вызвать create_place_task).
     if not place.rp_id:
-        return f"Place {place_id} does not have rp_id. Nothing to update."
+        return f"update_place_task Place {place_id} does not have rp_id. Nothing to update."
 
     # Инициализируем API-клиент
     from django.conf import settings
@@ -354,10 +354,10 @@ def update_place_task(place_id):
 
     if response and "id" in response:
         # Если во внешней системе возвращается тот же id или обновлённые данные, можно их сохранить
-        print(f"Place {place_id} updated with remote id {response['id']}.")
+        print(f"✅update_place_task Place {place_id} updated with remote id {response['id']}.")
         return f"Place {place_id} updated with remote id {response['id']}."
     else:
-        print(f"Failed to update place {place_id}.")
+        print(f"❌ update_place_task Failed to update place {place_id}.")
         return f"Failed to update place {place_id}."
 
 
@@ -420,12 +420,12 @@ def send_orders_task():
             order.rp_contract_external_id = contract_external_id
             order.contract_external_id_for_admin = contract_external_id
             order.save(update_fields=["active", "rp_id", "rp_contract_external_id", "contract_external_id_for_admin"])
-            print(f"Order {order.pk} sent successfully with external id {response['id']}")
+            print(f"✅ send_orders_task Order {order.pk} sent successfully with external id {response['id']}")
             results.append(f"{order.pk}, external id - {response['id']}.")
         else:
             fail_results.append(f"\033[91m❌Failed to send order {order.pk}.\033[0m")
 
-    print(f"Sent {len(results)} orders. Orders: {results}. Failed {len(fail_results)} orders")
+    print(f"✅ send_orders_task Sent {len(results)} orders. Orders: {results}. Failed {len(fail_results)} orders")
     return f"Sent {len(results)} orders. Orders: {results}. Failed {len(fail_results)} orders"
 
 
@@ -533,7 +533,7 @@ def create_orders_task():
                     })
                 new_order = Order(**base_order_data)
                 new_order.save()
-                print(f"✅ success create EVERY WEEK {new_order.pk}")
+                print(f"✅create_orders_task success create EVERY WEEK {new_order.pk}")
                 new_order_pk = new_order.pk
                 results.append(new_order.pk)
 
@@ -557,12 +557,12 @@ def create_orders_task():
             new_order = Order(**base_order_data)
             new_order.save()
             results.append(new_order.pk)
-            print(f"✅ success create ONE TIME ORDER {new_order.pk}, rp planned - {new_order.rp_time_planned}")
+            print(f"✅create_orders_task success create ONE TIME ORDER {new_order.pk}, rp planned - {new_order.rp_time_planned}")
         order.processed = True
         order.rp_status = 0
         order.save(update_fields=["processed", "rp_status"])
 
-    print(f"Orders was created successfully: {results}")
+    print(f"create_orders_task Orders was created successfully: {results}")
     return f"Orders was created successfully: {results}"
 
 
@@ -590,7 +590,7 @@ def update_orders_task():
         orders_data_from_rp = response
         success_get = True
     except requests.exceptions.RequestException as e:
-        print("\033[91m❌ API Request failed: \033[0m", e)
+        print("\033[91m❌ update_orders_task API Request failed: \033[0m", e)
 
     if success_get: # request is success
         if orders_data_from_rp: # list with data is not empty
@@ -625,21 +625,21 @@ def update_orders_task():
                                 order.rp_time_realization = item["time_realization"]
                                 order.rp_status = item["status"]
                                 order.save(update_fields=["rp_problem_description", "rp_status", "rp_time_realization"])
-                                success.append(f"✅ DELIVERY order No {order.pk} with {external_id} was sent")
+                                success.append(f"✅ update_orders_task DELIVERY order No {order.pk} with {external_id} was sent")
                         except Order.DoesNotExist:
-                            print(f"\033[91m❌ order not found for {external_id}.\033[0m")
-                            not_success.append(f"❌ order not found for {external_id}")
+                            print(f"\033[91m❌ update_orders_task order not found for {external_id}.\033[0m")
+                            not_success.append(f"❌ update_orders_task order not found for {external_id}")
                             continue
                         except Exception as e:
-                            print(f"\033[91m❌ order error for {external_id}.\033[0m")
+                            print(f"\033[91m❌update_orders_task order error for {external_id}.\033[0m")
                             not_success.append(f"order error for {external_id}: {str(e)}")
                             continue
                 except Order.DoesNotExist:
-                    print(f"\033[91m❌ order not found for {external_id}.\033[0m")
+                    print(f"\033[91m❌update_orders_task order not found for {external_id}.\033[0m")
                     not_success.append(f"order not found for {external_id}")
                     continue
                 except Exception as e:
-                    print(f"\033[91m❌ order error for {external_id}.\033[0m")
+                    print(f"\033[91m❌update_orders_task order error for {external_id}.\033[0m")
                     not_success.append(f"order error for {external_id}: {str(e)}")
                     continue
                 # there is only second delivery order in order history and needs to show status if it's main order
@@ -650,21 +650,21 @@ def update_orders_task():
                         delivery_order.rp_time_realization = item["time_realization"]
                         delivery_order.rp_status = item["status"]
                         delivery_order.save(update_fields=["rp_problem_description", "rp_status", "rp_time_realization"])
-                        print(f"✅ delivery order No {delivery_order.pk} with {external_id} was created")
+                        print(f"✅update_orders_task delivery order No {delivery_order.pk} with {external_id} was created")
                         success.append(f"delivery order No {delivery_order.pk} with {external_id}")
                     except Order.DoesNotExist:
                         not_success.append(f"delivery order not found for group {main_order.group_pair_id}")
                     except Exception as e:
                         not_success.append(f"delivery order error for {external_id}: {str(e)}")
 
-            print(f"✅ Success {len(success)} orders, fail {len(not_success)} orders")
-            return {"success": success, "not_success": not_success}
+            print(f"✅update_orders_task Success {len(success)} orders, fail {len(not_success)} orders")
+            return {"update_orders_task success": success, "not_success": not_success}
 
         else:
-            print(f"\033[91m❌ order_data_from_rp is empty\033[0m")
+            print(f"\033[91m❌update_orders_task order_data_from_rp is empty\033[0m")
             return "order_data_from_rp is empty"
     else:
-        print("\033[91m❌ Request doesn't work\033[0m")
+        print("\033[91m❌update_orders_task Request doesn't work\033[0m")
         return "Request doesn't work"
 
 
@@ -697,7 +697,7 @@ def check_file_in_orders_task():
         response = api_client.call_api(url, http_method="GET", params=params)
         data_from_rp = response
     except requests.exceptions.RequestException as e:
-        print("\033[91m❌ API Request failed:\033[0m", e)
+        print("\033[91m❌check_file_in_orders_task API Request failed:\033[0m", e)
 
     # Если данных нет, возвращаем соответствующее сообщение
     if not data_from_rp:
