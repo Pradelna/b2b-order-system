@@ -11,7 +11,7 @@ from .serializer import *
 from washpr import settings
 from integration.tasks import send_contact_email_task
 
-from ..utils.checkorigin import allow_only_pradelna1
+from utils.checkorigin import allow_only_pradelna1
 
 
 @allow_only_pradelna1
