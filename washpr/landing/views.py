@@ -11,7 +11,10 @@ from .serializer import *
 from washpr import settings
 from integration.tasks import send_contact_email_task
 
+from ..utils.checkorigin import allow_only_pradelna1
 
+
+@allow_only_pradelna1
 def landing_page(request):
     return render(request, 'index.html')
 
