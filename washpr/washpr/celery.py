@@ -16,15 +16,15 @@ def debug_task(self):
 app.conf.beat_schedule = {
     'send-orders-every-hour': {
         'task': 'integration.tasks.send_orders_task',
-        'schedule': crontab(minute='0,20,40', hour='4-23'),
+        'schedule': crontab(minute='5,15,25,36,45,55', hour='4-23'),
     },
     'create-orders-every-hour': {
         'task': 'integration.tasks.create_orders_task',
-        'schedule': crontab(minute='2,17,32,47', hour='4-23'),
+        'schedule': crontab(minute='0,17,32,47', hour='4-23'),
     },
     'update-orders-every-hour': {
         'task': 'integration.tasks.update_orders_task',
-        'schedule': crontab(minute='5,35', hour='4-23'),
+        'schedule': crontab(minute='2,33', hour='4-23'),
     },
     'update-photos-every-hour': {
         'task': 'integration.tasks.check_file_in_orders_task',
