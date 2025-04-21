@@ -101,7 +101,7 @@ services:
     restart: on-failure
     entrypoint: >
       /bin/sh -c "
-          sleep 10;
+          sleep 60;
           mc alias set myminio http://minio:9000 $MINIO_ROOT_USER $MINIO_ROOT_PASSWORD;
           mc mb -p myminio/$AWS_STORAGE_BUCKET_NAME || true;
           mc admin user add myminio $AWS_ACCESS_KEY_ID $AWS_SECRET_ACCESS_KEY || true;

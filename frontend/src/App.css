@@ -1401,14 +1401,14 @@ svg.loader{
   margin-bottom: 20px;
 }
 
-.all-history-page .card {
+.all-history-page .order-history .card {
   border: solid 1px #fff;
   height: 94px;
   padding: 18px 20px 20px 86px;
   margin-bottom: 20px;
 }
 
-.all-history-page p {
+.all-history-page .order-history p {
   margin-bottom: -5px;
 }
 
