@@ -481,7 +481,7 @@ def create_orders_task():
             'every_week': order.every_week,
             'processed': True,
         }
-        # заполняем отсутствующие поля пустыми строками или значениями по умолчанию.
+        # create date for others orders
         if order.type_ship == 'pickup_ship_one' or order.type_ship == 'pickup_ship_dif':
             order_date = int(datetime.combine(order.date_start_day, time()).timestamp())
             order.rp_time_realization = order_date # date when courier to come
@@ -511,8 +511,7 @@ def create_orders_task():
                 days_list = [0,1,2,3,4,5,6]
             new_order_dates = get_dates_by_weekdays(order.date_start_day, days_list)
             # check if new_order_dates is even
-            if len(new_order_dates) % 2 != 0:
-                prev_len = len(new_order_dates)
+            if len(new_order_dates) % 2 == 0:
                 last_date = new_order_dates[-1]
 
                 # Попробуем сначала добавить через get_dates_by_weekdays
@@ -520,8 +519,8 @@ def create_orders_task():
                 if extra_dates:
                     new_order_dates.append(extra_dates[0])
 
-                # Если всё ещё нечётное количество, добавим вручную по системе
-                if len(new_order_dates) % 2 != 0:
+                # Если всё ещё чётное количество, добавим вручную по системе
+                if len(new_order_dates) % 2 == 0:
                     last_date = new_order_dates[-1]
                     next_date = None
 
@@ -560,7 +559,7 @@ def create_orders_task():
                         new_order_dates.append(next_date)
 
                 # Финальная проверка
-                if len(new_order_dates) % 2 != 0:
+                if len(new_order_dates) % 2 == 0:
                     print(f"❌ The date is not added properly. Final length: {len(new_order_dates)}")
                 else:
                     print(f"✅ A new date has been added. Final length: {len(new_order_dates)}")
