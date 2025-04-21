@@ -33,7 +33,7 @@ class Place(models.Model):
                 self.rp_client_name = self.customer.company_name
                 self.rp_client_id = self.customer.rp_client_id
                 self.rp_title = self.place_name
-                self.rp_external_id = f"ZS_{self.rp_title}"
+                self.rp_external_id = f"ZS {self.rp_title}"
             super().save(update_fields=[
                 'rp_client_external_id',
                 'rp_client_name',
