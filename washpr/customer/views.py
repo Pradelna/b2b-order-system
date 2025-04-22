@@ -29,7 +29,6 @@ def customer_view(request):
         try:
             # Получаем клиента, связанного с текущим пользователем
             customer = Customer.objects.get(user=request.user)
-            # customer = Customer.objects.get(pk=2)
             serializer = CustomerSerializer(customer)
             return Response(serializer.data)
         except Customer.DoesNotExist:
@@ -62,7 +61,6 @@ def customer_view(request):
                         serializer.instance.rp_client_external_id,
                         serializer.instance.company_name
                     )
-                    transaction.on_commit(lambda: send_new_customer_task.delay(serializer.instance.company_name))
                 return Response(serializer.data)
             return Response(serializer.errors, status=400)
         except Customer.DoesNotExist:

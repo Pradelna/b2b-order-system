@@ -52,6 +52,21 @@ const CustomerEdit: React.FC<CustomerEditProps> = ({
         }));
     };
 
+    const lang = currentData?.lang || "cz";
+    const editInfo = {
+        cz: "Upravit údaje zákazníka",
+        ru: "Редактировать информацию о клинте",
+        en: "Edit Customer Information",
+    };
+    const labelEditInfo = editInfo[lang] || editInfo.cz;
+
+    const editMes = {
+        cz: "Údaje o zákazníkovi byly úspěšně aktualizovány!",
+        ru: "Данные клиента успешно обновлены!",
+        en: "Customer data updated successfully!",
+    };
+    const labelEditMes = editMes[lang] || editMes.cz;
+
     const handleSubmit = async (e: FormEvent) => {
         e.preventDefault();
 
@@ -70,7 +85,7 @@ const CustomerEdit: React.FC<CustomerEditProps> = ({
 
             const updatedData = await response.json();
             setCustomerData(updatedData);
-            setSuccessMessage("Customer data updated successfully!");
+            setSuccessMessage(labelEditMes || "Customer data updated successfully!");
             setTimeout(() => setSuccessMessage(""), 10000);
             setIsEditing(false);
         } catch (error) {
@@ -81,14 +96,6 @@ const CustomerEdit: React.FC<CustomerEditProps> = ({
     const handleCancel = () => {
         setIsEditing(false); // Exit editing mode without saving
     };
-
-    const lang = currentData?.lang || "cz";
-    const editInfo = {
-        cz: "Upravit údaje zákazníka",
-        ru: "Редактировать информацию о клинте",
-        en: "Edit Customer Information",
-    };
-    const labelEditInfo = editInfo[lang] || editInfo.cz;
 
     if (!currentData) {
         return null; // Avoid rendering if context data is unavailable
