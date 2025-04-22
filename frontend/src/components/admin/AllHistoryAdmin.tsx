@@ -226,7 +226,7 @@ const AllHistoryAdmin: React.FC = () => {
 
                                                     {order.rp_contract_external_id ? (
 
-                                                            <strong>{currentData?.history?.order_number || "Č."}:</strong> {order.id} - {order.rp_contract_external_id}
+                                                            <strong>{currentData?.history?.order_number || "Č."}:</strong> {order.id}{" - "}{order.rp_contract_external_id}
 
                                                     ) : (
 
