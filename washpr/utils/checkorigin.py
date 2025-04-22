@@ -11,8 +11,7 @@ def allow_only_pradelna1(view_func):
     @wraps(view_func)
     def _wrapped_view(request, *args, **kwargs):
         origin = request.META.get('HTTP_ORIGIN') or request.META.get('HTTP_REFERER')
-
-        if origin and origin.startswith(ALLOWED_ORIGIN):
+        if origin and any(origin.startswith(allowed) for allowed in ALLOWED_ORIGINS):
             return view_func(request, *args, **kwargs)
         return JsonResponse({'error': 'Unauthorized domain'}, status=403)
     return _wrapped_view
