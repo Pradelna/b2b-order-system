@@ -685,7 +685,7 @@ def update_orders_task():
                                 order.rp_time_realization = item["time_realization"]
                                 order.rp_status = item["status"]
                                 order.save(update_fields=["rp_problem_description", "rp_status", "rp_time_realization"])
-                                success.append(f"✅ update_orders_task DELIVERY order No {order.pk} with {external_id} was sent")
+                                success.append(f"order No {order.pk} with {external_id}")
                         except Order.DoesNotExist:
                             print(f"\033[91m❌ update_orders_task order not found for {external_id}.\033[0m")
                             not_success.append(f"❌ update_orders_task order not found for {external_id}")
@@ -710,15 +710,15 @@ def update_orders_task():
                         delivery_order.rp_time_realization = item["time_realization"]
                         delivery_order.rp_status = item["status"]
                         delivery_order.save(update_fields=["rp_problem_description", "rp_status", "rp_time_realization"])
-                        print(f"✅update_orders_task delivery order No {delivery_order.pk} with {external_id} was created")
-                        success.append(f"delivery order No {delivery_order.pk} with {external_id}")
+                        print(f"✅update_orders_task order No {delivery_order.pk} with {external_id} was updated")
+                        success.append(f"order No {delivery_order.pk} with {external_id}")
                     except Order.DoesNotExist:
-                        not_success.append(f"delivery order not found for group {main_order.group_pair_id}")
+                        not_success.append(f"order not found for group {main_order.group_pair_id}")
                     except Exception as e:
-                        not_success.append(f"delivery order error for {external_id}: {str(e)}")
+                        not_success.append(f"order error for {external_id}: {str(e)}")
 
             print(f"✅update_orders_task Success {len(success)} orders, fail {len(not_success)} orders")
-            return {"update_orders_task success": success, "not_success": not_success}
+            return {"✅update_orders_task success": success, "not_success": not_success}
 
         else:
             print(f"\033[91m❌update_orders_task order_data_from_rp is empty\033[0m")
