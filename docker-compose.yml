@@ -145,14 +145,10 @@ services:
       - frontend
 
   flower:
-    image: mher/flower
-    command: >
-      python -m flower
-      --broker=redis://redis:6379/0
-      --port=5555
-      --loglevel=info
-      --logging=info
-      --log-file-prefix=/logs/flower.log
+    build:
+      context: .
+      dockerfile: Dockerfile.prod  # или твой Dockerfile
+    command: [ "sh", "/app/entrypoint.sh", "flower" ]
     ports:
       - "5555:5555"
     volumes:

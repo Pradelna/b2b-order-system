@@ -20,4 +20,10 @@ echo "Collect static files"
 python manage.py collectstatic --noinput
 
 echo "Starting server..."
+
+if [ "$1" = "flower" ]; then
+  echo "Starting Flower..."
+  exec python -m flower --broker=redis://redis:6379/0 --port=5555 --loglevel=info --log-file-prefix=/logs/flower.log
+fi
+
 exec "$@"
