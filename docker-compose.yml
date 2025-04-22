@@ -147,7 +147,7 @@ services:
   flower:
     image: mher/flower
     command: >
-      flower
+      python -m flower
       --broker=redis://redis:6379/0
       --port=5555
       --loglevel=info
