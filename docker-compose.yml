@@ -149,11 +149,16 @@ services:
     image: mher/flower
     container_name: flower
     command: >
-      /bin/sh -c "sleep 60 && flower --broker=redis://redis:6379/0 --port=5555"
+      flower
+      --broker=redis://redis:6379/0
+      --port=5555
+      --persistent=True
+    environment:
+      - CELERY_BROKER_URL=redis://redis:6379/0
     ports:
       - "5555:5555"
     volumes:
-      - flower_logs:/logs
+      - flower_logs:/data
     depends_on:
       - redis
       - backend
