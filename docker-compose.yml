@@ -146,6 +146,7 @@ services:
 
   flower:
     image: mher/flower
+    container_name: flower
     command: >
       /bin/sh -c "sleep 60 && flower --broker=redis://redis:6379/0 --port=5555"
     ports:
