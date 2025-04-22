@@ -1,7 +1,11 @@
 from functools import wraps
 from django.http import JsonResponse
 
-ALLOWED_ORIGIN = 'https://pradelna1.cz'
+ALLOWED_ORIGIN = [
+    'https://pradelna1.cz',
+    'https://www.pradelna1.cz',
+    'https://api.pradelna1.cz',
+]
 
 def allow_only_pradelna1(view_func):
     @wraps(view_func)

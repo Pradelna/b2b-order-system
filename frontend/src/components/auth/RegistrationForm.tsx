@@ -70,7 +70,7 @@ const RegistrationForm: React.FC = () => {
   };
 
   const langTitle = {
-    cz: "Registrácia",
+    cz: "Registrace",
     ru: "Регистрация",
     en: "Registration",
   };
