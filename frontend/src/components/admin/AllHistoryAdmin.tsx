@@ -225,13 +225,13 @@ const AllHistoryAdmin: React.FC = () => {
 
 
                                                     {order.rp_contract_external_id ? (
-
-                                                            <strong>{currentData?.history?.order_number || "Č."}:</strong> {order.id}{" - "}{order.rp_contract_external_id}
-
+                                                        <strong>
+                                                            {`${currentData?.history?.order_number || "Č."}: ${order.id} - ${order.rp_contract_external_id}`}
+                                                        </strong>
                                                     ) : (
-
-                                                            <strong>{currentData?.history?.wait_approval || (`Č.${order.id} - Objednávka čeká na zpracování`)}</strong>
-
+                                                        <strong>
+                                                            {currentData?.history?.wait_approval || (`Č.${order.id} - Objednávka čeká na zpracování`)}
+                                                        </strong>
                                                     )}
                                                         </p>
 
