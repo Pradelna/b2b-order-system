@@ -206,17 +206,17 @@ const AllOrderHistory: React.FC = () => {
                                                         {order.rp_status === 12 ? (currentData?.status?.status_12 || "Čeká na díl") : null}
                                                         {order.rp_status === 13 ? (currentData?.status?.status_13 || "Marný výjezd") : null}
                                                     </strong>
-                                                </p>
 
-                                                {order.rp_contract_external_id ? (
-                                                    <p>
-                                                        <strong>{currentData?.history?.order_number || "Číslo objednávky"}:</strong> {order.rp_contract_external_id}
-                                                    </p>
-                                                ) : (
-                                                    <p>
+                                                    <span> / </span>
+
+                                                {order.rp_contract_external_id ? (<>
+                                                    <strong>{currentData?.history?.order_number || "Č"}:</strong> {order.rp_contract_external_id}
+                                                </>) : (
+                                                    <>
                                                         <strong>{currentData?.history?.wait_approval || "Objednávka čeká na zpracování"}</strong>
-                                                    </p>
+                                                    </>
                                                 )}
+                                                </p>
 
                                                 {order.place_name ? (
                                                     <p>
