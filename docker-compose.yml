@@ -144,12 +144,27 @@ services:
       - backend
       - frontend
 
+  flower:
+    image: mher/flower
+    command: >
+      celery --broker=redis://redis:6379/0
+             --loglevel=info
+             --logfile=/logs/flower.log
+    ports:
+      - "5555:5555"
+    volumes:
+      - flower_logs:/logs
+    depends_on:
+      - redis
+      - backend
+
 volumes:
   static_volume:
   media_volume:
   postgres_data:
   minio_data:
   frontend_result:
+  flower_logs:
 
 networks:
   default:
