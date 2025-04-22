@@ -145,10 +145,9 @@ services:
       - frontend
 
   flower:
-    build:
-      context: ./washpr
-      dockerfile: Dockerfile.prod
-    command: [ "sh", "/app/entrypoint.sh", "flower" ]
+    image: mher/flower
+    command: >
+      /bin/sh -c "sleep 60 && flower --broker=redis://redis:6379/0 --port=5555"
     ports:
       - "5555:5555"
     volumes:
