@@ -1,7 +1,7 @@
 from functools import wraps
 from django.http import JsonResponse
 
-ALLOWED_ORIGIN = [
+ALLOWED_ORIGINS = [
     'https://pradelna1.cz',
     'https://www.pradelna1.cz',
     'https://api.pradelna1.cz',
