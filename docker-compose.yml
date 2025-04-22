@@ -146,8 +146,8 @@ services:
 
   flower:
     build:
-      context: .
-      dockerfile: Dockerfile.prod  # или твой Dockerfile
+      context: ./washpr
+      dockerfile: Dockerfile.prod
     command: [ "sh", "/app/entrypoint.sh", "flower" ]
     ports:
       - "5555:5555"
