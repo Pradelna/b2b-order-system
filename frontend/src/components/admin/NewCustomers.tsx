@@ -39,6 +39,7 @@ function NewCustomers() {
     }, [BASE_URL]);
 
     if (loading) return <div>Loading...</div>;
+    if (customers.length === 0) return null;
 
     return (
         <div className="recent-customers mt-4">
