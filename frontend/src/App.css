@@ -1401,17 +1401,6 @@ svg.loader{
   margin-bottom: 20px;
 }
 
-.all-history-page .order-history .card {
-  border: solid 1px #fff;
-  height: 94px;
-  padding: 18px 20px 20px 86px;
-  margin-bottom: 20px;
-}
-
-.all-history-page .order-history p {
-  margin-bottom: -5px;
-}
-
 .history-icon svg {
   height: 18px;
 }
