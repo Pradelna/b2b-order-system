@@ -672,6 +672,7 @@ def update_orders_task():
                         order.rp_status = item["status"]
                         order.save(update_fields=["rp_problem_description", "rp_status", "rp_time_realization"])
                         success.append(f"order No {order.pk} with {external_id}")
+                        print(f"✅ Updated order No {order.pk} with {external_id}")
                         main_order = order
                     else:
                         try:
@@ -686,6 +687,7 @@ def update_orders_task():
                                 order.rp_status = item["status"]
                                 order.save(update_fields=["rp_problem_description", "rp_status", "rp_time_realization"])
                                 success.append(f"order No {order.pk} with {external_id}")
+                                print(f"✅ Updated order No {order.pk} with {external_id}")
                         except Order.DoesNotExist:
                             print(f"\033[91m❌ update_orders_task order not found for {external_id}.\033[0m")
                             not_success.append(f"❌ update_orders_task order not found for {external_id}")
