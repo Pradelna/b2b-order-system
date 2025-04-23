@@ -622,8 +622,8 @@ def create_orders_task():
         order.rp_status = 0
         order.save(update_fields=["processed", "rp_status"])
 
-    print(f"create_orders_task Orders was created successfully: {results}")
-    return f"Orders was created successfully: {results}"
+    print(f"✅ create_orders_task Orders was created successfully: {results}")
+    return f"✅ Orders was created successfully: {results}"
 
 
 @shared_task(
