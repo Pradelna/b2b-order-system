@@ -203,8 +203,12 @@ const OrderHistoryAdmin: React.FC<OrderHistoryAdminProps> = ({ placeId, orders =
                                                                         {order.rp_status === 11 ? (currentData?.status?.status_11 || "K fakturaci") : null}
                                                                         {order.rp_status === 12 ? (currentData?.status?.status_12 || "Čeká na díl") : null}
                                                                         {order.rp_status === 13 ? (currentData?.status?.status_13 || "Marný výjezd") : null}
-                                                                        {order.pickup  ? (" Pickup") : null}
-                                                                        {order.delivery ? (" Delivery") : null}
+                                                                        {order.type_ship === "pickup_ship_one" ? (
+                                                                            currentData?.order?.type_sipping_clear_for_dirty || "Výměna čistého prádla za špinavé"
+                                                                        ) : (<>
+                                                                            {order.pickup  ? (" Pickup") : null}
+                                                                            {order.delivery ? (" Delivery") : null}
+                                                                        </>)}
                                                                     </strong>
                                                                 </>
                                                             )}
