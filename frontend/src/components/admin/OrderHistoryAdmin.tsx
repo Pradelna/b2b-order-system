@@ -216,7 +216,7 @@ const OrderHistoryAdmin: React.FC<OrderHistoryAdminProps> = ({ placeId, orders =
 
                                                     {order.rp_contract_external_id ? (
                                                         <p>
-                                                            <strong>{currentData?.history?.order_number || "Číslo objednávky"}:</strong>{` č.${order.id} - ${order.rp_contract_external_id}`}
+                                                            <strong>{currentData?.history?.order_number || "Č"}:</strong>{` ${order.id} - ${order.rp_contract_external_id}`}
                                                         </p>
                                                     ) : (
                                                         <p>
