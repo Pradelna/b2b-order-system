@@ -1,11 +1,9 @@
 import React, { useState, useContext, FormEvent } from "react";
-import { LanguageContext } from "../../context/LanguageContext.js";
+import { LanguageContext } from "../../context/LanguageContext";
 import { useNavigate } from "react-router-dom";
-import Header from "../Header.js";
-import Footer from "../Footer.tsx";
-import { fetchWithAuth } from "../account/auth.ts";
-import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
-import {faSquareXmark} from "@fortawesome/free-solid-svg-icons";
+import Header from "../Header";
+import Footer from "../Footer";
+import { fetchWithAuth } from "../account/auth";
 
 const LoginForm: React.FC = () => {
     const [email, setEmail] = useState<string>("");
@@ -16,7 +14,7 @@ const LoginForm: React.FC = () => {
     const navigate = useNavigate();
     // Return null if the language data is not available
     if (!currentData || !currentData.auth) {
-        return <div>Loading...</div>;
+        return null;
     }
     const messageData = currentData?.auth;
 
@@ -37,8 +35,19 @@ const LoginForm: React.FC = () => {
 
             if (!response.ok) {
                 const errorData = await response.json();
+                const langMessage = {
+                    cz: "nesprávné heslo nebo účet s těmito přihlašovacími údaji neexistuje",
+                    ru: "неверный пароль или аккаунт с данными логином и паролем не существует",
+                    en: "incorrect password or an account with the given login and password does not exist.",
+                };
+                const lang = currentData?.lang || "cz";
+                const messageError = langMessage[lang] || langMessage.en;
+                const translatedDetail = errorData.detail === "Žádný aktivní účet s danými údaji nebyl nalezen"
+                    ? messageError
+                    : errorData.detail;
+
                 setErrorMessage(
-                    `${messageData.author_error} ${errorData.detail || messageData.unknown_error}`
+                    `${messageData.author_error}: ${translatedDetail || messageData.unknown_error}`
                 );
                 return;
             }
