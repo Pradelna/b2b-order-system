@@ -293,7 +293,7 @@ const PlaceDetailAdmin: React.FC = () => {
                                 <div className="card current-order">
 
                                     <h3>Aktuální objednávka #{currentOrder.id} {" "}
-                                        {currentOrder?.active ? (
+                                        {currentOrder?.rp_contract_external_id ? (
                                             currentOrder?.rp_contract_external_id
                                         ) : ("havn't sent yet")}
                                         </h3>
