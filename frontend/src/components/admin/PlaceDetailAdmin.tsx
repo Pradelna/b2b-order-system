@@ -294,7 +294,7 @@ const PlaceDetailAdmin: React.FC = () => {
 
                                     <h3>
                                         Aktuální objednávka č.{currentOrder.id} {" "}
-                                        {currentOrder.rp_contract_external_id || "havn't sent yet"}
+                                        {currentOrder.rp_contract_external_id ? `- ${currentOrder.rp_contract_external_id}` : "havn't sent yet"}
                                     </h3>
                                     <div className="order-details">
 
