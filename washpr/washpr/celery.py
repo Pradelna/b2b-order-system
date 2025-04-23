@@ -20,7 +20,7 @@ app.conf.beat_schedule = {
     },
     'create-orders-every-hour': {
         'task': 'integration.tasks.create_orders_task',
-        'schedule': crontab(minute='0,17,32,47', hour='4-23'),
+        'schedule': crontab(minute='0,7,12,17,22,28,31,34,40,47,52,57', hour='4-23'),
     },
     'update-orders-every-hour': {
         'task': 'integration.tasks.update_orders_task',
