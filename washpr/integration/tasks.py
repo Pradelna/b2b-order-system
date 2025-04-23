@@ -81,7 +81,7 @@ class RestApiClient:
         print("Client params:", params)
         response = self.call_api(url, http_method="POST", params=params)
         if response:
-            print("✅Client was created successfully: ", response)
+            print("✅ Client was created successfully: ", response)
             return response
         else:
             print("Failed to create client.")
@@ -111,11 +111,11 @@ class RestApiClient:
         response = self.call_api(url, http_method="POST", params=params)
         if response:
             # print("Place created successfully:", response)
-            print(f"✅Place {place_title} created successfully for client {client_external_id}")
-            return response
+            print(f"✅ Place {place_title} created successfully for client {client_external_id}")
+            return f"✅ Place {place_title} created successfully for client {client_external_id}"
         else:
-            print(f"Failed to create place {place_title}")
-            return None
+            print(f"❌ Failed to create place {place_title}")
+            return f"❌ Failed to create place {place_title}"
 
 
 @shared_task(
@@ -191,11 +191,11 @@ def create_client_task(customer_id):
         from_email = settings.DEFAULT_FROM_EMAIL
         recipient_list = [customer.user.email]
         send_mail(subject, message, from_email, recipient_list)
-        print(f"✅create_client_task Client created and Confirmation email sent to {customer.user.email}")
-        return f"Client created and email sent for customer {customer.company_name} with external client id {customer.rp_client_external_id}."
+        print(f"✅ create_client_task Client created and Confirmation email sent to {customer.user.email}")
+        return f"✅ Client created and email sent for customer {customer.company_name} with external client id {customer.rp_client_external_id}."
     else:
-        print(f"Failed to create client - {customer.company_name}")
-        return f"Failed to create client for customer {customer.company_name}."
+        print(f"❌ Failed to create client - {customer.company_name}")
+        return f"❌ Failed to create client for customer {customer.company_name}."
 
 
 @shared_task(
@@ -213,7 +213,7 @@ def create_place_task(place_id):
         place = Place.objects.get(pk=place_id)
     except Place.DoesNotExist:
         print(f"❌ create_place_task Place with id {place_id} not found.")
-        return f"Place with id {place_id} not found."
+        return f"❌ Place with id {place_id} not found."
 
     # Предполагается, что у модели Place есть внешний ключ customer
     customer = place.customer
@@ -243,11 +243,11 @@ def create_place_task(place_id):
             place.rp_id = response["id"]
             place.data_sent = True
             place.save(update_fields=["rp_id", "data_sent"])
-            print(f"✅create_place_task Place {place_id} created with remote id {response['id']}.")
-            return f"Place {place_id} created with remote id {response['id']}."
+            print(f"✅ create_place_task Place {place_id} created with remote id {response['id']}.")
+            return f"✅ Place {place_id} created with remote id {response['id']}."
         else:
             print(f"❌ Failed to create place {place_id}.")
-            return f"Failed to create place {place_id}."
+            return f"❌ Failed to create place {place_id}."
 
     else:
         return f"Customer is not active yet"
@@ -297,14 +297,14 @@ def create_all_place_task(customer_id):
                 place.rp_id = response["id"]
                 place.data_sent = True
                 place.save(update_fields=["rp_id", "data_sent"])
-                print(f"✅create_all_place_task Place {place.place_name} created with remote id {response['id']}.")
+                print(f"✅ create_all_place_task Place {place.place_name} created with remote id {response['id']}.")
                 result.append(f"{place.place_name}")
             else:
-                print(f"❌create_all_place_task Failed to create place {place.place_name}.")
+                print(f"❌ create_all_place_task Failed to create place {place.place_name}.")
                 fail_result.append(f"{place.place_name}.")
 
-    print(f"create_all_place_task Places created: {result}, Places don't created: {fail_result}")
-    return f"Places created: {result}, Places don't created: {fail_result}"
+    print(f"✅ create_all_place_task Places created: {result}, Places don't created: {fail_result}")
+    return f"✅ Places created: {result}, Places don't created: {fail_result}"
 
 
 @shared_task(
@@ -322,8 +322,8 @@ def update_place_task(place_id):
     try:
         place = Place.objects.get(pk=place_id)
     except Place.DoesNotExist:
-        print(f"\033[91m ❌update_place_task Place with id {place_id} not found.\033[0m")
-        return f"Place with id {place_id} not found."
+        print(f"\033[91m ❌ update_place_task Place with id {place_id} not found.\033[0m")
+        return f"❌ Place with id {place_id} not found."
 
     # Проверяем, что у place есть внешний идентификатор (rp_id),
     # иначе нечего обновлять (или сначала нужно вызвать create_place_task).
@@ -354,11 +354,11 @@ def update_place_task(place_id):
 
     if response and "id" in response:
         # Если во внешней системе возвращается тот же id или обновлённые данные, можно их сохранить
-        print(f"✅update_place_task Place {place_id} updated with remote id {response['id']}.")
-        return f"Place {place_id} updated with remote id {response['id']}."
+        print(f"✅ update_place_task Place {place_id} updated with remote id {response['id']}.")
+        return f"✅ Place {place_id} updated with remote id {response['id']}."
     else:
         print(f"❌ update_place_task Failed to update place {place_id}.")
-        return f"Failed to update place {place_id}."
+        return f"❌ Failed to update place {place_id}."
 
 
 @shared_task(
@@ -423,10 +423,10 @@ def send_orders_task():
             print(f"✅ send_orders_task Order {order.pk} sent successfully with external id {response['id']}")
             results.append(f"{order.pk}, external id - {response['id']}.")
         else:
-            fail_results.append(f"\033[91m❌Failed to send order {order.pk}.\033[0m")
+            fail_results.append(f"\033[91m❌ Failed to send order {order.pk}.\033[0m")
 
     print(f"✅ send_orders_task Sent {len(results)} orders. Orders: {results}. Failed {len(fail_results)} orders")
-    return f"Sent {len(results)} orders. Orders: {results}. Failed {len(fail_results)} orders"
+    return f"✅ Sent {len(results)} orders. Orders: {results}. Failed {len(fail_results)} orders"
 
 
 @shared_task(
@@ -593,7 +593,7 @@ def create_orders_task():
                     })
                 new_order = Order(**base_order_data)
                 new_order.save()
-                print(f"✅create_orders_task success create EVERY WEEK {new_order.pk}")
+                print(f"✅ create_orders_task success create EVERY WEEK {new_order.pk}")
                 new_order_pk = new_order.pk
                 results.append(new_order.pk)
 
@@ -617,7 +617,7 @@ def create_orders_task():
             new_order = Order(**base_order_data)
             new_order.save()
             results.append(new_order.pk)
-            print(f"✅create_orders_task success create ONE TIME ORDER {new_order.pk}, rp planned - {new_order.rp_time_planned}")
+            print(f"✅ create_orders_task success create ONE TIME ORDER {new_order.pk}, rp planned - {new_order.rp_time_planned}")
         order.processed = True
         order.rp_status = 0
         order.save(update_fields=["processed", "rp_status"])
@@ -691,15 +691,15 @@ def update_orders_task():
                             not_success.append(f"❌ update_orders_task order not found for {external_id}")
                             continue
                         except Exception as e:
-                            print(f"\033[91m❌update_orders_task order error for {external_id}.\033[0m")
+                            print(f"\033[91m❌ update_orders_task order error for {external_id}.\033[0m")
                             not_success.append(f"order error for {external_id}: {str(e)}")
                             continue
                 except Order.DoesNotExist:
-                    print(f"\033[91m❌update_orders_task order not found for {external_id}.\033[0m")
+                    print(f"\033[91m❌ update_orders_task order not found for {external_id}.\033[0m")
                     not_success.append(f"order not found for {external_id}")
                     continue
                 except Exception as e:
-                    print(f"\033[91m❌update_orders_task order error for {external_id}.\033[0m")
+                    print(f"\033[91m❌ update_orders_task order error for {external_id}.\033[0m")
                     not_success.append(f"order error for {external_id}: {str(e)}")
                     continue
                 # there is only second delivery order in order history and needs to show status if it's main order
@@ -710,15 +710,15 @@ def update_orders_task():
                         delivery_order.rp_time_realization = item["time_realization"]
                         delivery_order.rp_status = item["status"]
                         delivery_order.save(update_fields=["rp_problem_description", "rp_status", "rp_time_realization"])
-                        print(f"✅update_orders_task order No {delivery_order.pk} with {external_id} was updated")
+                        print(f"✅ update_orders_task order No {delivery_order.pk} with {external_id} was updated")
                         success.append(f"order No {delivery_order.pk} with {external_id}")
                     except Order.DoesNotExist:
                         not_success.append(f"order not found for group {main_order.group_pair_id}")
                     except Exception as e:
                         not_success.append(f"order error for {external_id}: {str(e)}")
 
-            print(f"✅update_orders_task Success {len(success)} orders, fail {len(not_success)} orders")
-            return {"✅update_orders_task success": success, "not_success": not_success}
+            print(f"✅ update_orders_task Success {len(success)} orders, fail {len(not_success)} orders")
+            return {"✅ update_orders_task success": success, "not_success": not_success}
 
         else:
             print(f"\033[91m❌update_orders_task order_data_from_rp is empty\033[0m")
@@ -757,7 +757,7 @@ def check_file_in_orders_task():
         response = api_client.call_api(url, http_method="GET", params=params)
         data_from_rp = response
     except requests.exceptions.RequestException as e:
-        print("\033[91m❌check_file_in_orders_task API Request failed:\033[0m", e)
+        print("\033[91m❌ check_file_in_orders_task API Request failed:\033[0m", e)
 
     # Если данных нет, возвращаем соответствующее сообщение
     if not data_from_rp:
@@ -824,11 +824,11 @@ def download_file_from_external_api(file_id):
         photo_report.file.save(f"{file_id}.jpg", ContentFile(response.content), save=True)
 
         print(f"✅ File {file_id} downloaded successfully.")
-        return f"File {file_id} downloaded successfully."
+        return f"✅ File {file_id} downloaded successfully."
 
     except requests.exceptions.RequestException as e:
         print(f"\033[91m❌ Failed to download file {file_id}: {str(e)}.\033[0m")
-        return f"Failed to download file {file_id}: {str(e)}"
+        return f"❌ Failed to download file {file_id}: {str(e)}"
 
 
 @shared_task(
@@ -879,7 +879,7 @@ def generate_order_report(user, year, month):
         # Если заказов не было, при желании можно очистить или ничего не делать
         report.orders.clear()
     print(f"✅ Report was created {report}")
-    return report
+    return f"✅ Report was created {report}"
 
 
 @shared_task(
@@ -909,11 +909,10 @@ def generate_monthly_reports_task():
     active_users= Customer.objects.filter(data_sent=True, active=True)
 
     for user in active_users:
-        print(f"Start for user {user}")
         generate_order_report(user, year, month)
 
     print(f"✅ Monthly reports created for {active_users.count()} active users for {year}-{month}.")
-    return f"Monthly reports created for {active_users.count()} active users for {year}-{month}."
+    return f"✅ Monthly reports created for {active_users.count()} active users for {year}-{month}."
 
 
 @shared_task(
@@ -921,7 +920,6 @@ def generate_monthly_reports_task():
     retry_kwargs={"max_retries": 5, "countdown": 180}
 )
 def send_email_deleted_place_task(place_id, place_name, place_external_id, customer):
-    print("place del email")
     from order.models import Order
     orders = Order.objects.filter(
         place__id=place_id,
@@ -941,7 +939,7 @@ def send_email_deleted_place_task(place_id, place_name, place_external_id, custo
         send_mail(subject, message, from_email, recipient_list)
         print(f"✅Place delete {place_name} email is sent")
     print(f"✅ Place was deleted: {place_name}")
-    return "Place didn't have actual orders"
+    return f"✅ Place was deleted: {place_name}. Place didn't have actual orders"
 
 
 @shared_task(
@@ -963,7 +961,7 @@ def send_email_change_customer_task(rp_client_external_id, company_name):
     except:
         print(f"\033[91m❌ Error sending email: {company_name} changed data.\033[0m")
         return f"Error sending email: {company_name} changed data"
-    return f"Email sent: {company_name} changed data"
+    return f"✅ Email sent: {company_name} changed data"
 
 
 @shared_task(
@@ -986,4 +984,4 @@ def send_new_customer_task(company_name):
         print(f"\033[91m❌ Failed to send new customer email for {company_name}.\033[0m")
         return f"Error sending email: new customer {company_name}"
     print(f"✅ Email sent to admin: new customer {company_name}")
-    return f"Email sent to admin: new customer - {company_name}"
+    return f"✅ Email sent to admin: new customer - {company_name}"
