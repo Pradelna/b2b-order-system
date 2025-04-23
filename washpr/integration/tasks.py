@@ -510,59 +510,60 @@ def create_orders_task():
             elif order.system == 'Every_day_with_weekend':
                 days_list = [0,1,2,3,4,5,6]
             new_order_dates = get_dates_by_weekdays(order.date_start_day, days_list)
-            # check if new_order_dates is even
-            if len(new_order_dates) % 2 == 0:
-                last_date = new_order_dates[-1]
-
-                # Попробуем сначала добавить через get_dates_by_weekdays
-                extra_dates = get_dates_by_weekdays(last_date + timedelta(days=1), days_list)
-                if extra_dates:
-                    new_order_dates.append(extra_dates[0])
-
-                # Если всё ещё чётное количество, добавим вручную по системе
+            # check if new_order_dates is even if pickup_ship_dif
+            if order.type_ship == 'pickup_ship_dif':
                 if len(new_order_dates) % 2 == 0:
                     last_date = new_order_dates[-1]
-                    next_date = None
 
-                    if order.system == 'Every_day':
-                        next_date = last_date + timedelta(days=1)
-                        if next_date.weekday() == 5:
-                            next_date += timedelta(days=2)
-                        elif next_date.weekday() == 6:
-                            next_date += timedelta(days=1)
+                    # Попробуем сначала добавить через get_dates_by_weekdays
+                    extra_dates = get_dates_by_weekdays(last_date + timedelta(days=1), days_list)
+                    if extra_dates:
+                        new_order_dates.append(extra_dates[0])
 
-                    elif order.system == 'Every_day_with_weekend':
-                        next_date = last_date + timedelta(days=1)
+                    # Если всё ещё чётное количество, добавим вручную по системе
+                    if len(new_order_dates) % 2 == 0:
+                        last_date = new_order_dates[-1]
+                        next_date = None
 
-                    elif order.system == 'Mon_Wed_Fri':
-                        for offset in range(1, 8):
-                            potential = last_date + timedelta(days=offset)
-                            if potential.weekday() in [0, 2, 4]:
-                                next_date = potential
-                                break
+                        if order.system == 'Every_day':
+                            next_date = last_date + timedelta(days=1)
+                            if next_date.weekday() == 5:
+                                next_date += timedelta(days=2)
+                            elif next_date.weekday() == 6:
+                                next_date += timedelta(days=1)
 
-                    elif order.system == 'Tue_Thu':
-                        for offset in range(1, 8):
-                            potential = last_date + timedelta(days=offset)
-                            if potential.weekday() in [1, 3]:
-                                next_date = potential
-                                break
+                        elif order.system == 'Every_day_with_weekend':
+                            next_date = last_date + timedelta(days=1)
 
-                    elif order.system == 'Own':
-                        for offset in range(1, 8):
-                            potential = last_date + timedelta(days=offset)
-                            if potential.weekday() in days_list:
-                                next_date = potential
-                                break
+                        elif order.system == 'Mon_Wed_Fri':
+                            for offset in range(1, 8):
+                                potential = last_date + timedelta(days=offset)
+                                if potential.weekday() in [0, 2, 4]:
+                                    next_date = potential
+                                    break
 
-                    if next_date:
-                        new_order_dates.append(next_date)
+                        elif order.system == 'Tue_Thu':
+                            for offset in range(1, 8):
+                                potential = last_date + timedelta(days=offset)
+                                if potential.weekday() in [1, 3]:
+                                    next_date = potential
+                                    break
 
-                # Финальная проверка
-                if len(new_order_dates) % 2 == 0:
-                    print(f"❌ The date is not added properly. Final length: {len(new_order_dates)}")
-                else:
-                    print(f"✅ A new date has been added. Final length: {len(new_order_dates)}")
+                        elif order.system == 'Own':
+                            for offset in range(1, 8):
+                                potential = last_date + timedelta(days=offset)
+                                if potential.weekday() in days_list:
+                                    next_date = potential
+                                    break
+
+                        if next_date:
+                            new_order_dates.append(next_date)
+
+                    # Финальная проверка
+                    if len(new_order_dates) % 2 == 0:
+                        print(f"❌ The date is not added properly. Final length: {len(new_order_dates)}")
+                    else:
+                        print(f"✅ A new date has been added. Final length: {len(new_order_dates)}")
 
             new_order_pk = 0
             for idx, date in enumerate(new_order_dates):
@@ -590,6 +591,10 @@ def create_orders_task():
                         'date_pickup': date,  # текущая дата
                         'pickup': True,
                         'delivery': False,
+                    })
+                if order.type_ship == 'pickup_ship_one':
+                    base_order_data.update({
+                        'rp_problem_description': "Výměna čistého prádla za špinavé",
                     })
                 new_order = Order(**base_order_data)
                 new_order.save()
