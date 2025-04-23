@@ -88,7 +88,7 @@
     "auth_invalid_link": "Neplatný nebo vypršený odkaz",
     "auth_button_ok": "Přihlásit se",
     "auth_button_error": "Web stránka",
-    "auth_author_error": "Chyba autorizace:",
+    "auth_author_error": "Chyba autorizace",
     "auth_unknown_error": "neznámá chyba",
     "auth_network_error": "Chyba sítě",
     "auth_new_pass": "Nové heslo",
