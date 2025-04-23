@@ -25,7 +25,7 @@ const Contacts: React.FC = () => {
     const { currentData } = useContext(LanguageContext) as { currentData: CurrentData | null };
     const [message, setMessage] = useState<string | null>(null);
     const [error, setError] = useState<string | null>(null);
-    const BASE_URL = import.meta.env.VITE_API_URL; // например, "https://your-backend-domain/api"
+    const BASE_URL = import.meta.env.VITE_API_URL;
 
     // Обработчик отправки формы
     const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
@@ -93,7 +93,7 @@ const Contacts: React.FC = () => {
                         {message && <div className="alert alert-success">{message}</div>}
                         {error && <div className="alert alert-danger">{error}</div>}
                         <input type="hidden" name="project_name" value="Website Pradelna contact form" />
-                        <input type="hidden" name="admin_email" value="raketaweb.eu@gmail.com" />
+                        <input type="hidden" name="admin_email" value="office@pradelna1.com" />
                         <input type="hidden" name="form_subject" value="Nova sprava" />
 
                         <div className="contacts__form__top">
