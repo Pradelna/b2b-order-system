@@ -429,7 +429,10 @@ const PlaceDetails: React.FC = () => {
                             <div className="col-xl-8 col-lg-10 col-12">
                                 <div className="card current-order">
 
-                                    <h3>{currentData?.order.current_order || "Aktuální objednávka"} #{currentOrder?.rp_contract_external_id || ""}</h3>
+                                    <h3>
+                                        {currentData?.order.current_order || "Aktuální objednávka"}{" "}
+                                        {currentOrder?.rp_contract_external_id ? `č.${currentOrder.rp_contract_external_id}` : ""}
+                                    </h3>
                                     <div className="order-details">
 
                                         <div className="form-control mb-2">

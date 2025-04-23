@@ -292,11 +292,10 @@ const PlaceDetailAdmin: React.FC = () => {
                             <div className="col-xl-8 col-lg-10 col-12">
                                 <div className="card current-order">
 
-                                    <h3>Aktuální objednávka #{currentOrder.id} {" "}
-                                        {currentOrder?.rp_contract_external_id ? (
-                                            currentOrder?.rp_contract_external_id
-                                        ) : ("havn't sent yet")}
-                                        </h3>
+                                    <h3>
+                                        Aktuální objednávka č.{currentOrder.id} {" "}
+                                        {currentOrder.rp_contract_external_id || "havn't sent yet"}
+                                    </h3>
                                     <div className="order-details">
 
                                         <div className="form-control mb-2">

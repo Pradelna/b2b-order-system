@@ -28,29 +28,27 @@ const HeaderAdmin: React.FC = () => {
                 <div className="container">
                     <div className="header__top__wrap">
 
-
-
                         {/* Contact Information */}
                         <div className="contact">
                             {location.pathname === "admin/dashboard/" ? (
                                 <>
                                     <FontAwesomeIcon icon={faDashboard} className="icon"/>
-                                    <span>Dashboard</span>
+                                    <span className="header-admin-span">Dashboard</span>
                                 </>
                             ) : (
                                 <Link to="/admin/dashboard/" className="mail">
                                     <FontAwesomeIcon icon={faDashboard} className="icon"/>
-                                    <span>Dashboard</span>
+                                    <span className="header-admin-span">Dashboard</span>
                                 </Link>
                             )}
 
                             <Link to="/" className="mail ms-4">
                                 <FontAwesomeIcon icon={faEarthAmerica} className="icon"/>
-                                <span>Web stránka</span>
+                                <span className="header-admin-span">Web stránka</span>
                             </Link>
                             <Link to="/" className="mail ms-4" onClick={handleLogout}>
                                 <FontAwesomeIcon icon={faRightFromBracket} className="icon"/>
-                                <span>Log out</span>
+                                <span className="header-admin-span">Log out</span>
                             </Link>
                         </div>
 
@@ -58,21 +56,21 @@ const HeaderAdmin: React.FC = () => {
                             {location.pathname === "admin/dashboard/" ? (
                                 <>
                                     <FontAwesomeIcon icon={faDashboard} className="icon"/>
-                                    <span>Dashboard</span>
+                                    <span className="header-admin-span">Dashboard</span>
                                 </>
                             ) : (
                                 <Link to="/admin/dashboard/" className="mail">
                                     <FontAwesomeIcon icon={faDashboard} className="icon"/>
-                                    <span>Dashboard</span>
+                                    <span className="header-admin-span">Dashboard</span>
                                 </Link>
                             )}
                             <Link to="/" className="mail ms-4">
                                 <FontAwesomeIcon icon={faEarthAmerica} className="icon"/>
-                                <span>Web stránka</span>
+                                <span className="header-admin-span">Web stránka</span>
                             </Link>
                             <Link to="/" className="mail ms-4" onClick={handleLogout}>
                                 <FontAwesomeIcon icon={faRightFromBracket} className="icon"/>
-                                <span>Log out</span>
+                                <span className="header-admin-span">Log out</span>
                             </Link>
                         </div>
 

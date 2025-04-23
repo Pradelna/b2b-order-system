@@ -2289,3 +2289,9 @@ a.terms:hover {
 .cursor-pointer {
   cursor: pointer;
 }
+
+@media (max-width: 575px) {
+  #admin .header-admin-span {
+    font-size: 14px;
+  }
+}
