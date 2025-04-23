@@ -171,7 +171,7 @@
     "order_mon_wed_fri": "Pondělí středa pátek",
     "order_tue_thu": "Úterý čtvrtek",
     "order_every_day": "Každý pracovní den",
-    "order_every_day_with_weekend": "Každý den a na víkend",
+    "order_every_day_with_weekend": "Každý den včetně víkendu",
     "order_own_system": "Vlastní systém",
     "order_day_next_visit": "Den další návštěvy",
     "order_info_waiting": "Informace čekají na aktualizaci",

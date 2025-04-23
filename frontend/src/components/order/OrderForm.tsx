@@ -17,9 +17,19 @@ interface Place {
 }
 
 const OrderForm: React.FC<OrderFormProps> = ({ placeId, onClose, onSuccess }) => {
-  const tomorrow = new Date();
-  tomorrow.setDate(tomorrow.getDate() + 1);
-  const formattedTomorrow = tomorrow.toISOString().split("T")[0];
+  // const tomorrow = new Date();
+  // tomorrow.setDate(tomorrow.getDate() + 1);
+  function getSmartToday(): Date {
+    const now = new Date();
+    const cutoffHour = 20;
+    const adjusted = new Date(now);
+    if (now.getHours() >= cutoffHour) {
+      adjusted.setDate(adjusted.getDate() + 1);
+    }
+    return adjusted;
+  }
+  const smartToday = getSmartToday();
+  const formattedTomorrow = smartToday.toISOString().split("T")[0];
 
   const [successMessage, setSuccessMessage] = useState<string | null>(null);
   const [showError, setShowError] = useState(false);
@@ -47,7 +57,7 @@ const OrderForm: React.FC<OrderFormProps> = ({ placeId, onClose, onSuccess }) =>
     "saturday",
     "sunday"
   ]);
-  const [workWeek, setWhorkWeek] = useState([
+  const [workWeek, setWorkWeek] = useState([
     "monday",
     "tuesday",
     "wednesday",
@@ -88,7 +98,8 @@ const OrderForm: React.FC<OrderFormProps> = ({ placeId, onClose, onSuccess }) =>
   // Functions for calculating available start dates
   function getAvailableStartDays() {
     const dateSet = new Set<string>();
-    const startDate = new Date();
+    // const startDate = new Date();
+    const startDate = getSmartToday();
 
     // if repeated order already exist start from next month
     if (alredyCurrentOrder) {
@@ -168,10 +179,11 @@ const OrderForm: React.FC<OrderFormProps> = ({ placeId, onClose, onSuccess }) =>
     return result;
   }
 
-  // avaliable pickup days
+  // available pickup days
   function getAvailablePickupDates() {
     const availableDates: string[] = [];
-    const startDate = new Date();
+    // const startDate = new Date();
+    const startDate = getSmartToday();
     startDate.setDate(startDate.getDate() + 1);
     for (let i = 0; i < 30; i++) {
       const date = new Date(startDate);
@@ -190,7 +202,7 @@ const OrderForm: React.FC<OrderFormProps> = ({ placeId, onClose, onSuccess }) =>
     return availableDates;
   }
 
-  // availble Delivery days
+  // available Delivery days
   function getAvailableDeliveryDates() {
     const availableDates: string[] = [];
     // get picupDate from date_pickup field
@@ -677,7 +689,7 @@ const OrderForm: React.FC<OrderFormProps> = ({ placeId, onClose, onSuccess }) =>
                           <option value="Tue_Thu">{ currentData.order.tue_thu || "Úterý čtvrte" }</option>
                           <option value="Every_day">{ currentData.order.every_day || "Každý pracovní den" }</option>
                           {customerWeekend && (
-                              <option value="Every_day_with_weekend">{ currentData.order.every_day_with_weekend || "Každý den a na víkend" }</option>
+                              <option value="Every_day_with_weekend">{ currentData.order.every_day_with_weekend || "Každý den včetně víkendu" }</option>
                           )}
                           <option value="Own">{ currentData.order.own_system || "Vlastní systém" }</option>
                         </select>
