@@ -166,7 +166,7 @@ def create_client_task(customer_id):
                 f"Tým Prádelna no.1\n"
             )
         elif customer.user.lang == 'ru':
-            subject = "Ваш аккаунт активирован"
+            subject = "Ваш аккаунт одобрен"
             message = (
                 f"Здравствуйте, {customer.company_person or customer.company_name}!\n\n"
                 f"Ваша учетная запись была успешно одобрена.\n"
@@ -177,7 +177,7 @@ def create_client_task(customer_id):
                 f"Команда Prádelna no.1\n"
             )
         else:
-            subject = "Your account has been activated"
+            subject = "Your account has been approved"
             message = (
                 f"Hello, {customer.company_person or customer.company_name}!\n\n"
                 f"Your account has been successfully approved.\n"
