@@ -11,7 +11,7 @@ const NavButtons: React.FC = () => {
             <Link to="/account" className="text-decoration-none">
                 <p className="back-link">
                     <FontAwesomeIcon icon={faChevronLeft} className="icon" />
-                    <span className="ms-2"><strong>"Zpět"</strong></span>
+                    <span className="ms-2"><strong>Zpět</strong></span>
                 </p>
             </Link>
         );

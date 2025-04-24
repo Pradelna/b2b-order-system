@@ -3,21 +3,22 @@ services:
     image: postgres:15
     container_name: postgres
     restart: always
+    env_file:
+      - .env
     volumes:
       - postgres_data:/var/lib/postgresql/data/
-      - ./postgres_converted_dump.sql:/docker-entrypoint-initdb.d/init.sql
+    expose:
+      - "5432"
     environment:
-      - POSTGRES_DB=washservice
-      - POSTGRES_USER=washadmin
-      - POSTGRES_PASSWORD=secret123
-    ports:
-      - "5433:5432"
+      - POSTGRES_USER=${POSTGRES_USER}
+      - POSTGRES_DB=${POSTGRES_DB}
+      - POSTGRES_PASSWORD=${POSTGRES_PASSWORD}
 
   redis:
     image: redis:7
     container_name: redis
-    ports:
-      - "6380:6379"
+    expose:
+      - "6379"
 
   minio:
     image: minio/minio:latest
@@ -26,85 +27,151 @@ services:
     ports:
       - "9000:9000"
       - "9001:9001"
-    environment:
-      MINIO_ROOT_USER: minioadmin
-      MINIO_ROOT_PASSWORD: minioadmin123
     volumes:
-      - ./minio_data:/data
+      - minio_data:/data
+    env_file:
+      - .env
 
   backend:
     build:
       context: ./washpr
-      dockerfile: Dockerfile
-    ports:
-      - "8800:8000"
+      dockerfile: Dockerfile.prod
+    container_name: backend
+    restart: always
+    expose:
+      - "8000"
+    env_file:
+      - .env
     volumes:
-      - ./washpr:/app
-    environment:
-      - PYTHONUNBUFFERED=1
-      - POSTGRES_DB=washservice
-      - POSTGRES_USER=washadmin
-      - POSTGRES_PASSWORD=secret123
+      - static_volume:/app/static
+      - media_volume:/app/media
+      - ./washpr/logs:/app/logs
     depends_on:
       - postgres
       - redis
       - minio
-    command: >
-      sh -c "python manage.py runserver 0.0.0.0:8000"
 
   celery:
     build:
       context: ./washpr
       dockerfile: Dockerfile
+    container_name: celery
     command: celery -A washpr worker --loglevel=info
     volumes:
       - ./washpr:/app
+      - ./washpr/logs:/app/logs
     depends_on:
       - backend
       - redis
+    env_file:
+      - .env
     environment:
+      - POSTGRES_HOST=postgres
       - CELERY_BROKER_URL=redis://redis:6379/0
+      - CELERY_RESULT_BACKEND=redis://redis:6379/0
 
   celery-beat:
     build:
       context: ./washpr
       dockerfile: Dockerfile
-    command: celery -A washpr beat --loglevel=info
+    container_name: celery-beat
+    command: celery -A washpr beat --loglevel=info --scheduler django_celery_beat.schedulers:DatabaseScheduler
+    env_file:
+      - .env
     volumes:
       - ./washpr:/app
+      - ./washpr/logs:/app/logs
     depends_on:
       - backend
       - redis
     environment:
       - CELERY_BROKER_URL=redis://redis:6379/0
-
-  frontend:
-    build:
-      context: ./frontend
-      dockerfile: Dockerfile
-    ports:
-      - "5175:5173"
-    volumes:
-      - ./frontend:/app
-      - /app/node_modules
-    stdin_open: true
-    tty: true
-    environment:
-      - CHOKIDAR_USEPOLLING=true
+      - CELERY_RESULT_BACKEND=redis://redis:6379/0
+      - POSTGRES_USER=${POSTGRES_USER}
+      - POSTGRES_DB=${POSTGRES_DB}
+      - POSTGRES_PASSWORD=${POSTGRES_PASSWORD}
+      - POSTGRES_HOST=${POSTGRES_HOST}
+      - POSTGRES_PORT=${POSTGRES_PORT}
 
   minio-client:
     image: minio/mc
+    container_name: minio-client
     depends_on:
       - minio
+    restart: on-failure
     entrypoint: >
       /bin/sh -c "
-        sleep 10;
-        mc alias set myminio http://minio:9000 minioadmin minioadmin123;
-        mc mb -p myminio/washservice;
-        mc policy set public myminio/washservice;
-        exit 0;
-      "
+          sleep 60;
+          mc alias set myminio http://minio:9000 $MINIO_ROOT_USER $MINIO_ROOT_PASSWORD;
+          mc mb -p myminio/$AWS_STORAGE_BUCKET_NAME || true;
+          mc admin user add myminio $AWS_ACCESS_KEY_ID $AWS_SECRET_ACCESS_KEY || true;
+          mc admin policy attach myminio readwrite --user=$AWS_ACCESS_KEY_ID || true;
+          tail -f /dev/null
+        "
+    environment:
+      MINIO_ROOT_USER: ${MINIO_ROOT_USER}
+      MINIO_ROOT_PASSWORD: ${MINIO_ROOT_PASSWORD}
+      AWS_STORAGE_BUCKET_NAME: ${AWS_STORAGE_BUCKET_NAME}
+      AWS_ACCESS_KEY_ID: ${AWS_ACCESS_KEY_ID}
+      AWS_SECRET_ACCESS_KEY: ${AWS_SECRET_ACCESS_KEY}
+    env_file:
+      - .env
+
+  frontend:
+    container_name: frontend
+    build:
+      context: ./frontend
+      dockerfile: Dockerfile.dev
+    env_file:
+      - .env
+    ports:
+      - "5173:5173"
+    volumes:
+      - ./frontend:/app
+      - /app/node_modules
+    environment:
+      - NODE_ENV=development
+    command: npm run dev -- --host
+
+  nginx:
+    image: nginx:alpine
+    container_name: nginx
+    ports:
+      - "80:80"
+      - "443:443"
+    volumes:
+      - ./nginx/conf.d:/etc/nginx/conf.d
+      - static_volume:/app/static
+      - media_volume:/app/media
+      - frontend_result:/app/result_build
+      - ./nginx/certbot/www:/var/www/certbot
+      - ./nginx/certbot/conf:/etc/letsencrypt
+    depends_on:
+      - backend
+      - frontend
+
+  flower:
+    image: mher/flower
+    container_name: flower
+    environment:
+      - CELERY_BROKER_URL=redis://redis:6379/0
+      - FLOWER_PORT=5555
+    ports:
+      - "5555:5555"
+    volumes:
+      - flower_logs:/data
+    depends_on:
+      - redis
+      - backend
 
 volumes:
+  static_volume:
+  media_volume:
   postgres_data:
   minio_data:
+  frontend_result:
+  flower_logs:
+
+networks:
+  default:
+    name: washservice_net
