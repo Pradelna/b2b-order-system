@@ -384,13 +384,9 @@ const PlaceDetailAdmin: React.FC = () => {
                                             </>
                                         )}
 
-                                        {/*<div className="form-control mb-2">*/}
-                                        {/*    <strong>Customer note:</strong> {currentOrder.rp_customer_note || "None"}*/}
-                                        {/*</div>*/}
-
                                         {currentOrder.rp_problem_description && (
                                             <div className="form-control mb-2">
-                                                <strong>{currentData?.form.note || "Poznámka"}:</strong> {currentOrder.rp_problem_description || "None"}
+                                                <strong>{currentData?.form.note || "Poznámka"}:</strong> {currentOrder.rp_problem_description || ""}
                                             </div>
                                         )}
 

@@ -111,11 +111,11 @@ class RestApiClient:
         response = self.call_api(url, http_method="POST", params=params)
         if response:
             # print("Place created successfully:", response)
-            print(f"✅ Place {place_title} created successfully for client {client_external_id}")
-            return f"✅ Place {place_title} created successfully for client {client_external_id}"
+            print(f"✅ create_client_place Place {place_title} created successfully for client {client_external_id}")
+            return f"✅ create_client_place Place {place_title} created successfully for client {client_external_id}"
         else:
-            print(f"❌ Failed to create place {place_title}")
-            return f"❌ Failed to create place {place_title}"
+            print(f"❌ create_client_place Failed to create place {place_title}")
+            return f"❌ create_client_place Failed to create place {place_title}"
 
 
 @shared_task(
@@ -242,11 +242,12 @@ def create_place_task(place_id):
         if response and "id" in response:
             place.rp_id = response["id"]
             place.data_sent = True
-            place.save(update_fields=["rp_id", "data_sent"])
+            place.active = True
+            place.save(update_fields=["rp_id","data_sent","active"])
             print(f"✅ create_place_task Place {place_id} created with remote id {response['id']}.")
             return f"✅ Place {place_id} created with remote id {response['id']}."
         else:
-            print(f"❌ Failed to create place {place_id}.")
+            print(f"❌ create_place_task Failed to create place {place_id}.")
             return f"❌ Failed to create place {place_id}."
 
     else:

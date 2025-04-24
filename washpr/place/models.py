@@ -47,12 +47,12 @@ class Place(models.Model):
 
         # Если объект существует, но еще не отправлен (data_sent == False)
         # и при этом клиент активен, запускаем задачу отправки
-        if self.customer.active and not self.data_sent:
-            super().save(*args, **kwargs)  # Сохраняем изменения
-            # from integration.tasks import create_place_task
-            create_place_task.delay(self.pk)
-            super().save(update_fields=['active'])
-            return
+        # if self.customer.active and not self.data_sent:
+        #     super().save(*args, **kwargs)  # Сохраняем изменения
+        #     # from integration.tasks import create_place_task
+        #     create_place_task.delay(self.pk)
+        #     super().save(update_fields=['active'])
+        #     return
         if self.rp_id:
             update_place_task.delay(place_id=self.pk)
         if self.deleted:

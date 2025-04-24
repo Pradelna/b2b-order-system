@@ -9,8 +9,9 @@ logger = logging.getLogger(__name__)
 @receiver(post_save, sender=Place)
 def trigger_create_place_task(sender, instance, created, **kwargs):
     if created:
-        logger.info(f"New Place created with id {instance.pk}. Triggering create_place_task.")
-        # Можно также вывести отладочное сообщение в консоль:
-        print(f"DEBUG: New Place created with id {instance.pk}. Triggering create_place_task.")
-        # Запускаем задачу асинхронно:
-        create_place_task.delay(instance.pk)
+        if instance.customer.active and not instance.data_sent:
+            logger.info(f"New Place created with id {instance.pk}. Triggering create_place_task.")
+            # Можно также вывести отладочное сообщение в консоль:
+            print(f"DEBUG: New Place created with id {instance.pk}. Triggering create_place_task.")
+            # Запускаем задачу асинхронно:
+            create_place_task.delay(instance.pk)

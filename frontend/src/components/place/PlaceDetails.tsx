@@ -197,6 +197,8 @@ const PlaceDetails: React.FC = () => {
     const lang = currentData?.lang || "cz";
     const messagePlaceWait = langMessage[lang] || langMessage.en;
 
+    const [remainingTimes, setRemainingTimes] = useState<number>(0); // for button timer
+
     useEffect(() => {
         // info about place
         const fetchPlace = async () => {
@@ -240,15 +242,24 @@ const PlaceDetails: React.FC = () => {
     useEffect(() => {
         if (!currentOrder) return; // Если заказа нет, не запускаем таймер
 
-        const timer = setInterval(() => {
-            if (checkTimeElapsed(currentOrder)) {
+        const updateRemaining = () => {
+            const now = new Date().getTime();
+            const created = new Date(currentOrder.created_at).getTime();
+            const timeDiff = now - created;
+            const remaining = Math.max(0, 30 - Math.floor(timeDiff / 60000));
+            setRemainingTimes(remaining);
+
+            if (remaining <= 0) {
                 setCancelableOrders(true);
                 clearInterval(timer); // Останавливаем таймер после установки true
             }
-        }, 60000); // Проверяем каждую минуту
+        };
+
+        updateRemaining(); // Сразу вычисляем
+        const timer = setInterval(updateRemaining, 60000); // Проверяем каждую минуту
 
         return () => clearInterval(timer); // Очищаем таймер при размонтировании компонента
-    }, [currentOrder]); // Зависимость — currentOrder
+    }, [currentOrder]);
 
     useEffect(() => {
         if (showOrderForm) {
@@ -522,10 +533,6 @@ const PlaceDetails: React.FC = () => {
                                             </>
                                         )}
 
-                                        {/*<div className="form-control mb-2">*/}
-                                        {/*    <strong>Customer note:</strong> {currentOrder.rp_customer_note || "None"}*/}
-                                        {/*</div>*/}
-
                                         {currentOrder.rp_problem_description && (
                                             <div className="form-control mb-2">
                                                 <strong>{currentData?.form.note || "Poznámka"}:</strong> {currentOrder.rp_problem_description || "None"}
@@ -549,6 +556,9 @@ const PlaceDetails: React.FC = () => {
                                         >
                                             <FontAwesomeIcon icon={faPowerOff} className="icon" />
                                             <span className="ms-2">{currentData?.buttons.cancel || "Stornovat"}</span>
+                                            {remainingTimes > 0 && (
+                                                <span className="ms-2 text-muted">({remainingTimes} min)</span>
+                                            )}
                                         </button>
                                     )}
 
