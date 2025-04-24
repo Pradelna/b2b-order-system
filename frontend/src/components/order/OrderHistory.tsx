@@ -217,10 +217,10 @@ const OrderHistory: React.FC<OrderHistoryProps> = ({ placeId, orders = [], setOr
                                         key={order.id}
                                         className={`card ${expandedOrders[order.id] ? "expanded" : ""}`}
                                         onClick={() => toggleExpand(order.id)}
-                                        style={{ display: (order.rp_status === 0 && order.every_week) || (
-                                            order.id === order.group_pair_id &&
-                                                order.rp_status !== 20 &&
-                                                order.rp_status !== 10) ? "none" : "block",
+                                        style={{ display: (
+                                            (order.rp_status === 0 && order.every_week) ||
+                                            (order.id === order.group_pair_id && order.type_ship !== "pickup_ship_one")
+                                            ) ? "none" : "block",
                                             '--card-height': dynamicHeight,} as React.CSSProperties}
                                     >
                                         {(order.id !== order.group_pair_id || (order.rp_status === 20 || order.rp_status === 10)) && (<>

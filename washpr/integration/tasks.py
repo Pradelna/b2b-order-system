@@ -566,6 +566,10 @@ def create_orders_task():
                         print(f"✅ A new date has been added. Final length: {len(new_order_dates)}")
 
             new_order_pk = 0
+            if order.type_ship == 'pickup_ship_one':
+                add_description = 'Výměna čistého prádla za špinavé'
+            else:
+                add_description = order.rp_customer_note
             for idx, date in enumerate(new_order_dates):
                 rp_time_planned = int(datetime.combine(date, time()).timestamp()) + 43200
                 if idx == 0:
@@ -576,7 +580,7 @@ def create_orders_task():
                     base_order_data.update({
                         'rp_time_planned': rp_time_planned,
                         'date_start_day': date,  # для нового заказа
-                        'rp_problem_description': "delivery",
+                        'rp_problem_description': f"delivery - {add_description}" if add_description else "delivery",
                         'date_pickup': order.date_start_day,  # дата предыдущего заказа
                         'date_delivery': date,             # текущая дата
                         'delivery': True,
@@ -587,14 +591,14 @@ def create_orders_task():
                     base_order_data.update({
                         'rp_time_planned': rp_time_planned,
                         'date_start_day': date,  # для нового заказа
-                        'rp_problem_description': "pickup",
+                        'rp_problem_description': f"pickup - {add_description}" if add_description else "pickup",
                         'date_pickup': date,  # текущая дата
                         'pickup': True,
                         'delivery': False,
                     })
                 if order.type_ship == 'pickup_ship_one':
                     base_order_data.update({
-                        'rp_problem_description': "Výměna čistého prádla za špinavé",
+                        'rp_problem_description': add_description,
                     })
                 new_order = Order(**base_order_data)
                 new_order.save()
