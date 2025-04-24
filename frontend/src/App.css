@@ -1517,6 +1517,13 @@ svg.loader{
   text-overflow: ellipsis;
 }
 
+.order-history .expanded p {
+  margin-bottom: 3px;
+  white-space: normal;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
 .place-detail-page .detail-info {
   display: none;
 }
