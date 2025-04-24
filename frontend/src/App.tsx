@@ -1,7 +1,8 @@
 import ForgotPas from "./components/auth/ForgotPas";
 import ScrollToTop from "./components/utils/ScrollToTop";
 
-const BASE_URL = import.meta.env.VITE_API_URL;
+// const BASE_URL = import.meta.env.VITE_API_URL;
+const BASE_URL = import.meta.env.VITE_API_URL || "http://localhost:8000/api";
 import { useState, useEffect } from "react";
 import {
   BrowserRouter,
@@ -74,15 +75,17 @@ const App: React.FC = () => {
     }
   };
 
-    useEffect(() => {
-        fetch('/meta.json?v=' + Date.now())
-            .then(res => res.json())
-            .then(({ version }) => {
-                if (version !== __APP_VERSION__) {
-                    window.location.reload();
-                }
-            });
-    }, []);
+    // useEffect(() => {
+    //     fetch('/meta.json?v=' + Date.now())
+    //         .then(res => res.json())
+    //         .then(({ version }) => {
+    //             if (version !== __APP_VERSION__) {
+    //                 window.location.reload();
+    //             }
+    //         });
+    // }, []);
+
+    console.log("BASE_URL =", BASE_URL);
 
 
   if (error) {
