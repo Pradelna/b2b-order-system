@@ -123,16 +123,20 @@ const OrderHistory: React.FC<OrderHistoryProps> = ({ placeId, orders = [], setOr
     };
 
     // check if order is old then 30 minut
+    const [remainingTimes, setRemainingTimes] = useState<{ [key: number]: number }>({});
     useEffect(() => {
         const checkCancelableOrders = () => {
             const now = new Date().getTime();
             const updatedCancelableOrders: { [key: number]: boolean } = {};
+            const updatedRemainingTimes: { [key: number]: number } = {};
             orders.forEach((order) => {
                 const createdTime = new Date(order.created_at).getTime();
-                const timeDiff = (now - createdTime) / 60000; // diffirent minutes
+                const timeDiff = (now - createdTime) / 60000; // different minutes
                 updatedCancelableOrders[order.id] = timeDiff < 30;
+                updatedRemainingTimes[order.id] = Math.max(0, 30 - Math.floor(timeDiff));
             });
             setCancelableOrders(updatedCancelableOrders);
+            setRemainingTimes(updatedRemainingTimes);
         };
 
         checkCancelableOrders();
@@ -202,10 +206,10 @@ const OrderHistory: React.FC<OrderHistoryProps> = ({ placeId, orders = [], setOr
                                 .map((order) => {
                                     // Получаем фотографии для данного заказа
                                     const photos = orderPhotos.filter((photo) => photo.group_pair_id === order.group_pair_id);
-                                    // Если файлов больше 3 – вычисляем высоту контейнера с иконками,
+                                    // Если файлов больше 3 (а если мобильная версия то больше 1) – вычисляем высоту контейнера с иконками,
                                     // иначе высота задаётся классом "expanded" (из CSS)
 
-                                    const dynamicHeight = ((photos.length > 3 || isMobileMax530) && !photos.length == 0)
+                                    const dynamicHeight = (photos.length > 3 || (isMobileMax530 && photos.length > 1))
                                         ? `${photos.length * 72 + 90}px` : '220px';
 
                                 return (
@@ -366,6 +370,9 @@ const OrderHistory: React.FC<OrderHistoryProps> = ({ placeId, orders = [], setOr
                                                 }}
                                             >
                                                 {currentData?.buttons.cancel || "Stornovat"}
+                                                <span className="cancel-timer ms-2">
+                                                    ({remainingTimes[order.id]} min)
+                                                </span>
                                             </button>
                                         ) : null}
 

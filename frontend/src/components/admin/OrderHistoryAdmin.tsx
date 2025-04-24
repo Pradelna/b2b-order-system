@@ -163,7 +163,7 @@ const OrderHistoryAdmin: React.FC<OrderHistoryAdminProps> = ({ placeId, orders =
                                         // Если файлов больше 3 – вычисляем высоту контейнера с иконками,
                                         // иначе высота задаётся классом "expanded" (из CSS)
 
-                                        const dynamicHeight = ((photos.length > 3 || isMobileMax530) && !photos.length == 0)
+                                        const dynamicHeight = (photos.length > 3 || (isMobileMax530 && photos.length > 1))
                                             ? `${photos.length * 72 + 90}px` : '270px';
 
                                         return (
@@ -204,7 +204,9 @@ const OrderHistoryAdmin: React.FC<OrderHistoryAdminProps> = ({ placeId, orders =
                                                                         {order.rp_status === 12 ? (currentData?.status?.status_12 || "Čeká na díl") : null}
                                                                         {order.rp_status === 13 ? (currentData?.status?.status_13 || "Marný výjezd") : null}
                                                                         {order.type_ship === "pickup_ship_one" ? (
-                                                                            currentData?.order?.type_sipping_clear_for_dirty || "Výměna čistého prádla za špinavé"
+                                                                            currentData?.order?.type_sipping_clear_for_dirty
+                                                                                ? ` - ${currentData.order.type_sipping_clear_for_dirty}`
+                                                                                : " - Výměna čistého prádla za špinavé"
                                                                         ) : (<>
                                                                             {order.pickup  ? (" Pickup") : null}
                                                                             {order.delivery ? (" Delivery") : null}

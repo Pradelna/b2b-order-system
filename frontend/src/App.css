@@ -1512,6 +1512,9 @@ svg.loader{
 
 .order-history p {
   margin-bottom: 3px;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
 }
 
 .place-detail-page .detail-info {
@@ -1618,6 +1621,7 @@ svg.loader{
   position: absolute;
   top: 18px;
   right: 20px;
+  background: #fff;
 }
 
 /*checkbox*/
@@ -1817,7 +1821,7 @@ p.back-link {
     display: none;
   }
   .order-history .card {
-    padding: 20px 16px;
+    padding: 20px 74px 16px 16px;
     margin-bottom: 10px;
   }
   .order-history .place-icon-skeleton {

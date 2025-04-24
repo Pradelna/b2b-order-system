@@ -189,7 +189,7 @@ const CustomerDetailAdmin: React.FC = () => {
                     )}
                 </div>
             </div>
-            <div id="company-top-admin" className="row">
+            <div id="company-top-admin">
 
                 <div className="row">
 
