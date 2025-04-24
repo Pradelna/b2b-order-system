@@ -155,37 +155,37 @@ def create_client_task(customer_id):
         create_all_place_task.delay(customer_id)
 
         if customer.user.lang == 'cz':
-            subject = "Váš účet byl aktivován"
+            subject = "Váš účet byl schválen"
             message = (
                 f"Dobrý den, {customer.company_person or customer.company_name}!\n\n"
                 f"Váš účet byl úspěšně schválen.\n"
-                f"S aktivací vašeho účtu souhlasíte s cenou, která Vám byla vyměřena.\n"
-                f"Ceny najdete v administračním kabinetu v bloku dokumentů.\n"
+                f"Ceník za služby prádelny naleznete ve Vašem uživatelském rozhraní.\n"
+                f"Můžete začít objednávat!\n"
                 f"Těšíme se na spolupráci!\n\n"
                 f"S pozdravem\n"
-                f"Tým prádelna no.1\n"
+                f"Tým Prádelna no.1\n"
             )
         elif customer.user.lang == 'ru':
             subject = "Ваш аккаунт активирован"
             message = (
                 f"Здравствуйте, {customer.company_person or customer.company_name}!\n\n"
                 f"Ваша учетная запись была успешно одобрена.\n"
-                f"Активируя свою учетную запись, вы соглашаетесь с ценой, которая была с вас взимана.\n"
-                f"Цены вы можете найти в кабинете администрации в блоке документов.\n"
+                f"Тарифы на прачечные услуги вы можете найти в вашем пользовательском интерфейсе.\n"
+                f"Вы можете начать заказывать!\n"
                 f"Мы с нетерпением ждем сотрудничества с вами!\n\n"
                 f"С уважением\n"
-                f"Команда прачечной №1\n"
+                f"Команда Prádelna no.1\n"
             )
         else:
             subject = "Your account has been activated"
             message = (
                 f"Hello, {customer.company_person or customer.company_name}!\n\n"
                 f"Your account has been successfully approved.\n"
-                f"By activating your account, you agree to the price that has been charged to you.\n"
-                f"You can find the prices in the administration cabinet in the documents block.\n"
+                f"You can find the laundry service rates in your user interface.\n"
+                f"You can start ordering!\n"
                 f"We look forward to working with you!\n\n"
                 f"Best regards\n"
-                f"The laundry no.1 team\n"
+                f"The Prádelna no.1 team\n"
             )
 
         from_email = settings.DEFAULT_FROM_EMAIL
