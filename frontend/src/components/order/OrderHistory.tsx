@@ -221,7 +221,8 @@ const OrderHistory: React.FC<OrderHistoryProps> = ({ placeId, orders = [], setOr
                                         (order.id === order.group_pair_id && order.type_ship !== "pickup_ship_one") ? "none" : "block",
                                             '--card-height': dynamicHeight,} as React.CSSProperties}
                                     >
-                                        {(order.id !== order.group_pair_id || (order.rp_status === 20 || order.rp_status === 10)) && (<>
+                                            {order.type_ship === "pickup_ship_one" ||
+                                            (order.type_ship !== "pickup_ship_one" && order.id !== order.group_pair_id) ? (<>
                                         <div className="history-icon">
                                             <FontAwesomeIcon icon={faTruck} />
                                         </div>
@@ -455,7 +456,7 @@ const OrderHistory: React.FC<OrderHistoryProps> = ({ placeId, orders = [], setOr
 
                                             </div>
                                             )}
-                                        </>)}
+                                        </>) : null}
                                     </div>
                                 ) // end return
                             }
