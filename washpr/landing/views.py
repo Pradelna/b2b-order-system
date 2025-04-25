@@ -10,7 +10,6 @@ from .models import *
 from .serializer import *
 from washpr import settings
 from integration.tasks import send_contact_email_task
-
 from utils.checkorigin import allow_only_pradelna1
 
 
@@ -22,6 +21,7 @@ def landing_page(request):
 @api_view(['GET'])
 @permission_classes([AllowAny])
 @authentication_classes([])  # Если аутентификация не требуется
+@allow_only_pradelna1
 def landing_page_view(request):
     """
     Functional representation for obtaining Landingpage data.
