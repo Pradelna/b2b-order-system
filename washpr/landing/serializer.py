@@ -306,7 +306,6 @@ class LandingPageSerializer(serializers.ModelSerializer):
             'your_invoices': obj.history_your_invoices,
             'no_invoices': obj.history_no_invoices,
             'wait_approval': obj.history_wait_approval,
-            'order_was_canceled': obj.history_order_was_canceled,
         }
 
     def get_status(self, obj):

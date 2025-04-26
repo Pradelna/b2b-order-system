@@ -133,6 +133,14 @@ const OrderHistory: React.FC<OrderHistoryProps> = ({
         }
     };
 
+    const langCanceledMes = {
+        cz: "Objednávka byla zrušena uživatelem",
+        ru: "Заказ был отмёнен клиентом",
+        en: "Order was cancelled by the customer",
+    };
+    const lang = currentData?.lang || "cz";
+    const messageCanceled = langCanceledMes[lang] || langCanceledMes.en;
+
     // check if order is old then 30 minut
     const [remainingTimes, setRemainingTimes] = useState<{ [key: number]: number }>({});
     useEffect(() => {
@@ -303,7 +311,7 @@ const OrderHistory: React.FC<OrderHistoryProps> = ({
                                                 </p>
                                             ) : (<>
                                                 <p>
-                                                    <strong>{currentData?.history?.order_was_canceled || "Objednávka byla zrušena uživatelem"}</strong>
+                                                    <strong>{messageCanceled || "Objednávka byla zrušena uživatelem"}</strong>
                                                 </p>
                                             </>)}
 
