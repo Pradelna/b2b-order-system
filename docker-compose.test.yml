@@ -4,7 +4,7 @@ services:
     container_name: postgres
     restart: always
     env_file:
-      - .env
+      - washpr/.env
     volumes:
       - postgres_data:/var/lib/postgresql/data/
     expose:
@@ -30,7 +30,7 @@ services:
     volumes:
       - minio_data:/data
     env_file:
-      - .env
+      - washpr/.env
 
   backend:
     build:
@@ -41,7 +41,7 @@ services:
     expose:
       - "8000"
     env_file:
-      - .env
+      - washpr/.env
     volumes:
       - static_volume:/app/static
       - media_volume:/app/media
@@ -64,7 +64,7 @@ services:
       - backend
       - redis
     env_file:
-      - .env
+      - washpr/.env
     environment:
       - POSTGRES_HOST=postgres
       - CELERY_BROKER_URL=redis://redis:6379/0
@@ -77,7 +77,7 @@ services:
     container_name: celery-beat
     command: celery -A washpr beat --loglevel=info --scheduler django_celery_beat.schedulers:DatabaseScheduler
     env_file:
-      - .env
+      - washpr/.env
     volumes:
       - ./washpr:/app
       - ./washpr/logs:/app/logs
@@ -115,7 +115,7 @@ services:
       AWS_ACCESS_KEY_ID: ${AWS_ACCESS_KEY_ID}
       AWS_SECRET_ACCESS_KEY: ${AWS_SECRET_ACCESS_KEY}
     env_file:
-      - .env
+      - washpr/.env
 
   frontend:
     container_name: frontend
@@ -123,7 +123,7 @@ services:
       context: ./frontend
       dockerfile: Dockerfile.dev
     env_file:
-      - .env
+      - washpr/.env
     ports:
       - "5173:5173"
     volumes:

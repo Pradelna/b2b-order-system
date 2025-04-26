@@ -23,11 +23,16 @@ interface OrderHistoryProps {
     hasMoreOrders: boolean;
     orders?: Order[]; // Сделано необязательным для защиты
     setOrders?: (orders: Order[]) => void; // Передача функции для обновления списка заказов
-    stopedOrder?: Order;
+    currentOrder?: Order;
 }
 
-const OrderHistory: React.FC<OrderHistoryProps> = ({ placeId, orders = [], setOrders, stopedOrder}) => {
-    const [visibleOrders, setVisibleOrders] = useState<number>(80);
+const OrderHistory: React.FC<OrderHistoryProps> = ({
+    placeId,
+    orders = [],
+    setOrders,
+    currentOrder,
+}) => {
+    const [visibleOrders, setVisibleOrders] = useState<number>(30);
     const [hasMoreOrders, setHasMoreOrders] = useState<boolean>(false);
     const [loading, setLoading] = useState<boolean>(true);
     const [expandedOrders, setExpandedOrders] = useState<{ [key: number]: boolean }>({});
@@ -51,7 +56,7 @@ const OrderHistory: React.FC<OrderHistoryProps> = ({ placeId, orders = [], setOr
                 if (setOrders) {
                     setOrders(data);
                 }
-                setHasMoreOrders(data.length > 40);
+                setHasMoreOrders(data.length > 30);
             } else {
                 console.error("Failed to fetch orders");
             }
@@ -84,7 +89,7 @@ const OrderHistory: React.FC<OrderHistoryProps> = ({ placeId, orders = [], setOr
 
     // Load more orders when the user clicks "More"
     const loadMoreOrders = () => {
-        const newVisibleCount = visibleOrders + 40;
+        const newVisibleCount = visibleOrders + 30;
         setVisibleOrders(newVisibleCount);
         setHasMoreOrders(newVisibleCount < orders.length);
     };
@@ -113,6 +118,12 @@ const OrderHistory: React.FC<OrderHistoryProps> = ({ placeId, orders = [], setOr
                     setUpdatedOrder(dataUpdatedOrder)
                     setSuccessMessage(currentData?.messages?.order_suc_canceled || "Objednávka byla úspěšně zrušena!");
                     setTimeout(() => setSuccessMessage(""), 10000);
+                    fetchOrders();
+                    // Добавляем сюда обновление cancelableOrders
+                    setCancelableOrders((prev) => ({
+                        ...prev,
+                        [dataUpdatedOrder.id]: false, // Этот заказ уже НЕ может быть отменён
+                    }));
                 } else {
                     console.error("Failed to stop order.");
                 }
@@ -167,7 +178,6 @@ const OrderHistory: React.FC<OrderHistoryProps> = ({ placeId, orders = [], setOr
         setHasMoreOrders(visibleOrders < orders.length);
     }, [orders, visibleOrders]);
 
-
     return (
         <div className="order-history mb-5">
             <h3 className="account-info">{currentData?.buttons?.all_history || "Historie objednávek"}</h3>
@@ -205,7 +215,11 @@ const OrderHistory: React.FC<OrderHistoryProps> = ({ placeId, orders = [], setOr
                             {orders.slice(0, visibleOrders)
                                 .map((order) => {
                                     // Получаем фотографии для данного заказа
-                                    const photos = orderPhotos.filter((photo) => photo.group_pair_id === order.group_pair_id);
+                                    const photos = orderPhotos.filter((photo) =>
+                                        order.type_ship === "pickup_ship_one"
+                                            ? photo.order_id === order.id
+                                            : photo.group_pair_id === order.group_pair_id
+                                    );
                                     // Если файлов больше 3 (а если мобильная версия то больше 1) – вычисляем высоту контейнера с иконками,
                                     // иначе высота задаётся классом "expanded" (из CSS)
 
@@ -217,12 +231,22 @@ const OrderHistory: React.FC<OrderHistoryProps> = ({ placeId, orders = [], setOr
                                         key={order.id}
                                         className={`card ${expandedOrders[order.id] ? "expanded" : ""}`}
                                         onClick={() => toggleExpand(order.id)}
-                                        style={{ display: (order.rp_status === 0 && order.every_week) ||
-                                        (order.id === order.group_pair_id && order.type_ship !== "pickup_ship_one") ? "none" : "block",
+                                        style={{ display: (order.rp_status === 0 && order.every_week) || (
+                                                order.id === order.group_pair_id &&
+                                                order.rp_status !== 20 &&
+                                                order.rp_status !== 10 &&
+                                                order.type_ship !== "pickup_ship_one"
+                                            ) ||
+                                            (
+                                                order.rp_status === 20 &&
+                                                order.every_week &&
+                                                (currentOrder?.active || currentOrder?.rp_status === 20)
+                                            ) ? "none" : "block",
                                             '--card-height': dynamicHeight,} as React.CSSProperties}
                                     >
                                             {order.type_ship === "pickup_ship_one" ||
-                                            (order.type_ship !== "pickup_ship_one" && order.id !== order.group_pair_id) ? (<>
+                                            (order.type_ship !== "pickup_ship_one" && order.id !== order.group_pair_id) ||
+                                            (order.rp_status === 20 || order.rp_status === 10) ? (<>
                                         <div className="history-icon">
                                             <FontAwesomeIcon icon={faTruck} />
                                         </div>
@@ -269,21 +293,26 @@ const OrderHistory: React.FC<OrderHistoryProps> = ({ placeId, orders = [], setOr
 
                                         {order.rp_contract_external_id  ? (
                                             <p>
-                                                <strong>{currentData?.history?.order_number || "Číslo objednávky"}:</strong> {order.rp_contract_external_id}
+                                                <strong>{currentData?.history?.order_number || "Č"}:</strong> {order.rp_contract_external_id}
                                             </p>
                                         ) : (<>
+
                                             {!order.canceled ? (
                                                 <p>
                                                     <strong>{currentData?.history?.wait_approval || "Objednávka čeká na zpracování"}</strong>
                                                 </p>
-                                            ) : null}
+                                            ) : (<>
+                                                <p>
+                                                    <strong>{currentData?.history?.order_was_canceled || "Objednávka byla zrušena uživatelem"}</strong>
+                                                </p>
+                                            </>)}
 
                                         </>)}
 
                                         {/* Дополнительная информация показывается только если карточка развернута */}
                                         {expandedOrders[order.id] && (
                                             <div className="expanded-content">
-                                                {/* if order is repeating */}
+
                                                 {order.every_week ? (<>
                                                 <p><strong>
                                                     {currentData?.history?.repeated_order || "Pravidelná opakující se objednávka"}
@@ -313,12 +342,20 @@ const OrderHistory: React.FC<OrderHistoryProps> = ({ placeId, orders = [], setOr
                                                         </p>
                                                     ) : null}
                                                 </>) : (<>
-                                                <p><strong>{currentData?.form?.pickup || "Vyzvednutí"}: </strong>
-                                                    {formatViceDate(order.date_pickup)}</p>
-                                                <p><strong>{currentData?.form?.delivery || "Dodání"}: </strong>
-                                                    {formatViceDate(order.date_delivery)}</p>
+                                                {order.type_ship === "pickup_ship_one" ? (
+                                                    <p><strong>{currentData?.form?.delivery || "Dodání"}: </strong>
+                                                        {formatDate(order.rp_time_planned)}</p>
+                                                    ) : (<>
+                                                    <p><strong>{currentData?.form?.pickup || "Vyzvednutí"}: </strong>
+                                                        {formatViceDate(order.date_pickup)}</p>
+                                                    <p><strong>{currentData?.form?.delivery || "Dodání"}: </strong>
+                                                        {formatViceDate(order.date_delivery)}</p>
+                                                    </>)}
+
+
                                                 </>)}
-                                                {order.rp_status === 4 ? (
+
+                                                {(order.rp_status === 4 || order.rp_status === 5 || order.rp_status === 11) ? (
                                                     <>
                                                         {order.rp_time_realization ? (
                                                             <p><strong>

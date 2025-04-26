@@ -95,10 +95,13 @@ const PlaceDetails: React.FC = () => {
             if (response.ok) {
                 const orders: Order[] = await response.json();
                 // get all repeated orders with end_order = flase
-                const repeatOrders = orders.filter((order) => order.every_week && !order.end_order && !order.canceled);
+                const repeatOrders = orders
+                    .filter((order) => order.every_week &&
+                        ![4, 5, 11].includes(order.rp_status) &&
+                        !order.canceled);
                 // get least order id
-                const current = repeatOrders.sort((a, b) => a.id - b.id)
-                    .find((order) => order.every_week && !order.end_order);
+                const current = repeatOrders
+                    .sort((a, b) => a.id - b.id)[0];
                 // Извлекаем даты в массив
                 const startDatesList = repeatOrders.map(order => order.date_start_day);
                 setStartDates(startDatesList);
@@ -167,13 +170,11 @@ const PlaceDetails: React.FC = () => {
                     const updatedOrder = await response.json();
                     setCurrentOrder(null); // del current order
                     setStopedOrder(updatedOrder);
-                    setOrderHistory((prevOrders) => {
-                        // add ex current order
-                        if (prevOrders.some((order) => order.id === updatedOrder.id)) {
-                            return prevOrders;
-                        }
-                        return [updatedOrder, ...prevOrders];
-                    });
+                    setOrderHistory((prevOrders) =>
+                        prevOrders.map((order) =>
+                            order.id === updatedOrder.id ? updatedOrder : order
+                        )
+                    );
                     setSuccessMessage(currentData?.messages?.order_suc_canceled || "Objednávka byla úspěšně zrušena!");
                     setTimeout(() => setSuccessMessage(""), 10000);
                 } else {
@@ -242,6 +243,8 @@ const PlaceDetails: React.FC = () => {
     useEffect(() => {
         if (!currentOrder) return; // Если заказа нет, не запускаем таймер
 
+        let timer: NodeJS.Timeout;
+
         const updateRemaining = () => {
             const now = new Date().getTime();
             const created = new Date(currentOrder.created_at).getTime();
@@ -255,8 +258,8 @@ const PlaceDetails: React.FC = () => {
             }
         };
 
-        updateRemaining(); // Сразу вычисляем
-        const timer = setInterval(updateRemaining, 60000); // Проверяем каждую минуту
+        updateRemaining();
+        timer = setInterval(updateRemaining, 60000);
 
         return () => clearInterval(timer); // Очищаем таймер при размонтировании компонента
     }, [currentOrder]);
@@ -410,9 +413,9 @@ const PlaceDetails: React.FC = () => {
                                             </div>
                                         </div>
                                         <button
-                                            className="btn-submit mt-3"
+                                            className={`btn-submit mt-3 ${notActivePlace || currentOrder?.rp_status === 20 ? 'disabled-btn' : ''}`}
                                             onClick={() => setShowOrderForm(true)}
-                                            disabled={notActivePlace}
+                                            disabled={notActivePlace || currentOrder?.rp_status === 20}
                                         >
                                             <FontAwesomeIcon icon={faCartPlus} className="icon" />
                                             <span className="ms-3">{currentData?.buttons.new_order || "Nová objednávka"}</span>
@@ -555,9 +558,9 @@ const PlaceDetails: React.FC = () => {
                                             }}
                                         >
                                             <FontAwesomeIcon icon={faPowerOff} className="icon" />
-                                            <span className="ms-2">{currentData?.buttons.cancel || "Stornovat"}</span>
+                                            <span className="ms-2">{currentData?.buttons.cancel || "Zrušit"}</span>
                                             {remainingTimes > 0 && (
-                                                <span className="ms-2 text-muted">({remainingTimes} min)</span>
+                                                <span className="ms-2">({remainingTimes} min)</span>
                                             )}
                                         </button>
                                     )}
@@ -576,7 +579,7 @@ const PlaceDetails: React.FC = () => {
                             hasMoreOrders={false}
                             orders={orderHistory}
                             setOrders={setOrderHistory}
-                            stopedOrder={stopedOrder}
+                            currentOrder={currentOrder}
                         />
                     </div>
                 </div>
@@ -586,11 +589,14 @@ const PlaceDetails: React.FC = () => {
                         placeId={place.id}
                         onClose={() => setShowOrderForm(false)}
                         onSuccess={(newOrder) => {
-                            // add a new order to the list
-                            setOrderHistory((prevOrders) => [newOrder, ...prevOrders]);
-                            // Обновляем текущий заказ, если он активный
-                            if (newOrder.every_week && !newOrder.end_order) {
-                                setCurrentOrder(newOrder);
+                            if (newOrder.order.every_week && !newOrder.order.end_order && !currentOrder) {
+                                setCurrentOrder(newOrder.order);
+                            }
+                            if (currentOrder || !newOrder.order.every_week) {
+                                setOrderHistory((prevOrders) => {
+                                    const updatedOrders = [newOrder.order, ...prevOrders];
+                                    return updatedOrders;
+                                });
                             }
                             setSuccessMessage(
                                 currentData?.messages.order_created || "Objednávka úspěšně vytvořená"
@@ -598,8 +604,6 @@ const PlaceDetails: React.FC = () => {
                             setTimeout(() => setSuccessMessage(""), 10000);
                             setShowOrderForm(false);
                             setSuccessOrderMessage(newOrder);
-                            // Обновляем данные из API
-                            fetchOrders();
                         }}
                     />
                 )}

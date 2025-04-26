@@ -253,6 +253,7 @@ class LandingPage(models.Model):
     history_your_invoices = models.CharField("Your invoices", max_length=100, blank=True, null=True)
     history_no_invoices = models.CharField("No invoices", max_length=100, blank=True, null=True)
     history_wait_approval = models.CharField("Order are waiting approval", max_length=100, blank=True, null=True)
+    history_order_was_canceled = models.CharField("Order was canceled", max_length=100, blank=True, null=True)
 
     status_0 = models.CharField("Status 0", max_length=100, blank=True, null=True)
     status_1 = models.CharField("Status 1", max_length=100, blank=True, null=True)

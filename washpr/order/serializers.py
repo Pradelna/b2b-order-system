@@ -9,7 +9,7 @@ class OrderSerializer(serializers.ModelSerializer):
             'place', 'rp_place_title', 'type_ship', 'system', 'monday', 'tuesday', 'wednesday', 'thursday',
             'friday', 'saturday', 'sunday', 'date_pickup', 'date_delivery', 'every_week', 'rp_customer_note', 'terms',
             'active', 'end_order', 'rp_status', 'date_start_day', 'created_at', 'canceled', 'id',
-            'rp_problem_description', 'rp_contract_external_id'
+            'rp_problem_description', 'rp_contract_external_id', 'rp_time_planned'
         ]
         extra_kwargs = {
             'terms': {'required': True},

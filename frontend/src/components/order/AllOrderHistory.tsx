@@ -29,7 +29,7 @@ interface Order {
 
 const AllOrderHistory: React.FC = () => {
     const [orders, setOrders] = useState<Order[]>([]);
-    const [visibleOrders, setVisibleOrders] = useState<number>(10);
+    const [visibleOrders, setVisibleOrders] = useState<number>(30);
     const [hasMoreOrders, setHasMoreOrders] = useState<boolean>(false);
     const [loading, setLoading] = useState<boolean>(true);
     const [expandedOrders, setExpandedOrders] = useState<{ [key: number]: boolean }>({});
@@ -62,7 +62,7 @@ const AllOrderHistory: React.FC = () => {
 
     //  Load More Orders
     const loadMoreOrders = () => {
-        setVisibleOrders((prev) => prev + 10);
+        setVisibleOrders((prev) => prev + 30);
     };
 
     //  Toggle Expanded Order
@@ -171,13 +171,12 @@ const AllOrderHistory: React.FC = () => {
                                                     key={order.id}
                                                     className={`card ${expandedOrders[order.id] ? "expanded" : ""}`}
                                                     onClick={() => toggleExpand(order.id)}
-                                                    style={{ display: (order.rp_status === 0 && order.every_week) || (
-                                                            order.id === order.group_pair_id &&
-                                                            order.rp_status !== 20 &&
-                                                            order.rp_status !== 10) ? "none" : "block",
+                                                    style={{ display: ((order.rp_status === 0 || order.rp_status === 20) && order.every_week) ||
+                                                        (order.id === order.group_pair_id && order.type_ship !== "pickup_ship_one") ? "none" : "block",
                                                         '--card-height': dynamicHeight,} as React.CSSProperties}
                                                 >
-                                                    {(order.id !== order.group_pair_id || (order.rp_status === 20 || order.rp_status === 10)) && (<>
+                                                    {order.type_ship === "pickup_ship_one" ||
+                                                    (order.type_ship !== "pickup_ship_one" && order.id !== order.group_pair_id) ? (<>
                                                 <div className="history-icon">
                                                     <FontAwesomeIcon icon={faTruck} />
                                                 </div>
@@ -211,11 +210,13 @@ const AllOrderHistory: React.FC = () => {
 
                                                 {order.rp_contract_external_id ? (<>
                                                     <strong>{currentData?.history?.order_number || "Č"}:</strong> {order.rp_contract_external_id}
-                                                </>) : (
-                                                    <>
-                                                        <strong>{currentData?.history?.wait_approval || "Objednávka čeká na zpracování"}</strong>
-                                                    </>
-                                                )}
+                                                </>) : (<>
+                                                        {!order.canceled ? (
+                                                                <strong>{currentData?.history?.wait_approval || "Objednávka čeká na zpracování"}</strong>
+                                                        ) : (<>
+                                                                <strong>{currentData?.history?.order_was_canceled || "Objednávka byla zrušena uživatelem"}</strong>
+                                                        </>)}
+                                                    </>)}
                                                 </p>
 
                                                 {order.place_name ? (
@@ -377,7 +378,7 @@ const AllOrderHistory: React.FC = () => {
 
                                                         </div>
                                                     )}
-                                                </>)}
+                                                </>) : null}
                                             </div>
                                         )})}
 

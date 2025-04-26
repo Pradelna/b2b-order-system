@@ -2306,3 +2306,15 @@ a.terms:hover {
     font-size: 14px;
   }
 }
+
+.disabled-btn {
+  background-color: #ccc;
+  cursor: not-allowed;
+  pointer-events: none;
+  transition: all 0.3s ease;
+  border: none;
+}
+
+.disabled-btn:hover {
+  background-color: #ccc;
+}

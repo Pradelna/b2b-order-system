@@ -1,11 +1,8 @@
 import React, {useState, useEffect, useContext} from "react";
 import { LanguageContext } from "../../context/LanguageContext";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { faTruck, faFileLines, faCheckCircle, faBan, faFileImage, faFileArrowDown, faFilePdf } from "@fortawesome/free-solid-svg-icons";
-import { fetchWithAuth } from "../account/auth.ts";
-import { styled } from '@mui/material/styles';
-import Tooltip, { TooltipProps, tooltipClasses } from '@mui/material/Tooltip';
-import {Form} from "react-router-dom";
+import { faTruck, faCheckCircle, faBan, faFileArrowDown } from "@fortawesome/free-solid-svg-icons";
+import { fetchWithAuth } from "../account/auth";
 import {Skeleton} from "@mui/material";
 import { formatDate } from "@/components/utils/FormatDate";
 import {formatViceDate} from "@/components/utils/FormatViceDate";
@@ -32,14 +29,12 @@ const OrderHistoryAdmin: React.FC<OrderHistoryAdminProps> = ({ placeId, orders =
     const [hasMoreOrders, setHasMoreOrders] = useState<boolean>(false);
     const [loading, setLoading] = useState<boolean>(true);
     const [expandedOrders, setExpandedOrders] = useState<{ [key: number]: boolean }>({});
-    const [cancelableOrders, setCancelableOrders] = useState<{ [key: number]: boolean }>({});
     const [successMessage, setSuccessMessage] = useState<string>("");
-    const [updatedOrder, setUpdatedOrder] = useState<any>(null);
     const [forceWait, setForceWait] = useState<boolean>(true);
     const BASE_URL = import.meta.env.VITE_API_URL;
     const { currentData } = useContext(LanguageContext);
     const [orderPhotos, setOrderPhotos] = useState<OrderPhoto[]>([]);
-    const [expandedPhoto, setExpandedPhoto] = useState(false); // for expend photo if theya are many
+    // const [expandedPhoto, setExpandedPhoto] = useState(false); // for expend photo if theya are many
     const isMobileMax530 = UseMediaQuery('(max-width: 530px)');
 
     // Fetch orders from the API

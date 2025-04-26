@@ -1,8 +1,6 @@
 import React, { useState, useEffect, useContext, useRef } from "react";
 import { LanguageContext } from "../../context/LanguageContext";
 import { fetchWithAuth } from "../account/auth";
-// import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
-// import {faFilePdf} from "@fortawesome/free-solid-svg-icons";
 import {Link} from "react-router-dom";
 
 interface OrderFormProps {

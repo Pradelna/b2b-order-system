@@ -2,8 +2,8 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { styled } from '@mui/material/styles';
 import Tooltip, { TooltipProps, tooltipClasses } from '@mui/material/Tooltip';
 import { faFileImage, faFileLines } from '@fortawesome/free-solid-svg-icons';
-import { fetchWithAuth } from '@/components/account/auth.ts';
-import DarkTooltip from "../utils/DarkTooltip.tsx";
+import { fetchWithAuth } from '@/components/account/auth';
+import DarkTooltip from "../utils/DarkTooltip";
 
 interface Photo {
     id: string;
@@ -18,9 +18,14 @@ interface PhotoDownloadIconProps {
 }
 
 const FileDownloadIcon: React.FC<PhotoDownloadIconProps> = ({ photo, styleData }) => {
-    // Извлекаем расширение из MIME-типа и приводим его к нижнему регистру
-    const fileExtension = photo.mime.split('/')[1].toLowerCase();
+    // We extract an extension from MIME-type and bring it to the lower register
+    const fileExtension = photo?.mime?.split('/')?.[1]?.toLowerCase() || '';
     const BASE_URL = import.meta.env.VITE_API_URL;
+
+    if (!fileExtension) {
+        console.error("Invalid MIME type for photo:", photo);
+        return null;
+    }
 
     // downloading report images
     const downloadFile = async (fileId: string) => {
@@ -57,6 +62,10 @@ const FileDownloadIcon: React.FC<PhotoDownloadIconProps> = ({ photo, styleData }
             console.error("Error of downloading file:", error);
         }
     };
+
+    if (!fileExtension) {
+        return null;
+    }
 
     return (
         <div
