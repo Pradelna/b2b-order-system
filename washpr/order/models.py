@@ -124,7 +124,10 @@ class Order(models.Model):
                 if self.rp_customer_note and not self.rp_problem_description:
                     self.rp_problem_description = self.rp_customer_note
                 if not self.rp_customer_note and not self.rp_problem_description:
-                    self.rp_problem_description = "pickup"
+                    if self.type_ship == 'pickup_ship_one':
+                        self.rp_problem_description = "Výměna čistého prádla za špinavé"
+                    else:
+                        self.rp_problem_description = "pickup"
                 self.contract_external_id_for_admin = self.pk
             if self.terms:
                 self.main_order = True
