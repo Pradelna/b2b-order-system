@@ -93,7 +93,8 @@ const Account: React.FC<AccountProps> = ({ customerData, setCustomerData }) => {
 
 
     const handleCreateOrder = () => {
-        setShowOrderForm(true); // Показываем форму создания заказа
+        setCurrentPlaceId(null); // clear placeId
+        setShowOrderForm(true);
     };
 
     const handleOrderSuccess = (data: number | null) => {
@@ -547,7 +548,7 @@ const Account: React.FC<AccountProps> = ({ customerData, setCustomerData }) => {
 
             {showOrderForm && (
                 <OrderForm
-                    placeId={currentPlaceId}
+                    placeId={currentPlaceId ?? ""}
                     onClose={() => setShowOrderForm(false)}
                     onSuccess={(newOrder) => {
                         setOrders((prevOrders) => [...prevOrders, newOrder]);

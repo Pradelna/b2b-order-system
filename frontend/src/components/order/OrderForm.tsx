@@ -43,7 +43,6 @@ const OrderForm: React.FC<OrderFormProps> = ({ placeId, onClose, onSuccess }) =>
   const [alredyCurrentOrder, setAlredyCurrentOrder] = useState(false);
   const [newCurrentOrder, setNewCurrentOrder] = useState(false);
   const [firstStartForm, setFirstStartForm] = useState(true);
-  const isFirstRender = useRef(true);
   const [everyWeek, setEveryWeek] = useState(false);
   const [customerWeekend, setCustomerWeekend] = useState<boolean>(false);
 
@@ -550,9 +549,7 @@ const OrderForm: React.FC<OrderFormProps> = ({ placeId, onClose, onSuccess }) =>
         console.error("Error fetching current order:", error);
       }
 
-
-    // fetchPlaces();
-  })();
+    })();
   }, [BASE_URL, selectedPlaceId]);
 
 

@@ -180,9 +180,6 @@ const CustomerDetailPage: React.FC = () => {
                             </div>
                         </>) : (<>
 
-
-                            {/*<UploadFile />*/}
-
                             <DocumentsBlock />
 
                             <AuthBlock customerData={customerData} />

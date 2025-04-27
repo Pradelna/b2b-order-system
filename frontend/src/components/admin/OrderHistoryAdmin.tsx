@@ -154,7 +154,11 @@ const OrderHistoryAdmin: React.FC<OrderHistoryAdminProps> = ({ placeId, orders =
                             {orders.slice(0, visibleOrders)
                                 .map((order) => {
                                         // Получаем фотографии для данного заказа
-                                        const photos = orderPhotos.filter((photo) => photo.group_pair_id === order.group_pair_id);
+                                        const photos = orderPhotos.filter((photo) =>
+                                            order.type_ship === "pickup_ship_one"
+                                                ? photo.order_id === order.id
+                                                : photo.group_pair_id === order.group_pair_id
+                                        );
                                         // Если файлов больше 3 – вычисляем высоту контейнера с иконками,
                                         // иначе высота задаётся классом "expanded" (из CSS)
 

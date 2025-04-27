@@ -157,9 +157,14 @@ const AllOrderHistory: React.FC = () => {
 
                                 {orders.length > 0 ? (
                                     <div>
-                                        {orders.slice(0, visibleOrders).map((order) => {
+                                        {orders.slice(0, visibleOrders)
+                                            .map((order) => {
                                             // Получаем фотографии для данного заказа
-                                            const photos = orderPhotos.filter((photo) => photo.group_pair_id === order.group_pair_id);
+                                            const photos = orderPhotos.filter((photo) =>
+                                                order.type_ship === "pickup_ship_one"
+                                                    ? photo.order_id === order.id
+                                                    : photo.group_pair_id === order.group_pair_id
+                                            );
                                             // Если фотографий больше двух – вычисляем высоту контейнера с иконками,
                                             // иначе высота задаётся классом "expanded" (из CSS)
 
@@ -171,12 +176,21 @@ const AllOrderHistory: React.FC = () => {
                                                     key={order.id}
                                                     className={`card ${expandedOrders[order.id] ? "expanded" : ""}`}
                                                     onClick={() => toggleExpand(order.id)}
-                                                    style={{ display: ((order.rp_status === 0 || order.rp_status === 20) && order.every_week) ||
-                                                        (order.id === order.group_pair_id && order.type_ship !== "pickup_ship_one") ? "none" : "block",
+                                                    style={{ display: (order.rp_status === 0 && order.every_week) || (
+                                                            order.id === order.group_pair_id &&
+                                                            order.rp_status !== 20 &&
+                                                            order.rp_status !== 10 &&
+                                                            order.type_ship !== "pickup_ship_one"
+                                                        ) ||
+                                                        (
+                                                            order.rp_status === 20 &&
+                                                            order.every_week
+                                                        ) ? "none" : "block",
                                                         '--card-height': dynamicHeight,} as React.CSSProperties}
                                                 >
                                                     {order.type_ship === "pickup_ship_one" ||
-                                                    (order.type_ship !== "pickup_ship_one" && order.id !== order.group_pair_id) ? (<>
+                                                    (order.type_ship !== "pickup_ship_one" && order.id !== order.group_pair_id) ||
+                                                    (order.rp_status === 20 || order.rp_status === 10) ? (<>
                                                 <div className="history-icon">
                                                     <FontAwesomeIcon icon={faTruck} />
                                                 </div>

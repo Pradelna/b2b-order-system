@@ -2,19 +2,13 @@ import React, {useState, useEffect, useContext} from "react";
 import { LanguageContext } from "../../context/LanguageContext";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import {
-    faTruck,
-    faFileLines,
-    faBan, faCheckCircle, faFileImage, faFileArrowDown, faChevronLeft
+    faTruck, faBan, faCheckCircle, faFileArrowDown, faChevronLeft
 } from "@fortawesome/free-solid-svg-icons";
 import { fetchWithAuth } from "../account/auth";
-import HeaderAccount from "../HeaderAccount";
-import NavButtons from "../account/NavButtons";
 import FooterAccount from "../FooterAccount";
 import {Skeleton} from "@mui/material";
 import { formatDate } from "@/components/utils/FormatDate";
 import { formatViceDate } from "@/components/utils/FormatViceDate";
-import { styled } from '@mui/material/styles';
-import Tooltip, { TooltipProps, tooltipClasses } from '@mui/material/Tooltip';
 import FileDownloadIcon from "@/components/order/FileDownloadIcon";
 import UseMediaQuery from "@/hooks/UseMediaQuery";
 import DarkTooltip from "../utils/DarkTooltip";
@@ -34,7 +28,7 @@ interface Order {
 const AllHistoryAdmin: React.FC = () => {
     const { customerId } = useParams<{ customerId: string }>();
     const [orders, setOrders] = useState<Order[]>([]);
-    const [visibleOrders, setVisibleOrders] = useState<number>(10);
+    const [visibleOrders, setVisibleOrders] = useState<number>(30);
     const [hasMoreOrders, setHasMoreOrders] = useState<boolean>(false);
     const [loading, setLoading] = useState<boolean>(true);
     const [expandedOrders, setExpandedOrders] = useState<{ [key: number]: boolean }>({});
@@ -67,7 +61,7 @@ const AllHistoryAdmin: React.FC = () => {
 
     //  Load More Orders
     const loadMoreOrders = () => {
-        const newVisibleCount = visibleOrders + 10;
+        const newVisibleCount = visibleOrders + 30;
         setVisibleOrders(newVisibleCount);
         setHasMoreOrders(newVisibleCount < orders.length);
     };
@@ -92,6 +86,7 @@ const AllHistoryAdmin: React.FC = () => {
                 const response = await fetchWithAuth(`${BASE_URL}/admin/adminpanel/user-orders/${customerId}`);
                 if (response.ok) {
                     const data: Order[] = await response.json();
+                    const sortedOrders = data.orders.sort((a, b) => b.id - a.id);
                     setOrders(data.orders.sort((a, b) => b.id - a.id));
                     setHasMoreOrders(visibleOrders < sortedOrders.length);
                     // setHasMoreOrders(data.orders.length > visibleOrders);
@@ -175,7 +170,12 @@ const AllHistoryAdmin: React.FC = () => {
                                     <div>
                                         {orders.slice(0, visibleOrders).map((order) => {
                                             // Получаем фотографии для данного заказа
-                                            const photos = orderPhotos.filter((photo) => photo.group_pair_id === order.group_pair_id);
+                                            const photos = orderPhotos
+                                                .filter((photo) =>
+                                                    order.type_ship === "pickup_ship_one"
+                                                        ? photo.order_id === order.id
+                                                        : photo.group_pair_id === order.group_pair_id
+                                                );
                                             // Если фотографий больше двух – вычисляем высоту контейнера с иконками,
                                             // иначе высота задаётся классом "expanded" (из CSS)
 
