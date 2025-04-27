@@ -413,9 +413,9 @@ const PlaceDetails: React.FC = () => {
                                             </div>
                                         </div>
                                         <button
-                                            className={`btn-submit mt-3 ${notActivePlace || currentOrder?.rp_status === 20 ? 'disabled-btn' : ''}`}
+                                            className={`btn-submit mt-3 ${notActivePlace ? 'disabled-btn' : ''}`}
                                             onClick={() => setShowOrderForm(true)}
-                                            disabled={notActivePlace || currentOrder?.rp_status === 20}
+                                            disabled={notActivePlace}
                                         >
                                             <FontAwesomeIcon icon={faCartPlus} className="icon" />
                                             <span className="ms-3">{currentData?.buttons.new_order || "Nová objednávka"}</span>

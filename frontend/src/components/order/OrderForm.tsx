@@ -41,6 +41,7 @@ const OrderForm: React.FC<OrderFormProps> = ({ placeId, onClose, onSuccess }) =>
   const BASE_URL = import.meta.env.VITE_API_URL;
   const { currentData } = useContext(LanguageContext);
   const [alredyCurrentOrder, setAlredyCurrentOrder] = useState(false);
+  const [newCurrentOrder, setNewCurrentOrder] = useState(false);
   const [firstStartForm, setFirstStartForm] = useState(true);
   const isFirstRender = useRef(true);
   const [everyWeek, setEveryWeek] = useState(false);
@@ -478,6 +479,8 @@ const OrderForm: React.FC<OrderFormProps> = ({ placeId, onClose, onSuccess }) =>
     }
   };
 
+  const selectedPlaceId = placeId || formData.place;
+
   // Авто-выбор места, если доступно только одно
   useEffect(() => {
     if (!placeId && places.length === 1) {
@@ -506,7 +509,13 @@ const OrderForm: React.FC<OrderFormProps> = ({ placeId, onClose, onSuccess }) =>
 
   // Check if exist an active current order AND check if weekend Able customer
   useEffect(() => {
-    const fetchPlaces = async () => {
+    // const fetchPlaces = async () => {
+    if (!selectedPlaceId) return;
+
+    setAlredyCurrentOrder(false);
+    setNewCurrentOrder(false);
+
+    (async () => {
       try {
         const response = await fetchWithAuth(`${BASE_URL}/order/check-current-order/`);
         if (response.ok) {
@@ -516,13 +525,23 @@ const OrderForm: React.FC<OrderFormProps> = ({ placeId, onClose, onSuccess }) =>
           }
           // if active order exists for this place
           if (currentOrderData.orders.length != 0) {
-            const exists = currentOrderData.orders.some(order => order.place === placeId);
+            const exists = currentOrderData.orders.some(order => order.place === Number(selectedPlaceId));
+
             if (exists) {
-              setAlredyCurrentOrder(true); // this change avaibles start dates and show message in the order form
+              setAlredyCurrentOrder(true);
               console.log("Order with this placeId exists");
             } else {
               console.log("No matching order found");
-            };
+            }
+
+            const new_exists = currentOrderData.new_orders.some(order => order.place === Number(selectedPlaceId));
+            if (new_exists) {
+              setNewCurrentOrder(true);
+              console.log("Order with this placeId NEW exists");
+            } else {
+              console.log("No matching order found (NEW)");
+            }
+
           }
         } else {
           console.error("Failed to fetch current order");
@@ -530,10 +549,11 @@ const OrderForm: React.FC<OrderFormProps> = ({ placeId, onClose, onSuccess }) =>
       } catch (error) {
         console.error("Error fetching current order:", error);
       }
-    };
 
-    fetchPlaces();
-  }, [BASE_URL]);
+
+    // fetchPlaces();
+  })();
+  }, [BASE_URL, selectedPlaceId]);
 
 
   useEffect(() => {
@@ -894,9 +914,16 @@ const OrderForm: React.FC<OrderFormProps> = ({ placeId, onClose, onSuccess }) =>
                 <button className="btn-link" type="button" onClick={onClose}>
                   { currentData.buttons["cancel"] || "Zrušit" }
                 </button>
-                <button className="btn-submit" type="submit">
-                  { currentData.buttons["submit"] || "Uložit" }
-                </button>
+                {newCurrentOrder ? (
+                    <button className="disabled-btn" type="submit">
+                      { "You already have an order for this location that is awaiting processing." }
+                    </button>
+                ) : (
+                    <button className="btn-submit" type="submit">
+                      { currentData.buttons["submit"] || "Uložit" }
+                    </button>
+                )}
+
 
               </div>
             </form>
