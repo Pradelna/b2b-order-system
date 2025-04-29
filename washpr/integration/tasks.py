@@ -112,10 +112,10 @@ class RestApiClient:
         if response:
             # print("Place created successfully:", response)
             print(f"✅ create_client_place Place {place_title} created successfully for client {client_external_id}")
-            return f"✅ create_client_place Place {place_title} created successfully for client {client_external_id}"
+            return response
         else:
             print(f"❌ create_client_place Failed to create place {place_title}")
-            return f"❌ create_client_place Failed to create place {place_title}"
+            return None
 
 
 @shared_task(
@@ -894,7 +894,7 @@ def generate_order_report(user, year, month):
         # Если заказов не было, при желании можно очистить или ничего не делать
         report.orders.clear()
     print(f"✅ Report was created {report}")
-    return f"✅ Report was created {report}"
+    return report
 
 
 @shared_task(
