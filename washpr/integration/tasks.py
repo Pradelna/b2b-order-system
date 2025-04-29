@@ -675,7 +675,7 @@ def update_orders_task():
                 try:
                     order = Order.objects.get(rp_contract_external_id=external_id)
                     # if order is pickup
-                    if order.id == order.group_pair_id:
+                    if order.id == order.group_pair_id or order.type_ship == 'pickup_ship_one':
                         # logger.info(f"main external_id: {external_id}")
                         order.rp_problem_description = item["problem_description"]
                         order.rp_time_realization = item["time_realization"]
@@ -686,18 +686,19 @@ def update_orders_task():
                         main_order = order
                     else:
                         try:
-                            # if order is delivery
-                            pickup_order = Order.objects.get(id=order.group_pair_id, pickup=True)
-                            # print(f"pickup order {pickup_order.id} AND order delivery {order.id}")
-                            # print(f"STATUS pickup order: {pickup_order.rp_status}")
-                            # if pickup order is done or cancel
-                            if pickup_order.rp_status in COMPLETED_STATUSES:
-                                order.rp_problem_description = item["problem_description"]
-                                order.rp_time_realization = item["time_realization"]
-                                order.rp_status = item["status"]
-                                order.save(update_fields=["rp_problem_description", "rp_status", "rp_time_realization"])
-                                success.append(f"order No {order.pk} with {external_id}")
-                                print(f"✅ Updated order No {order.pk} with {external_id}")
+                            if order.type_ship != 'pickup_ship_one':
+                                # if order is delivery
+                                pickup_order = Order.objects.get(id=order.group_pair_id, pickup=True)
+                                # print(f"pickup order {pickup_order.id} AND order delivery {order.id}")
+                                # print(f"STATUS pickup order: {pickup_order.rp_status}")
+                                # if pickup order is done or cancel
+                                if pickup_order.rp_status in COMPLETED_STATUSES:
+                                    order.rp_problem_description = item["problem_description"]
+                                    order.rp_time_realization = item["time_realization"]
+                                    order.rp_status = item["status"]
+                                    order.save(update_fields=["rp_problem_description", "rp_status", "rp_time_realization"])
+                                    success.append(f"order No {order.pk} with {external_id}")
+                                    print(f"✅ Updated order No {order.pk} with {external_id}")
                         except Order.DoesNotExist:
                             print(f"\033[91m❌ update_orders_task order not found for {external_id}.\033[0m")
                             not_success.append(f"❌ update_orders_task order not found for {external_id}")
@@ -715,7 +716,8 @@ def update_orders_task():
                     not_success.append(f"order error for {external_id}: {str(e)}")
                     continue
                 # there is only second delivery order in order history and needs to show status if it's main order
-                if main_order and item["status"] not in COMPLETED_STATUSES: # if order is done don't change second order
+                if main_order and item["status"] not in COMPLETED_STATUSES and main_order.type_ship != 'pickup_ship_one':
+                    # if order is done don't change second order
                     try:
                         delivery_order = Order.objects.get(group_pair_id=main_order.group_pair_id, delivery=True)
                         delivery_order.rp_problem_description = item["problem_description"]
