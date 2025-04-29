@@ -2,9 +2,7 @@ import React, {useState, useEffect, useContext} from "react";
 import { LanguageContext } from "../../context/LanguageContext";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import {
-    faTruck,
-    faFileLines,
-    faBan, faCheckCircle, faFileImage, faFileArrowDown
+    faTruck, faBan, faCheckCircle, faFileArrowDown
 } from "@fortawesome/free-solid-svg-icons";
 import { fetchWithAuth } from "../account/auth";
 import HeaderAccount from "../HeaderAccount";
@@ -169,7 +167,7 @@ const AllOrderHistory: React.FC = () => {
                                             // иначе высота задаётся классом "expanded" (из CSS)
 
                                             const dynamicHeight = ((photos.length > 3 || isMobileMax530) && !photos.length == 0)
-                                                ? `${photos.length * 72 + 90}px` : '270px';
+                                                ? `${photos.length * 72 + 90}px` : '280px';
 
                                             return (
                                                 <div

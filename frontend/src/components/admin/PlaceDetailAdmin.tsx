@@ -3,20 +3,12 @@ import { LanguageContext } from "../../context/LanguageContext";
 import { useParams, useNavigate, Link } from "react-router-dom";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import {
-    faPenToSquare,
-    faSquareXmark,
-    faCartPlus,
-    faPowerOff,
-    faCircleCheck,
-    faStopwatch, faFileInvoiceDollar, faChevronLeft, faBan
+   faChevronLeft, faBan
 } from "@fortawesome/free-solid-svg-icons";
 import HeaderAdmin from "./HeaderAdmin";
 import FooterAccount from "../FooterAccount";
-import OrderHistory from "../order/OrderHistory";
 import OrderHistoryAdmin from "./OrderHistoryAdmin";
 import { fetchWithAuth } from "../account/auth";
-import DarkTooltip from "@/components/utils/DarkTooltip";
-import NavButtons from "@/components/account/NavButtons";
 import {Skeleton} from "@mui/material";
 import { formatDate } from "@/components/utils/FormatDate";
 import { formatViceDate } from "@/components/utils/FormatViceDate";
@@ -99,10 +91,13 @@ const PlaceDetailAdmin: React.FC = () => {
             if (response.ok) {
                 const orders: Order[] = await response.json();
                 // get all repeated orders with end_order = flase
-                const repeatOrders = orders.filter((order) => order.every_week && !order.end_order && !order.canceled);
+                const repeatOrders = orders
+                    .filter((order) => order.every_week &&
+                        ![4, 5, 11].includes(order.rp_status) &&
+                        !order.canceled);
                 // get least order id
-                const current = repeatOrders.sort((a, b) => a.id - b.id)
-                    .find((order) => order.every_week && !order.end_order);
+                const current = repeatOrders
+                    .sort((a, b) => a.id - b.id)[0];
                 // Извлекаем даты в массив
                 const startDatesList = repeatOrders.map(order => order.date_start_day);
                 setStartDates(startDatesList);

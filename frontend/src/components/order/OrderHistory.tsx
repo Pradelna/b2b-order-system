@@ -232,7 +232,7 @@ const OrderHistory: React.FC<OrderHistoryProps> = ({
                                     // иначе высота задаётся классом "expanded" (из CSS)
 
                                     const dynamicHeight = (photos.length > 3 || (isMobileMax530 && photos.length > 1))
-                                        ? `${photos.length * 72 + 90}px` : '220px';
+                                        ? `${photos.length * 72 + 90}px` : '280px';
 
                                 return (
                                     <div

@@ -34,7 +34,6 @@ const OrderHistoryAdmin: React.FC<OrderHistoryAdminProps> = ({ placeId, orders =
     const BASE_URL = import.meta.env.VITE_API_URL;
     const { currentData } = useContext(LanguageContext);
     const [orderPhotos, setOrderPhotos] = useState<OrderPhoto[]>([]);
-    // const [expandedPhoto, setExpandedPhoto] = useState(false); // for expend photo if theya are many
     const isMobileMax530 = UseMediaQuery('(max-width: 530px)');
 
     // Fetch orders from the API
@@ -163,7 +162,7 @@ const OrderHistoryAdmin: React.FC<OrderHistoryAdminProps> = ({ placeId, orders =
                                         // иначе высота задаётся классом "expanded" (из CSS)
 
                                         const dynamicHeight = (photos.length > 3 || (isMobileMax530 && photos.length > 1))
-                                            ? `${photos.length * 72 + 90}px` : '270px';
+                                            ? `${photos.length * 72 + 90}px` : '280px';
 
                                         return (
                                             <div
