@@ -195,6 +195,8 @@ const Account: React.FC<AccountProps> = ({ customerData, setCustomerData }) => {
         };
     }, [showPlaceForm, showOrderForm]);
 
+    console.log(places);
+
     if (!currentData || !currentData.service) {  // Если данных нет, компонент ничего не отображает
         return (
 
@@ -466,7 +468,7 @@ const Account: React.FC<AccountProps> = ({ customerData, setCustomerData }) => {
                                                 {place.rp_street} {place.rp_number}, {place.rp_city}, {place.rp_zip}
                                             </p>
                                             <button
-                                                className="call new-order-button"
+                                                className= {`${place.data_sent ? "call new-order-button" : "display-none"}`}
                                                 onClick={() => {
                                                     setCurrentPlaceId(place.id);
                                                     setShowOrderForm(true);
@@ -480,7 +482,7 @@ const Account: React.FC<AccountProps> = ({ customerData, setCustomerData }) => {
                                             <button
                                                 onClick={() => place.id && navigate(`/place/${place.id}`)}
                                                 disabled={!place.id} // Отключаем кнопку, если нет ID
-                                                className="call details-place-button"
+                                                className={`call details-place-button${place.data_sent ? "" : " detail-not-sent"}`}
                                             >
                                                 {currentData.buttons["details"] || "Detail"}
                                             </button>

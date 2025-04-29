@@ -387,8 +387,8 @@ a {
     padding: 12px;
   }
   .details-place-button {
-    top: 16%;
-    right: 92px;
+    /*top: 16%;*/
+    /*right: 92px;*/
     font-size: 14px;
     font-weight: 600;
     line-height: 18px;
@@ -485,6 +485,11 @@ a {
     border-radius: 16px;
     padding: 12px;
   }
+}
+.detail-not-sent {
+  position: absolute;
+  top: 20%;
+  right: 20px;
 }
 @media (min-width: 768px) and (max-width: 991px) {
   .place-card-name,

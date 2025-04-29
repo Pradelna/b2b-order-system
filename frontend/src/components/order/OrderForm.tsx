@@ -478,6 +478,15 @@ const OrderForm: React.FC<OrderFormProps> = ({ placeId, onClose, onSuccess }) =>
     }
   };
 
+
+  const langButtonMes = {
+    cz: "Už máte objednávku pro tuto lokaci, která čeká na zpracování",
+    ru: "У вас уже есть заказ для этого места, который ожидает обработки.",
+    en: "You already have an order for this location that is awaiting processing",
+  };
+  const lang = currentData?.lang || "cz";
+  const messageButton = langButtonMes[lang] || langButtonMes.en;
+
   const selectedPlaceId = placeId || formData.place;
 
   // Авто-выбор места, если доступно только одно
@@ -913,7 +922,7 @@ const OrderForm: React.FC<OrderFormProps> = ({ placeId, onClose, onSuccess }) =>
                 </button>
                 {newCurrentOrder ? (
                     <button className="disabled-btn" type="submit">
-                      { "You already have an order for this location that is awaiting processing." }
+                      { messageButton }
                     </button>
                 ) : (
                     <button className="btn-submit" type="submit">
