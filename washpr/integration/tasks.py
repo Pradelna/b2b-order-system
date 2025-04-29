@@ -450,6 +450,7 @@ def create_orders_task():
         main_order=True,
         created_at__lte=time_threshold,
         place__deleted=False,
+        place__data_sent=True,
     )
 
     results = []
