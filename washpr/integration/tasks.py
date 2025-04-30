@@ -155,7 +155,7 @@ def create_client_task(customer_id):
         create_all_place_task.delay(customer_id)
 
         if customer.user.lang == 'cz':
-            subject = "Váš účet byl aktivován"
+            subject = "Váš účet byl schválen"
             message = (
                 f"Dobrý den, {customer.company_person or customer.company_name}!\n\n"
                 f"Váš účet byl úspěšně schválen.\n"
@@ -166,7 +166,7 @@ def create_client_task(customer_id):
                 f"Tým prádelna no.1\n"
             )
         elif customer.user.lang == 'ru':
-            subject = "Ваш аккаунт активирован"
+            subject = "Ваш аккаунт одобрен"
             message = (
                 f"Здравствуйте, {customer.company_person or customer.company_name}!\n\n"
                 f"Ваша учетная запись была успешно одобрена.\n"
@@ -177,7 +177,7 @@ def create_client_task(customer_id):
                 f"Команда прачечной №1\n"
             )
         else:
-            subject = "Your account has been activated"
+            subject = "Your account has been approved"
             message = (
                 f"Hello, {customer.company_person or customer.company_name}!\n\n"
                 f"Your account has been successfully approved.\n"
@@ -241,6 +241,7 @@ def create_place_task(place_id):
         # print(f"Create place response: {response}")
         if response and "id" in response:
             place.rp_id = response["id"]
+            place.rp_client_id = response["client_id"]
             place.data_sent = True
             place.active = True
             place.save(update_fields=["rp_id","data_sent","active"])
@@ -278,6 +279,7 @@ def create_all_place_task(customer_id):
 
     if len(places) != 0:
         for place in places:
+            # this request goes to create_client_place str 90
             response = api_client.create_client_place(
                 client_external_id=place.customer.rp_client_external_id,
                 place_external_id=place.rp_external_id,
@@ -296,6 +298,7 @@ def create_all_place_task(customer_id):
             # print(f"Create place response: {response}")
             if response and "id" in response:
                 place.rp_id = response["id"]
+                place.rp_client_id = response["client_id"]
                 place.data_sent = True
                 place.save(update_fields=["rp_id", "data_sent"])
                 print(f"✅ create_all_place_task Place {place.place_name} created with remote id {response['id']}.")
