@@ -42,7 +42,8 @@ from rest_framework.views import APIView
 from integration.tasks import create_client_task, send_email_change_customer_task, send_new_customer_task
 
 
-@login_required
+@api_view(['GET'])
+@permission_classes([IsAdminUser])
 def check_is_admin(request):
     return JsonResponse({'is_admin': request.user.is_staff})
 
