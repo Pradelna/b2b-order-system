@@ -88,6 +88,13 @@ export const fetchWithAuth = async (url: string, options: FetchOptions = {}): Pr
             }
         }
 
+        if (response.status === 401) {
+            console.warn("Unauthorized even after token refresh. Redirecting to login...");
+            localStorage.removeItem("accessToken");
+            localStorage.removeItem("refreshToken");
+            window.location.href = "/account/login";
+        }
+
         return response;
     } catch (error) {
         console.error("Error in fetchWithAuth:", error);

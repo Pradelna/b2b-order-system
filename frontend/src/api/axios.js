@@ -26,4 +26,18 @@ axiosInstance.interceptors.request.use(
   }
 );
 
+// Добавляем интерсептор для обработки 401 ошибок
+axiosInstance.interceptors.response.use(
+  (response) => response,
+  (error) => {
+    if (error.response?.status === 401) {
+      console.warn("Unauthorized from axios. Redirecting to login...");
+      localStorage.removeItem("accessToken");
+      localStorage.removeItem("refreshToken");
+      window.location.href = "/login";
+    }
+    return Promise.reject(error);
+  }
+);
+
 export default axiosInstance;
