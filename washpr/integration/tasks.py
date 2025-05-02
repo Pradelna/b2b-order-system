@@ -953,7 +953,7 @@ def send_email_deleted_place_task(place_id, place_name, place_external_id, custo
             f"Prosím, věnujte pozornost."
         )
         from_email = settings.DEFAULT_FROM_EMAIL
-        recipient_list = ["sergei@pradelna1.com", "office@pradelna1.com"]
+        recipient_list = ["office@pradelna1.com", "pradelna@raketaweb.eu"]
         send_mail(subject, message, from_email, recipient_list)
         print(f"✅Place delete {place_name} email is sent")
     print(f"✅ Place was deleted: {place_name}")
@@ -972,7 +972,7 @@ def send_email_change_customer_task(rp_client_external_id, company_name):
         f"Prosím, věnujte pozornost."
     )
     from_email = settings.DEFAULT_FROM_EMAIL
-    recipient_list = ["sergei@pradelna1.com", "office@pradelna1.com"]
+    recipient_list = ["office@pradelna1.com", "pradelna@raketaweb.eu"]
     try:
         send_mail(subject, message, from_email, recipient_list)
         print(f"✅ Email was sent: {company_name} wants change data")
@@ -994,7 +994,7 @@ def send_new_customer_task(company_name):
         f"Prosím, věnujte pozornost."
     )
     from_email = settings.DEFAULT_FROM_EMAIL
-    recipient_list = ["sergei@pradelna1.com", "office@pradelna1.com"]
+    recipient_list = ["office@pradelna1.com", "pradelna@raketaweb.eu"]
     try:
         send_mail(subject, message, from_email, recipient_list)
         print(f"✅ Email successfully sent to admin for new customer: {company_name}")
