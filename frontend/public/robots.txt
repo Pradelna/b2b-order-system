@@ -1,0 +1,4 @@
+User-agent: *
+Disallow:
+
+Sitemap: https://pradelna1.cz/sitemap.xml

@@ -34,6 +34,7 @@ import AllHistoryAdmin from "./components/admin/AllHistoryAdmin";
 import Invoices from "./components/admin/Invoices";
 import Vop from "./components/info/Vop";
 import Gdpr from "./components/info/Gdpr";
+import LoginFormAdmin from "./components/admin/LoginFormAdmin";
 
 // Define the shape of the language data
 interface LanguageData {
@@ -123,6 +124,9 @@ const App: React.FC = () => {
 
             {/* Login page */}
             <Route path="/account/login" element={<LoginForm />} />
+
+            {/* Login admin page */}
+            <Route path="/gjango-admin-panelka" element={<LoginFormAdmin />} />
 
             {/* Loader test page */}
             <Route path="/loader-test" element={<LoaderTestPage />} />
