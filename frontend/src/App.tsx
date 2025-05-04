@@ -75,6 +75,7 @@ const App: React.FC = () => {
     }
   };
 
+    // Version 0.4.1 — moved admin panel login to /gjango-admin-panelka
     useEffect(() => {
         fetch('/meta.json?v=' + Date.now())
             .then(res => res.json())
@@ -90,7 +91,7 @@ const App: React.FC = () => {
     return <div>Error: {error}</div>;
   }
 
-
+  if (loading) return <div></div>;
 
   return (
       <BrowserRouter>
