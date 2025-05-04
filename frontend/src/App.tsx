@@ -75,7 +75,7 @@ const App: React.FC = () => {
     }
   };
 
-    // Version 0.4.1 — moved admin panel login to /gjango-admin-panelka
+    // Version 0.4.2 — fixed lang requests
     useEffect(() => {
         fetch('/meta.json?v=' + Date.now())
             .then(res => res.json())

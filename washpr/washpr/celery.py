@@ -32,7 +32,7 @@ app.conf.beat_schedule = {
     },
     "generate_monthly_reports": {
         "task": "integration.tasks.generate_monthly_reports_task",
-        "schedule": crontab(day_of_month=1, hour=1, minute=0),
-        # Запустится 1-го числа каждого месяца в 01:00
+        "schedule": crontab(day_of_month=1, hour=4, minute=0),
+        # Запустится 1-го числа каждого месяца в 04:00
     },
 }
