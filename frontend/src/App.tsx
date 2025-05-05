@@ -75,7 +75,7 @@ const App: React.FC = () => {
     }
   };
 
-    // Version 0.4.2 — fixed lang requests
+    // Version 0.4.3 — fixed current order
     useEffect(() => {
         fetch('/meta.json?v=' + Date.now())
             .then(res => res.json())

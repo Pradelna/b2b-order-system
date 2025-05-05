@@ -533,7 +533,7 @@ const OrderForm: React.FC<OrderFormProps> = ({ placeId, onClose, onSuccess }) =>
           }
           // if active order exists for this place
           if (currentOrderData.orders.length != 0) {
-            const exists = currentOrderData.orders.some(order => order.place === Number(selectedPlaceId));
+            const exists = currentOrderData.current_orders.some(order => order.place === Number(selectedPlaceId));
 
             if (exists) {
               setAlredyCurrentOrder(true);
@@ -545,9 +545,9 @@ const OrderForm: React.FC<OrderFormProps> = ({ placeId, onClose, onSuccess }) =>
             const new_exists = currentOrderData.new_orders.some(order => order.place === Number(selectedPlaceId));
             if (new_exists) {
               setNewCurrentOrder(true);
-              console.log("Order with this placeId NEW exists");
+              console.log("NEW Order with this placeId exists");
             } else {
-              console.log("No matching order found (NEW)");
+              console.log("No matching NEW order found");
             }
 
           }

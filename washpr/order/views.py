@@ -108,17 +108,29 @@ def get_current_order(request):
                                       active=True,
                                       end_order=False,
                                       canceled=False)
+        serializer = CurrentOrderSerializer(orders, many=True)
+        #  check if new order is waiting for processing
         new_orders = Order.objects.filter(place__customer__user=user,
                                           every_week=True,
                                           end_order=False,
                                           canceled=False,
                                           rp_status=20)
-        serializer = CurrentOrderSerializer(orders, many=True)
         new_serializer = CurrentOrderSerializer(new_orders, many=True)
+        # check if current order still exists
+        current_orders = Order.objects.filter(
+            ~Q(rp_status__in=[20, 4, 5, 7, 10, 13]),
+            place__customer__user=user,
+            every_week=True,
+            end_order=False,
+            canceled=False,
+            active=True
+        )
+        current_serializer = CurrentOrderSerializer(current_orders, many=True)
         return Response({
             "weekend_able": customer.weekend_able,
             "orders": serializer.data,
             "new_orders": new_serializer.data,
+            "current_orders": current_serializer.data,
         }, status=status.HTTP_200_OK)
     except Exception as e:
         return Response({"error": str(e)}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
