@@ -14,6 +14,7 @@ import { formatViceDate } from "@/components/utils/FormatViceDate";
 import FileDownloadIcon from "@/components/order/FileDownloadIcon";
 import UseMediaQuery from "@/hooks/UseMediaQuery";
 import DarkTooltip from "../utils/DarkTooltip";
+import StatusLabel from "./StatusLabel";
 
 interface Order {
     id: number;
@@ -194,29 +195,10 @@ const AllOrderHistory: React.FC = () => {
                                                 </div>
 
                                                 <p>
-                                                    {(order.rp_status === 10 || order.rp_status === 7) ? (
+                                                    {(order.canceled || order.rp_status === 10 || order.rp_status === 7) ? (<>
                                                         <FontAwesomeIcon icon={faBan} style={{ color: "red", height: "18px" }}/>
-                                                    ) : (
-                                                        <FontAwesomeIcon icon={faCheckCircle} style={{ color: "#00aab7", height: "18px" }} />
-                                                    )}
-
-                                                    <strong className="ms-2">
-                                                        {order.rp_status === 20 ? (currentData?.status?.status_20 || "Nová") : null}
-                                                        {order.rp_status === 0 ? (currentData?.status?.status_0 || "Nová") : null}
-                                                        {order.rp_status === 1 ? (currentData?.status?.status_1 || "Nová") : null}
-                                                        {order.rp_status === 2 ? (currentData?.status?.status_2 || "Přijato") : null}
-                                                        {order.rp_status === 3 ? (currentData?.status?.status_3 || "Na cestě") : null}
-                                                        {order.rp_status === 4 ? (currentData?.status?.status_4 || "Dokončeno") : null}
-                                                        {order.rp_status === 5 ? (currentData?.status?.status_5 || "Complited") : null}
-                                                        {order.rp_status === 6 ? (currentData?.status?.status_6 || "Ověřeno") : null}
-                                                        {order.rp_status === 7 ? (currentData?.status?.status_7 || "Odmítnuto") : null}
-                                                        {order.rp_status === 8 ? (currentData?.status?.status_8 || "Neznámý status") : null}
-                                                        {order.rp_status === 9 ? (currentData?.status?.status_9 || "Odloženo") : null}
-                                                        {order.rp_status === 10 ? (currentData?.status?.status_10 || "Storno") : null}
-                                                        {order.rp_status === 11 ? (currentData?.status?.status_11 || "K fakturaci") : null}
-                                                        {order.rp_status === 12 ? (currentData?.status?.status_12 || "Čeká na díl") : null}
-                                                        {order.rp_status === 13 ? (currentData?.status?.status_13 || "Marný výjezd") : null}
-                                                    </strong>
+                                                        <strong className="ms-2">{currentData?.status?.status_10 || "Storno"}</strong>
+                                                    </>) : ( <StatusLabel statusCode={order.rp_status} currentData={currentData} /> )}
 
                                                     <span> / </span>
 

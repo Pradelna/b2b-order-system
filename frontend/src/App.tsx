@@ -75,7 +75,7 @@ const App: React.FC = () => {
     }
   };
 
-    // Version 0.4.3 — fixed current order
+    // Version 0.4.4 — added translating choose days
     useEffect(() => {
         fetch('/meta.json?v=' + Date.now())
             .then(res => res.json())

@@ -14,6 +14,7 @@ import UseMediaQuery from "@/hooks/UseMediaQuery";
 import DarkTooltip from "../utils/DarkTooltip";
 import {Link, useParams} from "react-router-dom";
 import HeaderAdmin from "./HeaderAdmin";
+import StatusLabel from "../order/StatusLabel";
 
 interface Order {
     id: number;
@@ -200,28 +201,7 @@ const AllHistoryAdmin: React.FC = () => {
                                                                     <FontAwesomeIcon icon={faBan} style={{ color: "red", height: "18px" }}/>
                                                                     <strong className="ms-2">{currentData?.status?.status_10 || "Storno"}</strong>
                                                                 </>
-                                                            ) : (
-                                                                <>
-                                                                    <FontAwesomeIcon icon={faCheckCircle} style={{ color: "#00aab7", height: "18px" }}/>
-                                                                    <strong className="ms-2">
-                                                                        {order.rp_status === 20 ? (currentData?.status?.status_20 || "Nová") : null}
-                                                                        {order.rp_status === 0 ? (currentData?.status?.status_0 || "Nová") : null}
-                                                                        {order.rp_status === 1 ? (currentData?.status?.status_1 || "Nová") : null}
-                                                                        {order.rp_status === 2 ? (currentData?.status?.status_2 || "Přijato") : null}
-                                                                        {order.rp_status === 3 ? (currentData?.status?.status_3 || "Na cestě") : null}
-                                                                        {order.rp_status === 4 ? (currentData?.status?.status_4 || "Dokončeno") : null}
-                                                                        {order.rp_status === 5 ? (currentData?.status?.status_5 || "Complited") : null}
-                                                                        {order.rp_status === 6 ? (currentData?.status?.status_6 || "Ověřeno") : null}
-                                                                        {order.rp_status === 7 ? (currentData?.status?.status_7 || "Odmítnuto") : null}
-                                                                        {order.rp_status === 8 ? (currentData?.status?.status_8 || "Neznámý status") : null}
-                                                                        {order.rp_status === 9 ? (currentData?.status?.status_9 || "Odloženo") : null}
-                                                                        {order.rp_status === 10 ? (currentData?.status?.status_10 || "Storno") : null}
-                                                                        {order.rp_status === 11 ? (currentData?.status?.status_11 || "K fakturaci") : null}
-                                                                        {order.rp_status === 12 ? (currentData?.status?.status_12 || "Čeká na díl") : null}
-                                                                        {order.rp_status === 13 ? (currentData?.status?.status_13 || "Marný výjezd") : null}
-                                                                    </strong>
-                                                                </>
-                                                            )}{" / "}
+                                                            ) : ( <StatusLabel statusCode={order.rp_status} currentData={currentData} /> )}{" / "}
 
 
                                                     {order.rp_contract_external_id ? (

@@ -257,7 +257,7 @@ const OrderForm: React.FC<OrderFormProps> = ({ placeId, onClose, onSuccess }) =>
     return uniqueDates;
   }
 
-  // Обработчики событий this maybe no needs
+  // add value from field to form
   const handleStartDayChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
     setFormData((prev) => ({ ...prev, date_start_day: e.target.value }));
   };
@@ -478,7 +478,7 @@ const OrderForm: React.FC<OrderFormProps> = ({ placeId, onClose, onSuccess }) =>
     }
   };
 
-
+  // translating of button if user has order wich is awaiting processing
   const langButtonMes = {
     cz: "Už máte objednávku pro tuto lokaci, která čeká na zpracování",
     ru: "У вас уже есть заказ для этого места, который ожидает обработки.",
@@ -486,6 +486,14 @@ const OrderForm: React.FC<OrderFormProps> = ({ placeId, onClose, onSuccess }) =>
   };
   const lang = currentData?.lang || "cz";
   const messageButton = langButtonMes[lang] || langButtonMes.en;
+
+  // translating of choose
+  const langChooseDays = {
+    cz: "Vyberte dny",
+    ru: "Выберите дни",
+    en: "Choose days",
+  };
+  const messageChooseDays = langChooseDays[lang] || langChooseDays.en;
 
   const selectedPlaceId = placeId || formData.place;
 
@@ -694,7 +702,7 @@ const OrderForm: React.FC<OrderFormProps> = ({ placeId, onClose, onSuccess }) =>
               {useShowDaysSystem && formData.type_ship !== "one_time" && formData.type_ship !== "quick_order" && (
                   <div className="row mb-3">
                     <div className={`col-12 days ${showDaySystem ? "display-none" : ""}`}>
-                      <p>Choose days</p>
+                      <p>{messageChooseDays}</p>
                     </div>
                     <div className={`day-system-hide ${showDaySystem ? "opacity-1" : "opacity-0 height-1 z-index-1"}`}>
                       <div className="col-12 label-form">
