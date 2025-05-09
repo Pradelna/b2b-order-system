@@ -54,7 +54,7 @@ def total_customers(request):
 
 @user_passes_test(lambda u: u.is_staff)
 def total_orders(request):
-    total = Order.objects.filter(processed=True, delivery=True).count()
+    total = Order.objects.filter(processed=True, active=True).count()
     return JsonResponse({"total_orders": total})
 
 @api_view(['GET'])
