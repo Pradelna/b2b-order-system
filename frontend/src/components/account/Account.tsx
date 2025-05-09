@@ -195,8 +195,6 @@ const Account: React.FC<AccountProps> = ({ customerData, setCustomerData }) => {
         };
     }, [showPlaceForm, showOrderForm]);
 
-    console.log(places);
-
     if (!currentData || !currentData.service) {  // Если данных нет, компонент ничего не отображает
         return (
 
