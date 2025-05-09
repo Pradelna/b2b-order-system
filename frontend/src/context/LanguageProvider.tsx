@@ -1,5 +1,6 @@
 import React, { useState, useEffect, ReactNode } from "react";
 import { LanguageContext } from "./LanguageContext";
+import fallbackLang from '../locales/fallback-lang.json';
 
 interface LanguageProviderProps {
     children: ReactNode;
@@ -13,31 +14,49 @@ export const LanguageProvider: React.FC<LanguageProviderProps> = ({ children }) 
     const BASE_URL = import.meta.env.VITE_API_URL;
 
     useEffect(() => {
+        const controller = new AbortController();
         // Fetch language data based on the current language
         const fetchLanguageData = async () => {
             try {
-                const response = await fetch(`${BASE_URL}/landing/?lang=${language}`);
+                const response = await fetch(`${BASE_URL}/landing/?lang=${language}`, {
+                    signal: controller.signal,
+                });
                 const data = await response.json();
                 setLanguageData(data);
                 setLoading(false);
-            } catch (err) {
-                console.error("Error fetching language data:", err);
-                setError("Failed to load language data.");
+            } catch (err: any) {
+                if (err.name !== 'AbortError') {
+                    console.error("Error fetching language data:", err);
+                    setError("Failed to load language data.");
+                }
                 setLoading(false);
             }
         };
 
         fetchLanguageData();
+        return () => {
+            controller.abort();
+        };
     }, [language]);
 
     const handleLanguageChange = (lang: string) => {
-        if (lang !== language) {
+        if (lang && lang !== language) {
             setLanguage(lang);
             localStorage.setItem("language", lang); // Save the chosen language
         }
     };
 
-    const currentData = languageData?.find((item) => item.lang === language) || null;
+    let currentData = null;
+
+    if (languageData) {
+        currentData = languageData?.find((item) => item.lang === language) || null;
+        // console.log("Loaded currentData from backend API.");
+    }
+
+    if (!currentData) {
+        currentData = fallbackLang.find((item) => item.lang === language) || null;
+        // console.warn("Loaded currentData from static fallbackLang.json");
+    }
 
     if (!loading && !currentData) {
         console.error("No data found for the current language.");
