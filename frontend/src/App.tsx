@@ -75,7 +75,7 @@ const App: React.FC = () => {
     }
   };
 
-    // Version 0.4.5 — back LanguageProvider from 0.4.1
+    // Version 0.4.5 — fix bugs in vite.congig.ls
     useEffect(() => {
         fetch('/meta.json?v=' + Date.now())
             .then(res => res.json())
