@@ -85,5 +85,5 @@ jobs:
           python manage.py migrate django_celery_beat
 
       - name: Run tests
-        working-directory: .
-        run: python washpr/manage.py test
+        run: |
+          PYTHONPATH=. python washpr/manage.py test
