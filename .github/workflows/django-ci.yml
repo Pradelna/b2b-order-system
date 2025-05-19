@@ -5,10 +5,10 @@ name: Django CI
 on:
   push:
     branches:
-      - main
+      - test-vps
   pull_request:
     branches:
-      - main
+      - test-vps
 
 jobs:
   django-ci:
