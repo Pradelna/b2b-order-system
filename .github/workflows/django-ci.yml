@@ -50,8 +50,17 @@ jobs:
       - name: Install dependencies
         run: pip install -r requirements.txt
 
-      - name: Make migrations (check)
-        run: python manage.py makemigrations --check --dry-run
+      - name: Make migrations (accounts first)
+        run: python manage.py makemigrations accounts
+
+      - name: Make migrations (all apps)
+        run: python manage.py makemigrations
+
+      - name: Apply migrations (accounts first)
+        run: python manage.py migrate accounts --noinput
+
+      - name: Apply migrations (all apps)
+        run: python manage.py migrate --noinput
 
       - name: Apply migrations (accounts first)
         run: python manage.py migrate accounts --noinput
