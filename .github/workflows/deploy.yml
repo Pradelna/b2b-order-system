@@ -1,0 +1,40 @@
+name: Django CD
+
+on:
+  workflow_run:
+    workflows: ["Django CI"]
+    types:
+      - completed
+
+jobs:
+  deploy:
+    if: ${{ github.event.workflow_run.conclusion == 'success' }}
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v3
+
+      - name: Set up SSH
+        uses: webfactory/ssh-agent@v0.9.0
+        with:
+          ssh-private-key: ${{ secrets.SSH_PRIVATE_KEY }}
+
+      - name: Copy docker-compose files to server
+        run: |
+          scp -o StrictHostKeyChecking=no docker-compose.yml Dockerfile ${{ secrets.SSH_USER }}@${{ secrets.SSH_HOST }}:/var/www/www-root/imeister-github/imeister.sk/
+
+      - name: Deploy via SSH
+        run: |
+          ssh -o StrictHostKeyChecking=no ${{ secrets.SSH_USER }}@${{ secrets.SSH_HOST }} << 'EOF'
+            cd /var/www/www-root/imeister-github/imeister.sk/
+            git reset --hard
+            git clean -fd
+            if ! git pull; then
+            echo "❌ Failed to pull latest code. Deployment aborted."
+            exit 1
+            fi
+            docker compose down
+            docker compose build
+            docker compose up -d
+          EOF

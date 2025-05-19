@@ -1,6 +1,6 @@
 # washservice
 
-This version for deploy on test VPS
+This version for deploy on test VPS with another NGINX settings
 
 ## Content
 
