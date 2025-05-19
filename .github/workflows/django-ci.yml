@@ -84,5 +84,13 @@ jobs:
           python manage.py migrate --noinput
           python manage.py migrate django_celery_beat
 
+      - name: Debug Python path and location
+        run: |
+          echo "PWD=$(pwd)"
+          echo "Files in current directory:"
+          ls -alh
+          echo "Python path:"
+          python -c "import sys; print('\n'.join(sys.path))"
+
       - name: Run tests
         run: PYTHONPATH=$GITHUB_WORKSPACE python washpr/manage.py test
