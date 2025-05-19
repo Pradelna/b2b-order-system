@@ -1,5 +1,7 @@
 # washservice
 
+This version for deploy on test VPS
+
 ## Content
 
 - [Start](#start)
