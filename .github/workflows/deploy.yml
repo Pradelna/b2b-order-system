@@ -22,12 +22,12 @@ jobs:
 
       - name: Copy docker-compose files to server
         run: |
-          scp -o StrictHostKeyChecking=no docker-compose.yml Dockerfile ${{ secrets.SSH_USER }}@${{ secrets.SSH_HOST }}:/var/www/www-root/imeister-github/imeister.sk/
+          scp -o StrictHostKeyChecking=no docker-compose.yml Dockerfile ${{ secrets.SSH_USER }}@${{ secrets.SSH_HOST }}:/var/www/www-root/pradelna/b2b-order-system
 
       - name: Deploy via SSH
         run: |
           ssh -o StrictHostKeyChecking=no ${{ secrets.SSH_USER }}@${{ secrets.SSH_HOST }} << 'EOF'
-            cd /var/www/www-root/imeister-github/imeister.sk/
+            cd /var/www/www-root/pradelna/b2b-order-system
             git reset --hard
             git clean -fd
             if ! git pull; then
