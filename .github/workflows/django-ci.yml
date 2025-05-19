@@ -50,6 +50,13 @@ jobs:
       - name: Create logs directory
         run: mkdir -p washpr/logs
 
+      - name: Wait for Postgres to be ready
+        run: |
+          until pg_isready -h postgres -p 5432; do
+            echo "Waiting for postgres..."
+            sleep 2
+          done
+
       - name: Run migrations
         working-directory: washpr
         run: python manage.py migrate
