@@ -50,12 +50,18 @@ jobs:
       - name: Create logs directory
         run: mkdir -p washpr/logs
 
-      - name: Wait for Postgres to be ready
+      - name: Debug Postgres logs
+        run: docker logs $(docker ps -q --filter "ancestor=postgres:15")
+
+      - name: Wait for Postgres to be ready (max 30s)
         run: |
-          until pg_isready -h postgres -p 5432; do
-            echo "Waiting for postgres..."
+          for i in {1..15}; do
+            pg_isready -h postgres -p 5432 && exit 0
+            echo "Waiting for postgres ($i)..."
             sleep 2
           done
+          echo "Postgres did not become ready in time."
+          exit 1
 
       - name: Run migrations
         working-directory: washpr
