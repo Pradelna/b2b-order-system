@@ -162,7 +162,7 @@ STATIC_URL = '/static/'
 MEDIA_URL = '/media/'
 
 STATIC_ROOT = os.path.join(BASE_DIR, 'static/')
-MEDIA_ROOT = os.path.join(BASE_DIR, 'media/')
+MEDIA_ROOT = BASE_DIR / "test_media"
 
 # Default primary key field type
 # https://docs.djangoproject.com/en/5.0/ref/settings/#default-auto-field
@@ -204,7 +204,13 @@ LOGGING['loggers']['django']['handlers'] = ['console']
 LOGGING['loggers']['celery']['handlers'] = ['console']
 
 DEFAULT_FILE_STORAGE = "django.core.files.storage.FileSystemStorage"
-MEDIA_ROOT = BASE_DIR / "test_media"
+
+AWS_STORAGE_BUCKET_NAME = os.getenv("AWS_STORAGE_BUCKET_NAME", "ci-fake-bucket")
+AWS_S3_ENDPOINT_URL = os.getenv("AWS_S3_ENDPOINT_URL", "http://localhost:9000")
+AWS_ACCESS_KEY_ID = os.getenv("AWS_ACCESS_KEY_ID", "fake-key")
+AWS_SECRET_ACCESS_KEY = os.getenv("AWS_SECRET_ACCESS_KEY", "fake-secret")
+AWS_S3_FILE_OVERWRITE = False
+AWS_DEFAULT_ACL = None
 
 CSRF_COOKIE_SECURE = False
 SESSION_COOKIE_SECURE = False
