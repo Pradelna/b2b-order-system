@@ -13,7 +13,7 @@ import os
 from datetime import timedelta
 from pathlib import Path
 
-from washpr.washpr.settings import LOGGING
+from .settings import LOGGING
 
 # from dotenv import load_dotenv
 # load_dotenv()
