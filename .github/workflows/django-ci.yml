@@ -26,7 +26,7 @@ jobs:
           --health-retries 5
 
     env:
-      DJANGO_SETTINGS_MODULE: washpr.settings_ci
+      DJANGO_SETTINGS_MODULE: settings_ci
       POSTGRES_DB: washpr
       POSTGRES_USER: postgres
       POSTGRES_PASSWORD: postgres
