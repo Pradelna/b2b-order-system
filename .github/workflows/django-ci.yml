@@ -75,12 +75,12 @@ jobs:
         working-directory: washpr
         run: |
           run: |
-          python manage.py make migrations accounts
-          python manage.py make migrations customer
-          python manage.py make migrations place
-          python manage.py make migrations order
-          python manage.py make migrations landing
-          python manage.py make migrations
+          python manage.py makemigrations accounts
+          python manage.py makemigrations customer
+          python manage.py makemigrations place
+          python manage.py makemigrations order
+          python manage.py makemigrations landing
+          python manage.py makemigrations
           python manage.py migrate --noinput
           python manage.py migrate django_celery_beat
 
