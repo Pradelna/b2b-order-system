@@ -85,7 +85,4 @@ jobs:
           python manage.py migrate django_celery_beat
 
       - name: Run tests
-        working-directory: washpr
-        env:
-          PYTHONPATH: ..
-        run: python manage.py test
+        run: PYTHONPATH=$GITHUB_WORKSPACE python washpr/manage.py test
