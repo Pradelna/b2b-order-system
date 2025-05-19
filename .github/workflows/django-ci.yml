@@ -23,6 +23,9 @@ jobs:
           python -m pip install --upgrade pip
           pip install -r washpr/requirements.txt
 
+      - name: Create logs directory
+        run: mkdir -p washpr/logs
+
       - name: Run migrations
         working-directory: washpr
         run: python manage.py migrate
