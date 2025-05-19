@@ -93,7 +93,8 @@ jobs:
           python -c "import sys; print('\n'.join(sys.path))"
 
       - name: Run tests
-        working-directory: washpr
-        env:
-          PYTHONPATH: .
-        run: python manage.py test
+        run: |
+          echo "PWD=$(pwd)"
+          echo "Python path:"
+          python -c "import sys; print('\n'.join(sys.path))"
+          PYTHONPATH=. python washpr/manage.py test
