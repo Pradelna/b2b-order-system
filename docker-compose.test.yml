@@ -4,7 +4,7 @@ services:
     container_name: postgres
     restart: always
     env_file:
-      - washpr/.env
+      - backend/.env
     volumes:
       - postgres_data:/var/lib/postgresql/data/
     expose:
@@ -30,22 +30,22 @@ services:
     volumes:
       - minio_data:/data
     env_file:
-      - washpr/.env
+      - backend/.env
 
   backend:
     build:
-      context: ./washpr
+      context: backend
       dockerfile: Dockerfile.prod
     container_name: backend
     restart: always
     expose:
       - "8000"
     env_file:
-      - washpr/.env
+      - backend/.env
     volumes:
       - static_volume:/app/static
       - media_volume:/app/media
-      - ./washpr/logs:/app/logs
+      - ./backend/logs:/app/logs
     depends_on:
       - postgres
       - redis
@@ -53,18 +53,18 @@ services:
 
   celery:
     build:
-      context: ./washpr
+      context: backend
       dockerfile: Dockerfile
     container_name: celery
-    command: celery -A washpr worker --loglevel=info
+    command: celery -A backend worker --loglevel=info
     volumes:
-      - ./washpr:/app
-      - ./washpr/logs:/app/logs
+      - ./backend:/app
+      - ./backend/logs:/app/logs
     depends_on:
       - backend
       - redis
     env_file:
-      - washpr/.env
+      - backend/.env
     environment:
       - POSTGRES_HOST=postgres
       - CELERY_BROKER_URL=redis://redis:6379/0
@@ -72,15 +72,15 @@ services:
 
   celery-beat:
     build:
-      context: ./washpr
+      context: backend
       dockerfile: Dockerfile
     container_name: celery-beat
-    command: celery -A washpr beat --loglevel=info --scheduler django_celery_beat.schedulers:DatabaseScheduler
+    command: celery -A backend beat --loglevel=info --scheduler django_celery_beat.schedulers:DatabaseScheduler
     env_file:
-      - washpr/.env
+      - backend/.env
     volumes:
-      - ./washpr:/app
-      - ./washpr/logs:/app/logs
+      - ./backend:/app
+      - ./backend/logs:/app/logs
     depends_on:
       - backend
       - redis
@@ -115,7 +115,7 @@ services:
       AWS_ACCESS_KEY_ID: ${AWS_ACCESS_KEY_ID}
       AWS_SECRET_ACCESS_KEY: ${AWS_SECRET_ACCESS_KEY}
     env_file:
-      - washpr/.env
+      - backend/.env
 
   frontend:
     container_name: frontend
@@ -123,7 +123,7 @@ services:
       context: ./frontend
       dockerfile: Dockerfile.dev
     env_file:
-      - washpr/.env
+      - backend/.env
     ports:
       - "5173:5173"
     volumes:

@@ -30,7 +30,7 @@ python3 -m venv venv
 
 Change the directory
 ```sh
-cd washpr
+cd backend
 ```
 Install requirements
 ```sh

@@ -14,7 +14,7 @@ jobs:
       postgres:
         image: postgres:15
         env:
-          POSTGRES_DB: washpr
+          POSTGRES_DB: backend
           POSTGRES_USER: postgres
           POSTGRES_PASSWORD: postgres
         ports:
@@ -26,8 +26,8 @@ jobs:
           --health-retries 5
 
     env:
-      DJANGO_SETTINGS_MODULE: washpr.settings_ci
-      POSTGRES_DB: washpr
+      DJANGO_SETTINGS_MODULE: backend.settings_ci
+      POSTGRES_DB: backend
       POSTGRES_USER: postgres
       POSTGRES_PASSWORD: postgres
       POSTGRES_HOST: localhost
@@ -57,7 +57,7 @@ jobs:
           pip install -r washpr/requirements.txt
 
       - name: Create logs directory
-        run: mkdir -p washpr/logs
+        run: mkdir -p backend/logs
 
       - name: Show env for debug
         run: |
@@ -72,7 +72,7 @@ jobs:
         run: sleep 10
 
       - name: Run migrations
-        working-directory: washpr
+        working-directory: backend
         run: |
           run: |
           python manage.py makemigrations accounts
