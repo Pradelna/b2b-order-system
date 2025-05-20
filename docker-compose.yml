@@ -34,7 +34,7 @@ services:
 
   backend:
     build:
-      context: ./washpr
+      contebackend
       dockerfile: Dockerfile.prod
     container_name: backend
     restart: always
@@ -45,7 +45,7 @@ services:
     volumes:
       - static_volume:/app/static
       - media_volume:/app/media
-      - ./washpr/logs:/app/logs
+      - ./backend/logs:/app/logs
     depends_on:
       - postgres
       - redis
@@ -53,13 +53,13 @@ services:
 
   celery:
     build:
-      context: ./washpr
+      context: ./backend
       dockerfile: Dockerfile
     container_name: celery
     command: celery -A washpr worker --loglevel=info
     volumes:
-      - ./washpr:/app
-      - ./washpr/logs:/app/logs
+      - ./backend:/app
+      - ./backend/logs:/app/logs
     depends_on:
       - backend
       - redis
@@ -72,15 +72,15 @@ services:
 
   celery-beat:
     build:
-      context: ./washpr
+      context: ./backend
       dockerfile: Dockerfile
     container_name: celery-beat
     command: celery -A washpr beat --loglevel=info --scheduler django_celery_beat.schedulers:DatabaseScheduler
     env_file:
       - .env
     volumes:
-      - ./washpr:/app
-      - ./washpr/logs:/app/logs
+      - ./backend:/app
+      - ./backend/logs:/app/logs
     depends_on:
       - backend
       - redis

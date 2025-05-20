@@ -2,9 +2,9 @@ name: Django CI
 
 on:
   push:
-    branches: [ test-vps ]
+    branches: [ test-vps, rename-folder ]
   pull_request:
-    branches: [ test-vps ]
+    branches: [ test-vps, rename-folder ]
 
 jobs:
   test:
