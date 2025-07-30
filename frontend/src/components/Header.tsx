@@ -80,31 +80,6 @@ const Header: React.FC<HeaderProps> = ({ formCustomer }) => {
                   <FontAwesomeIcon icon={faEnvelope} className="icon" />
                   <span>pradelna1cz@gmail.com</span>
                 </a>
-                {(location.pathname === "/account/auth" ||
-                    location.pathname === "/account/login" ||
-                    location.pathname === "/forgot-password" ||
-                    formCustomer) ? (
-                    <Link to="/" className="mail">
-                      <FontAwesomeIcon icon={faEarthAmerica} className="icon"/>
-                      <span>{currentData?.auth.button_error}</span>
-                    </Link>
-                ) : (<>
-
-                </>)}
-              </div>
-
-              <div className="to-website">
-                {(location.pathname === "/account/auth" ||
-                    location.pathname === "/account/login" ||
-                    location.pathname === "/forgot-password" ||
-                    formCustomer) ? (
-                    <Link to="/" className="mail">
-                      <FontAwesomeIcon icon={faEarthAmerica} className="icon"/>
-                      <span>{currentData?.auth.button_error}</span>
-                    </Link>
-                ) : (
-   <></>
-                )}
               </div>
             </div>
           </div>
