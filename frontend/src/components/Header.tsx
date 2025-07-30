@@ -103,10 +103,7 @@ const Header: React.FC<HeaderProps> = ({ formCustomer }) => {
                       <span>{currentData?.auth.button_error}</span>
                     </Link>
                 ) : (
-                    <button onClick={handleAuthClick} className="header-menu">
-                      <FontAwesomeIcon icon={faUser} className="icon" />
-                      <span>{isAuthenticated ? menuData?.header_account : (currentData?.auth.login || "Přihlásit se")}</span>
-                    </button>
+   <></>
                 )}
               </div>
             </div>
