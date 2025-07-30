@@ -136,6 +136,19 @@ services:
       - backend
       - frontend
 
+  certbot:
+    image: certbot/certbot
+    container_name: certbot
+    volumes:
+      - ./nginx/certbot/conf:/etc/letsencrypt
+      - ./nginx/certbot/www:/var/www/certbot
+    entrypoint: >
+      sh -c "trap exit TERM; while :; do
+        certbot renew --webroot -w /var/www/certbot --quiet &&
+        nginx -s reload;
+        sleep 12h;
+      done"
+
 volumes:
   static_volume:
   media_volume:
