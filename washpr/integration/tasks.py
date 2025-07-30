@@ -419,21 +419,6 @@ def send_orders_task():
     if success_get:
         for order in orders:
             time_planned = datetime.utcfromtimestamp(order.rp_time_planned).strftime('%d%m%y')
-            # check if other orders for this date
-            # if time_planned in max_external_number_by_day:
-            #     # number for order
-            #     next_number_order = max_external_number_by_day[time_planned] + 1
-            #     # name of contract_external_id
-            #     contract_external_id = time_planned + f"/{next_number_order}"
-            #     # print(f"new number -> {contract_external_id}")
-            # else:
-            #     # print(f"{time_planned} -> free")
-            #     next_number_order = 1
-            #     contract_external_id = time_planned + f"/{next_number_order}"
-            #     # print(f"new number -> {contract_external_id}")
-            # # add new number to dictionary to check next order
-            # max_external_number_by_day[time_planned] = next_number_order
-
 
             contract_external_id = time_planned + f"/test-{order.id}"
             # Формируем payload для заказа. Приводим поля к нужному типу,
@@ -921,6 +906,12 @@ def send_email_deleted_place_task(place_id, place_name, place_external_id, custo
     retry_kwargs={"max_retries": 5, "countdown": 180}
 )
 def send_email_change_customer_task(rp_client_external_id, company_name):
+    """
+    Send email if customer wants to change his data
+    :param rp_client_external_id:
+    :param company_name:
+    :return: just inform about sending email
+    """
     subject = "Je zapotřebí účast administrátora"
     message = (
         f"Zakaznik {company_name} chce změnit údaje\n\n"
@@ -941,6 +932,11 @@ def send_email_change_customer_task(rp_client_external_id, company_name):
     retry_kwargs={"max_retries": 5, "countdown": 180}
 )
 def send_new_customer_task(company_name):
+    """
+    Send email about new request from new customer
+    :param company_name:
+    :return: just inform about sending email
+    """
     logger.info(f"Start send email for new customer")
     subject = "Nový zákazník"
     message = (
@@ -948,7 +944,7 @@ def send_new_customer_task(company_name):
         f"Prosím, věnujte pozornost."
     )
     from_email = settings.DEFAULT_FROM_EMAIL
-    recipient_list = ["sergei@pradelna1.com", "office@pradelna1.com"]
+    recipient_list = ["sokov.tlt@gmail.com"]
     try:
         logger.info(f"Sending new customer email for {company_name}")
         send_mail(subject, message, from_email, recipient_list)

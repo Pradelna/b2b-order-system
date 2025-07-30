@@ -76,9 +76,9 @@ const Header: React.FC<HeaderProps> = ({ formCustomer }) => {
                   <FontAwesomeIcon icon={faMobileScreen} className="icon" />
                   <span>+420 734 246 834</span>
                 </a>
-                <a href="mailto:office@pradelna1.com" className="mail">
+                <a href="mailto:pradelna1cz@gmail.com" className="mail">
                   <FontAwesomeIcon icon={faEnvelope} className="icon" />
-                  <span>office@pradelna1.com</span>
+                  <span>pradelna1cz@gmail.com</span>
                 </a>
                 {(location.pathname === "/account/auth" ||
                     location.pathname === "/account/login" ||
@@ -124,9 +124,9 @@ const Header: React.FC<HeaderProps> = ({ formCustomer }) => {
                     <FontAwesomeIcon icon={faMobileScreen} className="icon" />
                     <span className="ms-2"> +420 734 246 834</span>
                   </a>
-                  <a href="mailto:office@pradelna1.com" className="mail">
+                  <a href="mailto:pradelna1cz@gmail.com" className="mail">
                     <FontAwesomeIcon icon={faEnvelope} className="icon" />
-                    <span className="ms-2"> office@pradelna1.com</span>
+                    <span className="ms-2"> pradelna1cz@gmail.com</span>
                   </a>
                 </div>
               </div>

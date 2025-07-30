@@ -69,14 +69,14 @@ const Footer: React.FC = () => {
                     <FontAwesomeIcon icon={faMobileScreen} className="icon" />
                     <span>+420 734 246 834 (RU)</span>
                   </a>
-                  <a href="mailto:office@pradelna1.com" className="mail">
+                  <a href="mailto:pradelna1cz@gmail.com" className="mail">
                     <FontAwesomeIcon icon={faEnvelope} className="icon" />
-                    <span>office@pradelna1.com</span>
+                    <span>pradelna1cz@gmail.com</span>
                   </a>
-                  <a href="mailto:office@pradelna1.com" className="mail">
-                    <FontAwesomeIcon icon={faEnvelope} className="icon" />
-                    <span>pradelna1cz@gmail.com (Majitel)</span>
-                  </a>
+                  {/*<a href="mailto:pradelna1cz@gmail.com" className="mail">*/}
+                  {/*  <FontAwesomeIcon icon={faEnvelope} className="icon" />*/}
+                  {/*  <span>pradelna1cz@gmail.com (Majitel)</span>*/}
+                  {/*</a>*/}
                 </div>
               </div>
             </div>
