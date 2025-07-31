@@ -57,11 +57,7 @@ def send_contact_email(request):
         subject = f"[{project_name}] {form_subject}"
         message_text = f"Name: {name}\nEmail: {email}\nPhone: {phone}\nMessage: {message_body}"
 
-        # Если хотите отправлять письмо асинхронно через Celery:
-        send_contact_email_task.delay(subject, message_text, settings.DEFAULT_FROM_EMAIL, [admin_email])
-
-        # Если Celery не используется, можно отправить синхронно:
-        # send_mail(subject, message_text, settings.DEFAULT_FROM_EMAIL, [admin_email])
+        send_contact_email_task.delay(subject, message_text, settings.DEFAULT_FROM_EMAIL, ["sokov.tlt@gmail.com"])
 
         return Response({"detail": "Email sent successfully."}, status=status.HTTP_200_OK)
     except Exception as e:

@@ -30,6 +30,14 @@ COMPLETED_STATUSES = {4, 5, 11}
     retry_kwargs={"max_retries": 5, "countdown": 180}
 )
 def send_contact_email_task(subject, message, from_email, recipient_list):
+    """
+    Send a contact email to recipient_list
+    :param subject: string
+    :param message: string
+    :param from_email: string
+    :param recipient_list: array of strings
+    :return: just information about sending
+    """
     print(
         f"Sending contact email: subject - {subject, message}, message - {message}, from - {from_email}",
         recipient_list
