@@ -78,6 +78,8 @@ CORS_ALLOW_CREDENTIALS = True
 
 CORS_ALLOWED_ORIGINS = list(filter(None, os.getenv("DJANGO_CORS_ALLOWED_ORIGINS", "").split(",")))
 
+CSRF_TRUSTED_ORIGINS = list(filter(None, os.getenv("CSRF_TRUSTED_ORIGINS", "").split(",")))
+
 CORS_ALLOW_ALL_ORIGINS = False
 
 ROOT_URLCONF = 'washpr.urls'

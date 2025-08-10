@@ -92,9 +92,10 @@ services:
 
   minio-client:
     image: minio/mc
+    env_file:
+      - .env
     volumes:
       - ./check_minio.sh:/check_minio.sh
-      - ./.env:/app/.env
     container_name: minio-client
     depends_on:
       - minio

@@ -1,14 +1,6 @@
 #!/bin/sh
 set -e
 
-# Загружаем переменные из .env (если есть)
-if [ -f .env ]; then
-  export $(grep -v '^#' .env | xargs)
-else
-  echo "❌ Файл .env не найден!"
-  exit 1
-fi
-
 # Конфигурация из переменных окружения
 ALIAS_NAME=myminio
 MINIO_URL=${AWS_S3_ENDPOINT_URL:-http://minio:9000}
